@@ -1,12 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-// import { CalendarDateRangePicker } from "@/components/ui/date-range-picker"
 import { Download } from "lucide-react"
 import { KPIStats } from "@/components/dashboard/KPIStats"
 import { RevenueChart } from "@/components/dashboard/RevenueChart"
 import { AttendanceChart } from "@/components/dashboard/AttendanceChart"
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed"
+import { StudentDistribution } from "@/components/dashboard/StudentDistribution"
 
 export default function DashboardPage() {
     return (
@@ -34,7 +34,7 @@ export default function DashboardPage() {
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <ActivityFeed />
-                {/* Future component: StudentDistribution or similar */}
+                <StudentDistribution />
             </div>
         </div>
     )

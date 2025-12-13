@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function ActivityFeed() {
     return (
-        <Card className="col-span-3">
+        <Card className="col-span-4">
             <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
                 <CardDescription>Latest updates from your institute.</CardDescription>
