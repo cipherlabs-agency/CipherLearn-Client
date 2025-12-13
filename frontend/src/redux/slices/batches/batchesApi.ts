@@ -1,6 +1,7 @@
 import { api } from '../../api/api';
+import { Batch } from '@/types';
 
-const dummyBatches = [
+const dummyBatches: Batch[] = [
     { id: 1, name: "Physics Class 11", subject: "Physics", students: 24, time: "10:00 AM - 11:30 AM", days: "Mon, Wed, Fri", status: "Active" },
     { id: 2, name: "Math Class 10", subject: "Mathematics", students: 18, time: "04:00 PM - 05:30 PM", days: "Tue, Thu, Sat", status: "Active" },
     { id: 3, name: "Chem Class 12", subject: "Chemistry", students: 30, time: "11:00 AM - 12:30 PM", days: "Mon, Wed, Fri", status: "Active" },

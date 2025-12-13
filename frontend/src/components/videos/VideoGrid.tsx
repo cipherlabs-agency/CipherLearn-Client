@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+// import { Badge } from "@/components/ui/badge"
 import { PlayCircle, Clock, Calendar, MoreVertical, Loader2 } from "lucide-react"
 import { useGetVideosQuery } from "@/redux/slices/videos/videosApi"
 import { Video } from "@/types"

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Pin, MoreHorizontal, Calendar, Loader2 } from "lucide-react"
 import { useGetAnnouncementsQuery } from "@/redux/slices/announcements/announcementsApi"
 import { Announcement } from "@/types"
