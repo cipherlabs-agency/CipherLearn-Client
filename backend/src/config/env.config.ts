@@ -8,6 +8,7 @@ export const config = {
     HOST: process.env.APP_HOST || "localhost",
     ENV: process.env.NODE_ENV || "development",
     CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
+    SALT: Number(process.env.SALT),
   },
   DB: {
     HOST: process.env.DB_HOST || "localhost",
@@ -15,7 +16,7 @@ export const config = {
     USER: process.env.DB_USER || "user",
     PASSWORD: process.env.DB_PASSWORD || "password",
     NAME: process.env.DB_NAME || "database",
-    URL: process.env.DATABASE_URL || "",
+    URL: process.env.DB_URL || "",
   },
   CLOUDINAIRY: {
     CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "",

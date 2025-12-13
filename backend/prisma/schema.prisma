@@ -12,3 +12,50 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id       Int       @unique @default(autoincrement())
+  name     String
+  email    String    @unique
+  password String
+  role     UserRoles @default(TEACHER)
+
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now())
+}
+
+model Student {
+  id         Int      @unique @default(autoincrement())
+  firstname  String
+  middlename String
+  lastname   String
+  fullname   String
+  email      String   @unique
+  dob        String
+  batchId    Int?
+  attendance Json?
+  address    String?
+  isDeleted  Boolean?
+  deletedBy  String?
+
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now())
+}
+
+model Batch {
+  id            Int      @unique @default(autoincrement())
+  name          String
+  totalStudents Int?
+  timings       Json?
+  isDeleted     Boolean?
+  deletedBy     String?
+
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now())
+}
+
+enum UserRoles {
+  ADMIN
+  TEACHER
+  STUDENT
+}

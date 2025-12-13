@@ -18,6 +18,8 @@ export class Database {
         { level: "warn", emit: "stdout" },
       ],
     });
+
+    this.prisma.$on("query", this.defaultQueryLogger);
   }
 
   private defaultQueryLogger = (e: Prisma.QueryEvent): void => {
@@ -48,3 +50,4 @@ export class Database {
 }
 
 export default Database;
+export const prisma = new Database().prisma;

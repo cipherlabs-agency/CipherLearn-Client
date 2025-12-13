@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "start:dev": "npx prisma generate && tsx watch src/index.ts"
+    "start:dev": "npx prisma generate && tsx watch src/index.ts",
+    "prisma:g": "npx prisma generate",
+    "prisma:m:d": "npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
@@ -16,14 +18,19 @@
     "@prisma/client": "^7.1.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
+    "@types/multer": "^2.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
     "pg": "^8.16.3"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.1",
     "@types/pg": "^8.15.6",
     "prisma": "^7.1.0",
