@@ -4,12 +4,12 @@ import batchesRoutes from "./batches/route";
 
 const router = Router();
 
-router.use("/analytics");
-router.use("/attendance");
+// router.use("/analytics");
+// router.use("/attendance");
 router.use("/batches", batchesRoutes);
-router.use("/fees");
-router.use("/notes");
+// router.use("/fees");
+// router.use("/notes");
 router.use("/student-enrollment", studentEnrollmentRoutes);
-router.use("/youtube-videos");
+// router.use("/youtube-videos");
 
 export default router;
