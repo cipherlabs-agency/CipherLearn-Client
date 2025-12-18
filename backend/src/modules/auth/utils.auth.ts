@@ -39,3 +39,10 @@ export const generateHash = (
 export const compareHash = (string: string, hash: string): boolean => {
   return bcryptjs.compareSync(string, hash);
 };
+
+export const checkAdminEmail = (email: string): boolean => {
+  const adminEmails = config.APP.ADMIN_EMAILS
+    ? config.APP.ADMIN_EMAILS.split(",").map((e) => e.trim().toLowerCase())
+    : [];
+  return adminEmails.includes(email.toLowerCase());
+};

@@ -51,7 +51,7 @@ export const validateQuery = (schema: Joi.ObjectSchema) => {
 };
 
 const signUpSchema = Joi.object({
-  name: Joi.string().alphanum().min(3).max(50).required(),
+  name: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
 });

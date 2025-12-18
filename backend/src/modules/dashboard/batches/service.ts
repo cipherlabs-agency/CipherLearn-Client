@@ -2,9 +2,7 @@ import { Prisma, Batch } from "../../../../prisma/generated/prisma/client";
 import { prisma } from "../../../config/db.config";
 
 export default class BatchService {
-  async create(
-    batch: Prisma.BatchCreateInput
-  ): Promise<Batch> {
+  async create(batch: Prisma.BatchCreateInput): Promise<Batch> {
     try {
       const newBatch = await prisma.batch.create({
         data: {
@@ -20,18 +18,16 @@ export default class BatchService {
     }
   }
 
-  async update(
-    batch: Prisma.BatchCreateInput
-  ): Promise<Batch> {
+  async update(id: number, batch: Prisma.BatchUpdateInput): Promise<Batch> {
     try {
       let exist = await prisma.batch.findUnique({
-        where: { id: batch.id },
+        where: { id: id },
       });
 
       if (!exist) throw new Error("Batch not found");
 
       const updated = await prisma.batch.update({
-        where: { id: batch.id },
+        where: { id: id },
         data: {
           ...batch,
         },
@@ -43,10 +39,34 @@ export default class BatchService {
     }
   }
 
-  async get() {
+  async getAll() {
     try {
-      const batches = await prisma.batch.findMany();
+      let select: Prisma.BatchSelect = {
+        id: true,
+        name: true,
+        timings: true,
+        totalStudents: true,
+        createdAt: true,
+      };
+
+      const batches = await prisma.batch.findMany({
+        where: { isDeleted: false },
+        select: select,
+      });
       return batches;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getById(id: number) {
+    try {
+      const batch = await prisma.batch.findUnique({
+        where: { id: id, isDeleted: false },
+      });
+
+      if (!batch) throw new Error("Batch not found");
+      return batch;
     } catch (error) {
       throw error;
     }
@@ -97,6 +117,4 @@ export default class BatchService {
       throw error;
     }
   }
-
-  async promote() { }
 }

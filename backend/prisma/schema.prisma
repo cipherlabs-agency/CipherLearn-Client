@@ -52,7 +52,7 @@ model Student {
 model Batch {
   id            Int      @id @default(autoincrement())
   name          String
-  totalStudents Int?
+  totalStudents Json?
   timings       Json?
   isDeleted     Boolean? @default(false)
   deletedBy     String?

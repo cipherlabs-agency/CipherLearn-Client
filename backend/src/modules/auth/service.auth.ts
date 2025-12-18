@@ -1,7 +1,13 @@
 // services/auth.service.ts
+import { UserRoles } from "../../../prisma/generated/prisma/enums";
 import { prisma } from "../../config/db.config";
 import { LoginData, LoginResult, SignupData } from "./types.auth";
-import { compareHash, generateHash, generateLoginToken } from "./utils.auth";
+import {
+  checkAdminEmail,
+  compareHash,
+  generateHash,
+  generateLoginToken,
+} from "./utils.auth";
 
 export default class AuthService {
   async signup(data: SignupData): Promise<boolean> {
@@ -22,6 +28,9 @@ export default class AuthService {
           name: data.name,
           email: data.email,
           password: hashPassword,
+          role: checkAdminEmail(data.email)
+            ? UserRoles.ADMIN
+            : UserRoles.TEACHER,
         },
       });
 

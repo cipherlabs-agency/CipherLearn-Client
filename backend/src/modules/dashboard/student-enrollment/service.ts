@@ -4,7 +4,7 @@ import { StudentCSV } from "./types";
 
 export default class StudentEnrollmentService {
   public async enrollSingle(
-    student: Omit<Prisma.StudentCreateInput, "createdAt">
+    student: Prisma.StudentCreateInput
   ): Promise<Student> {
     try {
       let alreadyExist = await prisma.student.findUnique({
@@ -31,7 +31,7 @@ export default class StudentEnrollmentService {
       throw error;
     }
   }
-  public async enrollCSV(csv: StudentCSV) { }
+  public async enrollCSV(csv: StudentCSV) {}
 
   public async getAll(): Promise<Student[]> {
     try {
