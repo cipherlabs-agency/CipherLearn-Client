@@ -1,9 +1,11 @@
 import Joi from "joi";
 
-const note = Joi.object({
+const upload = Joi.object({
   title: Joi.string().required(),
+  content: Joi.array().items(Joi.object()).required(),
+  batchId: Joi.number().required(),
 });
 
 export const NotesValidations = {
-  notes: note,
+  upload: upload,
 };

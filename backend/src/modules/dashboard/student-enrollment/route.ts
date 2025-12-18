@@ -2,7 +2,7 @@ import { Router } from "express";
 import { validateRequest } from "../../auth/validations.auth";
 import { StudentValidations } from "./validation";
 import StudentEnrollmentController from "./controller";
-import { upload } from "../../../config/multer.config";
+import upload from "../../../config/multer.config";
 
 const router = Router();
 const controller = new StudentEnrollmentController();

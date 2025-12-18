@@ -126,6 +126,20 @@ model YoutubeVideo {
   @@map("youtube_videos")
 }
 
+model Note {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String[]
+  batchId   Int
+  isDeleted Boolean? @default(false)
+  deletedBy String?
+
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now())
+
+  @@map("notes")
+}
+
 enum UserRoles {
   ADMIN
   TEACHER
