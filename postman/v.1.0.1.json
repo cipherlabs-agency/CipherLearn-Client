@@ -18,11 +18,6 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{admin_token}}",
-								"description": "Admin authentication required"
 							}
 						],
 						"body": {
@@ -39,7 +34,7 @@
 								"signup"
 							]
 						},
-						"description": "Create a new user account. Requires admin authentication."
+						"description": "Create a new user account."
 					},
 					"response": []
 				},
@@ -369,6 +364,204 @@
 							]
 						},
 						"description": "Delete a batch. Requires admin authentication."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attendance",
+			"item": [
+				{
+					"name": "Create Attendance Sheet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"batchId\": 1,\n  \"month\": 1,\n  \"year\": 2024\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/dashboard/attendance/create-attendance-sheet",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"attendance",
+								"create-attendance-sheet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Attendance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"studentId\": 1,\n  \"batchId\": 1,\n  \"date\": \"2024-01-01\",\n  \"markedBy\": \"Teacher\",\n  \"markedById\": 1,\n  \"method\": \"MANUAL\",\n  \"status\": \"PRESENT\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/dashboard/attendance/mark-attendance",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"attendance",
+								"mark-attendance"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Batch Attendance Sheet",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/dashboard/attendance/batch-attendance-sheet/:batchId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"attendance",
+								"batch-attendance-sheet",
+								":batchId"
+							],
+							"variable": [
+								{
+									"key": "batchId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Attendance Matrix",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/dashboard/attendance/student-attendance-matrix/:studentId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"attendance",
+								"student-attendance-matrix",
+								":studentId"
+							],
+							"variable": [
+								{
+									"key": "studentId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Youtube Videos",
+			"item": [
+				{
+					"name": "Upload Video",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Intro to React\",\n  \"description\": \"React basics\",\n  \"category\": \"Education\",\n  \"visibility\": \"PUBLIC\",\n  \"url\": \"https://youtube.com/watch?v=123\",\n  \"batchId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/dashboard/youtube-videos/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"youtube-videos",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Draft/Update Video",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/dashboard/youtube-videos/:videoId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"youtube-videos",
+								":videoId"
+							],
+							"variable": [
+								{
+									"key": "videoId",
+									"value": "1"
+								}
+							]
+						}
 					},
 					"response": []
 				}
