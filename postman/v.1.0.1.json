@@ -566,6 +566,230 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Notes",
+			"item": [
+				{
+					"name": "Create Note",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [],
+									"description": "Max 5 files (images, documents)"
+								},
+								{
+									"key": "title",
+									"value": "My New Note",
+									"type": "text"
+								},
+								{
+									"key": "batchId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "General",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/dashboard/notes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"notes"
+							]
+						},
+						"description": "Create a new note with optional file uploads"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Notes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/dashboard/notes?batchId=1&page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"notes"
+							],
+							"query": [
+								{
+									"key": "batchId",
+									"value": "1",
+									"description": "Filter by batch ID"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page"
+								},
+								{
+									"key": "category",
+									"value": "",
+									"description": "Filter by category",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all notes with pagination and filtering"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Note by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/dashboard/notes/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"notes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Note ID"
+								}
+							]
+						},
+						"description": "Get a single note by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Note",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [],
+									"description": "Max 5 files"
+								},
+								{
+									"key": "title",
+									"value": "Updated Note Title",
+									"type": "text"
+								},
+								{
+									"key": "batchId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Updated Category",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/dashboard/notes/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"notes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Note ID"
+								}
+							]
+						},
+						"description": "Update a note"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Note",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/dashboard/notes/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard",
+								"notes",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Note ID"
+								}
+							]
+						},
+						"description": "Delete a note (Soft delete)"
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
