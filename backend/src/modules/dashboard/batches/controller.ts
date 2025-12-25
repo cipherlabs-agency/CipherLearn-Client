@@ -17,9 +17,9 @@ export default class BatchController {
           .json({ success: false, message: "name and timings are required" });
 
       let capacity = 0;
-      if (typeof totalStudents === 'object' && totalStudents !== null) {
+      if (typeof totalStudents === "object" && totalStudents !== null) {
         capacity = (totalStudents as any).capacity || 0;
-      } else if (typeof totalStudents === 'number') {
+      } else if (typeof totalStudents === "number") {
         capacity = totalStudents;
       }
 
@@ -44,34 +44,10 @@ export default class BatchController {
 
   public async update(req: Request, res: Response) {
     try {
-      const idParam = req.params.id || req.body.id;
-      if (!idParam)
-        return res
-          .status(400)
-          .json({ success: false, message: "id is required" });
+      const { id } = req.params;
+      const batch = req.body as Partial<Prisma.BatchUpdateInput>;
 
-      const id = Number(idParam);
-      if (Number.isNaN(id))
-        return res
-          .status(400)
-          .json({ success: false, message: "id must be a number" });
-
-      const { name, timings, totalStudents } =
-        req.body as Partial<Prisma.BatchCreateInput>;
-
-      let capacity = undefined;
-      if (typeof totalStudents === 'object' && totalStudents !== null) {
-        capacity = (totalStudents as any).capacity;
-      } else if (typeof totalStudents === 'number') {
-        capacity = totalStudents;
-      }
-
-      const updated = await batchService.update({
-        id,
-        name,
-        timings,
-        totalStudents: capacity,
-      } as Prisma.BatchCreateInput);
+      const updated = await batchService.update(Number(id), batch);
 
       logger.info(`Batch updated: ${updated.id}`);
 
@@ -92,14 +68,16 @@ export default class BatchController {
 
   public async getAll(req: Request, res: Response) {
     try {
-      const batches = await batchService.get();
+      const batches = await batchService.getAll();
 
       const formattedBatches = batches.map((batch: any) => ({
         ...batch,
         students: batch.totalStudents || 0,
         time: batch.timings?.time || "",
-        days: Array.isArray(batch.timings?.days) ? batch.timings.days.join(", ") : "",
-        status: batch.isDeleted ? 'Inactive' : 'Active' // Assuming isDeleted determines status
+        days: Array.isArray(batch.timings?.days)
+          ? batch.timings.days.join(", ")
+          : "",
+        status: batch.isDeleted ? "Inactive" : "Active", // Assuming isDeleted determines status
       }));
 
       return res.status(200).json({ success: true, batches: formattedBatches });
@@ -108,6 +86,19 @@ export default class BatchController {
       return res
         .status(500)
         .json({ success: false, message: `Get failed: ${error}` });
+    }
+  }
+
+  public async get(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const batch = await batchService.getById(Number(id));
+      return res.status(200).json({ success: true, batch });
+    } catch (error) {
+      logger.error("Batch.get error:", error);
+      return res
+        .status(404)
+        .json({ success: false, message: (error as Error).message });
     }
   }
 
@@ -122,7 +113,7 @@ export default class BatchController {
       const user = req.user as User;
 
       const result = await batchService.draft(ids, user);
-      logger.info(`Batches drafted: ${ids.join(', ')}`);
+      logger.info(`Batches drafted: ${ids.join(", ")}`);
       return res
         .status(200)
         .json({ success: true, message: "Batches drafted", result });
@@ -155,7 +146,7 @@ export default class BatchController {
           .json({ success: false, message: "ids array is required" });
 
       const result = await batchService.delete(ids);
-      logger.info(`Batches deleted: ${ids.join(', ')}`);
+      logger.info(`Batches deleted: ${ids.join(", ")}`);
       return res
         .status(200)
         .json({ success: true, message: "Batches deleted", result });

@@ -12,4 +12,15 @@ export type Student = {
   createdAt?: Date;
 };
 
+export interface EnrollStudentInput {
+  email: string;
+  firstname: string;
+  middlename: string;
+  lastname: string;
+  fullname?: string;
+  dob: string;
+  batchId: number;
+  address: string;
+}
+
 export type StudentCSV = Student[];

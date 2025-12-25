@@ -7,16 +7,18 @@ import { BatchValidations } from "./validation";
 const router = Router();
 const controller = new BatchController();
 
+router.use(isAuthenticated);
 router.post(
   "/",
-  isAuthenticated,
+  isAdmin,
   validateRequest(BatchValidations.batch),
   controller.create.bind(controller)
 );
-router.put("/:id", isAuthenticated, controller.update.bind(controller));
-router.get("/", isAuthenticated, controller.getAll.bind(controller));
-router.post("/draft", isAuthenticated, controller.draft.bind(controller));
-router.get("/drafts", isAuthenticated, controller.getDrafts.bind(controller));
-router.delete("/", isAuthenticated, controller.delete.bind(controller));
+router.put("/:id", isAdmin, controller.update.bind(controller));
+router.get("/", controller.getAll.bind(controller));
+router.get("/:id", controller.get.bind(controller));
+router.put("/draft", isAdmin, controller.draft.bind(controller));
+router.get("/drafts", isAdmin, controller.getDrafts.bind(controller));
+router.delete("/", isAdmin, controller.delete.bind(controller));
 
 export default router;
