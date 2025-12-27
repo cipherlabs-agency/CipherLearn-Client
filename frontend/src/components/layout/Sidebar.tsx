@@ -7,10 +7,8 @@ import {
     LayoutDashboard,
     Users,
     CalendarCheck,
-    CreditCard,
     Video,
     FileText,
-    Megaphone,
     Layers,
     GraduationCap,
     ChevronLeft,
@@ -27,11 +25,9 @@ const sidebarItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
     { icon: Users, label: "Students", href: "/students" },
     { icon: CalendarCheck, label: "Attendance", href: "/attendance" },
-    { icon: CreditCard, label: "Fees", href: "/fees" },
     { icon: Layers, label: "Batches", href: "/batches" },
     { icon: Video, label: "Videos", href: "/videos" },
     { icon: FileText, label: "Notes", href: "/notes" },
-    { icon: Megaphone, label: "Announcements", href: "/announcements" },
 ]
 
 export function Sidebar() {

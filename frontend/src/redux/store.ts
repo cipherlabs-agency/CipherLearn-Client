@@ -3,7 +3,6 @@ import { api } from './api/api';
 import authReducer from './slices/auth/authSlice';
 import studentsReducer from './slices/students/studentsSlice';
 import attendanceReducer from './slices/attendance/attendanceSlice';
-import feesReducer from './slices/fees/feesSlice';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 export const store = configureStore({
@@ -11,7 +10,6 @@ export const store = configureStore({
         auth: authReducer,
         students: studentsReducer,
         attendance: attendanceReducer,
-        fees: feesReducer,
         [api.reducerPath]: api.reducer,
     },
     middleware: (getDefaultMiddleware) =>
@@ -22,3 +20,4 @@ setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+

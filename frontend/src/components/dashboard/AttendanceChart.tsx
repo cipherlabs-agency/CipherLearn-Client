@@ -1,16 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-
-const attendanceData = [
-    { day: "Mon", present: 90 },
-    { day: "Tue", present: 85 },
-    { day: "Wed", present: 95 },
-    { day: "Thu", present: 88 },
-    { day: "Fri", present: 92 },
-    { day: "Sat", present: 80 },
-]
+import { BarChart3 } from "lucide-react"
 
 export function AttendanceChart() {
     return (
@@ -20,37 +11,16 @@ export function AttendanceChart() {
                 <CardDescription>Weekly student attendance average.</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="h-[350px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={attendanceData}>
-                            <XAxis
-                                dataKey="day"
-                                stroke="#888888"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                            />
-                            <YAxis
-                                stroke="#888888"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                                domain={[0, 100]}
-                            />
-                            <Tooltip
-                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                            />
-                            <Line
-                                type="monotone"
-                                dataKey="present"
-                                strokeWidth={2}
-                                activeDot={{ r: 8 }}
-                                className="stroke-primary"
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
+                <div className="h-[350px] w-full flex flex-col items-center justify-center text-center">
+                    <BarChart3 className="h-16 w-16 text-muted-foreground mb-4" />
+                    <p className="text-sm text-muted-foreground mb-2">Attendance Analytics Coming Soon</p>
+                    <p className="text-xs text-muted-foreground max-w-sm">
+                        This chart will display weekly attendance trends based on real data
+                        from the attendance tracking system.
+                    </p>
                 </div>
             </CardContent>
         </Card>
     )
 }
+

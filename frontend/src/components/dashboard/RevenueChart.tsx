@@ -1,16 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
-
-const data = [
-    { name: "Jan", total: Math.floor(Math.random() * 5000) + 1000 },
-    { name: "Feb", total: Math.floor(Math.random() * 5000) + 1000 },
-    { name: "Mar", total: Math.floor(Math.random() * 5000) + 1000 },
-    { name: "Apr", total: Math.floor(Math.random() * 5000) + 1000 },
-    { name: "May", total: Math.floor(Math.random() * 5000) + 1000 },
-    { name: "Jun", total: Math.floor(Math.random() * 5000) + 1000 },
-]
+import { IndianRupee } from "lucide-react"
 
 export function RevenueChart() {
     return (
@@ -20,32 +11,16 @@ export function RevenueChart() {
                 <CardDescription>Monthly revenue breakdown for the current academic year.</CardDescription>
             </CardHeader>
             <CardContent className="pl-2">
-                <div className="h-[350px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data}>
-                            <XAxis
-                                dataKey="name"
-                                stroke="#888888"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                            />
-                            <YAxis
-                                stroke="#888888"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                                tickFormatter={(value) => `₹${value}`}
-                            />
-                            <Tooltip
-                                cursor={{ fill: 'transparent' }}
-                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                            />
-                            <Bar dataKey="total" fill="currentColor" radius={[4, 4, 0, 0]} className="fill-primary" />
-                        </BarChart>
-                    </ResponsiveContainer>
+                <div className="h-[350px] w-full flex flex-col items-center justify-center text-center">
+                    <IndianRupee className="h-16 w-16 text-muted-foreground mb-4" />
+                    <p className="text-sm text-muted-foreground mb-2">Fee Collection Analytics Coming Soon</p>
+                    <p className="text-xs text-muted-foreground max-w-sm">
+                        This chart will display monthly fee collection data once the fee management
+                        system is fully integrated.
+                    </p>
                 </div>
             </CardContent>
         </Card>
     )
 }
+

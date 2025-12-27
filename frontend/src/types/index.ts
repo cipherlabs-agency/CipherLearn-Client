@@ -123,31 +123,34 @@ export interface UploadVideoRequest {
     batchId?: number;
 }
 
-// Mock-only types (no backend endpoints)
-export interface FeeRecord {
-    id: number;
-    name: string;
-    batch: string;
-    amount: number;
-    status: 'Paid' | 'Pending' | 'Overdue';
-    date: string;
-    progress: number;
-}
-
+// Note Types
 export interface Note {
     id: number;
     title: string;
-    batch: string;
-    size: string;
-    downloads: number;
-    date: string;
+    content?: string[]; // Array of URLs (images, documents)
+    batchId?: number;
+    category?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    isDeleted?: boolean;
+    // Frontend display fields (computed)
+    batch?: string;
+    size?: string;
+    downloads?: number;
+    date?: string;
 }
 
-export interface Announcement {
-    id: number;
+export interface CreateNoteInput {
     title: string;
-    content: string;
-    date: string;
-    pinned: boolean;
-    author: string;
+    content?: string[]; // Array of URLs
+    batchId: number;
+    category?: string;
 }
+
+export interface UpdateNoteInput {
+    title?: string;
+    content?: string[];
+    batchId?: number;
+    category?: string;
+}
+
