@@ -4,10 +4,11 @@ import batchesRoutes from "./batches/route";
 import attendanceRoutes from "./attendance/route";
 import youtubeVideoRoutes from "./youtube-videos/route";
 import notesRoutes from "./notes/route";
+import analyticsRoutes from "./analytics/route";
 
 const router = Router();
 
-// router.use("/analytics");
+router.use("/analytics", analyticsRoutes);
 router.use("/attendance", attendanceRoutes);
 router.use("/batches", batchesRoutes);
 // router.use("/fees");
