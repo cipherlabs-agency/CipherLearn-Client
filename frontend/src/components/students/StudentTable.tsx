@@ -9,17 +9,15 @@ import {
     TableHead,
     TableHeader,
     TableRow,
+    TableCaption
 } from "@/components/ui/table"
-import { MoreHorizontal, Trash2, Loader2 } from "lucide-react"
+import { MoreHorizontal, Trash2 } from "lucide-react"
 import { useGetStudentsQuery, useDeleteStudentMutation } from "@/redux/slices/students/studentsApi"
-import { Student } from "@/types"
+import { Loader2 } from "lucide-react"
 
-interface StudentTableProps {
-    batchId?: number;
-}
-
-export function StudentTable({ batchId = 1 }: StudentTableProps) {
-    const { data: students, isLoading, isError } = useGetStudentsQuery(batchId);
+export function StudentTable() {
+    const { data, isLoading, isError } = useGetStudentsQuery(undefined);
+    const students = data;
     const [deleteStudent, { isLoading: isDeleting }] = useDeleteStudentMutation();
 
     if (isLoading) {
@@ -27,11 +25,7 @@ export function StudentTable({ batchId = 1 }: StudentTableProps) {
     }
 
     if (isError) {
-        return <div className="text-red-500 p-4">Failed to load students. Make sure backend is running.</div>
-    }
-
-    if (!students || students.length === 0) {
-        return <div className="text-center p-8 text-muted-foreground">No students enrolled yet.</div>
+        return <div className="text-red-500 p-4">Failed to load students.</div>
     }
 
     return (
@@ -41,20 +35,24 @@ export function StudentTable({ batchId = 1 }: StudentTableProps) {
                     <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Email</TableHead>
-                        <TableHead>DOB</TableHead>
-                        <TableHead>Address</TableHead>
+                        <TableHead>Batch</TableHead>
+                        <TableHead>Join Date</TableHead>
+                        <TableHead>Status</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {students?.map((student: Student) => (
+                    {students?.map((student: any) => (
                         <TableRow key={student.id}>
-                            <TableCell className="font-medium">
-                                {student.firstname} {student.middletname} {student.lastname}
-                            </TableCell>
+                            <TableCell className="font-medium">{student.name}</TableCell>
                             <TableCell className="text-muted-foreground">{student.email}</TableCell>
-                            <TableCell>{student.dob || 'N/A'}</TableCell>
-                            <TableCell>{student.address || 'N/A'}</TableCell>
+                            <TableCell>{student.batch}</TableCell>
+                            <TableCell>{student.joinDate}</TableCell>
+                            <TableCell>
+                                <Badge variant={student.status === 'Active' ? 'default' : student.status === 'Inactive' ? 'secondary' : 'destructive'}>
+                                    {student.status}
+                                </Badge>
+                            </TableCell>
                             <TableCell className="text-right">
                                 <Button variant="ghost" size="icon">
                                     <MoreHorizontal className="h-4 w-4" />

@@ -1,24 +1,37 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
-    user: any | null;
+    user: { id?: number; name: string; email: string; role: string } | null;
     token: string | null;
-    isAuthenticated: boolean;
+    status: 'idle' | 'authenticated' | 'unauthenticated';
 }
 
-// Load token from localStorage on initial load
-const loadTokenFromStorage = (): string | null => {
+const getUserFromStorage = () => {
     if (typeof window !== 'undefined') {
-        return localStorage.getItem('auth_token');
+        const user = localStorage.getItem('user');
+        if (!user || user === 'undefined') return null;
+        try {
+            return JSON.parse(user);
+        } catch (error) {
+            console.error("Error parsing user from storage", error);
+            localStorage.removeItem('user');
+            return null;
+        }
     }
     return null;
 };
 
-// Don't load from localStorage during SSR to prevent hydration mismatch
+const getTokenFromStorage = () => {
+    if (typeof window !== 'undefined') {
+        return localStorage.getItem('token');
+    }
+    return null;
+};
+
 const initialState: AuthState = {
-    user: null,
-    token: null, // Will be loaded on client after hydration
-    isAuthenticated: false,
+    user: getUserFromStorage(),
+    token: getTokenFromStorage(),
+    status: getTokenFromStorage() ? 'authenticated' : 'idle',
 };
 
 const authSlice = createSlice({
@@ -28,38 +41,23 @@ const authSlice = createSlice({
         setCredentials: (state, action: PayloadAction<{ user: any; token: string }>) => {
             state.user = action.payload.user;
             state.token = action.payload.token;
-            state.isAuthenticated = true;
-
-            // Persist token to localStorage
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('auth_token', action.payload.token);
+            state.status = 'authenticated';
+            if (action.payload.user) {
+                localStorage.setItem('user', JSON.stringify(action.payload.user));
+            }
+            if (action.payload.token) {
+                localStorage.setItem('token', action.payload.token);
             }
         },
         logoutLocal: (state) => {
             state.user = null;
             state.token = null;
-            state.isAuthenticated = false;
-
-            // Clear token from localStorage
-            if (typeof window !== 'undefined') {
-                localStorage.removeItem('auth_token');
-            }
-        },
-        updateUser: (state, action: PayloadAction<any>) => {
-            state.user = action.payload;
-        },
-        // Load token from localStorage after client hydration
-        rehydrateAuth: (state) => {
-            if (typeof window !== 'undefined') {
-                const token = localStorage.getItem('auth_token');
-                if (token) {
-                    state.token = token;
-                    state.isAuthenticated = true;
-                }
-            }
+            state.status = 'unauthenticated';
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
         },
     },
 });
 
-export const { setCredentials, logoutLocal, updateUser, rehydrateAuth } = authSlice.actions;
+export const { setCredentials, logoutLocal } = authSlice.actions;
 export default authSlice.reducer;

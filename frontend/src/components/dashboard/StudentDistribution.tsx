@@ -2,20 +2,30 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
-import { useGetBatchesQuery } from "@/redux/slices/batches/batchesApi"
+import { useGetStudentsQuery } from "@/redux/slices/students/studentsApi"
+import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d']
 
 export function StudentDistribution() {
-    const { data: batchesData } = useGetBatchesQuery(undefined)
+    const { data: studentsData } = useGetStudentsQuery(undefined)
+    const { data: batchesData } = useGetAllBatchesQuery({})
 
-    const batches = batchesData?.batches || []
+    const students = studentsData || []
+    const batches = batchesData?.data || []
 
-    // Calculate distribution from batch data
-    const data = batches.map((batch: any) => ({
-        name: batch.name,
-        value: batch.students?.length || 0
-    })).filter((item: any) => item.value > 0)
+    const data = students.reduce((acc: any[], student: any) => {
+        const batch = batches.find((b: any) => b.id === student.batchId)
+        const batchName = batch ? batch.name : "Unassigned"
+        
+        const existing = acc.find(item => item.name === batchName)
+        if (existing) {
+            existing.value += 1
+        } else {
+            acc.push({ name: batchName, value: 1 })
+        }
+        return acc
+    }, [])
 
     if (data.length === 0) {
         data.push({ name: "No Data", value: 1 }) // Placeholder to avoid empty chart

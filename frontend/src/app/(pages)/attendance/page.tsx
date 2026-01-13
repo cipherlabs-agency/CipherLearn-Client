@@ -1,47 +1,56 @@
-"use client"
+﻿"use client"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { QrCode, CalendarDays } from "lucide-react"
 import { AttendanceMarker } from "@/components/attendance/AttendanceMarker"
+import { AttendanceReport } from "@/components/attendance/AttendanceReport"
+import { QRCodeGenerator } from "@/components/attendance/QRCodeGenerator"
+import { QRCodeScanner } from "@/components/attendance/QRCodeScanner"
+import { AttendanceHistory } from "@/components/attendance/AttendanceHistory"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store"
 
 export default function AttendancePage() {
+    const { user } = useSelector((state: RootState) => state.auth)
+    const isAdmin = user?.role === 'ADMIN' || user?.role === 'TEACHER'
+
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Attendance</h1>
                     <p className="text-muted-foreground">Mark and track student attendance.</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline">
-                        <CalendarDays className="mr-2 h-4 w-4" /> View Calendar
-                    </Button>
-                    <Button className="bg-indigo-600 hover:bg-indigo-700">
-                        <QrCode className="mr-2 h-4 w-4" /> Generate QR Code
-                    </Button>
+                    {isAdmin ? (
+                        <QRCodeGenerator />
+                    ) : (
+                        <QRCodeScanner studentId={user?.id || 0} />
+                    )}
                 </div>
             </div>
 
-            <Tabs defaultValue="mark" className="space-y-4">
+            <Tabs defaultValue={isAdmin ? "mark" : "history"} className="space-y-4">
                 <TabsList>
-                    <TabsTrigger value="mark">Mark Attendance</TabsTrigger>
+                    {isAdmin && <TabsTrigger value="mark">Mark Attendance</TabsTrigger>}
                     <TabsTrigger value="history">History</TabsTrigger>
-                    <TabsTrigger value="report">Reports</TabsTrigger>
+                    {isAdmin && <TabsTrigger value="report">Reports</TabsTrigger>}
+                    {isAdmin && <TabsTrigger value="qr">QR Attendance</TabsTrigger>}
                 </TabsList>
 
-                <TabsContent value="mark" className="space-y-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Attendance Register</CardTitle>
-                            <CardDescription>Mark attendance for today&apos;s session.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <AttendanceMarker />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                {isAdmin && (
+                    <TabsContent value="mark" className="space-y-4">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Attendance Register</CardTitle>
+                                <CardDescription>Mark attendance for today's session.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <AttendanceMarker />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                )}
 
                 <TabsContent value="history">
                     <Card>
@@ -50,12 +59,38 @@ export default function AttendancePage() {
                             <CardDescription>View past attendance records.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center justify-center p-8 text-muted-foreground">
-                                Calendar View Placeholder
-                            </div>
+                            <AttendanceHistory />
                         </CardContent>
                     </Card>
                 </TabsContent>
+
+                {isAdmin && (
+                    <TabsContent value="report">
+                        <AttendanceReport />
+                    </TabsContent>
+                )}
+
+                {isAdmin && (
+                    <TabsContent value="qr">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>QR Code Attendance</CardTitle>
+                                <CardDescription>
+                                    Generate QR codes for students to scan and mark their attendance.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    <p className="text-sm text-muted-foreground">
+                                        Generate a daily QR code and display it for students to scan.
+                                        The QR code is unique for each batch and expires at the end of the day.
+                                    </p>
+                                    <QRCodeGenerator />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                )}
             </Tabs>
         </div>
     )

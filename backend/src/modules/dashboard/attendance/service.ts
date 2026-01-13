@@ -1,12 +1,31 @@
 import {
   Attendance,
   AttendanceMethod,
+  AttendanceStatus,
   Prisma,
 } from "../../../../prisma/generated/prisma/client";
 import { prisma } from "../../../config/db.config";
-import { AttendanceMatrixOptions, DayAttendanceResponse } from "./types";
+import {
+  AttendanceMatrixOptions,
+  DayAttendanceResponse,
+  MarkBulkAttendanceInput,
+  AttendanceReportQuery,
+  AttendanceReport,
+} from "./types";
+import { getMonthRangeInUTC, toIntOrDefault } from "./utils";
+import {
+  generateQRPayload,
+  verifyQRPayload,
+  encodeQRPayload,
+  decodeQRPayload,
+  QRPayload,
+  QRVerificationResult,
+} from "./qr.utils";
 
 export default class AttendanceService {
+  /**
+   * Create attendance sheet for a batch/month/year
+   */
   async createAttendanceSheet(
     attendanceSheet: Omit<
       Prisma.AttendanceSheetCreateInput,
@@ -22,6 +41,10 @@ export default class AttendanceService {
       throw error;
     }
   }
+
+  /**
+   * Mark manual attendance for a single student
+   */
   async markManualAttendance(
     attendance: Omit<
       Prisma.AttendanceCreateInput,
@@ -37,9 +60,177 @@ export default class AttendanceService {
       throw error;
     }
   }
+
+  /**
+   * Mark bulk attendance for multiple students (Admin/Teacher)
+   */
+  async markBulkAttendance(input: MarkBulkAttendanceInput) {
+    try {
+      const { batchId, date, markedBy, markedById, attendances } = input;
+
+      // Validate batch exists
+      const batch = await prisma.batch.findUnique({ where: { id: batchId } });
+      if (!batch) {
+        throw new Error("Batch not found");
+      }
+
+      // Get or create attendance sheet for this month/year
+      const attendanceDate = new Date(date);
+      const month = String(attendanceDate.getMonth() + 1);
+      const year = String(attendanceDate.getFullYear());
+
+      let sheet = await prisma.attendanceSheet.findUnique({
+        where: {
+          batchId_year_month: { batchId, year, month },
+        },
+      });
+
+      if (!sheet) {
+        sheet = await prisma.attendanceSheet.create({
+          data: {
+            batch: { connect: { id: batchId } },
+            month,
+            year,
+          },
+        });
+      }
+
+      // Process each attendance record
+      const results = await Promise.all(
+        attendances.map(async (record) => {
+          try {
+            // Upsert attendance - update if exists, create if not
+            const attendance = await prisma.attendance.upsert({
+              where: {
+                studentId_date_batchId: {
+                  studentId: record.studentId,
+                  date: attendanceDate,
+                  batchId,
+                },
+              },
+              update: {
+                status: record.status,
+                markedBy,
+                markedById,
+                method: AttendanceMethod.MANUAL,
+                time: new Date().toTimeString().slice(0, 8),
+              },
+              create: {
+                student: { connect: { id: record.studentId } },
+                batch: { connect: { id: batchId } },
+                date: attendanceDate,
+                status: record.status,
+                markedBy,
+                markedById,
+                method: AttendanceMethod.MANUAL,
+                time: new Date().toTimeString().slice(0, 8),
+                attendanceSheet: { connect: { id: sheet!.id } },
+              },
+            });
+            return { success: true, studentId: record.studentId, attendance };
+          } catch (error: any) {
+            return {
+              success: false,
+              studentId: record.studentId,
+              error: error.message,
+            };
+          }
+        })
+      );
+
+      return {
+        sheetId: sheet.id,
+        processed: results.length,
+        successful: results.filter((r) => r.success).length,
+        failed: results.filter((r) => !r.success).length,
+        results,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Update a single attendance record
+   */
+  async updateAttendance(
+    attendanceId: number,
+    data: { status?: AttendanceStatus; markedBy?: string; markedById?: number }
+  ) {
+    try {
+      const attendance = await prisma.attendance.findUnique({
+        where: { id: attendanceId },
+      });
+
+      if (!attendance) {
+        throw new Error("Attendance record not found");
+      }
+
+      const updated = await prisma.attendance.update({
+        where: { id: attendanceId },
+        data: {
+          ...data,
+          updatedAt: new Date(),
+        },
+      });
+
+      return updated;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Get batch attendance for a specific date
+   */
+  async getBatchAttendanceByDate(
+    batchId: number,
+    date: string
+  ): Promise<Attendance[]> {
+    try {
+      const batch = await prisma.batch.findUnique({
+        where: { id: batchId },
+      });
+
+      if (!batch) {
+        throw new Error("Batch not found");
+      }
+
+      const targetDate = new Date(date);
+      const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
+      const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
+
+      const attendances = await prisma.attendance.findMany({
+        where: {
+          batchId,
+          date: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+        },
+        include: {
+          student: {
+            select: {
+              id: true,
+              fullname: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return attendances;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Get all attendance sheets for a batch
+   */
   async getBatchAttendanceSheet(batchId: number): Promise<Attendance[]> {
     try {
-      let batch = await prisma.batch.findUnique({
+      const batch = await prisma.batch.findUnique({
         where: { id: batchId },
       });
 
@@ -55,6 +246,10 @@ export default class AttendanceService {
       throw error;
     }
   }
+
+  /**
+   * Get student attendance matrix for a month
+   */
   async getStudentAttendanceMatrix(
     studentId: number,
     opts: AttendanceMatrixOptions = {}
@@ -107,16 +302,6 @@ export default class AttendanceService {
 
     const days: DayAttendanceResponse[] = [];
     for (let d = 1; d <= daysInMonth; d++) {
-      const localDateStr = new Date(Date.UTC(yearNum, monthNum - 1, d))
-        .toISOString()
-        .slice(0, 10);
-      const localMidnightUtcMs =
-        Date.UTC(yearNum, monthNum - 1, d) - tzOffsetMinutes * 60 * 1000;
-      const localMidnightLocalStr = new Date(
-        localMidnightUtcMs + tzOffsetMinutes * 60 * 1000
-      )
-        .toISOString()
-        .slice(0, 10);
       const yyyy = String(yearNum).padStart(4, "0");
       const mm = String(monthNum).padStart(2, "0");
       const dd = String(d).padStart(2, "0");
@@ -148,5 +333,258 @@ export default class AttendanceService {
       year: yearNum,
     };
   }
-  async markQRAttendance() {}
+
+  /**
+   * Generate attendance report for a batch
+   */
+  async generateAttendanceReport(
+    query: AttendanceReportQuery
+  ): Promise<AttendanceReport> {
+    try {
+      const { batchId, startDate, endDate } = query;
+
+      const batch = await prisma.batch.findUnique({
+        where: { id: batchId },
+        include: {
+          students: {
+            where: { isDeleted: false },
+            select: { id: true, fullname: true, email: true },
+          },
+        },
+      });
+
+      if (!batch) {
+        throw new Error("Batch not found");
+      }
+
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      // Get all attendance records in date range
+      const attendances = await prisma.attendance.findMany({
+        where: {
+          batchId,
+          date: {
+            gte: start,
+            lte: end,
+          },
+        },
+        include: {
+          student: {
+            select: { id: true, fullname: true },
+          },
+        },
+      });
+
+      // Calculate statistics per student
+      const studentStats = batch.students.map((student) => {
+        const studentAttendances = attendances.filter(
+          (a) => a.studentId === student.id
+        );
+        const presentCount = studentAttendances.filter(
+          (a) => a.status === AttendanceStatus.PRESENT
+        ).length;
+        const absentCount = studentAttendances.filter(
+          (a) => a.status === AttendanceStatus.ABSENT
+        ).length;
+        const totalDays = presentCount + absentCount;
+        const percentage =
+          totalDays > 0 ? Math.round((presentCount / totalDays) * 100) : 0;
+
+        return {
+          studentId: student.id,
+          studentName: student.fullname,
+          email: student.email,
+          presentDays: presentCount,
+          absentDays: absentCount,
+          totalDays,
+          percentage,
+        };
+      });
+
+      // Overall batch statistics
+      const totalPresent = studentStats.reduce(
+        (sum, s) => sum + s.presentDays,
+        0
+      );
+      const totalAbsent = studentStats.reduce(
+        (sum, s) => sum + s.absentDays,
+        0
+      );
+      const totalRecords = totalPresent + totalAbsent;
+      const overallPercentage =
+        totalRecords > 0 ? Math.round((totalPresent / totalRecords) * 100) : 0;
+
+      return {
+        batchId,
+        batchName: batch.name,
+        startDate: startDate,
+        endDate: endDate,
+        totalStudents: batch.students.length,
+        overallAttendancePercentage: overallPercentage,
+        studentStats,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // =====================
+  // QR CODE ATTENDANCE
+  // =====================
+
+  /**
+   * Generate QR code for a batch (daily)
+   */
+  async generateBatchQRCode(batchId: number) {
+    try {
+      const batch = await prisma.batch.findUnique({
+        where: { id: batchId },
+      });
+
+      if (!batch) {
+        throw new Error("Batch not found");
+      }
+
+      const payload = generateQRPayload(batchId);
+      const encodedPayload = encodeQRPayload(payload);
+
+      return {
+        batchId,
+        batchName: batch.name,
+        qrData: encodedPayload,
+        payload,
+        validFor: payload.date,
+        expiresAt: payload.expiresAt,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Mark attendance via QR code scan
+   */
+  async markQRAttendance(
+    studentId: number,
+    qrData: string
+  ): Promise<{ success: boolean; message: string; attendance?: Attendance }> {
+    try {
+      // Decode and verify QR payload
+      const payload = decodeQRPayload(qrData);
+      if (!payload) {
+        return { success: false, message: "Invalid QR code format" };
+      }
+
+      const verification = verifyQRPayload(payload);
+      if (!verification.valid) {
+        return { success: false, message: verification.error || "Invalid QR code" };
+      }
+
+      const { batchId, date } = verification;
+
+      // Verify student exists and belongs to the batch
+      const student = await prisma.student.findUnique({
+        where: { id: studentId },
+      });
+
+      if (!student) {
+        return { success: false, message: "Student not found" };
+      }
+
+      if (student.batchId !== batchId) {
+        return {
+          success: false,
+          message: "You are not enrolled in this batch",
+        };
+      }
+
+      // Check for existing attendance on this date
+      const attendanceDate = new Date(date!);
+      const existingAttendance = await prisma.attendance.findUnique({
+        where: {
+          studentId_date_batchId: {
+            studentId,
+            date: attendanceDate,
+            batchId: batchId!,
+          },
+        },
+      });
+
+      if (existingAttendance) {
+        return {
+          success: false,
+          message: "Attendance already marked for today",
+        };
+      }
+
+      // Get or create attendance sheet
+      const month = String(attendanceDate.getMonth() + 1);
+      const year = String(attendanceDate.getFullYear());
+
+      let sheet = await prisma.attendanceSheet.findUnique({
+        where: {
+          batchId_year_month: { batchId: batchId!, year, month },
+        },
+      });
+
+      if (!sheet) {
+        sheet = await prisma.attendanceSheet.create({
+          data: {
+            batch: { connect: { id: batchId! } },
+            month,
+            year,
+          },
+        });
+      }
+
+      // Mark attendance
+      const attendance = await prisma.attendance.create({
+        data: {
+          student: { connect: { id: studentId } },
+          batch: { connect: { id: batchId! } },
+          date: attendanceDate,
+          status: AttendanceStatus.PRESENT,
+          method: AttendanceMethod.QR,
+          markedBy: "QR_SCAN",
+          time: new Date().toTimeString().slice(0, 8),
+          attendanceSheet: { connect: { id: sheet.id } },
+        },
+      });
+
+      return {
+        success: true,
+        message: "Attendance marked successfully",
+        attendance,
+      };
+    } catch (error: any) {
+      console.error("QR Attendance error:", error);
+      return { success: false, message: error.message || "Failed to mark attendance" };
+    }
+  }
+
+  /**
+   * Get attendance history for student
+   */
+  async getStudentAttendanceHistory(
+    studentId: number,
+    limit: number = 30
+  ): Promise<Attendance[]> {
+    try {
+      const attendances = await prisma.attendance.findMany({
+        where: { studentId },
+        orderBy: { date: "desc" },
+        take: limit,
+        include: {
+          batch: {
+            select: { id: true, name: true },
+          },
+        },
+      });
+
+      return attendances;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

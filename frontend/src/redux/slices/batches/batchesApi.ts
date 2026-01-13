@@ -2,59 +2,48 @@ import { api } from '../../api/api';
 
 export const batchesApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        getBatches: builder.query({
-            query: () => ({
-                url: '/dashboard/batches',
-                method: 'GET',
-            }),
-            providesTags: ['Batches'],
-        }),
         createBatch: builder.mutation({
-            query: (payload) => ({
+            query: (batchData) => ({
                 url: '/dashboard/batches',
                 method: 'POST',
-                body: payload,
+                body: batchData,
             }),
             invalidatesTags: ['Batches'],
         }),
+        getAllBatches: builder.query({
+            query: () => '/dashboard/batches',
+            providesTags: ['Batches'],
+        }),
         updateBatch: builder.mutation({
-            query: ({ id, ...payload }) => ({
+            query: ({ id, ...batchData }) => ({
                 url: `/dashboard/batches/${id}`,
                 method: 'PUT',
-                body: payload,
+                body: batchData,
             }),
             invalidatesTags: ['Batches'],
         }),
         deleteBatch: builder.mutation({
             query: (id) => ({
-                url: `/dashboard/batches/${id}`,
+                url: '/dashboard/batches',
                 method: 'DELETE',
+                body: { ids: [id] },
             }),
             invalidatesTags: ['Batches'],
         }),
         createDraftBatch: builder.mutation({
             query: (payload) => ({
                 url: '/dashboard/batches/draft',
-                method: 'POST',
+                method: 'PUT',
                 body: payload,
             }),
             invalidatesTags: ['Batches'],
-        }),
-        getDraftBatches: builder.query({
-            query: () => ({
-                url: '/dashboard/batches/drafts',
-                method: 'GET',
-            }),
-            providesTags: ['Batches'],
         }),
     }),
 });
 
 export const {
-    useGetBatchesQuery,
     useCreateBatchMutation,
+    useGetAllBatchesQuery,
     useUpdateBatchMutation,
     useDeleteBatchMutation,
-    useCreateDraftBatchMutation,
-    useGetDraftBatchesQuery,
 } = batchesApi;

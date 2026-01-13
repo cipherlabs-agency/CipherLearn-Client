@@ -12,12 +12,12 @@ const createAttendanceSheet = Joi.object({
     .items(
       Joi.object({
         studentId: Joi.number().required(),
-        status: Joi.string().valid(AttendanceStatus).required(),
+        status: Joi.string().valid(...Object.values(AttendanceStatus)).required(),
         batchId: Joi.number().required(),
         date: Joi.date().required(),
         markedBy: Joi.string().required(),
         markedById: Joi.number().required(),
-        method: Joi.string().valid(AttendanceMethod).required(),
+        method: Joi.string().valid(...Object.values(AttendanceMethod)).required(),
       })
     )
     .optional(),
@@ -29,8 +29,36 @@ const markAttendance = Joi.object({
   date: Joi.date().required(),
   markedBy: Joi.string().required(),
   markedById: Joi.number().required(),
-  method: Joi.string().valid(AttendanceMethod).required(),
-  status: Joi.string().valid(AttendanceStatus).required(),
+  method: Joi.string().valid(...Object.values(AttendanceMethod)).required(),
+  status: Joi.string().valid(...Object.values(AttendanceStatus)).required(),
+});
+
+const markBulkAttendance = Joi.object({
+  batchId: Joi.number().required(),
+  date: Joi.string().required(),
+  attendances: Joi.array()
+    .items(
+      Joi.object({
+        studentId: Joi.number().required(),
+        status: Joi.string().valid(...Object.values(AttendanceStatus)).required(),
+      })
+    )
+    .min(1)
+    .required(),
+});
+
+const updateAttendance = Joi.object({
+  status: Joi.string().valid(...Object.values(AttendanceStatus)).required(),
+});
+
+const markQRAttendance = Joi.object({
+  studentId: Joi.number().required(),
+  qrData: Joi.string().required(),
+});
+
+const reportQuery = Joi.object({
+  startDate: Joi.string().required(),
+  endDate: Joi.string().required(),
 });
 
 export const AttendanceValidations = {
@@ -39,5 +67,13 @@ export const AttendanceValidations = {
   },
   attendance: {
     mark: markAttendance,
+    markBulk: markBulkAttendance,
+    update: updateAttendance,
+  },
+  qr: {
+    mark: markQRAttendance,
+  },
+  report: {
+    query: reportQuery,
   },
 };

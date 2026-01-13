@@ -1,4 +1,4 @@
-function getMonthRangeInUTC(yearNum: number, monthNum: number) {
+export function getMonthRangeInUTC(yearNum: number, monthNum: number) {
   const monthIndex = monthNum - 1;
   const tzOffsetMinutes = 5 * 60 + 30;
 
@@ -12,7 +12,7 @@ function getMonthRangeInUTC(yearNum: number, monthNum: number) {
   return { start: new Date(startUtcMs), end: new Date(endUtcMs) };
 }
 
-function toIntOrDefault(val: number | string | undefined, fallback: number) {
+export function toIntOrDefault(val: number | string | undefined, fallback: number) {
   if (val === undefined) return fallback;
   const n = Number(val);
   return Number.isNaN(n) ? fallback : n;
