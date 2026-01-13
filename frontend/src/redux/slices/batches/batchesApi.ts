@@ -23,10 +23,18 @@ export const batchesApi = api.injectEndpoints({
             invalidatesTags: ['Batches'],
         }),
         deleteBatch: builder.mutation({
-            query: (idOrIds) => ({
+            query: (id) => ({
                 url: '/dashboard/batches',
                 method: 'DELETE',
-                body: { ids: Array.isArray(idOrIds) ? idOrIds : [idOrIds] },
+                body: { ids: [id] },
+            }),
+            invalidatesTags: ['Batches'],
+        }),
+        createDraftBatch: builder.mutation({
+            query: (payload) => ({
+                url: '/dashboard/batches/draft',
+                method: 'PUT',
+                body: payload,
             }),
             invalidatesTags: ['Batches'],
         }),

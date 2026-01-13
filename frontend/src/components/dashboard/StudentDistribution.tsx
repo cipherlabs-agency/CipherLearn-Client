@@ -8,11 +8,11 @@ import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d']
 
 export function StudentDistribution() {
-    const { data: studentsData } = useGetStudentsQuery({})
+    const { data: studentsData } = useGetStudentsQuery(undefined)
     const { data: batchesData } = useGetAllBatchesQuery({})
 
-    const students = studentsData?.students || []
-    const batches = batchesData?.batches || []
+    const students = studentsData || []
+    const batches = batchesData?.data || []
 
     const data = students.reduce((acc: any[], student: any) => {
         const batch = batches.find((b: any) => b.id === student.batchId)

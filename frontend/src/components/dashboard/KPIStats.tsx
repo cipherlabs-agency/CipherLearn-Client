@@ -7,12 +7,13 @@ import { useGetStudentsQuery } from "@/redux/slices/students/studentsApi"
 import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
 
 export function KPIStats() {
-    const { data: studentsData } = useGetStudentsQuery({})
+    const { data: studentsData } = useGetStudentsQuery(undefined)
     const { data: batchesData } = useGetAllBatchesQuery({})
 
-    const studentsCount = studentsData?.students?.length || 0
-    const batchesCount = batchesData?.batches?.length || 0
-    const activeBatchesCount = batchesData?.batches?.filter((b: any) => !b.isDeleted)?.length || 0
+    const studentsCount = studentsData?.length || 0
+    const batches = batchesData?.data || []
+    const batchesCount = batches.length
+    const activeBatchesCount = batches.filter((b: any) => !b.isDeleted)?.length || 0
 
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

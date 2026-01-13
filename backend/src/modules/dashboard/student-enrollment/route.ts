@@ -8,8 +8,37 @@ import { isAdmin, isAuthenticated } from "../../auth/middleware";
 const router = Router();
 const controller = new StudentEnrollmentController();
 
+// All routes require authentication
 router.use(isAuthenticated);
 
+// =====================
+// CSV OPERATIONS
+// =====================
+
+// Download sample CSV template
+router.get("/csv/template", controller.downloadTemplate.bind(controller));
+
+// Preview CSV data before import (Admin only)
+router.post(
+  "/csv/preview",
+  isAdmin,
+  upload.single("file"),
+  controller.previewCSV.bind(controller)
+);
+
+// Import students from CSV (Admin only)
+router.post(
+  "/csv/import",
+  isAdmin,
+  upload.single("file"),
+  controller.enrollCSV.bind(controller)
+);
+
+// =====================
+// SINGLE STUDENT OPERATIONS
+// =====================
+
+// Enroll a single student (Admin only)
 router.post(
   "/enroll",
   isAdmin,
@@ -17,14 +46,21 @@ router.post(
   controller.enrollSingle.bind(controller)
 );
 
-router.post(
-  "/enroll-with-csv",
-  isAdmin,
-  validateRequest(StudentValidations.enroll),
-  upload.single("file"),
-  controller.enrollCSV.bind(controller)
-);
+// Get a single student by ID
+router.get("/student/:id", controller.getById.bind(controller));
 
+// Update a student (Admin only)
+router.put("/student/:id", isAdmin, controller.update.bind(controller));
+
+// Delete a student (Admin only)
+router.delete("/student/:id", isAdmin, controller.delete.bind(controller));
+
+// =====================
+// LIST OPERATIONS
+// =====================
+
+// Get all students (optionally filter by batch)
+router.get("/students", controller.getAll.bind(controller));
 router.get("/students/:id", controller.getAll.bind(controller));
 
 export default router;
