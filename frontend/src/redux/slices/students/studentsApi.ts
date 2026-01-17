@@ -1,93 +1,75 @@
-import { api } from '../../api/api';
+import { api, ApiResponse } from '../../api/api';
+import {
+    Student,
+    StudentProfile,
+    StudentsApiResponse,
+    EnrollStudentInput,
+    CSVPreviewData,
+    CSVImportResult
+} from '@/types';
 
-export interface Student {
-    id: number;
-    firstname: string;
-    middlename: string;
-    lastname: string;
-    fullname: string;
-    email: string;
-    dob: string;
+// Local types for update input if not in central types
+export interface UpdateStudentInput {
+    firstname?: string;
+    middlename?: string;
+    lastname?: string;
+    email?: string;
+    dob?: string;
     address?: string;
     batchId?: number;
-    createdAt: string;
-    updatedAt?: string;
-}
-
-export interface EnrollStudentInput {
-    firstname: string;
-    middlename?: string;
-    lastname: string;
-    email: string;
-    dob: string;
-    address: string;
-    batchId: number;
-}
-
-export interface CSVPreviewData {
-    totalRows: number;
-    validRows: number;
-    invalidRows: number;
-    preview: {
-        firstname: string;
-        middlename?: string;
-        lastname: string;
-        email: string;
-        dob: string;
-        address?: string;
-    }[];
-    errors: {
-        row: number;
-        email?: string;
-        error: string;
-    }[];
-}
-
-export interface CSVImportResult {
-    total: number;
-    successful: number;
-    failed: number;
-    errors: {
-        row: number;
-        email?: string;
-        error: string;
-    }[];
-    imported: Student[];
 }
 
 export const studentsApi = api.injectEndpoints({
     endpoints: (builder) => ({
         // Get all students (optionally by batch)
-        getStudents: builder.query<Student[], number | undefined>({
+        getStudents: builder.query<Student[], number | void>({
             query: (batchId) => {
                 if (batchId) {
                     return `/dashboard/student-enrollment/students/${batchId}`;
                 }
                 return '/dashboard/student-enrollment/students';
             },
-            transformResponse: (response: any) => response.data || response.students || [],
+            // The API might return { data: [...] } or { students: [...] } or just [...]
+            // We use StudentsApiResponse to type the raw response before transformation
+            transformResponse: (response: StudentsApiResponse | { students?: Student[] } | Student[]): Student[] => {
+                if (Array.isArray(response)) {
+                    return response;
+                }
+                if ('data' in response && Array.isArray(response.data)) {
+                    return response.data;
+                }
+                if ('students' in response && Array.isArray(response.students)) {
+                    return response.students;
+                }
+                return [];
+            },
             providesTags: ['Students'],
         }),
 
         // Get single student
         getStudentById: builder.query<Student, number>({
             query: (id) => `/dashboard/student-enrollment/student/${id}`,
-            transformResponse: (response: any) => response.data,
+            transformResponse: (response: ApiResponse<Student>): Student => {
+                if (!response.data) {
+                    throw new Error("Student data not found in response");
+                }
+                return response.data;
+            },
             providesTags: ['Students'],
         }),
 
         // Enroll single student
-        enrollStudent: builder.mutation<Student, EnrollStudentInput>({
+        enrollStudent: builder.mutation<ApiResponse<Student>, EnrollStudentInput>({
             query: (data) => ({
                 url: '/dashboard/student-enrollment/enroll',
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ['Students'],
+            invalidatesTags: ['Students', 'Dashboard', 'Batches'],
         }),
 
         // Update student
-        updateStudent: builder.mutation<Student, { id: number; data: Partial<EnrollStudentInput> }>({
+        updateStudent: builder.mutation<ApiResponse<Student>, { id: number; data: UpdateStudentInput }>({
             query: ({ id, data }) => ({
                 url: `/dashboard/student-enrollment/student/${id}`,
                 method: 'PUT',
@@ -97,12 +79,12 @@ export const studentsApi = api.injectEndpoints({
         }),
 
         // Delete student
-        deleteStudent: builder.mutation<void, number>({
+        deleteStudent: builder.mutation<ApiResponse<void>, number>({
             query: (id) => ({
                 url: `/dashboard/student-enrollment/student/${id}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Students'],
+            invalidatesTags: ['Students', 'Dashboard', 'Batches'],
         }),
 
         // Preview CSV import
@@ -112,6 +94,9 @@ export const studentsApi = api.injectEndpoints({
                 method: 'POST',
                 body: formData,
             }),
+            transformResponse: (response: ApiResponse<CSVPreviewData>): CSVPreviewData => {
+                return response.data!;
+            },
         }),
 
         // Import students from CSV
@@ -121,15 +106,31 @@ export const studentsApi = api.injectEndpoints({
                 method: 'POST',
                 body: formData,
             }),
-            invalidatesTags: ['Students'],
+            transformResponse: (response: ApiResponse<CSVImportResult>): CSVImportResult => {
+                return response.data!;
+            },
+            invalidatesTags: ['Students', 'Dashboard', 'Batches'],
         }),
 
         // Download CSV template
         downloadCSVTemplate: builder.query<string, void>({
             query: () => ({
                 url: '/dashboard/student-enrollment/csv/template',
-                responseHandler: (response) => response.text(),
+                responseHandler: (response: Response) => response.text(),
             }),
+        }),
+
+        // Get current user's student profile (for student users)
+        // This matches the authenticated user's email with their student record
+        getMyStudentProfile: builder.query<StudentProfile, void>({
+            query: () => '/dashboard/student-enrollment/my-profile',
+            transformResponse: (response: ApiResponse<StudentProfile>): StudentProfile => {
+                if (!response.data) {
+                    throw new Error("Student profile not found");
+                }
+                return response.data;
+            },
+            providesTags: ['Students'],
         }),
     }),
 });
@@ -143,4 +144,5 @@ export const {
     usePreviewCSVMutation,
     useImportCSVMutation,
     useLazyDownloadCSVTemplateQuery,
+    useGetMyStudentProfileQuery,
 } = studentsApi;

@@ -1,47 +1,18 @@
-import { api } from '../../api/api';
-
-export interface YoutubeVideo {
-    id: number;
-    title: string;
-    description?: string;
-    url: string;
-    visibility: 'PUBLIC' | 'PRIVATE' | 'UNLISTED';
-    category?: string;
-    batchId: number;
-    createdAt: string;
-    updatedAt?: string;
-}
-
-export interface CreateVideoInput {
-    title: string;
-    description?: string;
-    url: string;
-    visibility?: 'PUBLIC' | 'PRIVATE' | 'UNLISTED';
-    category?: string;
-    batchId: number;
-}
-
-export interface UpdateVideoInput {
-    title?: string;
-    description?: string;
-    url?: string;
-    visibility?: 'PUBLIC' | 'PRIVATE' | 'UNLISTED';
-    category?: string;
-    batchId?: number;
-}
-
-export interface VideosQueryParams {
-    batchId?: number;
-    category?: string;
-    page?: number;
-    limit?: number;
-    search?: string;
-}
+import { api, ApiResponse } from '../../api/api';
+import {
+    YoutubeVideo,
+    CreateVideoInput,
+    UpdateVideoInput,
+    VideosQueryParams,
+    VideosListResponse,
+    CategoriesResponse,
+    PaginationInfo
+} from '@/types';
 
 export const videosApi = api.injectEndpoints({
     endpoints: (builder) => ({
         // Get all videos with filtering and pagination
-        getVideos: builder.query<{ videos: YoutubeVideo[]; pagination: any }, VideosQueryParams>({
+        getVideos: builder.query<VideosListResponse, VideosQueryParams>({
             query: (params) => {
                 const searchParams = new URLSearchParams();
                 if (params.batchId) searchParams.append('batchId', params.batchId.toString());
@@ -52,7 +23,7 @@ export const videosApi = api.injectEndpoints({
                 const queryString = searchParams.toString();
                 return `/dashboard/youtube-videos${queryString ? `?${queryString}` : ''}`;
             },
-            transformResponse: (response: any) => ({
+            transformResponse: (response: ApiResponse<YoutubeVideo[]> & { pagination?: PaginationInfo }): VideosListResponse => ({
                 videos: response.data || [],
                 pagination: response.pagination || { page: 1, limit: 10, total: 0, totalPages: 0 },
             }),
@@ -62,36 +33,36 @@ export const videosApi = api.injectEndpoints({
         // Get videos by batch
         getVideosByBatch: builder.query<YoutubeVideo[], number>({
             query: (batchId) => `/dashboard/youtube-videos/batch/${batchId}`,
-            transformResponse: (response: any) => response.data || [],
+            transformResponse: (response: ApiResponse<YoutubeVideo[]>) => response.data || [],
             providesTags: ['Videos'],
         }),
 
         // Get single video
         getVideoById: builder.query<YoutubeVideo, number>({
             query: (id) => `/dashboard/youtube-videos/${id}`,
-            transformResponse: (response: any) => response.data,
+            transformResponse: (response: ApiResponse<YoutubeVideo>) => response.data!,
             providesTags: ['Videos'],
         }),
 
         // Get video categories
-        getVideoCategories: builder.query<string[], number | undefined>({
+        getVideoCategories: builder.query<string[], number | void>({
             query: (batchId) => `/dashboard/youtube-videos/categories${batchId ? `?batchId=${batchId}` : ''}`,
-            transformResponse: (response: any) => response.data || [],
+            transformResponse: (response: CategoriesResponse) => response.data || [],
             providesTags: ['Videos'],
         }),
 
         // Upload (create) video
-        uploadVideo: builder.mutation<YoutubeVideo, CreateVideoInput>({
+        uploadVideo: builder.mutation<ApiResponse<YoutubeVideo>, CreateVideoInput>({
             query: (data) => ({
                 url: '/dashboard/youtube-videos/upload',
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ['Videos'],
+            invalidatesTags: ['Videos', 'Dashboard'],
         }),
 
         // Update video
-        updateVideo: builder.mutation<YoutubeVideo, { id: number; data: UpdateVideoInput }>({
+        updateVideo: builder.mutation<ApiResponse<YoutubeVideo>, { id: number; data: UpdateVideoInput }>({
             query: ({ id, data }) => ({
                 url: `/dashboard/youtube-videos/${id}`,
                 method: 'PUT',
@@ -101,7 +72,7 @@ export const videosApi = api.injectEndpoints({
         }),
 
         // Soft delete (draft) video
-        draftVideo: builder.mutation<boolean, number>({
+        draftVideo: builder.mutation<ApiResponse<boolean>, number>({
             query: (videoId) => ({
                 url: `/dashboard/youtube-videos/${videoId}/draft`,
                 method: 'PUT',
@@ -110,16 +81,16 @@ export const videosApi = api.injectEndpoints({
         }),
 
         // Permanently delete video
-        deleteVideo: builder.mutation<boolean, number>({
+        deleteVideo: builder.mutation<ApiResponse<boolean>, number>({
             query: (id) => ({
                 url: `/dashboard/youtube-videos/${id}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Videos'],
+            invalidatesTags: ['Videos', 'Dashboard'],
         }),
 
         // Restore video
-        restoreVideo: builder.mutation<YoutubeVideo, number>({
+        restoreVideo: builder.mutation<ApiResponse<YoutubeVideo>, number>({
             query: (id) => ({
                 url: `/dashboard/youtube-videos/${id}/restore`,
                 method: 'PUT',

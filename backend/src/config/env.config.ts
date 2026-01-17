@@ -29,6 +29,11 @@ export const config = {
     EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1h",
     REFRESH_TOKEN_EXPIRES_IN: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN || "7d",
   },
+  QR: {
+    // Dedicated secret for QR code token generation
+    // Should be different from JWT_SECRET in production
+    SECRET: process.env.QR_SECRET || process.env.JWT_SECRET || "qr_attendance_secret",
+  },
   NODE_MAILER: {
     HOST: process.env.NODE_MAILER_HOST || "smtp.example.com",
     PORT: Number(process.env.NODE_MAILER_PORT) || 587,

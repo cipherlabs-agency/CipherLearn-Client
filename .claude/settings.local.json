@@ -6,7 +6,11 @@
       "Bash(printf:*)",
       "Bash(npx tsc:*)",
       "Bash(npx tsx:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(npm run build:*)",
+      "Bash(dir /s /b \"C:\\\\CipherLabs\\\\CipherLearn\\\\client\\\\backend\\\\src\\\\*.ts\")",
+      "mcp__ide__getDiagnostics",
+      "Bash(npx prisma generate:*)"
     ]
   }
 }

@@ -117,4 +117,110 @@ export default class BatchService {
       throw error;
     }
   }
+
+  // =====================
+  // DANGER ZONE - HARD DELETE OPERATIONS
+  // =====================
+
+  /**
+   * Permanently delete a batch with all related data (DANGER: This cannot be undone!)
+   */
+  async hardDelete(id: number): Promise<{ deleted: boolean; relatedData: { students: number; attendance: number; sheets: number; videos: number; notes: number; qrTokens: number } }> {
+    try {
+      // Delete related QR tokens
+      const qrTokens = await prisma.qRAttendanceToken.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete related attendance records
+      const attendance = await prisma.attendance.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete related attendance sheets
+      const sheets = await prisma.attendanceSheet.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete related notes
+      const notes = await prisma.note.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete related videos
+      const videos = await prisma.youtubeVideo.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete related students
+      const students = await prisma.student.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Finally delete the batch
+      await prisma.batch.delete({
+        where: { id },
+      });
+
+      return {
+        deleted: true,
+        relatedData: {
+          students: students.count,
+          attendance: attendance.count,
+          sheets: sheets.count,
+          videos: videos.count,
+          notes: notes.count,
+          qrTokens: qrTokens.count,
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Purge all soft-deleted batches with related data (DANGER: This cannot be undone!)
+   */
+  async purgeDeleted(): Promise<{ deleted: number }> {
+    try {
+      const deletedBatches = await prisma.batch.findMany({
+        where: { isDeleted: true },
+        select: { id: true },
+      });
+
+      const ids = deletedBatches.map((b) => b.id);
+
+      if (ids.length === 0) {
+        return { deleted: 0 };
+      }
+
+      // Delete all related data
+      await prisma.qRAttendanceToken.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+      await prisma.attendance.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+      await prisma.attendanceSheet.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+      await prisma.note.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+      await prisma.youtubeVideo.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+      await prisma.student.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+
+      const result = await prisma.batch.deleteMany({
+        where: { id: { in: ids } },
+      });
+
+      return { deleted: result.count };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

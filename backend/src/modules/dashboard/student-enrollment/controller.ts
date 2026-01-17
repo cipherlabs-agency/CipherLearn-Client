@@ -312,4 +312,130 @@ export default class StudentEnrollmentController {
       });
     }
   }
+
+  /**
+   * Get the current authenticated user's student profile
+   * GET /student-enrollment/my-profile
+   * This endpoint matches the authenticated user's email with a student record
+   */
+  public async getMyProfile(req: Request, res: Response) {
+    try {
+      const user = req.user;
+
+      if (!user) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+
+      const student = await studentEnrollmentService.getByEmail(user.email);
+
+      if (!student) {
+        return res.status(404).json({
+          success: false,
+          message: "No student profile found for your account",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Student profile retrieved successfully",
+        data: student,
+      });
+    } catch (error: any) {
+      logger.error("StudentEnrollment.getMyProfile error:", error);
+
+      return res.status(500).json({
+        success: false,
+        message: `Failed to fetch student profile: ${error.message}`,
+      });
+    }
+  }
+
+  // =====================
+  // DANGER ZONE - HARD DELETE OPERATIONS
+  // =====================
+
+  /**
+   * Permanently delete a student (DANGER: This cannot be undone!)
+   * DELETE /student-enrollment/hard-delete/:id
+   */
+  public async hardDelete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      await studentEnrollmentService.hardDelete(Number(id));
+
+      logger.warn(`DANGER ZONE: Student ${id} permanently deleted by ${req.user?.name}`);
+
+      return res.status(200).json({
+        success: true,
+        message: "Student permanently deleted",
+      });
+    } catch (error: any) {
+      logger.error("StudentEnrollment.hardDelete error:", error);
+
+      return res.status(500).json({
+        success: false,
+        message: `Failed to permanently delete student: ${error.message}`,
+      });
+    }
+  }
+
+  /**
+   * Permanently delete multiple students (DANGER: This cannot be undone!)
+   * DELETE /student-enrollment/hard-delete-many
+   */
+  public async hardDeleteMany(req: Request, res: Response) {
+    try {
+      const { ids } = req.body;
+
+      if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "ids array is required",
+        });
+      }
+
+      const result = await studentEnrollmentService.hardDeleteMany(ids);
+
+      logger.warn(`DANGER ZONE: ${result.deleted} students permanently deleted by ${req.user?.name}`);
+
+      return res.status(200).json({
+        success: true,
+        message: `${result.deleted} students permanently deleted`,
+        data: result,
+      });
+    } catch (error: any) {
+      logger.error("StudentEnrollment.hardDeleteMany error:", error);
+
+      return res.status(500).json({
+        success: false,
+        message: `Failed to permanently delete students: ${error.message}`,
+      });
+    }
+  }
+
+  /**
+   * Purge all soft-deleted students (DANGER: This cannot be undone!)
+   * DELETE /student-enrollment/purge-deleted
+   */
+  public async purgeDeleted(req: Request, res: Response) {
+    try {
+      const result = await studentEnrollmentService.purgeDeleted();
+
+      logger.warn(`DANGER ZONE: ${result.deleted} soft-deleted students purged by ${req.user?.name}`);
+
+      return res.status(200).json({
+        success: true,
+        message: `${result.deleted} soft-deleted students permanently removed`,
+        data: result,
+      });
+    } catch (error: any) {
+      logger.error("StudentEnrollment.purgeDeleted error:", error);
+
+      return res.status(500).json({
+        success: false,
+        message: `Failed to purge deleted students: ${error.message}`,
+      });
+    }
+  }
 }

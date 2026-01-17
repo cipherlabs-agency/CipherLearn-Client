@@ -54,10 +54,15 @@ export const ModelName = {
   User: 'User',
   Student: 'Student',
   Batch: 'Batch',
+  QRAttendanceToken: 'QRAttendanceToken',
   AttendanceSheet: 'AttendanceSheet',
   Attendance: 'Attendance',
   YoutubeVideo: 'YoutubeVideo',
-  Note: 'Note'
+  Note: 'Note',
+  AssignmentSlot: 'AssignmentSlot',
+  StudentSubmission: 'StudentSubmission',
+  Announcement: 'Announcement',
+  StudyMaterial: 'StudyMaterial'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -123,6 +128,20 @@ export const BatchScalarFieldEnum = {
 export type BatchScalarFieldEnum = (typeof BatchScalarFieldEnum)[keyof typeof BatchScalarFieldEnum]
 
 
+export const QRAttendanceTokenScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  token: 'token',
+  date: 'date',
+  expiresAt: 'expiresAt',
+  isActive: 'isActive',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type QRAttendanceTokenScalarFieldEnum = (typeof QRAttendanceTokenScalarFieldEnum)[keyof typeof QRAttendanceTokenScalarFieldEnum]
+
+
 export const AttendanceSheetScalarFieldEnum = {
   id: 'id',
   batchId: 'batchId',
@@ -186,6 +205,70 @@ export const NoteScalarFieldEnum = {
 export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
 
 
+export const AssignmentSlotScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  subject: 'subject',
+  description: 'description',
+  batchId: 'batchId',
+  dueDate: 'dueDate',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isDeleted: 'isDeleted'
+} as const
+
+export type AssignmentSlotScalarFieldEnum = (typeof AssignmentSlotScalarFieldEnum)[keyof typeof AssignmentSlotScalarFieldEnum]
+
+
+export const StudentSubmissionScalarFieldEnum = {
+  id: 'id',
+  slotId: 'slotId',
+  studentId: 'studentId',
+  files: 'files',
+  status: 'status',
+  feedback: 'feedback',
+  reviewedBy: 'reviewedBy',
+  reviewedAt: 'reviewedAt',
+  submittedAt: 'submittedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StudentSubmissionScalarFieldEnum = (typeof StudentSubmissionScalarFieldEnum)[keyof typeof StudentSubmissionScalarFieldEnum]
+
+
+export const AnnouncementScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  date: 'date',
+  priority: 'priority',
+  isActive: 'isActive',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
+
+
+export const StudyMaterialScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  files: 'files',
+  batchId: 'batchId',
+  category: 'category',
+  createdBy: 'createdBy',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StudyMaterialScalarFieldEnum = (typeof StudyMaterialScalarFieldEnum)[keyof typeof StudyMaterialScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -200,6 +283,13 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull'
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

@@ -2,148 +2,112 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
 import {
     LayoutDashboard,
     Users,
-    CalendarCheck,
-    Video,
+    BookOpen,
+    ClipboardList,
     FileText,
-    Layers,
-    GraduationCap,
+    Video,
+    LogOut,
     ChevronLeft,
-    Settings,
-    LogOut
+    ChevronRight,
+    FileUp,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion";
-import { useAppDispatch } from "@/redux/hooks";
-import { logoutLocal } from "@/redux/slices/auth/authSlice";
+import { useRouter } from "next/navigation"
 
-const sidebarItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-    { icon: Users, label: "Students", href: "/students" },
-    { icon: CalendarCheck, label: "Attendance", href: "/attendance" },
-    { icon: Layers, label: "Batches", href: "/batches" },
-    { icon: Video, label: "Videos", href: "/videos" },
-    { icon: FileText, label: "Notes", href: "/notes" },
+const navItems = [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/batches", label: "Batches", icon: BookOpen },
+    { href: "/students", label: "Students", icon: Users },
+    { href: "/attendance", label: "Attendance", icon: ClipboardList },
+    { href: "/assignments", label: "Assignments", icon: FileUp },
+    { href: "/notes", label: "Notes", icon: FileText },
+    { href: "/videos", label: "Videos", icon: Video },
 ]
 
 export function Sidebar() {
     const pathname = usePathname()
+    const router = useRouter()
     const [isCollapsed, setIsCollapsed] = useState(false)
-    const dispatch = useAppDispatch()
 
-    // Determine if a link is active. Handle root dashboard path specifically.
-    const isActive = (href: string) => {
-        if (href === "/dashboard") {
-            // if we are on /dashboard or exactly /dashboard/, it is active. 
-            // Depending on routing, maybe we are at /. 
-            // Assuming app/(dashboard)/page.tsx maps to /. or /dashboard?
-            // The plan implies / is landing logic or dashboard. 
-            // Usually dashboard is /dashboard. 
-            // Let's assume dashboard root is /dashboard for now.
-            return pathname === href
-        }
-        return pathname.startsWith(href)
+    const handleLogout = () => {
+        localStorage.removeItem("token")
+        router.push("/login")
     }
 
     return (
-        <aside
-            className={cn(
-                "relative flex flex-col border-r bg-card transition-[width] duration-300 ease-in-out h-screen sticky top-0 left-0 z-40",
-                isCollapsed ? "w-20" : "w-64"
-            )}
+        <aside 
+            className={`sticky top-0 z-40 h-screen transition-all duration-300 border-r shrink-0 bg-primary ${
+                isCollapsed ? 'w-16' : 'w-64'
+            }`}
         >
-            <div className="flex h-16 items-center justify-between px-4 border-b">
-                <div className={cn("flex items-center gap-2 font-bold text-xl text-primary transition-all overflow-hidden whitespace-nowrap", isCollapsed && "w-0 opacity-0")}>
-                    <div className="bg-indigo-600 p-1 rounded-md shrink-0">
-                        <GraduationCap className="h-5 w-5 text-white" />
-                    </div>
-                    <span>CipherLearn</span>
-                </div>
-                {isCollapsed && (
-                    <div className="mx-auto bg-indigo-600 p-2 rounded-md shrink-0">
-                        <GraduationCap className="h-6 w-6 text-white" />
-                    </div>
-                )}
-
+            {/* Header */}
+            <div className="flex h-16 items-center justify-between px-4 border-b border-white/10">
                 {!isCollapsed && (
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 ml-auto"
-                        onClick={() => setIsCollapsed(!isCollapsed)}
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <div className="h-9 w-9 rounded-lg flex items-center justify-center bg-accent text-accent-foreground font-bold text-sm shadow-lg shadow-accent/20">
+                            CI
+                        </div>
+                        <span className="font-bold text-lg text-white">CipherLearn</span>
+                    </div>
                 )}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10"
+                >
+                    {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                </Button>
             </div>
 
-            {isCollapsed && (
-                <div className="flex justify-center py-2 absolute top-3 right-[-12px] z-50">
-                    <Button
-                        variant="secondary"
-                        size="icon"
-                        className="h-6 w-6 rounded-full border shadow-md"
-                        onClick={() => setIsCollapsed(false)}
-                    >
-                        <ChevronLeft className="h-3 w-3 rotate-180" />
-                    </Button>
-                </div>
-            )}
-
-            <div className="flex-1 overflow-y-auto py-4">
-                <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-                    {sidebarItems.map((item, index) => (
+            {/* Navigation */}
+            <nav className="flex-1 px-3 py-4 space-y-1">
+                {navItems.map((item) => {
+                    const isActive = pathname === item.href
+                    return (
                         <Link
-                            key={index}
+                            key={item.href}
                             href={item.href}
-                            className={cn(
-                                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                                isActive(item.href) ? "bg-primary/10 text-primary hover:bg-primary/15" : "text-muted-foreground",
-                                isCollapsed && "justify-center px-2"
-                            )}
-                            title={isCollapsed ? item.label : undefined}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 group relative ${
+                                isActive
+                                    ? 'text-white bg-white/10'
+                                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                            }`}
                         >
-                            <item.icon className={cn("h-5 w-5 shrink-0", isActive(item.href) && "text-primary")} />
+                            {/* Active indicator */}
+                            {isActive && (
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-accent shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                            )}
+                            
+                            <item.icon 
+                                className={`h-5 w-5 shrink-0 transition-all ${
+                                    isActive ? 'text-accent' : 'group-hover:text-white'
+                                }`}
+                            />
                             {!isCollapsed && (
                                 <span className="truncate">{item.label}</span>
                             )}
                         </Link>
-                    ))}
-                </nav>
-            </div>
+                    )
+                })}
+            </nav>
 
-            <div className="border-t p-2 space-y-1">
-                <Link
-                    href="/settings"
-                    className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground",
-                        isCollapsed && "justify-center px-2"
-                    )}
+            {/* Footer - Logout */}
+            <div className="p-3 border-t border-white/10">
+                <Button
+                    variant="ghost"
+                    onClick={handleLogout}
+                    className={`w-full justify-start gap-3 text-white/60 hover:text-white hover:bg-destructive/20 transition-all ${
+                        isCollapsed ? 'justify-center' : ''
+                    }`}
                 >
-                    <Settings className="h-5 w-5" />
-                    {!isCollapsed && (
-                        <span>Settings</span>
-                    )}
-                </Link>
-                <button
-                    onClick={() => {
-                        dispatch(logoutLocal())
-                        window.location.href = "/login"
-                    }}
-                    className={cn(
-                        "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-red-500/10 hover:text-red-600 text-muted-foreground",
-                        isCollapsed && "justify-center px-2"
-                    )}
-                >
-                    <LogOut className="h-5 w-5" />
-                    {!isCollapsed && (
-                        <span>Logout</span>
-                    )}
-                </button>
+                    <LogOut className="h-5 w-5 shrink-0" />
+                    {!isCollapsed && <span>Logout</span>}
+                </Button>
             </div>
         </aside>
     )

@@ -54,6 +54,7 @@ export default class AuthService {
           name: true,
           email: true,
           password: true,
+          role: true,
         },
       });
 
@@ -77,6 +78,7 @@ export default class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       };
 
       return { user: safeUser, token };

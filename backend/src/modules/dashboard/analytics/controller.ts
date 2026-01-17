@@ -91,4 +91,130 @@ export default class AnalyticsController {
       return res.status(500).json({ error: `Internal Server Error: ${error}` });
     }
   }
+
+  /**
+   * Get student enrollment trends
+   * GET /analytics/enrollment-trends?months=12
+   */
+  async getEnrollmentTrends(req: Request, res: Response): Promise<Response> {
+    try {
+      const months = Number(req.query.months) || 12;
+      const trends = await this.analyticsService.getEnrollmentTrends(months);
+      return res.status(200).json({
+        success: true,
+        message: "Enrollment trends retrieved successfully",
+        data: trends,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get enrollment trends: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Get attendance trends (daily)
+   * GET /analytics/attendance-trends?days=30&batchId=1
+   */
+  async getAttendanceTrends(req: Request, res: Response): Promise<Response> {
+    try {
+      const days = Number(req.query.days) || 30;
+      const batchId = req.query.batchId ? Number(req.query.batchId) : undefined;
+      const trends = await this.analyticsService.getAttendanceTrends(days, batchId);
+      return res.status(200).json({
+        success: true,
+        message: "Attendance trends retrieved successfully",
+        data: trends,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get attendance trends: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Get monthly attendance trends
+   * GET /analytics/monthly-attendance-trends?months=6&batchId=1
+   */
+  async getMonthlyAttendanceTrends(req: Request, res: Response): Promise<Response> {
+    try {
+      const months = Number(req.query.months) || 6;
+      const batchId = req.query.batchId ? Number(req.query.batchId) : undefined;
+      const trends = await this.analyticsService.getMonthlyAttendanceTrends(months, batchId);
+      return res.status(200).json({
+        success: true,
+        message: "Monthly attendance trends retrieved successfully",
+        data: trends,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get monthly attendance trends: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Get comprehensive dashboard stats
+   * GET /analytics/dashboard-stats
+   */
+  async getDashboardStats(req: Request, res: Response): Promise<Response> {
+    try {
+      const stats = await this.analyticsService.getDashboardStats();
+      return res.status(200).json({
+        success: true,
+        message: "Dashboard stats retrieved successfully",
+        data: stats,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get dashboard stats: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Get batch-wise student distribution
+   * GET /analytics/batch-distribution
+   */
+  async getBatchDistribution(req: Request, res: Response): Promise<Response> {
+    try {
+      const distribution = await this.analyticsService.getBatchDistribution();
+      return res.status(200).json({
+        success: true,
+        message: "Batch distribution retrieved successfully",
+        data: distribution,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get batch distribution: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Get recent activities
+   * GET /analytics/recent-activities?limit=10
+   */
+  async getRecentActivities(req: Request, res: Response): Promise<Response> {
+    try {
+      const limit = Number(req.query.limit) || 10;
+      const activities = await this.analyticsService.getRecentActivities(limit);
+      return res.status(200).json({
+        success: true,
+        message: "Recent activities retrieved successfully",
+        data: activities,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get recent activities: ${error}`,
+      });
+    }
+  }
 }

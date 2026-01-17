@@ -26,8 +26,8 @@ export function AttendanceHistory() {
         new Date().toISOString().split('T')[0]
     )
 
-    const { data: batchesData } = useGetAllBatchesQuery({})
-    const batches = batchesData?.data || []
+    const { data: batchesData } = useGetAllBatchesQuery()
+    const batches = batchesData || []
 
     const { data: batchAttendance, isLoading } = useGetBatchAttendanceByDateQuery(
         { batchId: selectedBatchId!, date: selectedDate },

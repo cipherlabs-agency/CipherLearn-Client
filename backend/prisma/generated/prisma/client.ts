@@ -53,6 +53,11 @@ export type Student = Prisma.StudentModel
  */
 export type Batch = Prisma.BatchModel
 /**
+ * Model QRAttendanceToken
+ * 
+ */
+export type QRAttendanceToken = Prisma.QRAttendanceTokenModel
+/**
  * Model AttendanceSheet
  * 
  */
@@ -72,3 +77,23 @@ export type YoutubeVideo = Prisma.YoutubeVideoModel
  * 
  */
 export type Note = Prisma.NoteModel
+/**
+ * Model AssignmentSlot
+ * 
+ */
+export type AssignmentSlot = Prisma.AssignmentSlotModel
+/**
+ * Model StudentSubmission
+ * 
+ */
+export type StudentSubmission = Prisma.StudentSubmissionModel
+/**
+ * Model Announcement
+ * 
+ */
+export type Announcement = Prisma.AnnouncementModel
+/**
+ * Model StudyMaterial
+ * 
+ */
+export type StudyMaterial = Prisma.StudyMaterialModel

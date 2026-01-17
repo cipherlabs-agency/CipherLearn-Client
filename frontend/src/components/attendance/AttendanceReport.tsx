@@ -25,8 +25,8 @@ export function AttendanceReport() {
         new Date().toISOString().split('T')[0]
     )
 
-    const { data: batchesData } = useGetAllBatchesQuery({})
-    const batches = batchesData?.data || []
+    const { data: batchesData } = useGetAllBatchesQuery()
+    const batches = batchesData || []
 
     const { data: report, isLoading, isFetching } = useGetAttendanceReportQuery(
         { batchId: selectedBatchId!, startDate, endDate },

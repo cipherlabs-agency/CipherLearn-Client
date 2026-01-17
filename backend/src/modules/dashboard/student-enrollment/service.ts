@@ -388,4 +388,100 @@ export default class StudentEnrollmentService {
   public getSampleCSV(): string {
     return generateSampleCSV();
   }
+
+  /**
+   * Get student profile by email (for authenticated student users)
+   */
+  public async getByEmail(email: string): Promise<Student | null> {
+    try {
+      const student = await prisma.student.findUnique({
+        where: { email: email.toLowerCase(), isDeleted: false },
+        include: {
+          batch: {
+            select: { id: true, name: true },
+          },
+        },
+      });
+
+      return student;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // =====================
+  // DANGER ZONE - HARD DELETE OPERATIONS
+  // =====================
+
+  /**
+   * Permanently delete a student (DANGER: This cannot be undone!)
+   */
+  public async hardDelete(id: number): Promise<void> {
+    try {
+      // First delete related attendance records
+      await prisma.attendance.deleteMany({
+        where: { studentId: id },
+      });
+
+      // Then delete the student
+      await prisma.student.delete({
+        where: { id },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Permanently delete multiple students (DANGER: This cannot be undone!)
+   */
+  public async hardDeleteMany(ids: number[]): Promise<{ deleted: number }> {
+    try {
+      // First delete related attendance records
+      await prisma.attendance.deleteMany({
+        where: { studentId: { in: ids } },
+      });
+
+      // Then delete the students
+      const result = await prisma.student.deleteMany({
+        where: { id: { in: ids } },
+      });
+
+      return { deleted: result.count };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Permanently delete all soft-deleted students (DANGER: This cannot be undone!)
+   */
+  public async purgeDeleted(): Promise<{ deleted: number }> {
+    try {
+      const deletedStudents = await prisma.student.findMany({
+        where: { isDeleted: true },
+        select: { id: true },
+      });
+
+      const ids = deletedStudents.map((s) => s.id);
+
+      if (ids.length === 0) {
+        return { deleted: 0 };
+      }
+
+      // First delete related attendance records
+      await prisma.attendance.deleteMany({
+        where: { studentId: { in: ids } },
+      });
+
+      // Then delete the students
+      const result = await prisma.student.deleteMany({
+        where: { id: { in: ids } },
+      });
+
+      return { deleted: result.count };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

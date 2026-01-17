@@ -89,7 +89,7 @@ export function CreateBatchDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-orange-600 hover:bg-orange-700">
+                <Button>
                     <Plus className="mr-2 h-4 w-4" /> Create New Batch
                 </Button>
             </DialogTrigger>

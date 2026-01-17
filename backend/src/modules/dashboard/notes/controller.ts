@@ -71,11 +71,14 @@ export default class NotesController {
    */
   async getNotes(req: Request, res: Response): Promise<void> {
     try {
+      // Use validated query if available (from middleware), otherwise use raw query
+      const querySource = req.validatedQuery || req.query;
+
       const query: GetNotesQuery = {
-        batchId: req.query.batchId ? Number(req.query.batchId) : undefined,
-        page: req.query.page ? Number(req.query.page) : 1,
-        limit: req.query.limit ? Number(req.query.limit) : 10,
-        category: req.query.category as string | undefined,
+        batchId: querySource.batchId ? Number(querySource.batchId) : undefined,
+        page: querySource.page ? Number(querySource.page) : 1,
+        limit: querySource.limit ? Number(querySource.limit) : 10,
+        category: querySource.category as string | undefined,
       };
 
       const result = await notesService.getNotes(query);

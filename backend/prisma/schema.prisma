@@ -41,9 +41,10 @@ model Student {
   isDeleted  Boolean? @default(false)
   deletedBy  String?
 
-  updatedAt   DateTime?    @updatedAt
-  createdAt   DateTime?    @default(now())
+  updatedAt   DateTime?           @updatedAt
+  createdAt   DateTime?           @default(now())
   attendances Attendance[]
+  submissions StudentSubmission[]
 
   @@index([batchId])
   @@map("students")
@@ -57,14 +58,35 @@ model Batch {
   isDeleted     Boolean? @default(false)
   deletedBy     String?
 
-  students Student[]
-  sheets   AttendanceSheet[]
+  students           Student[]
+  sheets             AttendanceSheet[]
+  qrAttendanceTokens QRAttendanceToken[]
+  assignmentSlots    AssignmentSlot[]
+  studyMaterials     StudyMaterial[]
 
   updatedAt   DateTime?    @updatedAt
   createdAt   DateTime?    @default(now())
   attendances Attendance[]
 
   @@map("batches")
+}
+
+model QRAttendanceToken {
+  id        Int      @id @default(autoincrement())
+  batchId   Int
+  batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  token     String
+  date      DateTime @db.Date
+  expiresAt DateTime
+  isActive  Boolean  @default(true)
+
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now())
+
+  @@unique([batchId, date])
+  @@index([batchId, date])
+  @@index([token])
+  @@map("qr_attendance_tokens")
 }
 
 model AttendanceSheet {
@@ -140,6 +162,90 @@ model Note {
   createdAt DateTime? @default(now())
 
   @@map("notes")
+}
+
+model AssignmentSlot {
+  id          Int       @id @default(autoincrement())
+  title       String
+  subject     String
+  description String?
+  batchId     Int
+  batch       Batch     @relation(fields: [batchId], references: [id])
+  dueDate     DateTime?
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isDeleted   Boolean   @default(false)
+
+  submissions StudentSubmission[]
+
+  @@index([batchId])
+  @@map("assignment_slots")
+}
+
+model StudentSubmission {
+  id          Int              @id @default(autoincrement())
+  slotId      Int
+  slot        AssignmentSlot   @relation(fields: [slotId], references: [id])
+  studentId   Int
+  student     Student          @relation(fields: [studentId], references: [id])
+  files       Json             // Array of file URLs
+  status      SubmissionStatus @default(PENDING)
+  feedback    String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  submittedAt DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([slotId, studentId])
+  @@index([slotId])
+  @@index([studentId])
+  @@map("student_submissions")
+}
+
+model Announcement {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  imageUrl    String?
+  date        DateTime?
+  priority    AnnouncementPriority @default(NORMAL)
+  isActive    Boolean   @default(true)
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("announcements")
+}
+
+model StudyMaterial {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  files       Json     // Array of file URLs
+  batchId     Int
+  batch       Batch    @relation(fields: [batchId], references: [id])
+  category    String?
+  createdBy   String
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([batchId])
+  @@map("study_materials")
+}
+
+enum AnnouncementPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum SubmissionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 enum UserRoles {

@@ -23,8 +23,9 @@ import {
 } from "@/components/ui/table"
 import { Upload, Loader2, FileText, Download, AlertCircle, CheckCircle, XCircle } from "lucide-react"
 import { useState } from "react"
-import { usePreviewCSVMutation, useImportCSVMutation, useLazyDownloadCSVTemplateQuery, CSVPreviewData } from "@/redux/slices/students/studentsApi"
+import { usePreviewCSVMutation, useImportCSVMutation, useLazyDownloadCSVTemplateQuery } from "@/redux/slices/students/studentsApi"
 import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
+import type { CSVPreviewData, Batch } from "@/types"
 import { toast } from "sonner"
 
 type Step = "upload" | "preview" | "result"
@@ -44,8 +45,8 @@ export function ImportStudentCsvDialog() {
     const [previewData, setPreviewData] = useState<CSVPreviewData | null>(null)
     const [importResult, setImportResult] = useState<ImportResult | null>(null)
 
-    const { data: batchesData } = useGetAllBatchesQuery({})
-    const batches = batchesData?.data || []
+    const { data: batchesData } = useGetAllBatchesQuery()
+    const batches = batchesData || []
 
     const [previewCSV, { isLoading: isPreviewing }] = usePreviewCSVMutation()
     const [importCSV, { isLoading: isImporting }] = useImportCSVMutation()
@@ -164,13 +165,13 @@ export function ImportStudentCsvDialog() {
                             <Label htmlFor="batchId">Select Batch *</Label>
                             <select
                                 id="batchId"
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                className="w-full input-industrial rounded-md text-sm"
                                 value={batchId}
                                 onChange={(e) => setBatchId(e.target.value)}
                                 required
                             >
                                 <option value="">Select a batch...</option>
-                                {batches.map((batch: any) => (
+                                {batches.map((batch: Batch) => (
                                     <option key={batch.id} value={batch.id}>
                                         {batch.name}
                                     </option>

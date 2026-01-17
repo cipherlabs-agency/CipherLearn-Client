@@ -157,4 +157,58 @@ export default class BatchController {
         .json({ success: false, message: `Delete failed: ${error}` });
     }
   }
+
+  // =====================
+  // DANGER ZONE - HARD DELETE OPERATIONS
+  // =====================
+
+  /**
+   * Permanently delete a batch with all related data
+   * DELETE /batches/hard-delete/:id
+   */
+  public async hardDelete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const result = await batchService.hardDelete(Number(id));
+
+      logger.warn(`DANGER ZONE: Batch ${id} permanently deleted with all related data by ${req.user?.name}`);
+
+      return res.status(200).json({
+        success: true,
+        message: "Batch and all related data permanently deleted",
+        data: result,
+      });
+    } catch (error) {
+      logger.error("Batch.hardDelete error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to permanently delete batch: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Purge all soft-deleted batches with related data
+   * DELETE /batches/purge-deleted
+   */
+  public async purgeDeleted(req: Request, res: Response) {
+    try {
+      const result = await batchService.purgeDeleted();
+
+      logger.warn(`DANGER ZONE: ${result.deleted} soft-deleted batches purged by ${req.user?.name}`);
+
+      return res.status(200).json({
+        success: true,
+        message: `${result.deleted} soft-deleted batches permanently removed`,
+        data: result,
+      });
+    } catch (error) {
+      logger.error("Batch.purgeDeleted error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to purge deleted batches: ${error}`,
+      });
+    }
+  }
 }

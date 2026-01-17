@@ -6,7 +6,8 @@ import { config } from "../../../config/env.config";
  * Generates and verifies daily QR codes for batch attendance
  */
 
-const QR_SECRET = config.JWT.SECRET || "qr_attendance_secret";
+// Use dedicated QR secret for token generation
+const QR_SECRET = config.QR.SECRET;
 
 /**
  * Generate a unique token for QR code based on batch and date

@@ -1,8 +1,9 @@
 import { Router } from "express";
 import AttendanceController from "./controller";
+import { qrAttendanceController } from "./qr.controller";
 import { AttendanceValidations } from "./validation";
 import { validateRequest } from "../../auth/validations.auth";
-import { isAdmin, isAuthenticated } from "../../auth/middleware";
+import { isAdmin, isAuthenticated, isAdminOrTeacher } from "../../auth/middleware";
 
 const router = Router();
 const attendanceController = new AttendanceController();
@@ -94,17 +95,25 @@ router.get(
 // =====================
 
 // Generate QR code for a batch (Admin/Teacher)
+// Supports ?regenerate=true query param to force regeneration
 router.get(
   "/qr/generate/:batchId",
-  isAdmin,
-  attendanceController.generateQRCode.bind(attendanceController)
+  isAdminOrTeacher,
+  qrAttendanceController.generateQRCode.bind(qrAttendanceController)
+);
+
+// Get QR code status for a batch (Admin/Teacher)
+router.get(
+  "/qr/status/:batchId",
+  isAdminOrTeacher,
+  qrAttendanceController.getQRCodeStatus.bind(qrAttendanceController)
 );
 
 // Mark attendance via QR code (Student)
 router.post(
   "/qr/mark",
   validateRequest(AttendanceValidations.qr.mark),
-  attendanceController.markQRAttendance.bind(attendanceController)
+  qrAttendanceController.markQRAttendance.bind(qrAttendanceController)
 );
 
 export default router;

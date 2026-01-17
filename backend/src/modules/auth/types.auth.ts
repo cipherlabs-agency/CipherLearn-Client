@@ -1,6 +1,7 @@
 import { UserRoles } from "../../../prisma/generated/prisma/enums";
 
 export type User = {
+  id: number;
   name: string;
   email: string;
   password: string;
@@ -24,6 +25,7 @@ export type LoginResult = {
     id: number;
     name: string;
     email: string;
+    role: UserRoles;
   };
 };
 

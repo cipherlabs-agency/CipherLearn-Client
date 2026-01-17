@@ -12,6 +12,13 @@ const controller = new StudentEnrollmentController();
 router.use(isAuthenticated);
 
 // =====================
+// STUDENT PROFILE (for authenticated students)
+// =====================
+
+// Get current user's student profile (matches by email)
+router.get("/my-profile", controller.getMyProfile.bind(controller));
+
+// =====================
 // CSV OPERATIONS
 // =====================
 
@@ -62,5 +69,18 @@ router.delete("/student/:id", isAdmin, controller.delete.bind(controller));
 // Get all students (optionally filter by batch)
 router.get("/students", controller.getAll.bind(controller));
 router.get("/students/:id", controller.getAll.bind(controller));
+
+// =====================
+// DANGER ZONE - HARD DELETE (Admin only)
+// =====================
+
+// Permanently delete a student
+router.delete("/hard-delete/:id", isAdmin, controller.hardDelete.bind(controller));
+
+// Permanently delete multiple students
+router.delete("/hard-delete-many", isAdmin, controller.hardDeleteMany.bind(controller));
+
+// Purge all soft-deleted students
+router.delete("/purge-deleted", isAdmin, controller.purgeDeleted.bind(controller));
 
 export default router;

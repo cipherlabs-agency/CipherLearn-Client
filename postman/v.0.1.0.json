@@ -1,0 +1,1614 @@
+{
+	"info": {
+		"_postman_id": "cipherlearn-api-v0.1.0",
+		"name": "CipherLearn API v0.1.0",
+		"version": "0.1.0",
+		"description": "Comprehensive API collection for CipherLearn - Learning Management System.\n\nThis collection includes all endpoints for:\n- Authentication (Login, Signup, Logout)\n- Batches Management (CRUD)\n- Student Enrollment (Single & CSV Import)\n- Attendance (Manual, QR, Reports)\n- YouTube Videos (CRUD)\n- Notes (CRUD with file uploads)\n- Analytics Dashboard\n\n**Setup:**\n1. Import this collection into Postman\n2. Import the CipherLearn-Environment.postman_environment.json\n3. Select the environment\n4. Run the Login request first to auto-set the authToken\n\n**Base URL:** http://localhost:5000/api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"description": "Authentication endpoints for user management",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Admin User\",\n    \"email\": \"admin@cipherlearn.com\",\n    \"password\": \"Admin@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "signup"]
+						},
+						"description": "Register a new user account.\n\n**Required fields:**\n- name: Full name of the user\n- email: Valid email address\n- password: Minimum 6 characters with at least one uppercase, one lowercase, and one number"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Parse the response",
+									"var jsonData = pm.response.json();",
+									"",
+									"// Check if login was successful",
+									"if (jsonData.success && jsonData.data) {",
+									"    // Set the auth token in environment",
+									"    if (jsonData.data.token) {",
+									"        pm.environment.set(\"authToken\", jsonData.data.token);",
+									"        console.log(\"Auth token set successfully\");",
+									"    }",
+									"    ",
+									"    // Set user info if available",
+									"    if (jsonData.data.user) {",
+									"        pm.environment.set(\"userId\", jsonData.data.user.id);",
+									"        pm.environment.set(\"userName\", jsonData.data.user.name);",
+									"        pm.environment.set(\"userEmail\", jsonData.data.user.email);",
+									"    }",
+									"}",
+									"",
+									"// Test response",
+									"pm.test(\"Login successful\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@cipherlearn.com\",\n    \"password\": \"Admin@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Login to get authentication token.\n\n**Note:** The token is automatically saved to the environment variable `authToken` after successful login."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "logout"]
+						},
+						"description": "Logout and invalidate the current session"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Admin Name\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "profile"]
+						},
+						"description": "Update the current user's profile information"
+					},
+					"response": []
+				},
+				{
+					"name": "Request Password Reset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@cipherlearn.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/request-password-reset",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "request-password-reset"]
+						},
+						"description": "Request a password reset email"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"reset-token-from-email\",\n    \"newPassword\": \"NewPassword@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/reset-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "reset-password"]
+						},
+						"description": "Reset password using the token received via email"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Batches",
+			"description": "Batch management endpoints for creating and managing student batches",
+			"item": [
+				{
+					"name": "Create Batch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"batchId\", jsonData.data.id);",
+									"    console.log(\"Batch ID set: \" + jsonData.data.id);",
+									"}",
+									"",
+									"pm.test(\"Batch created successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Batch 2024-A\",\n    \"status\": \"Active\",\n    \"totalStudents\": {\n        \"capacity\": 30,\n        \"enrolled\": 0\n    },\n    \"timings\": {\n        \"time\": \"10:00 AM - 12:00 PM\",\n        \"days\": [\"Monday\", \"Wednesday\", \"Friday\"]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches"]
+						},
+						"description": "Create a new batch for student enrollment.\n\n**Required fields:**\n- name: Unique batch name\n- status: 'Active' or 'Inactive'\n- totalStudents.capacity: Maximum students allowed\n- timings.time: Class timing\n- timings.days: Array of days"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Batches",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.batches && jsonData.batches.length > 0) {",
+									"    pm.environment.set(\"batchId\", jsonData.batches[0].id);",
+									"    console.log(\"First batch ID set: \" + jsonData.batches[0].id);",
+									"}",
+									"",
+									"pm.test(\"Batches fetched successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches"]
+						},
+						"description": "Get all batches with their details including student count and timings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Batch By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "{{batchId}}"]
+						},
+						"description": "Get details of a specific batch by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Batch",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Batch 2024-A Updated\",\n    \"status\": \"Active\",\n    \"timings\": {\n        \"time\": \"09:00 AM - 11:00 AM\",\n        \"days\": [\"Tuesday\", \"Thursday\", \"Saturday\"]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "{{batchId}}"]
+						},
+						"description": "Update an existing batch's details"
+					},
+					"response": []
+				},
+				{
+					"name": "Draft Batch",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ids\": [{{batchId}}]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches/draft",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "draft"]
+						},
+						"description": "Move batch(es) to draft status (soft delete)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Draft Batches",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches/drafts",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "drafts"]
+						},
+						"description": "Get all draft (soft-deleted) batches"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Batch(es)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ids\": [{{batchId}}]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches"]
+						},
+						"description": "Permanently delete one or more batches"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Students/Enrollment",
+			"description": "Student enrollment and management endpoints including CSV import",
+			"item": [
+				{
+					"name": "Enroll Single Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"studentId\", jsonData.data.id);",
+									"    console.log(\"Student ID set: \" + jsonData.data.id);",
+									"}",
+									"",
+									"pm.test(\"Student enrolled successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"John\",\n    \"middlename\": \"Robert\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe@email.com\",\n    \"dob\": \"2005-05-15\",\n    \"address\": \"123 Main Street, New York, NY 10001\",\n    \"batchId\": {{batchId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/enroll",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "enroll"]
+						},
+						"description": "Enroll a single student into a batch.\n\n**Required fields:**\n- firstname, lastname: Student name\n- email: Unique email address\n- dob: Date of birth (YYYY-MM-DD)\n- address: Full address\n- batchId: ID of the batch to enroll in"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Students",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.length > 0) {",
+									"    pm.environment.set(\"studentId\", jsonData.data[0].id);",
+									"    console.log(\"First student ID set: \" + jsonData.data[0].id);",
+									"}",
+									"",
+									"pm.test(\"Students fetched successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/students",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "students"]
+						},
+						"description": "Get all students across all batches"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Students By Batch",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/students/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "students", "{{batchId}}"]
+						},
+						"description": "Get all students enrolled in a specific batch"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/student/{{studentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "student", "{{studentId}}"]
+						},
+						"description": "Get details of a specific student by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"John\",\n    \"lastname\": \"Smith\",\n    \"address\": \"456 Updated Street, New York, NY 10002\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/student/{{studentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "student", "{{studentId}}"]
+						},
+						"description": "Update a student's information"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Student",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/student/{{studentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "student", "{{studentId}}"]
+						},
+						"description": "Delete a student from the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Download CSV Template",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/csv/template",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "csv", "template"]
+						},
+						"description": "Download a sample CSV template for bulk student import"
+					},
+					"response": []
+				},
+				{
+					"name": "Preview CSV Import",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "",
+									"description": "Select the CSV file containing student data"
+								},
+								{
+									"key": "batchId",
+									"value": "{{batchId}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/csv/preview",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "csv", "preview"]
+						},
+						"description": "Preview CSV data before importing.\n\nReturns:\n- Total rows found\n- Valid rows that can be imported\n- Invalid rows with error details\n- Preview of first few records"
+					},
+					"response": []
+				},
+				{
+					"name": "Import CSV",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "",
+									"description": "Select the CSV file containing student data"
+								},
+								{
+									"key": "batchId",
+									"value": "{{batchId}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/csv/import",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "csv", "import"]
+						},
+						"description": "Import students from a CSV file.\n\n**CSV Format:**\n```\nfirstname,middlename,lastname,email,dob,address\nJohn,Robert,Doe,john@email.com,2005-01-15,123 Street City State\n```\n\nReturns:\n- Total processed\n- Successful imports\n- Failed imports with errors"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attendance",
+			"description": "Attendance management including manual marking, QR-based attendance, and reports",
+			"item": [
+				{
+					"name": "Manual Attendance",
+					"item": [
+						{
+							"name": "Mark Single Attendance",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if (jsonData.success && jsonData.data && jsonData.data.id) {",
+											"    pm.environment.set(\"attendanceId\", jsonData.data.id);",
+											"    console.log(\"Attendance ID set: \" + jsonData.data.id);",
+											"}",
+											"",
+											"pm.test(\"Attendance marked successfully\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"studentId\": {{studentId}},\n    \"batchId\": {{batchId}},\n    \"date\": \"2024-01-15\",\n    \"status\": \"PRESENT\",\n    \"time\": \"10:00:00\",\n    \"markedBy\": \"Admin\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/mark-attendance",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "mark-attendance"]
+								},
+								"description": "Mark attendance for a single student.\n\n**Status options:** PRESENT, ABSENT"
+							},
+							"response": []
+						},
+						{
+							"name": "Mark Bulk Attendance",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"batchId\": {{batchId}},\n    \"date\": \"2024-01-15\",\n    \"attendances\": [\n        {\n            \"studentId\": {{studentId}},\n            \"status\": \"PRESENT\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/mark-bulk",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "mark-bulk"]
+								},
+								"description": "Mark attendance for multiple students at once.\n\nUseful for marking entire batch attendance in one request."
+							},
+							"response": []
+						},
+						{
+							"name": "Update Attendance",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"ABSENT\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/update/{{attendanceId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "update", "{{attendanceId}}"]
+								},
+								"description": "Update an existing attendance record"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "QR Attendance",
+					"item": [
+						{
+							"name": "Generate QR Code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if (jsonData.success && jsonData.data && jsonData.data.qrData) {",
+											"    pm.environment.set(\"qrData\", jsonData.data.qrData);",
+											"    console.log(\"QR Data saved for scanning\");",
+											"}",
+											"",
+											"pm.test(\"QR code generated successfully\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/qr/generate/{{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "qr", "generate", "{{batchId}}"]
+								},
+								"description": "Generate a QR code for a batch.\n\nThe QR code is valid for the current day only and expires at midnight.\n\n**Returns:**\n- qrData: Encoded QR payload to display\n- validFor: Date the QR is valid for\n- expiresAt: Expiration timestamp"
+							},
+							"response": []
+						},
+						{
+							"name": "Mark QR Attendance",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"studentId\": {{studentId}},\n    \"qrData\": \"{{qrData}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/qr/mark",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "qr", "mark"]
+								},
+								"description": "Mark attendance by scanning QR code.\n\nStudents scan the QR code displayed in class, and their attendance is automatically marked as PRESENT.\n\n**Validation:**\n- QR must be valid and not expired\n- Student must be enrolled in the batch\n- Attendance can only be marked once per day"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reports & Data",
+					"item": [
+						{
+							"name": "Get Batch Attendance Sheet",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/batch-attendance-sheet/{{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "batch-attendance-sheet", "{{batchId}}"]
+								},
+								"description": "Get all attendance records for a batch"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Batch Attendance By Date",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/batch/{{batchId}}/date?date=2024-01-15",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "batch", "{{batchId}}", "date"],
+									"query": [
+										{
+											"key": "date",
+											"value": "2024-01-15"
+										}
+									]
+								},
+								"description": "Get attendance records for a batch on a specific date"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Student Attendance Matrix",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/student-attendance-matrix/{{studentId}}?month=1&year=2024",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "student-attendance-matrix", "{{studentId}}"],
+									"query": [
+										{
+											"key": "month",
+											"value": "1"
+										},
+										{
+											"key": "year",
+											"value": "2024"
+										}
+									]
+								},
+								"description": "Get student's attendance matrix for calendar view.\n\nReturns day-by-day attendance status for the specified month."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Student Attendance History",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/student-history/{{studentId}}?limit=30",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "student-history", "{{studentId}}"],
+									"query": [
+										{
+											"key": "limit",
+											"value": "30"
+										}
+									]
+								},
+								"description": "Get a student's attendance history with most recent records first"
+							},
+							"response": []
+						},
+						{
+							"name": "Generate Attendance Report",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/report/{{batchId}}?startDate=2024-01-01&endDate=2024-01-31",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "report", "{{batchId}}"],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2024-01-01"
+										},
+										{
+											"key": "endDate",
+											"value": "2024-01-31"
+										}
+									]
+								},
+								"description": "Generate an attendance report for a batch within a date range.\n\n**Returns:**\n- Overall attendance percentage\n- Per-student statistics\n- Present/Absent counts"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create Attendance Sheet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"batchId\": {{batchId}},\n    \"month\": \"1\",\n    \"year\": \"2024\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/attendance/create-attendance-sheet",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "attendance", "create-attendance-sheet"]
+						},
+						"description": "Create a new attendance sheet for a batch/month/year"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "YouTube Videos",
+			"description": "YouTube video content management for educational videos",
+			"item": [
+				{
+					"name": "Upload Video",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"videoId\", jsonData.data.id);",
+									"    console.log(\"Video ID set: \" + jsonData.data.id);",
+									"}",
+									"",
+									"pm.test(\"Video uploaded successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Introduction to JavaScript\",\n    \"description\": \"Learn the basics of JavaScript programming language\",\n    \"url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n    \"category\": \"Programming\",\n    \"batchId\": {{batchId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/upload",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "upload"]
+						},
+						"description": "Upload/Add a new YouTube video for a batch.\n\n**Required fields:**\n- title: Video title\n- url: YouTube video URL\n- batchId: Batch to associate with"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Videos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.length > 0) {",
+									"    pm.environment.set(\"videoId\", jsonData.data[0].id);",
+									"    console.log(\"First video ID set: \" + jsonData.data[0].id);",
+									"}",
+									"",
+									"pm.test(\"Videos fetched successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "category",
+									"value": "Programming",
+									"disabled": true
+								},
+								{
+									"key": "batchId",
+									"value": "{{batchId}}",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all videos with pagination and optional filtering.\n\n**Query Parameters:**\n- page: Page number (default: 1)\n- limit: Items per page (default: 10)\n- category: Filter by category\n- batchId: Filter by batch"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Videos By Batch",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/batch/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "batch", "{{batchId}}"]
+						},
+						"description": "Get all videos for a specific batch"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Video By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/{{videoId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "{{videoId}}"]
+						},
+						"description": "Get details of a specific video"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Video Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/categories",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "categories"]
+						},
+						"description": "Get all available video categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Video",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Introduction to JavaScript - Updated\",\n    \"description\": \"Updated description for JavaScript basics\",\n    \"category\": \"Web Development\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/{{videoId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "{{videoId}}"]
+						},
+						"description": "Update an existing video's details"
+					},
+					"response": []
+				},
+				{
+					"name": "Draft Video (Soft Delete)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/{{videoId}}/draft",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "{{videoId}}", "draft"]
+						},
+						"description": "Move video to draft status (soft delete)"
+					},
+					"response": []
+				},
+				{
+					"name": "Restore Video",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/{{videoId}}/restore",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "{{videoId}}", "restore"]
+						},
+						"description": "Restore a soft-deleted video"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Video",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/{{videoId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "{{videoId}}"]
+						},
+						"description": "Permanently delete a video"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notes",
+			"description": "Notes management with file upload support for educational materials",
+			"item": [
+				{
+					"name": "Create Note (with files)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"noteId\", jsonData.data.id);",
+									"    console.log(\"Note ID set: \" + jsonData.data.id);",
+									"}",
+									"",
+									"pm.test(\"Note created successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "JavaScript Fundamentals Notes",
+									"type": "text"
+								},
+								{
+									"key": "batchId",
+									"value": "{{batchId}}",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Programming",
+									"type": "text"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "",
+									"description": "Upload up to 5 files (PDF, DOC, DOCX, PPT, PPTX, TXT, MD, images)"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/notes",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "notes"]
+						},
+						"description": "Create a new note with optional file attachments.\n\n**Supported file types:**\n- Images: JPG, PNG, GIF, WEBP\n- Documents: PDF, DOC, DOCX, PPT, PPTX\n- Text: TXT, MD\n\n**Limits:**\n- Max 5 files\n- Max 10MB per file"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Notes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.length > 0) {",
+									"    pm.environment.set(\"noteId\", jsonData.data[0].id);",
+									"    console.log(\"First note ID set: \" + jsonData.data[0].id);",
+									"}",
+									"",
+									"pm.test(\"Notes fetched successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/notes?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "notes"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "batchId",
+									"value": "{{batchId}}",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Programming",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all notes with pagination and optional filtering.\n\n**Query Parameters:**\n- page: Page number\n- limit: Items per page\n- batchId: Filter by batch\n- category: Filter by category"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Note By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "notes", "{{noteId}}"]
+						},
+						"description": "Get details of a specific note including file URLs"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Note",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "JavaScript Fundamentals Notes - Updated",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Web Development",
+									"type": "text"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "",
+									"description": "Optional: Add more files"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "notes", "{{noteId}}"]
+						},
+						"description": "Update a note with optional new file attachments"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Note",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "notes", "{{noteId}}"]
+						},
+						"description": "Soft delete a note"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Analytics",
+			"description": "Dashboard analytics and statistics endpoints",
+			"item": [
+				{
+					"name": "Get Total Batches Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/analytics/batch-count",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "analytics", "batch-count"]
+						},
+						"description": "Get total number of batches in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Total Students Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/analytics/student-count",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "analytics", "student-count"]
+						},
+						"description": "Get total number of students across all batches"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Batch Student Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/analytics/batch/{{batchId}}/student-count",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "analytics", "batch", "{{batchId}}", "student-count"]
+						},
+						"description": "Get student count for a specific batch"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Daily Attendance Matrix",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/analytics/batch/{{batchId}}/attendance/day?date=2024-01-15",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "analytics", "batch", "{{batchId}}", "attendance", "day"],
+							"query": [
+								{
+									"key": "date",
+									"value": "2024-01-15"
+								}
+							]
+						},
+						"description": "Get attendance statistics for a batch on a specific day"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Monthly Attendance Matrix",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/analytics/batch/{{batchId}}/attendance/month?month=1&year=2024",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "analytics", "batch", "{{batchId}}", "attendance", "month"],
+							"query": [
+								{
+									"key": "month",
+									"value": "1"
+								},
+								{
+									"key": "year",
+									"value": "2024"
+								}
+							]
+						},
+						"description": "Get attendance statistics for a batch for an entire month"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Log the request being made",
+					"console.log('Making request to: ' + pm.request.url.toString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Log response status for debugging",
+					"console.log('Response status: ' + pm.response.code);"
+				]
+			}
+		}
+	]
+}

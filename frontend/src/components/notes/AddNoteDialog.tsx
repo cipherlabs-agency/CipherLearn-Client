@@ -16,8 +16,8 @@ export function AddNoteDialog() {
     const [formData, setFormData] = useState({ title: "", category: "", batchId: "" })
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const { data: batchesData } = useGetAllBatchesQuery({})
-    const batches = batchesData?.data || []
+    const { data: batchesData } = useGetAllBatchesQuery()
+    const batches = batchesData || []
     const [uploadNote, { isLoading }] = useUploadNoteMutation()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -61,7 +61,7 @@ export function AddNoteDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-blue-600 hover:bg-blue-700"><Upload className="mr-2 h-4 w-4" />Upload File</Button>
+                <Button><Upload className="mr-2 h-4 w-4" />Upload File</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
@@ -77,7 +77,7 @@ export function AddNoteDialog() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="batchId">Batch *</Label>
-                                <select id="batchId" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={formData.batchId} onChange={handleChange} required>
+                                <select id="batchId" className="w-full input-industrial rounded-md text-sm" value={formData.batchId} onChange={handleChange} required>
                                     <option value="">Select batch...</option>
                                     {batches.map((batch: any) => (<option key={batch.id} value={batch.id}>{batch.name}</option>))}
                                 </select>
@@ -109,7 +109,7 @@ export function AddNoteDialog() {
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                        <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+                        <Button type="submit" disabled={isLoading}>
                             {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Uploading...</>) : "Upload"}
                         </Button>
                     </DialogFooter>

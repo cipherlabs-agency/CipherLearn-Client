@@ -1,96 +1,77 @@
-import { api } from '../../api/api';
+import { api, ApiResponse } from '../../api/api';
+import {
+    AttendanceRecord,
+    AttendanceStatus,
+    AttendanceMethod,
+    MarkAttendanceInput,
+    BulkAttendanceInput,
+    UpdateAttendanceInput,
+    AttendanceReport,
+    AttendanceReportParams,
+    AttendanceMatrixData,
+    QRCodeData,
+    QRCodeStatusData,
+    MarkQRAttendanceInput,
+    GenerateQRCodeParams
+} from '@/types';
 
-export interface AttendanceRecord {
-    id: number;
+// Local query param types
+export interface AttendanceByDateParams {
+    batchId: number;
+    date: string;
+}
+
+export interface StudentMatrixParams {
     studentId: number;
-    batchId: number;
-    date: string;
-    status: 'PRESENT' | 'ABSENT';
-    method: 'MANUAL' | 'QR';
-    markedBy?: string;
-    time?: string;
-    student?: {
-        id: number;
-        fullname: string;
-        email: string;
-    };
+    month?: number;
+    year?: number;
 }
 
-export interface BulkAttendanceInput {
-    batchId: number;
-    date: string;
-    attendances: {
-        studentId: number;
-        status: 'PRESENT' | 'ABSENT';
-    }[];
-}
-
-export interface QRCodeData {
-    batchId: number;
-    batchName: string;
-    qrData: string;
-    validFor: string;
-    expiresAt: string;
-}
-
-export interface AttendanceReport {
-    batchId: number;
-    batchName: string;
-    startDate: string;
-    endDate: string;
-    totalStudents: number;
-    overallAttendancePercentage: number;
-    studentStats: {
-        studentId: number;
-        studentName: string;
-        email: string;
-        presentDays: number;
-        absentDays: number;
-        totalDays: number;
-        percentage: number;
-    }[];
+export interface StudentHistoryParams {
+    studentId: number;
+    limit?: number;
 }
 
 export const attendanceApi = api.injectEndpoints({
     endpoints: (builder) => ({
         // Get batch attendance for a specific date
-        getBatchAttendanceByDate: builder.query<AttendanceRecord[], { batchId: number; date: string }>({
+        getBatchAttendanceByDate: builder.query<AttendanceRecord[], AttendanceByDateParams>({
             query: ({ batchId, date }) => `/dashboard/attendance/batch/${batchId}/date?date=${date}`,
-            transformResponse: (response: any) => response.data || [],
+            transformResponse: (response: ApiResponse<AttendanceRecord[]>) => response.data || [],
             providesTags: ['Attendance'],
         }),
 
         // Get batch attendance sheet (all records)
         getBatchAttendanceSheet: builder.query<AttendanceRecord[], number>({
             query: (batchId) => `/dashboard/attendance/batch-attendance-sheet/${batchId}`,
-            transformResponse: (response: any) => response.data || [],
+            transformResponse: (response: ApiResponse<AttendanceRecord[]>) => response.data || [],
             providesTags: ['Attendance'],
         }),
 
         // Get student attendance matrix (calendar view)
-        getStudentAttendanceMatrix: builder.query({
+        getStudentAttendanceMatrix: builder.query<AttendanceMatrixData, StudentMatrixParams>({
             query: ({ studentId, month, year }) => {
                 let url = `/dashboard/attendance/student-attendance-matrix/${studentId}`;
                 const params = new URLSearchParams();
-                if (month) params.append('month', month);
-                if (year) params.append('year', year);
+                if (month !== undefined) params.append('month', month.toString());
+                if (year !== undefined) params.append('year', year.toString());
                 if (params.toString()) url += `?${params.toString()}`;
                 return url;
             },
-            transformResponse: (response: any) => response.data,
+            transformResponse: (response: ApiResponse<AttendanceMatrixData>) => response.data!,
             providesTags: ['Attendance'],
         }),
 
         // Get student attendance history
-        getStudentAttendanceHistory: builder.query<AttendanceRecord[], { studentId: number; limit?: number }>({
+        getStudentAttendanceHistory: builder.query<AttendanceRecord[], StudentHistoryParams>({
             query: ({ studentId, limit = 30 }) =>
                 `/dashboard/attendance/student-history/${studentId}?limit=${limit}`,
-            transformResponse: (response: any) => response.data || [],
+            transformResponse: (response: ApiResponse<AttendanceRecord[]>) => response.data || [],
             providesTags: ['Attendance'],
         }),
 
         // Mark single attendance
-        markAttendance: builder.mutation({
+        markAttendance: builder.mutation<ApiResponse<AttendanceRecord>, MarkAttendanceInput>({
             query: (data) => ({
                 url: '/dashboard/attendance/mark-attendance',
                 method: 'POST',
@@ -100,7 +81,7 @@ export const attendanceApi = api.injectEndpoints({
         }),
 
         // Mark bulk attendance for multiple students
-        markBulkAttendance: builder.mutation<any, BulkAttendanceInput>({
+        markBulkAttendance: builder.mutation<ApiResponse<AttendanceRecord[]>, BulkAttendanceInput>({
             query: (data) => ({
                 url: '/dashboard/attendance/mark-bulk',
                 method: 'POST',
@@ -110,7 +91,7 @@ export const attendanceApi = api.injectEndpoints({
         }),
 
         // Update attendance record
-        updateAttendance: builder.mutation<any, { id: number; status: 'PRESENT' | 'ABSENT' }>({
+        updateAttendance: builder.mutation<ApiResponse<AttendanceRecord>, UpdateAttendanceInput>({
             query: ({ id, status }) => ({
                 url: `/dashboard/attendance/update/${id}`,
                 method: 'PUT',
@@ -120,21 +101,27 @@ export const attendanceApi = api.injectEndpoints({
         }),
 
         // Generate attendance report
-        getAttendanceReport: builder.query<AttendanceReport, { batchId: number; startDate: string; endDate: string }>({
+        getAttendanceReport: builder.query<AttendanceReport, AttendanceReportParams>({
             query: ({ batchId, startDate, endDate }) =>
                 `/dashboard/attendance/report/${batchId}?startDate=${startDate}&endDate=${endDate}`,
-            transformResponse: (response: any) => response.data,
+            transformResponse: (response: ApiResponse<AttendanceReport>) => response.data!,
             providesTags: ['Attendance'],
         }),
 
         // Generate QR code for batch
         generateQRCode: builder.query<QRCodeData, number>({
             query: (batchId) => `/dashboard/attendance/qr/generate/${batchId}`,
-            transformResponse: (response: any) => response.data,
+            transformResponse: (response: ApiResponse<QRCodeData>) => response.data!,
+        }),
+
+        // Get QR code status for batch
+        getQRCodeStatus: builder.query<QRCodeStatusData, number>({
+            query: (batchId) => `/dashboard/attendance/qr/status/${batchId}`,
+            transformResponse: (response: ApiResponse<QRCodeStatusData>) => response.data!,
         }),
 
         // Mark attendance via QR code
-        markQRAttendance: builder.mutation<any, { studentId: number; qrData: string }>({
+        markQRAttendance: builder.mutation<ApiResponse<AttendanceRecord>, MarkQRAttendanceInput>({
             query: (data) => ({
                 url: '/dashboard/attendance/qr/mark',
                 method: 'POST',
@@ -156,5 +143,6 @@ export const {
     useGetAttendanceReportQuery,
     useLazyGenerateQRCodeQuery,
     useGenerateQRCodeQuery,
+    useGetQRCodeStatusQuery,
     useMarkQRAttendanceMutation,
 } = attendanceApi;

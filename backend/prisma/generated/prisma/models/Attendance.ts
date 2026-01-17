@@ -673,10 +673,6 @@ export type AttendanceUncheckedUpdateManyWithoutAttendanceSheetNestedInput = {
   deleteMany?: Prisma.AttendanceScalarWhereInput | Prisma.AttendanceScalarWhereInput[]
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
 export type EnumAttendanceMethodFieldUpdateOperationsInput = {
   set?: $Enums.AttendanceMethod
 }

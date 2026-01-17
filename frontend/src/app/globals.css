@@ -1,120 +1,166 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  
+  /* Vercel Geist Palette */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-md: 0.375rem; /* 6px */
+  --radius-sm: 0.125rem; /* 2px */
+
+  /* Geist Typography */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --animate-fade-in: fadeIn 0.2s ease-in-out;
+  --animate-shimmer: shimmer 1s linear infinite;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
 }
 
 :root {
-  --background: #f8fafc; /* Slate 50 */
-  --foreground: #0f172a; /* Slate 900 */
-
-  /* Indigo Primary */
-  --primary: #4f46e5; /* Indigo 600 */
-  --primary-foreground: #ffffff;
-
-  /* Teal/Green Secondary */
-  --secondary: #0d9488; /* Teal 600 */
-  --secondary-foreground: #ffffff;
-
-  /* Soft Orange Accent */
-  --accent: #f97316; /* Orange 500 */
-  --accent-foreground: #ffffff;
-
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-
-  --muted: #f1f5f9; /* Slate 100 */
-  --muted-foreground: #64748b; /* Slate 500 */
-
-  --destructive: #ef4444; /* Red 500 */
-  --destructive-foreground: #ffffff;
-
-  --border: #e2e8f0; /* Slate 200 */
-  --input: #e2e8f0;
-  --ring: #4f46e5;
-
-  --radius: 0.75rem; /* 12px */
+  /* Geist Light Config */
+  --background: 0 0% 100%;       /* #ffffff */
+  --foreground: 0 0% 0%;         /* #000000 */
+  
+  --card: 0 0% 100%;             /* #ffffff */
+  --card-foreground: 0 0% 0%;    /* #000000 */
+  
+  --popover: 0 0% 100%;          /* #ffffff */
+  --popover-foreground: 0 0% 0%; /* #000000 */
+  
+  --primary: 0 0% 0%;            /* #000000 */
+  --primary-foreground: 0 0% 100%; /* #ffffff */
+  
+  --secondary: 0 0% 98%;         /* #fafafa */
+  --secondary-foreground: 0 0% 0%; /* #000000 */
+  
+  --muted: 0 0% 96%;             /* #f5f5f5 */
+  --muted-foreground: 0 0% 45%;  /* #737373 (Gray 5/6 approx) */
+  
+  --accent: 0 0% 96%;            /* #f5f5f5 */
+  --accent-foreground: 0 0% 0%;  /* #000000 */
+  
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  
+  --border: 0 0% 92%;            /* #ebebeb */
+  --input: 0 0% 92%;             /* #ebebeb */
+  --ring: 0 0% 0%;               /* #000000 */
+  
+  --radius: 0.375rem;            /* 6px */
 }
 
 .dark {
-  --background: #0f172a; /* Slate 900 */
-  --foreground: #f8fafc; /* Slate 50 */
-
-  --primary: #6366f1; /* Indigo 500 */
-  --primary-foreground: #ffffff;
-
-  --secondary: #14b8a6; /* Teal 500 */
-  --secondary-foreground: #ffffff;
-
-  --accent: #fb923c; /* Orange 400 */
-  --accent-foreground: #ffffff;
-
-  --card: #1e293b; /* Slate 800 */
-  --card-foreground: #f8fafc;
-
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
-
-  --muted: #334155; /* Slate 700 */
-  --muted-foreground: #94a3b8; /* Slate 400 */
-
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-
-  --border: #334155;
-  --input: #334155;
-  --ring: #6366f1;
+  /* Geist Dark Config */
+  --background: 0 0% 0%;         /* #000000 */
+  --foreground: 0 0% 93%;        /* #ededed */
+  
+  --card: 0 0% 4%;               /* #0a0a0a (Cards/Modals surface) */
+  --card-foreground: 0 0% 93%;   /* #ededed */
+  
+  --popover: 0 0% 4%;            /* #0a0a0a */
+  --popover-foreground: 0 0% 93%;/* #ededed */
+  
+  --primary: 0 0% 100%;          /* #ffffff */
+  --primary-foreground: 0 0% 0%; /* #000000 */
+  
+  --secondary: 0 0% 10%;         /* #1a1a1a */
+  --secondary-foreground: 0 0% 100%; /* #ffffff */
+  
+  --muted: 0 0% 12%;             /* #1f1f1f */
+  --muted-foreground: 0 0% 60%;  /* #999999 */
+  
+  --accent: 0 0% 12%;            /* #1f1f1f */
+  --accent-foreground: 0 0% 100%;/* #ffffff */
+  
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 93%;
+  
+  --border: 0 0% 20%;            /* #333333 */
+  --input: 0 0% 20%;             /* #333333 */
+  --ring: 0 0% 100%;             /* #ffffff */
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground tracking-tight selection:bg-foreground selection:text-background;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold;
+  }
 }
 
-/* Custom Scrollbar */
+@layer utilities {
+  .card-vercel {
+    @apply bg-card border border-border rounded-lg p-6 transition-colors hover:border-foreground/20;
+  }
+
+  /* Geist Modal */
+  .dialog-vercel {
+    @apply bg-card border border-border shadow-2xl sm:rounded-xl;
+  }
+  
+  .dialog-overlay-vercel {
+    @apply bg-background/50 backdrop-blur-[2px];
+  }
+
+  .text-muted-vercel {
+    @apply text-muted-foreground text-sm leading-relaxed;
+  }
+
+  .skeleton-vercel {
+    @apply bg-muted relative overflow-hidden rounded-md;
+  }
+  .skeleton-vercel::after {
+    content: "";
+    @apply absolute inset-0 -translate-x-full animate-shimmer;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  }
+}
+
+/* Slim Scrollbar matching darker themes */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--muted-foreground);
-  opacity: 0.5;
-  border-radius: 4px;
+  @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--muted-foreground);
-  opacity: 0.8;
-}
+
+
+
