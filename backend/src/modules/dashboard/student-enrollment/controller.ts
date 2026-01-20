@@ -350,6 +350,55 @@ export default class StudentEnrollmentController {
     }
   }
 
+  /**
+   * Get all soft-deleted students
+   * GET /student-enrollment/deleted
+   */
+  public async getDeleted(req: Request, res: Response) {
+    try {
+      const students = await studentEnrollmentService.getDeleted();
+      return res.status(200).json({ success: true, data: students });
+    } catch (error: any) {
+      logger.error("StudentEnrollment.getDeleted error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to fetch deleted students: ${error.message}`,
+      });
+    }
+  }
+
+  /**
+   * Restore soft-deleted students
+   * PUT /student-enrollment/restore
+   */
+  public async restore(req: Request, res: Response) {
+    try {
+      const { ids } = req.body;
+
+      if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "ids array is required",
+        });
+      }
+
+      const result = await studentEnrollmentService.restore(ids);
+      logger.info(`Students restored: ${ids.join(", ")}`);
+
+      return res.status(200).json({
+        success: true,
+        message: `${result.restored} students restored`,
+        data: result,
+      });
+    } catch (error: any) {
+      logger.error("StudentEnrollment.restore error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Restore failed: ${error.message}`,
+      });
+    }
+  }
+
   // =====================
   // DANGER ZONE - HARD DELETE OPERATIONS
   // =====================

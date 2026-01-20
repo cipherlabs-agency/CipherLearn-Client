@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { User } from "../../../../prisma/generated/prisma/client";
 import FeesService from "./service";
+import { generateReceiptPDF } from "./pdf.service";
 import logger from "../../../utils/logger";
 import {
   validate,
@@ -468,6 +469,53 @@ export default class FeesController {
       return res.status(500).json({
         success: false,
         message: `Failed to get student summary: ${err.message}`,
+      });
+    }
+  }
+
+  // ============================================
+  // PDF Generation
+  // ============================================
+
+  /**
+   * Download receipt as PDF
+   * GET /fees/receipts/:id/pdf
+   */
+  public async downloadReceiptPDF(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id, 10);
+
+      if (isNaN(id)) {
+        return res.status(400).json({ success: false, message: "Invalid ID" });
+      }
+
+      const receipt = await feesService.getReceiptById(id);
+
+      // Generate PDF
+      const doc = generateReceiptPDF(receipt);
+
+      // Set response headers
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="Receipt-${receipt.receiptNumber}.pdf"`
+      );
+
+      // Pipe PDF to response
+      doc.pipe(res);
+      doc.end();
+
+      logger.info(`PDF generated for receipt: ${receipt.receiptNumber}`);
+    } catch (err: any) {
+      logger.error("FeesController.downloadReceiptPDF error:", err);
+
+      if (err.message.includes("not found")) {
+        return res.status(404).json({ success: false, message: err.message });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: `Failed to generate PDF: ${err.message}`,
       });
     }
   }

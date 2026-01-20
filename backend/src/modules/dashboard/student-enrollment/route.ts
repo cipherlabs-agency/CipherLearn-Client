@@ -71,6 +71,16 @@ router.get("/students", controller.getAll.bind(controller));
 router.get("/students/:id", controller.getAll.bind(controller));
 
 // =====================
+// DELETED STUDENTS & RESTORE (Admin only)
+// =====================
+
+// Get all soft-deleted students
+router.get("/deleted", isAdmin, controller.getDeleted.bind(controller));
+
+// Restore soft-deleted students
+router.put("/restore", isAdmin, controller.restore.bind(controller));
+
+// =====================
 // DANGER ZONE - HARD DELETE (Admin only)
 // =====================
 

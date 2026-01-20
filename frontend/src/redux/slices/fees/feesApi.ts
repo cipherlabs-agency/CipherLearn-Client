@@ -113,7 +113,13 @@ export const feesApi = api.injectEndpoints({
                 method: 'POST',
                 body: data,
             }),
-            transformResponse: (response: BulkCreateResponse) => response.data,
+            transformResponse: (response: any) => {
+                // Handle various response structures robustly
+                if (response?.data) return response.data;
+                if (response?.result) return response.result;
+                if (typeof response?.created === 'number') return response;
+                return response;
+            },
             invalidatesTags: ['Fees'],
         }),
 

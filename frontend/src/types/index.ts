@@ -67,7 +67,7 @@ export interface Batch {
     id: number;
     name: string;
     timings: BatchTimings;
-    totalStudents: BatchTotalStudents;
+    totalStudents: BatchTotalStudents | number;
     isDeleted: boolean;
     deletedBy: number | null;
     createdAt: string;

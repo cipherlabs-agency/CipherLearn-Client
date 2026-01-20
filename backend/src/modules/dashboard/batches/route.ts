@@ -23,6 +23,7 @@ router.get("/", controller.getAll.bind(controller));
 router.get("/drafts", isAdmin, controller.getDrafts.bind(controller));
 router.get("/:id", controller.get.bind(controller));
 router.put("/draft", isAdmin, controller.draft.bind(controller));
+router.put("/restore", isAdmin, controller.restore.bind(controller));
 router.delete("/", isAdmin, controller.delete.bind(controller));
 
 // =====================

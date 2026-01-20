@@ -133,6 +133,25 @@ export const studentsApi = api.injectEndpoints({
             providesTags: ['Students'],
         }),
 
+        // Get soft-deleted students
+        getDeletedStudents: builder.query<Student[], void>({
+            query: () => '/dashboard/student-enrollment/deleted',
+            transformResponse: (response: ApiResponse<Student[]>): Student[] => {
+                return response.data || [];
+            },
+            providesTags: ['Students'],
+        }),
+
+        // Restore soft-deleted students
+        restoreStudents: builder.mutation<ApiResponse<{ restored: number }>, number[]>({
+            query: (ids) => ({
+                url: '/dashboard/student-enrollment/restore',
+                method: 'PUT',
+                body: { ids },
+            }),
+            invalidatesTags: ['Students', 'Dashboard', 'Batches'],
+        }),
+
         // DANGER ZONE - Hard Delete Operations
         hardDeleteStudent: builder.mutation<ApiResponse<void>, number>({
             query: (id) => ({
@@ -171,6 +190,8 @@ export const {
     useImportCSVMutation,
     useLazyDownloadCSVTemplateQuery,
     useGetMyStudentProfileQuery,
+    useGetDeletedStudentsQuery,
+    useRestoreStudentsMutation,
     useHardDeleteStudentMutation,
     useHardDeleteManyStudentsMutation,
     usePurgeDeletedStudentsMutation,

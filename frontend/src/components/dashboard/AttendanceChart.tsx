@@ -61,7 +61,17 @@ export function AttendanceChart() {
                 <div className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.2} />
+                            <defs>
+                                <linearGradient id="presentGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="hsl(142.1 76.2% 36.3%)" stopOpacity={1} />
+                                    <stop offset="100%" stopColor="hsl(142.1 76.2% 36.3%)" stopOpacity={0.6} />
+                                </linearGradient>
+                                <linearGradient id="absentGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="var(--muted-foreground)" stopOpacity={0.4} />
+                                    <stop offset="100%" stopColor="var(--muted-foreground)" stopOpacity={0.1} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.2} vertical={false} />
                             <XAxis
                                 dataKey="name"
                                 tick={{ fontSize: 9, fill: 'var(--muted-foreground)', fontWeight: 500 }}
@@ -70,7 +80,7 @@ export function AttendanceChart() {
                             />
                             <YAxis
                                 tick={{ fontSize: 9, fill: 'var(--muted-foreground)', fontWeight: 500 }}
-                                axisLine={{ stroke: 'var(--border)', opacity: 0.5 }}
+                                axisLine={false}
                                 tickLine={false}
                             />
                             <Tooltip
@@ -85,19 +95,19 @@ export function AttendanceChart() {
                                 }}
                                 labelStyle={{ fontWeight: 'bold', marginBottom: '4px', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '0.05em' }}
                             />
-                            <Bar dataKey="present" fill="var(--foreground)" radius={[2, 2, 0, 0]} name="Present" barSize={12} />
-                            <Bar dataKey="absent" fill="var(--muted-foreground)" opacity={0.2} radius={[2, 2, 0, 0]} name="Absent" barSize={12} />
+                            <Bar dataKey="present" fill="url(#presentGradient)" radius={[4, 4, 0, 0]} name="Present" barSize={14} />
+                            <Bar dataKey="absent" fill="url(#absentGradient)" radius={[4, 4, 0, 0]} name="Absent" barSize={14} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
                 <div className="flex items-center justify-center gap-6 pt-6 border-t border-border/40 mt-6">
                     <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-foreground" />
-                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest opacity-60">Present</span>
+                        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest opacity-70">Present</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/30" />
-                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest opacity-60">Absent</span>
+                        <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest opacity-70">Absent</span>
                     </div>
                 </div>
             </CardContent>

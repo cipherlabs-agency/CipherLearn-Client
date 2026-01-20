@@ -409,6 +409,49 @@ export default class StudentEnrollmentService {
     }
   }
 
+  /**
+   * Get all soft-deleted students
+   */
+  public async getDeleted(): Promise<Student[]> {
+    try {
+      const students = await prisma.student.findMany({
+        where: { isDeleted: true },
+        include: {
+          batch: {
+            select: { id: true, name: true },
+          },
+        },
+        orderBy: { updatedAt: "desc" },
+      });
+
+      return students;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Restore soft-deleted students
+   */
+  public async restore(ids: number[]): Promise<{ restored: number }> {
+    try {
+      const result = await prisma.student.updateMany({
+        where: {
+          id: { in: ids },
+          isDeleted: true,
+        },
+        data: {
+          isDeleted: false,
+          deletedBy: null,
+        },
+      });
+
+      return { restored: result.count };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // =====================
   // DANGER ZONE - HARD DELETE OPERATIONS
   // =====================

@@ -24,6 +24,7 @@ router.post("/receipts/bulk", isAdmin, controller.bulkCreateReceipts.bind(contro
 router.get("/receipts", isAdmin, controller.getReceipts.bind(controller));
 router.get("/receipts/summary", isAdmin, controller.getReceiptsSummary.bind(controller));
 router.get("/receipts/:id", isAdmin, controller.getReceiptById.bind(controller));
+router.get("/receipts/:id/pdf", isAdmin, controller.downloadReceiptPDF.bind(controller));
 router.put("/receipts/:id", isAdmin, controller.updateReceipt.bind(controller));
 router.delete("/receipts/:id", isAdmin, controller.deleteReceipt.bind(controller));
 

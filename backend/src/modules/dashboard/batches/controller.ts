@@ -128,12 +128,37 @@ export default class BatchController {
   public async getDrafts(req: Request, res: Response) {
     try {
       const drafts = await batchService.getDrafts();
-      return res.status(200).json({ success: true, drafts });
+      return res.status(200).json({ success: true, batches: drafts });
     } catch (error) {
       logger.error("Batch.getDrafts error:", error);
       return res
         .status(500)
         .json({ success: false, message: `Get drafts failed: ${error}` });
+    }
+  }
+
+  /**
+   * Restore soft-deleted batches
+   * PUT /batches/restore
+   */
+  public async restore(req: Request, res: Response) {
+    try {
+      const ids = (req.body.ids || []) as number[];
+      if (!Array.isArray(ids) || ids.length === 0)
+        return res
+          .status(400)
+          .json({ success: false, message: "ids array is required" });
+
+      const result = await batchService.restore(ids);
+      logger.info(`Batches restored: ${ids.join(", ")}`);
+      return res
+        .status(200)
+        .json({ success: true, message: "Batches restored", data: result });
+    } catch (error) {
+      logger.error("Batch.restore error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: `Restore failed: ${error}` });
     }
   }
 

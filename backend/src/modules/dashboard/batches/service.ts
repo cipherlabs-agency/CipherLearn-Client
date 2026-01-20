@@ -102,6 +102,28 @@ export default class BatchService {
     }
   }
 
+  /**
+   * Restore soft-deleted batches
+   */
+  async restore(ids: number[]): Promise<{ restored: number }> {
+    try {
+      const result = await prisma.batch.updateMany({
+        where: {
+          id: { in: ids },
+          isDeleted: true,
+        },
+        data: {
+          isDeleted: false,
+          deletedBy: null,
+        },
+      });
+
+      return { restored: result.count };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async delete(ids: number[]) {
     try {
       const deleted = await prisma.batch.deleteMany({

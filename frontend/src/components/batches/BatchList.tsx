@@ -129,7 +129,7 @@ export const BatchList: FC = () => {
                                     <span>Deployment</span>
                                 </div>
                                 <span className="font-bold tabular-nums text-foreground/80">
-                                    {batch.totalStudents?.enrolled ?? 0} <span className="text-muted-foreground/40 font-medium">/</span> {batch.totalStudents?.capacity ?? 0}
+                                    {typeof batch.totalStudents === 'object' ? batch.totalStudents?.enrolled ?? 0 : 0} <span className="text-muted-foreground/40 font-medium">/</span> {typeof batch.totalStudents === 'object' ? batch.totalStudents?.capacity ?? 0 : batch.totalStudents ?? 0}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between text-[11px]">

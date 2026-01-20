@@ -115,6 +115,16 @@ export const batchesApi = api.injectEndpoints({
             providesTags: ['Batches'],
         }),
 
+        // Restore soft-deleted batches
+        restoreBatches: builder.mutation<ApiResponse<{ restored: number }>, number[]>({
+            query: (ids) => ({
+                url: '/dashboard/batches/restore',
+                method: 'PUT',
+                body: { ids },
+            }),
+            invalidatesTags: ['Batches', 'Dashboard'],
+        }),
+
         // DANGER ZONE - Hard Delete Operations
         hardDeleteBatch: builder.mutation<ApiResponse<{ batchName: string; deletedStudents: number; deletedAttendance: number }>, number>({
             query: (id) => ({
@@ -143,6 +153,7 @@ export const {
     useDeleteBatchesMutation,
     useDraftBatchMutation,
     useGetDraftBatchesQuery,
+    useRestoreBatchesMutation,
     useHardDeleteBatchMutation,
     usePurgeDeletedBatchesMutation,
 } = batchesApi;
