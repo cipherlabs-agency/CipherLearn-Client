@@ -458,3 +458,189 @@ export interface CSVImportResult {
     errors: CSVError[];
     imported: Student[];
 }
+
+// ============================================
+// Fee Management Types
+// ============================================
+
+export type PaymentStatus = 'PAID' | 'PARTIAL' | 'PENDING' | 'OVERDUE';
+export type PaymentMode = 'CASH' | 'UPI' | 'BANK_TRANSFER' | 'CHEQUE' | 'ONLINE';
+export type FeeFrequency = 'MONTHLY' | 'QUARTERLY' | 'SEMI_ANNUAL' | 'ANNUAL' | 'ONE_TIME';
+
+export interface FeeStructure {
+    id: number;
+    batchId: number;
+    name: string;
+    amount: number;
+    frequency: FeeFrequency;
+    dueDay: number;
+    lateFee: number;
+    gracePeriod: number;
+    isActive: boolean;
+    description: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface FeeReceipt {
+    id: number;
+    receiptNumber: string;
+    studentId: number;
+    batchId: number;
+    feeStructureId: number | null;
+    student: {
+        id: number;
+        fullname: string;
+        email: string;
+    };
+    batch: {
+        id: number;
+        name: string;
+    };
+    feeStructure?: {
+        id: number;
+        name: string;
+    } | null;
+    totalAmount: number;
+    paidAmount: number;
+    discountAmount: number;
+    lateFeeAmount: number;
+    remainingAmount: number;
+    paymentMode: PaymentMode | null;
+    transactionId: string | null;
+    chequeNumber: string | null;
+    bankName: string | null;
+    paymentNotes: string | null;
+    academicMonth: number;
+    academicYear: number;
+    status: PaymentStatus;
+    dueDate: string;
+    paymentDate: string | null;
+    generatedBy: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface CreateFeeStructureInput {
+    batchId: number;
+    name: string;
+    amount: number;
+    frequency?: FeeFrequency;
+    dueDay?: number;
+    lateFee?: number;
+    gracePeriod?: number;
+    description?: string;
+}
+
+export interface UpdateFeeStructureInput {
+    name?: string;
+    amount?: number;
+    frequency?: FeeFrequency;
+    dueDay?: number;
+    lateFee?: number;
+    gracePeriod?: number;
+    isActive?: boolean;
+    description?: string;
+}
+
+export interface CreateFeeReceiptInput {
+    studentId: number;
+    batchId: number;
+    feeStructureId?: number;
+    totalAmount: number;
+    paidAmount?: number;
+    discountAmount?: number;
+    lateFeeAmount?: number;
+    paymentMode?: PaymentMode;
+    transactionId?: string;
+    chequeNumber?: string;
+    bankName?: string;
+    paymentNotes?: string;
+    academicMonth: number;
+    academicYear: number;
+    dueDate: string;
+    paymentDate?: string;
+}
+
+export interface UpdateFeeReceiptInput {
+    paidAmount?: number;
+    discountAmount?: number;
+    lateFeeAmount?: number;
+    paymentMode?: PaymentMode;
+    transactionId?: string;
+    chequeNumber?: string;
+    bankName?: string;
+    paymentNotes?: string;
+    dueDate?: string;
+    paymentDate?: string;
+    status?: PaymentStatus;
+}
+
+export interface BulkCreateReceiptsInput {
+    batchId: number;
+    feeStructureId?: number;
+    academicMonth: number;
+    academicYear: number;
+    dueDate: string;
+    studentIds?: number[];
+}
+
+export interface BulkCreateResult {
+    total: number;
+    created: number;
+    skipped: number;
+    errors: string[];
+}
+
+export interface FeeReceiptFilters {
+    batchId?: number;
+    studentId?: number;
+    status?: PaymentStatus;
+    academicMonth?: number;
+    academicYear?: number;
+    startDate?: string;
+    endDate?: string;
+    paymentMode?: PaymentMode;
+    page?: number;
+    limit?: number;
+}
+
+export interface FeeReceiptSummary {
+    totalReceipts: number;
+    totalAmount: number;
+    paidAmount: number;
+    pendingAmount: number;
+    overdueAmount: number;
+    byStatus: {
+        paid: number;
+        partial: number;
+        pending: number;
+        overdue: number;
+    };
+    byMonth: {
+        month: number;
+        year: number;
+        totalAmount: number;
+        collectedAmount: number;
+        pendingAmount: number;
+    }[];
+}
+
+export interface StudentFeesSummary {
+    studentId: number;
+    studentName: string;
+    email: string;
+    batchName: string;
+    totalDue: number;
+    totalPaid: number;
+    totalPending: number;
+    overdueReceipts: number;
+    lastPaymentDate?: string;
+}
+
+export interface FeesApiResponse<T> {
+    success: boolean;
+    message?: string;
+    data: T;
+    pagination?: PaginationInfo;
+}

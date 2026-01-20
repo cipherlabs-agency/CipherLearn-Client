@@ -132,6 +132,32 @@ export const studentsApi = api.injectEndpoints({
             },
             providesTags: ['Students'],
         }),
+
+        // DANGER ZONE - Hard Delete Operations
+        hardDeleteStudent: builder.mutation<ApiResponse<void>, number>({
+            query: (id) => ({
+                url: `/dashboard/student-enrollment/hard-delete/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Students', 'Dashboard', 'Batches', 'Attendance'],
+        }),
+
+        hardDeleteManyStudents: builder.mutation<ApiResponse<{ deleted: number }>, number[]>({
+            query: (ids) => ({
+                url: '/dashboard/student-enrollment/hard-delete-many',
+                method: 'DELETE',
+                body: { ids },
+            }),
+            invalidatesTags: ['Students', 'Dashboard', 'Batches', 'Attendance'],
+        }),
+
+        purgeDeletedStudents: builder.mutation<ApiResponse<{ deleted: number }>, void>({
+            query: () => ({
+                url: '/dashboard/student-enrollment/purge-deleted',
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Students', 'Dashboard', 'Batches', 'Attendance'],
+        }),
     }),
 });
 
@@ -145,4 +171,7 @@ export const {
     useImportCSVMutation,
     useLazyDownloadCSVTemplateQuery,
     useGetMyStudentProfileQuery,
+    useHardDeleteStudentMutation,
+    useHardDeleteManyStudentsMutation,
+    usePurgeDeletedStudentsMutation,
 } = studentsApi;

@@ -45,6 +45,7 @@ model Student {
   createdAt   DateTime?           @default(now())
   attendances Attendance[]
   submissions StudentSubmission[]
+  feeReceipts FeeReceipt[]
 
   @@index([batchId])
   @@map("students")
@@ -63,6 +64,8 @@ model Batch {
   qrAttendanceTokens QRAttendanceToken[]
   assignmentSlots    AssignmentSlot[]
   studyMaterials     StudyMaterial[]
+  feeStructures      FeeStructure[]
+  feeReceipts        FeeReceipt[]
 
   updatedAt   DateTime?    @updatedAt
   createdAt   DateTime?    @default(now())
@@ -268,4 +271,106 @@ enum YoutubeVideoVisibility {
   PUBLIC
   PRIVATE
   UNLISTED
+}
+
+// ============================================
+// Fee Management Enums & Models
+// ============================================
+
+enum PaymentStatus {
+  PAID
+  PARTIAL
+  PENDING
+  OVERDUE
+}
+
+enum PaymentMode {
+  CASH
+  UPI
+  BANK_TRANSFER
+  CHEQUE
+  ONLINE
+}
+
+enum FeeFrequency {
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+  ONE_TIME
+}
+
+model FeeStructure {
+  id          Int          @id @default(autoincrement())
+  batchId     Int
+  batch       Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  name        String       // e.g., "Monthly Tuition Fee", "Lab Fee"
+  amount      Float
+  frequency   FeeFrequency @default(MONTHLY)
+  dueDay      Int          @default(5) // Day of month when fee is due
+  lateFee     Float        @default(0)
+  gracePeriod Int          @default(5) // Days after due date before late fee applies
+  isActive    Boolean      @default(true)
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  receipts FeeReceipt[]
+
+  @@unique([batchId, name])
+  @@index([batchId])
+  @@map("fee_structures")
+}
+
+model FeeReceipt {
+  id              Int           @id @default(autoincrement())
+  receiptNumber   String        @unique // Format: RCP-YYYY-NNNNN
+  studentId       Int
+  student         Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  batchId         Int
+  batch           Batch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  feeStructureId  Int?
+  feeStructure    FeeStructure? @relation(fields: [feeStructureId], references: [id], onDelete: SetNull)
+
+  // Amount Details
+  totalAmount     Float
+  paidAmount      Float         @default(0)
+  discountAmount  Float         @default(0)
+  lateFeeAmount   Float         @default(0)
+  remainingAmount Float         @default(0) // Computed: totalAmount - paidAmount - discountAmount + lateFeeAmount
+
+  // Payment Details
+  paymentMode     PaymentMode?
+  transactionId   String?       // For digital payments
+  chequeNumber    String?
+  bankName        String?
+  paymentNotes    String?
+
+  // Period
+  academicMonth   Int           // 1-12
+  academicYear    Int           // e.g., 2024
+
+  // Status
+  status          PaymentStatus @default(PENDING)
+
+  // Dates
+  dueDate         DateTime
+  paymentDate     DateTime?
+
+  // Audit
+  generatedBy     String        // Admin who generated
+  generatedById   Int?
+  modifiedBy      String?
+  modifiedById    Int?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([studentId])
+  @@index([batchId])
+  @@index([status])
+  @@index([academicMonth, academicYear])
+  @@index([dueDate])
+  @@map("fee_receipts")
 }

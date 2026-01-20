@@ -3,7 +3,7 @@
 		"_postman_id": "cipherlearn-api-v1.0.1",
 		"name": "CipherLearn API v1.0.1",
 		"version": "1.0.1",
-		"description": "Comprehensive API collection for CipherLearn - Learning Management System.\n\nThis collection includes all endpoints for:\n- Authentication (Login, Signup, Logout)\n- Batches Management (CRUD + Danger Zone)\n- Student Enrollment (Single & CSV Import + Danger Zone)\n- Attendance (Manual, QR, Reports)\n- YouTube Videos (CRUD)\n- Notes (CRUD with file uploads)\n- Analytics Dashboard (Stats, Trends, Distribution)\n\n**New in v1.0.1:**\n- Dashboard Analytics APIs (stats, enrollment trends, attendance trends)\n- Batch Distribution & Recent Activities\n- Danger Zone APIs for hard delete operations\n- Student Profile API for QR attendance\n\n**Setup:**\n1. Import this collection into Postman\n2. Create environment with baseUrl = http://localhost:5000/api\n3. Run the Login request first to auto-set the authToken\n\n**Base URL:** http://localhost:5000/api",
+		"description": "Comprehensive API collection for CipherLearn - Learning Management System.\n\nThis collection includes all endpoints for:\n- Authentication (Login, Signup, Logout)\n- Batches Management (CRUD + Danger Zone)\n- Student Enrollment (Single & CSV Import + Danger Zone)\n- Attendance (Manual, QR, Reports)\n- Fees Management (Structures, Receipts, Summaries)\n- YouTube Videos (CRUD)\n- Notes (CRUD with file uploads)\n- Analytics Dashboard (Stats, Trends, Distribution)\n\n**New in v1.0.1:**\n- Dashboard Analytics APIs (stats, enrollment trends, attendance trends)\n- Batch Distribution & Recent Activities\n- Danger Zone APIs for hard delete operations\n- Student Profile API for QR attendance\n- Fees Management System (Fee Structures, Receipts, Bulk Creation)\n\n**Setup:**\n1. Import this collection into Postman\n2. Create environment with baseUrl = http://localhost:5000/api\n3. Run the Login request first to auto-set the authToken\n\n**Base URL:** http://localhost:5000/api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -1190,6 +1190,387 @@
 						"description": "Soft delete a note"
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fees",
+			"description": "Fee management including fee structures, receipts, and summaries",
+			"item": [
+				{
+					"name": "Fee Structures",
+					"description": "Fee structure configuration per batch (Admin only)",
+					"item": [
+						{
+							"name": "Create Fee Structure",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"batchId\": {{batchId}},\n    \"name\": \"Monthly Tuition Fee\",\n    \"amount\": 5000,\n    \"frequency\": \"MONTHLY\",\n    \"dueDay\": 5,\n    \"lateFee\": 100,\n    \"gracePeriod\": 7,\n    \"description\": \"Regular monthly tuition fee for the batch\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/structures",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "structures"]
+								},
+								"description": "Create a new fee structure for a batch.\n\n**Frequency options:** MONTHLY, QUARTERLY, SEMI_ANNUAL, ANNUAL, ONE_TIME\n\n**Required fields:**\n- batchId: Target batch ID\n- name: Fee structure name\n- amount: Fee amount\n- frequency: Payment frequency"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Fee Structures By Batch",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/structures/batch/{{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "structures", "batch", "{{batchId}}"]
+								},
+								"description": "Get all fee structures for a specific batch"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Fee Structure",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Monthly Fee\",\n    \"amount\": 5500,\n    \"lateFee\": 150,\n    \"isActive\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/structures/{{feeStructureId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "structures", "{{feeStructureId}}"]
+								},
+								"description": "Update an existing fee structure"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Fee Structure",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/structures/{{feeStructureId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "structures", "{{feeStructureId}}"]
+								},
+								"description": "Delete a fee structure"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Fee Receipts",
+					"description": "Fee receipt management (Admin only)",
+					"item": [
+						{
+							"name": "Create Fee Receipt",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if (jsonData.success && jsonData.data && jsonData.data.id) {",
+											"    pm.environment.set(\"receiptId\", jsonData.data.id);",
+											"    console.log(\"Receipt ID set: \" + jsonData.data.id);",
+											"}",
+											"",
+											"pm.test(\"Receipt created successfully\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"studentId\": {{studentId}},\n    \"batchId\": {{batchId}},\n    \"feeStructureId\": {{feeStructureId}},\n    \"totalAmount\": 5000,\n    \"paidAmount\": 5000,\n    \"discountAmount\": 0,\n    \"paymentMode\": \"UPI\",\n    \"transactionId\": \"TXN123456789\",\n    \"academicMonth\": 1,\n    \"academicYear\": 2024,\n    \"dueDate\": \"2024-01-05\",\n    \"paymentDate\": \"2024-01-03\",\n    \"paymentNotes\": \"Full payment received\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts"]
+								},
+								"description": "Create a single fee receipt.\n\n**Payment modes:** CASH, UPI, BANK_TRANSFER, CHEQUE, ONLINE\n\n**Status is auto-calculated:**\n- PAID: paidAmount >= totalAmount\n- PARTIAL: paidAmount > 0 but < totalAmount\n- PENDING: paidAmount = 0 and not overdue\n- OVERDUE: paidAmount < totalAmount and past due date"
+							},
+							"response": []
+						},
+						{
+							"name": "Bulk Create Receipts",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"batchId\": {{batchId}},\n    \"feeStructureId\": {{feeStructureId}},\n    \"academicMonth\": 1,\n    \"academicYear\": 2024,\n    \"dueDate\": \"2024-01-05\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/bulk",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "bulk"]
+								},
+								"description": "Bulk create fee receipts for all students in a batch.\n\nCreates PENDING receipts for each student who doesn't already have a receipt for the specified month/year."
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Receipts",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts?page=1&limit=20&batchId={{batchId}}&status=PENDING",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "batchId",
+											"value": "{{batchId}}",
+											"description": "Optional: filter by batch"
+										},
+										{
+											"key": "status",
+											"value": "PENDING",
+											"description": "Optional: PAID, PARTIAL, PENDING, OVERDUE"
+										}
+									]
+								},
+								"description": "Get all fee receipts with optional filters and pagination.\n\n**Available filters:**\n- batchId, studentId\n- status (PAID, PARTIAL, PENDING, OVERDUE)\n- academicMonth, academicYear\n- startDate, endDate\n- paymentMode"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Receipt By ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/{{receiptId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "{{receiptId}}"]
+								},
+								"description": "Get a specific fee receipt by ID with full details"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Receipt",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"paidAmount\": 5000,\n    \"paymentMode\": \"BANK_TRANSFER\",\n    \"transactionId\": \"BANK789456123\",\n    \"paymentDate\": \"2024-01-04\",\n    \"paymentNotes\": \"Payment updated via bank transfer\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/{{receiptId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "{{receiptId}}"]
+								},
+								"description": "Update a fee receipt. Status is auto-recalculated based on paid amount."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Receipt",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/{{receiptId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "{{receiptId}}"]
+								},
+								"description": "Delete a fee receipt"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Receipts Summary",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/summary?batchId={{batchId}}&academicYear=2024",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "summary"],
+									"query": [
+										{
+											"key": "batchId",
+											"value": "{{batchId}}",
+											"description": "Optional: filter by batch"
+										},
+										{
+											"key": "academicYear",
+											"value": "2024",
+											"description": "Optional: filter by year"
+										}
+									]
+								},
+								"description": "Get summary statistics for fee receipts.\n\n**Returns:**\n- Total, paid, pending, overdue amounts\n- Receipt counts by status\n- Total receipts count"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Student Fees",
+					"description": "Student-specific fee endpoints",
+					"item": [
+						{
+							"name": "Get Student Fees Summary (Admin)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/student/{{studentId}}/summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "student", "{{studentId}}", "summary"]
+								},
+								"description": "Get fee summary for a specific student (Admin only).\n\n**Returns:**\n- Total due, paid, pending amounts\n- Receipt counts (total, paid, pending, overdue)"
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Receipts (Student)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/my-receipts",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "my-receipts"]
+								},
+								"description": "Get fee receipts for the authenticated student.\n\n**Note:** Requires the authenticated user to have a linked student profile."
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Summary (Student)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/my-summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "my-summary"]
+								},
+								"description": "Get fee summary for the authenticated student.\n\n**Note:** Requires the authenticated user to have a linked student profile."
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

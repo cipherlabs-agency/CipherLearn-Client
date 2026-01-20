@@ -1,43 +1,80 @@
 @import "tailwindcss";
 
 @theme {
-  /* Vercel Geist Palette */
+  /* === GEIST COLOR SCALES === */
+  /* These map to the official Vercel Geist 10-step color system */
+  
+  /* Background colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
+  
+  /* Card/surface colors */
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  
+  /* Popover/dropdown colors */
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  
+  /* Primary action colors */
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  
+  /* Secondary action colors */
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  
+  /* Muted/subtle colors */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  
+  /* Accent colors */
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  
+  /* Destructive/error colors */
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  
+  /* Border colors */
   --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-border-active: var(--border-active);
+  
+  /* Input colors */
   --color-input: var(--input);
+  
+  /* Focus ring */
   --color-ring: var(--ring);
-
-  --radius-lg: 0.75rem; /* 12px */
-  --radius-md: 0.375rem; /* 6px */
-  --radius-sm: 0.125rem; /* 2px */
-
-  /* Geist Typography */
+  
+  /* Status colors - semantic (not monochrome) */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  
+  /* === GEIST BORDER RADIUS === */
+  --radius-lg: 0.5rem;   /* 8px - larger components */
+  --radius-md: 0.375rem; /* 6px - default */
+  --radius-sm: 0.25rem;  /* 4px - small components */
+  --radius-xs: 0.125rem; /* 2px - minimal */
+  --radius: var(--radius-md);
+  
+  /* === GEIST TYPOGRAPHY === */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-
-  --animate-fade-in: fadeIn 0.2s ease-in-out;
-  --animate-shimmer: shimmer 1s linear infinite;
-
+  
+  /* === ANIMATIONS === */
+  --animate-fade-in: fadeIn 0.15s ease-out;
+  --animate-shimmer: shimmer 2s linear infinite;
+  
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
+    from { opacity: 0; transform: translateY(2px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  
   @keyframes shimmer {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
@@ -45,122 +82,225 @@
 }
 
 :root {
-  /* Geist Light Config */
-  --background: 0 0% 100%;       /* #ffffff */
-  --foreground: 0 0% 0%;         /* #000000 */
+  /* === GEIST LIGHT MODE === */
   
-  --card: 0 0% 100%;             /* #ffffff */
-  --card-foreground: 0 0% 0%;    /* #000000 */
+  /* Backgrounds - Geist uses pure white for light mode */
+  --background: 0 0% 100%;        /* #ffffff - Background 1 (default) */
+  --foreground: 0 0% 0%;          /* #000000 - Primary text/icons (Color 10) */
   
-  --popover: 0 0% 100%;          /* #ffffff */
-  --popover-foreground: 0 0% 0%; /* #000000 */
+  /* Card/Modal surfaces use same as background in light mode */
+  --card: 0 0% 100%;              /* #ffffff */
+  --card-foreground: 0 0% 0%;     /* #000000 */
   
-  --primary: 0 0% 0%;            /* #000000 */
+  /* Popovers/Dropdowns */
+  --popover: 0 0% 100%;           /* #ffffff */
+  --popover-foreground: 0 0% 0%;  /* #000000 */
+  
+  /* Primary (Black in light, White in dark) */
+  --primary: 0 0% 0%;             /* #000000 */
   --primary-foreground: 0 0% 100%; /* #ffffff */
   
-  --secondary: 0 0% 98%;         /* #fafafa */
+  /* Secondary (Light gray bg) - Color 2 for hover states */
+  --secondary: 0 0% 98%;           /* #fafafa - Color 2 */
   --secondary-foreground: 0 0% 0%; /* #000000 */
   
-  --muted: 0 0% 96%;             /* #f5f5f5 */
-  --muted-foreground: 0 0% 45%;  /* #737373 (Gray 5/6 approx) */
+  /* Muted (Subtle backgrounds) - Color 3 for active/badges */
+  --muted: 0 0% 96%;               /* #f5f5f5 - Color 3 */
+  --muted-foreground: 0 0% 45.1%;  /* #737373 - Color 9 (secondary text) */
   
-  --accent: 0 0% 96%;            /* #f5f5f5 */
-  --accent-foreground: 0 0% 0%;  /* #000000 */
+  /* Accent (Interactive elements hover) */
+  --accent: 0 0% 96%;              /* #f5f5f5 */
+  --accent-foreground: 0 0% 0%;    /* #000000 */
   
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
+  /* Destructive (Error/danger) */
+  --destructive: 0 72% 51%;        /* #e5484d - Red for errors */
+  --destructive-foreground: 0 0% 100%;
   
-  --border: 0 0% 92%;            /* #ebebeb */
-  --input: 0 0% 92%;             /* #ebebeb */
-  --ring: 0 0% 0%;               /* #000000 */
+  /* Borders - Geist Color 4 (default), 5 (hover), 6 (active) */
+  --border: 0 0% 90%;              /* #e5e5e5 - Color 4 (default border) */
+  --border-hover: 0 0% 80%;        /* #cccccc - Color 5 (hover border) */
+  --border-active: 0 0% 70%;       /* #b3b3b3 - Color 6 (active/focus border) */
+  --input: 0 0% 90%;               /* #e5e5e5 */
   
-  --radius: 0.375rem;            /* 6px */
+  /* Focus ring */
+  --ring: 0 0% 0%;                 /* #000000 */
+  
+  /* Status colors (semantic - keep colorful) */
+  --success: 142 76% 36%;          /* #30a46c - Green */
+  --success-foreground: 0 0% 100%;
+  --warning: 37 92% 50%;           /* #f59f0b - Amber */
+  --warning-foreground: 0 0% 0%;
+  --info: 212 100% 48%;            /* #0091ff - Blue */
+  --info-foreground: 0 0% 100%;
 }
 
 .dark {
-  /* Geist Dark Config */
-  --background: 0 0% 0%;         /* #000000 */
-  --foreground: 0 0% 93%;        /* #ededed */
+  /* === GEIST DARK MODE === */
   
-  --card: 0 0% 4%;               /* #0a0a0a (Cards/Modals surface) */
-  --card-foreground: 0 0% 93%;   /* #ededed */
+  /* Backgrounds - Geist uses pure black for dark mode */
+  --background: 0 0% 0%;           /* #000000 - Background 1 */
+  --foreground: 0 0% 92.9%;        /* #ededed - Primary text (Color 10 dark) */
   
-  --popover: 0 0% 4%;            /* #0a0a0a */
-  --popover-foreground: 0 0% 93%;/* #ededed */
+  /* Card/Modal surfaces - slightly elevated from pure black */
+  --card: 0 0% 6.3%;               /* #101010 - Cards/modals surface */
+  --card-foreground: 0 0% 92.9%;   /* #ededed */
   
-  --primary: 0 0% 100%;          /* #ffffff */
-  --primary-foreground: 0 0% 0%; /* #000000 */
+  /* Popovers/Dropdowns */
+  --popover: 0 0% 6.3%;            /* #101010 */
+  --popover-foreground: 0 0% 92.9%; /* #ededed */
   
-  --secondary: 0 0% 10%;         /* #1a1a1a */
-  --secondary-foreground: 0 0% 100%; /* #ffffff */
+  /* Primary (White in dark mode) */
+  --primary: 0 0% 100%;            /* #ffffff */
+  --primary-foreground: 0 0% 0%;   /* #000000 */
   
-  --muted: 0 0% 12%;             /* #1f1f1f */
-  --muted-foreground: 0 0% 60%;  /* #999999 */
+  /* Secondary - Color 2 for dark mode */
+  --secondary: 0 0% 12.5%;         /* #202020 - Color 2 (hover bg) */
+  --secondary-foreground: 0 0% 100%;
   
-  --accent: 0 0% 12%;            /* #1f1f1f */
-  --accent-foreground: 0 0% 100%;/* #ffffff */
+  /* Muted - Color 3 for dark mode */
+  --muted: 0 0% 18.8%;             /* #303030 - Color 3 (active bg) */
+  --muted-foreground: 0 0% 60%;    /* #999999 - Color 9 (secondary text) */
   
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 93%;
+  /* Accent */
+  --accent: 0 0% 18.8%;            /* #303030 */
+  --accent-foreground: 0 0% 100%;
   
-  --border: 0 0% 20%;            /* #333333 */
-  --input: 0 0% 20%;             /* #333333 */
-  --ring: 0 0% 100%;             /* #ffffff */
+  /* Destructive */
+  --destructive: 0 62.8% 30.6%;    /* #e5484d darkened */
+  --destructive-foreground: 0 0% 92.9%;
+  
+  /* Borders - Geist dark mode borders */
+  --border: 0 0% 20%;              /* #333333 - Color 4 */
+  --border-hover: 0 0% 30%;        /* #4d4d4d - Color 5 */
+  --border-active: 0 0% 40%;       /* #666666 - Color 6 */
+  --input: 0 0% 20%;               /* #333333 */
+  
+  /* Focus ring */
+  --ring: 0 0% 100%;               /* #ffffff */
+  
+  /* Status colors (adjusted for dark mode) */
+  --success: 142 76% 42%;          /* Slightly brighter green for dark */
+  --success-foreground: 0 0% 0%;
+  --warning: 37 92% 55%;           /* Slightly brighter amber */
+  --warning-foreground: 0 0% 0%;
+  --info: 212 100% 55%;            /* Slightly brighter blue */
+  --info-foreground: 0 0% 0%;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground tracking-tight selection:bg-foreground selection:text-background;
+    @apply bg-background text-foreground;
     font-family: var(--font-sans);
+    font-feature-settings: 'rlig' 1, 'calt' 1;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
+  
+  /* Geist Typography Hierarchy */
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight font-bold;
+    @apply font-semibold tracking-tight;
   }
+  
+  h1 { @apply text-3xl; }      /* ~28px */
+  h2 { @apply text-2xl; }      /* ~24px */
+  h3 { @apply text-xl; }       /* ~20px */
+  h4 { @apply text-lg; }       /* ~18px */
+  h5 { @apply text-base; }     /* ~16px */
+  h6 { @apply text-sm; }       /* ~14px */
 }
 
 @layer utilities {
-  .card-vercel {
-    @apply bg-card border border-border rounded-lg p-6 transition-colors hover:border-foreground/20;
-  }
-
-  /* Geist Modal */
-  .dialog-vercel {
-    @apply bg-card border border-border shadow-2xl sm:rounded-xl;
+  /* Geist Card Utility */
+  .card-geist {
+    @apply bg-card border border-border rounded-lg shadow-sm transition-all duration-200;
   }
   
-  .dialog-overlay-vercel {
-    @apply bg-background/50 backdrop-blur-[2px];
+  .card-geist:hover {
+    @apply border-border-hover;
   }
-
-  .text-muted-vercel {
-    @apply text-muted-foreground text-sm leading-relaxed;
+  
+  /* Geist Modal/Dialog */
+  .dialog-geist {
+    @apply bg-card border border-border shadow-2xl rounded-xl;
   }
-
-  .skeleton-vercel {
+  
+  .dialog-overlay-geist {
+    @apply bg-background/80 backdrop-blur-sm;
+  }
+  
+  /* Text utilities */
+  .text-muted-geist {
+    @apply text-muted-foreground text-sm;
+  }
+  
+  /* Skeleton with Geist shimmer */
+  .skeleton-geist {
     @apply bg-muted relative overflow-hidden rounded-md;
   }
-  .skeleton-vercel::after {
+  
+  .skeleton-geist::after {
     content: "";
-    @apply absolute inset-0 -translate-x-full animate-shimmer;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    @apply absolute inset-0 -translate-x-full;
+    animation: shimmer 2s linear infinite;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.03),
+      transparent
+    );
+  }
+  
+  .dark .skeleton-geist::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+  }
+  
+  /* Status badges */
+  .badge-success {
+    @apply bg-success/10 text-success border border-success/20;
+  }
+  
+  .badge-warning {
+    @apply bg-warning/10 text-warning border border-warning/20;
+  }
+  
+  .badge-error {
+    @apply bg-destructive/10 text-destructive border border-destructive/20;
+  }
+  
+  .badge-info {
+    @apply bg-info/10 text-info border border-info/20;
   }
 }
 
-/* Slim Scrollbar matching darker themes */
+/* === GEIST SCROLLBAR === */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40;
+  @apply bg-border rounded-full;
 }
 
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-border-hover;
+}
 
-
+/* Selection styling */
+::selection {
+  @apply bg-foreground text-background;
+}

@@ -114,6 +114,23 @@ export const batchesApi = api.injectEndpoints({
             },
             providesTags: ['Batches'],
         }),
+
+        // DANGER ZONE - Hard Delete Operations
+        hardDeleteBatch: builder.mutation<ApiResponse<{ batchName: string; deletedStudents: number; deletedAttendance: number }>, number>({
+            query: (id) => ({
+                url: `/dashboard/batches/hard-delete/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Batches', 'Dashboard', 'Students', 'Attendance'],
+        }),
+
+        purgeDeletedBatches: builder.mutation<ApiResponse<{ deleted: number }>, void>({
+            query: () => ({
+                url: '/dashboard/batches/purge-deleted',
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Batches', 'Dashboard', 'Students', 'Attendance'],
+        }),
     }),
 });
 
@@ -126,6 +143,8 @@ export const {
     useDeleteBatchesMutation,
     useDraftBatchMutation,
     useGetDraftBatchesQuery,
+    useHardDeleteBatchMutation,
+    usePurgeDeletedBatchesMutation,
 } = batchesApi;
 
 // Alias for compatibility

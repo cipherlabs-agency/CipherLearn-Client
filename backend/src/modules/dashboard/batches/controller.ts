@@ -33,7 +33,7 @@ export default class BatchController {
 
       return res
         .status(201)
-        .json({ success: true, message: "Batch created", batch: created });
+        .json({ success: true, message: "Batch created", data: created });
     } catch (error) {
       logger.error("Batch.create error:", error);
       return res
@@ -53,7 +53,7 @@ export default class BatchController {
 
       return res
         .status(200)
-        .json({ success: true, message: "Batch updated", batch: updated });
+        .json({ success: true, message: "Batch updated", data: updated });
     } catch (error) {
       logger.error("Batch.update error:", error);
       if ((error as Error).message?.includes("not found"))
@@ -93,7 +93,7 @@ export default class BatchController {
     try {
       const { id } = req.params;
       const batch = await batchService.getById(Number(id));
-      return res.status(200).json({ success: true, batch });
+      return res.status(200).json({ success: true, data: batch });
     } catch (error) {
       logger.error("Batch.get error:", error);
       return res
