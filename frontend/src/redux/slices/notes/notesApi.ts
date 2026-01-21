@@ -1,46 +1,76 @@
-import { api } from '../../api/api';
-import { Note } from '@/types';
+import { api, ApiResponse } from '../../api/api';
+import {
+    Note,
+    NoteFile,
+    CreateNoteInput,
+    UpdateNoteInput,
+    NotesQueryParams,
+    NotesListResponse,
+    PaginationInfo
+} from '@/types';
 
 export const notesApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        getNotes: builder.query<Note[], { batchId?: number; page?: number; limit?: number; category?: string } | void>({
-            query: (params) => ({
-                url: '/dashboard/notes',
-                params: params || {},
+        // Get all notes with filtering and pagination
+        getNotes: builder.query<NotesListResponse, NotesQueryParams>({
+            query: (params) => {
+                const searchParams = new URLSearchParams();
+                if (params.batchId) searchParams.append('batchId', params.batchId.toString());
+                if (params.category) searchParams.append('category', params.category);
+                if (params.page) searchParams.append('page', params.page.toString());
+                if (params.limit) searchParams.append('limit', params.limit.toString());
+                const queryString = searchParams.toString();
+                return `/dashboard/notes${queryString ? `?${queryString}` : ''}`;
+            },
+            transformResponse: (response: ApiResponse<Note[]> & { pagination?: PaginationInfo }): NotesListResponse => ({
+                notes: response.data || [],
+                pagination: response.pagination || { page: 1, limit: 10, total: 0, totalPages: 0 },
             }),
-            transformResponse: (response: any) => response.data || response,
             providesTags: ['Notes'],
         }),
+
+        // Get single note
         getNoteById: builder.query<Note, number>({
             query: (id) => `/dashboard/notes/${id}`,
-            transformResponse: (response: any) => response.data || response,
+            transformResponse: (response: ApiResponse<Note>) => response.data!,
             providesTags: ['Notes'],
         }),
-        uploadNote: builder.mutation<{ success: boolean; data?: Note }, FormData>({
+
+        // Create note with file upload (uses FormData)
+        uploadNote: builder.mutation<ApiResponse<Note>, FormData>({
             query: (formData) => ({
                 url: '/dashboard/notes',
                 method: 'POST',
                 body: formData,
             }),
-            invalidatesTags: ['Notes']
+            invalidatesTags: ['Notes'],
         }),
-        updateNote: builder.mutation<{ success: boolean; data?: Note }, { id: number; formData: FormData }>({
+
+        // Update note with optional file upload (uses FormData)
+        updateNote: builder.mutation<ApiResponse<Note>, { id: number; formData: FormData }>({
             query: ({ id, formData }) => ({
                 url: `/dashboard/notes/${id}`,
                 method: 'PUT',
                 body: formData,
             }),
-            invalidatesTags: ['Notes']
+            invalidatesTags: ['Notes'],
         }),
-        deleteNote: builder.mutation<{ success: boolean }, number>({
+
+        // Delete note
+        deleteNote: builder.mutation<ApiResponse<void>, number>({
             query: (id) => ({
                 url: `/dashboard/notes/${id}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Notes']
-        })
+            invalidatesTags: ['Notes'],
+        }),
     }),
 });
 
-export const { useGetNotesQuery, useGetNoteByIdQuery, useUploadNoteMutation, useUpdateNoteMutation, useDeleteNoteMutation } = notesApi;
-
+export const {
+    useGetNotesQuery,
+    useGetNoteByIdQuery,
+    useUploadNoteMutation,
+    useUpdateNoteMutation,
+    useDeleteNoteMutation,
+} = notesApi;

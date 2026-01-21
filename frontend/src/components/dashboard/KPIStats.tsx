@@ -1,73 +1,96 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, BookOpen, TrendingUp } from "lucide-react"
+import { Users, BookOpen, CalendarCheck, TrendingUp, TrendingDown } from "lucide-react"
+import { useGetDashboardStatsQuery } from "@/redux/slices/analytics/analyticsApi"
 import { Skeleton } from "@/components/ui/skeleton"
-
-import { useGetBatchesQuery } from "@/redux/slices/batches/batchesApi"
-import { useGetTotalStudentsCountQuery, useGetTotalBatchesCountQuery } from "@/redux/slices/analytics/analyticsApi"
+import { Card } from "@/components/ui/card"
 
 export function KPIStats() {
-    const { data: batchesData, isLoading: batchesLoading } = useGetBatchesQuery(undefined)
-    const { data: studentsCountData, isLoading: studentsLoading } = useGetTotalStudentsCountQuery()
-    const { data: batchCountData, isLoading: batchCountLoading } = useGetTotalBatchesCountQuery()
+    const { data: stats, isLoading, error } = useGetDashboardStatsQuery()
 
-    // Get total students from analytics API
-    const studentsCount = studentsCountData?.count || 0
+    if (isLoading) {
+        return (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {[1, 2, 3, 4].map((i) => (
+                    <Card key={i} className="p-4">
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                                <Skeleton className="h-3 w-20" />
+                                <Skeleton className="h-4 w-4 rounded" />
+                            </div>
+                            <div>
+                                <Skeleton className="h-7 w-12 mb-2" />
+                                <div className="flex items-center gap-1.5">
+                                    <Skeleton className="h-3 w-10" />
+                                    <Skeleton className="h-3 w-16" />
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+                ))}
+            </div>
+        )
+    }
 
-    // Get total batches from analytics API
-    const batchesCount = batchCountData?.count || 0
-
-    // Calculate active batches from batches data
-    const activeBatchesCount = batchesData?.batches?.filter((b: any) => !b.isDeleted)?.length || 0
-
-    const isLoading = batchesLoading || studentsLoading || batchCountLoading
+    const statsData = [
+        {
+            title: "Total Students",
+            value: stats?.totalStudents || 0,
+            icon: Users,
+            trend: stats?.monthlyGrowth?.students || 0,
+            trendLabel: "vs last month"
+        },
+        {
+            title: "Active Batches",
+            value: stats?.totalBatches || 0,
+            icon: BookOpen,
+            trend: 0,
+            trendLabel: "total active"
+        },
+        {
+            title: "Today Present",
+            value: stats?.todayAttendance?.present || 0,
+            icon: CalendarCheck,
+            trend: stats?.todayAttendance?.percentage || 0,
+            trendLabel: "attendance rate"
+        },
+        {
+            title: "Attendance Growth",
+            value: `${stats?.monthlyGrowth?.attendance || 0}%`,
+            icon: TrendingUp,
+            trend: stats?.monthlyGrowth?.attendance || 0,
+            trendLabel: "vs last month"
+        }
+    ]
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-8 w-20" />
-                    ) : (
-                        <div className="text-2xl font-bold">{studentsCount}</div>
-                    )}
-                    <p className="text-xs text-muted-foreground">Enrolled across all batches</p>
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Batches</CardTitle>
-                    <BookOpen className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-8 w-20" />
-                    ) : (
-                        <div className="text-2xl font-bold">{batchesCount}</div>
-                    )}
-                    <p className="text-xs text-muted-foreground">{activeBatchesCount} currently active</p>
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Batches</CardTitle>
-                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-8 w-20" />
-                    ) : (
-                        <div className="text-2xl font-bold">{activeBatchesCount}</div>
-                    )}
-                    <p className="text-xs text-muted-foreground">Non-deleted batches</p>
-                </CardContent>
-            </Card>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {statsData.map((stat, index) => {
+                const trendUp = stat.trend >= 0
+                return (
+                    <Card key={index} className="p-4">
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-medium text-muted-foreground">{stat.title}</span>
+                                <stat.icon className="h-4 w-4 text-muted-foreground" />
+                            </div>
+
+                            <div>
+                                <div className="text-2xl font-semibold text-foreground">
+                                    {stat.value}
+                                </div>
+                                <div className="flex items-center gap-1.5 mt-1">
+                                    <span className={`text-xs font-medium flex items-center gap-0.5 ${trendUp ? 'text-success' : 'text-error'}`}>
+                                        {trendUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                                        {stat.trend > 0 ? '+' : ''}{stat.trend}%
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">{stat.trendLabel}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+                )
+            })}
         </div>
     )
 }
-

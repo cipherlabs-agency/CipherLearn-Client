@@ -45,7 +45,8 @@ export const validateQuery = (schema: Joi.ObjectSchema) => {
       });
     }
 
-    req.query = value;
+    // Fix: req.query might be a getter-only property. Use Object.assign.
+    Object.assign(req.query, value);
     next();
   };
 };

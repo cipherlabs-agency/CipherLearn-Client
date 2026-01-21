@@ -1,14 +1,22 @@
 {
 	"info": {
-		"_postman_id": "cipher-learn-api-v1.0.1",
+		"_postman_id": "cipherlearn-api-v1.0.1",
 		"name": "CipherLearn API v1.0.1",
-		"description": "API collection for CipherLearn platform - Based on actual backend routes",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"version": "1.0.1"
+		"version": "1.0.1",
+		"description": "Comprehensive API collection for CipherLearn - Learning Management System.\n\nThis collection includes all endpoints for:\n- Authentication (Login, Signup, Logout)\n- Batches Management (CRUD + Danger Zone)\n- Student Enrollment (Single & CSV Import + Danger Zone)\n- Attendance (Manual, QR, Reports)\n- Fees Management (Structures, Receipts, Summaries)\n- YouTube Videos (CRUD)\n- Notes (CRUD with file uploads)\n- Analytics Dashboard (Stats, Trends, Distribution)\n- **Student App APIs** (Mobile/Student Portal)\n\n**New in v1.0.1:**\n- Dashboard Analytics APIs (stats, enrollment trends, attendance trends)\n- Batch Distribution & Recent Activities\n- Danger Zone APIs for hard delete operations\n- Student Profile API for QR attendance\n- Fees Management System (Fee Structures, Receipts, Bulk Creation)\n- Student App APIs (Profile, Dashboard, Attendance, Assignments, Announcements, Resources, Fees)\n\n**Setup:**\n1. Import this collection into Postman\n2. Create environment with baseUrl = http://localhost:5000/api\n3. Run the Login request first to auto-set the authToken\n4. For Student App APIs, login as a student user\n\n**Base URL:** http://localhost:5000/api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		}
+	],
 	"item": [
 		{
 			"name": "Auth",
+			"description": "Authentication endpoints for user management",
 			"item": [
 				{
 					"name": "Signup",
@@ -22,37 +30,49 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"johndoe123\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+							"raw": "{\n    \"name\": \"Admin User\",\n    \"email\": \"admin@cipherlearn.com\",\n    \"password\": \"Admin@123\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/auth/signup",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"auth",
-								"signup"
-							]
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "signup"]
 						},
-						"description": "Create a new user account."
+						"description": "Register a new user account.\n\n**Required fields:**\n- name: Full name of the user\n- email: Valid email address\n- password: Minimum 6 characters with at least one uppercase, one lowercase, and one number"
 					},
-					"response": [],
+					"response": []
+				},
+				{
+					"name": "Login",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"var jsonData = pm.response.json();",
+									"",
+									"if (jsonData.success && jsonData.data) {",
+									"    if (jsonData.data.token) {",
+									"        pm.environment.set(\"authToken\", jsonData.data.token);",
+									"        console.log(\"Auth token set successfully\");",
+									"    }",
+									"    ",
+									"    if (jsonData.data.user) {",
+									"        pm.environment.set(\"userId\", jsonData.data.user.id);",
+									"        pm.environment.set(\"userName\", jsonData.data.user.name);",
+									"        pm.environment.set(\"userEmail\", jsonData.data.user.email);",
+									"        pm.environment.set(\"userRole\", jsonData.data.user.role);",
+									"    }",
+									"}",
+									"",
+									"pm.test(\"Login successful\", function () {",
 									"    pm.response.to.have.status(200);",
+									"    pm.expect(jsonData.success).to.be.true;",
 									"});"
 								],
 								"type": "text/javascript"
 							}
 						}
-					]
-				},
-				{
-					"name": "Login",
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -63,39 +83,35 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+							"raw": "{\n    \"email\": \"admin@cipherlearn.com\",\n    \"password\": \"Admin@123\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/auth/login",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
 						},
-						"description": "Authenticate user and receive access token"
+						"description": "Login to get authentication token.\n\n**Note:** The token and user role are automatically saved to environment variables after successful login."
 					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.success && jsonData.data && jsonData.data.token) {",
-									"    pm.environment.set(\"auth_token\", jsonData.data.token);",
-									"    console.log(\"Auth token set\");",
-									"}",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
 							}
-						}
-					]
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "logout"]
+						},
+						"description": "Logout and invalidate the current session"
+					},
+					"response": []
 				},
 				{
 					"name": "Update Profile",
@@ -108,263 +124,30 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\"\n}"
+							"raw": "{\n    \"name\": \"Updated Admin Name\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/auth/profile",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"auth",
-								"profile"
-							]
+							"raw": "{{baseUrl}}/auth/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "profile"]
 						},
-						"description": "Update user profile"
+						"description": "Update the current user's profile information"
 					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "Student Enrollment",
-			"item": [
-				{
-					"name": "Enroll Single Student",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"batchId\": 1,\n  \"firstname\": \"John\",\n  \"lastname\": \"Doe\",\n  \"middletname\": \"Michael\",\n  \"dob\": \"2000-05-15\",\n  \"address\": \"123 Main Street, New York, NY 10001\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/dashboard/student-enrollment/enroll",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"student-enrollment",
-								"enroll"
-							]
-						},
-						"description": "Enroll a single student in a batch"
-					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
-				},
-				{
-					"name": "Enroll Students with CSV",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"type": "file",
-									"src": [],
-									"description": "CSV file containing student enrollment data"
-								},
-								{
-									"key": "name",
-									"value": "Batch Enrollment 2024",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "admin@example.com",
-									"type": "text"
-								},
-								{
-									"key": "batchId",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "firstname",
-									"value": "Admin",
-									"type": "text"
-								},
-								{
-									"key": "lastname",
-									"value": "User",
-									"type": "text"
-								},
-								{
-									"key": "middletname",
-									"value": "Manager",
-									"type": "text"
-								},
-								{
-									"key": "dob",
-									"value": "1990-01-01",
-									"type": "text"
-								},
-								{
-									"key": "address",
-									"value": "Office Address",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/dashboard/student-enrollment/enroll-with-csv",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"student-enrollment",
-								"enroll-with-csv"
-							]
-						},
-						"description": "Bulk enroll students using CSV file upload"
-					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
-				},
-				{
-					"name": "Get Students by Batch ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/dashboard/student-enrollment/students/:id",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"student-enrollment",
-								"students",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{batch_id}}",
-									"description": "Batch ID"
-								}
-							]
-						},
-						"description": "Get all enrolled students for a specific batch"
-					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Batch",
+			"name": "Batches",
+			"description": "Batch management endpoints for creating and managing student batches",
 			"item": [
 				{
 					"name": "Create Batch",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{admin_token}}",
-								"description": "Admin authentication required"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Web Development Batch 2024-Q1\",\n  \"timings\": {\n    \"days\": [\"Monday\", \"Wednesday\", \"Friday\"],\n    \"time\": \"18:00-20:00\"\n  },\n  \"totalStudents\": {\n    \"capacity\": 30,\n    \"enrolled\": 0\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/dashboard/batches",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"batches"
-							]
-						},
-						"description": "Create a new batch. Requires admin authentication."
-					},
-					"response": [],
 					"event": [
 						{
 							"listen": "test",
@@ -372,99 +155,99 @@
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"if (jsonData.success && jsonData.batch && jsonData.batch.id) {",
-									"    pm.environment.set(\"batch_id\", jsonData.batch.id);",
+									"    pm.environment.set(\"batchId\", jsonData.batch.id);",
 									"    console.log(\"Batch ID set: \" + jsonData.batch.id);",
 									"}",
-									"pm.test(\"Status code is 201\", function () {",
+									"",
+									"pm.test(\"Batch created successfully\", function () {",
 									"    pm.response.to.have.status(201);",
 									"});"
 								],
 								"type": "text/javascript"
 							}
 						}
-					]
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Batch 2024-A\",\n    \"totalStudents\": 30,\n    \"timings\": {\n        \"time\": \"10:00 AM - 12:00 PM\",\n        \"days\": [\"Monday\", \"Wednesday\", \"Friday\"]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches"]
+						},
+						"description": "Create a new batch for student enrollment."
+					},
+					"response": []
 				},
 				{
 					"name": "Get All Batches",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/dashboard/batches",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"batches"
-							]
-						},
-						"description": "Retrieve all batches"
-					},
-					"response": [],
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.batches && jsonData.batches.length > 0) {",
+									"    pm.environment.set(\"batchId\", jsonData.batches[0].id);",
+									"    console.log(\"First batch ID set: \" + jsonData.batches[0].id);",
+									"}",
+									"",
+									"pm.test(\"Batches fetched successfully\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
 								"type": "text/javascript"
 							}
 						}
-					]
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches"]
+						},
+						"description": "Get all batches with their details"
+					},
+					"response": []
 				},
 				{
-					"name": "Get Batch by ID",
+					"name": "Get Batch By ID",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/dashboard/batches/:id",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"batches",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{batch_id}}",
-									"description": "Batch ID"
-								}
-							]
+							"raw": "{{baseUrl}}/dashboard/batches/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "{{batchId}}"]
 						},
-						"description": "Retrieve a single batch by ID"
+						"description": "Get details of a specific batch by ID"
 					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "Update Batch",
@@ -477,52 +260,26 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Web Development Batch 2024-Q1 (Updated)\",\n  \"timings\": {\n    \"days\": [\"Tuesday\", \"Thursday\"],\n    \"time\": \"19:00-21:00\"\n  },\n  \"totalStudents\": {\n    \"capacity\": 35,\n    \"enrolled\": 15\n  }\n}"
+							"raw": "{\n    \"name\": \"Batch 2024-A Updated\",\n    \"timings\": {\n        \"time\": \"09:00 AM - 11:00 AM\",\n        \"days\": [\"Tuesday\", \"Thursday\", \"Saturday\"]\n    }\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/dashboard/batches/:id",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"batches",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{batch_id}}",
-									"description": "Batch ID"
-								}
-							]
+							"raw": "{{baseUrl}}/dashboard/batches/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "{{batchId}}"]
 						},
-						"description": "Update an existing batch by ID"
+						"description": "Update an existing batch's details"
 					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "Create Draft Batch",
+					"name": "Draft Batch (Soft Delete)",
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -530,41 +287,21 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{admin_token}}",
-								"description": "Admin authentication required"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Data Science Batch 2024-Q2 (Draft)\",\n  \"timings\": {\n    \"days\": [\"Saturday\", \"Sunday\"],\n    \"time\": \"10:00-13:00\"\n  },\n  \"totalStudents\": {\n    \"capacity\": 25,\n    \"enrolled\": 0\n  }\n}"
+							"raw": "{\n    \"ids\": [{{batchId}}]\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/dashboard/batches/draft",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"batches",
-								"draft"
-							]
+							"raw": "{{baseUrl}}/dashboard/batches/draft",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "draft"]
 						},
-						"description": "Create a draft batch. Requires admin authentication."
+						"description": "Move batch(es) to draft status (soft delete)"
 					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "Get Draft Batches",
@@ -573,219 +310,694 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{admin_token}}",
-								"description": "Admin authentication required"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/dashboard/batches/drafts",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"batches",
-								"drafts"
-							]
+							"raw": "{{baseUrl}}/dashboard/batches/drafts",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "drafts"]
 						},
-						"description": "Retrieve all draft batches. Requires admin authentication."
+						"description": "Get all draft (soft-deleted) batches"
 					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "Delete Batch",
+					"name": "Delete Batch(es)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ids\": [{{batchId}}]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches"]
+						},
+						"description": "Delete one or more batches"
+					},
+					"response": []
+				},
+				{
+					"name": "DANGER: Hard Delete Batch",
 					"request": {
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{admin_token}}",
-								"description": "Admin authentication required"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
+								"value": "Bearer {{authToken}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"ids\": [{{batch_id}}]\n}"
-						},
 						"url": {
-							"raw": "{{base_url}}/dashboard/batches",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"batches"
-							]
+							"raw": "{{baseUrl}}/dashboard/batches/hard-delete/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "hard-delete", "{{batchId}}"]
 						},
-						"description": "Delete a batch. Requires admin authentication."
+						"description": "**DANGER ZONE:** Permanently delete a batch with ALL related data including students, attendance records, videos, and notes. This action cannot be undone!"
 					},
-					"response": [],
+					"response": []
+				},
+				{
+					"name": "DANGER: Purge Deleted Batches",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/batches/purge-deleted",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "batches", "purge-deleted"]
+						},
+						"description": "**DANGER ZONE:** Permanently delete ALL soft-deleted batches with their related data. This action cannot be undone!"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Students/Enrollment",
+			"description": "Student enrollment and management endpoints",
+			"item": [
+				{
+					"name": "Enroll Single Student",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"studentId\", jsonData.data.id);",
+									"    console.log(\"Student ID set: \" + jsonData.data.id);",
+									"}",
+									"",
+									"pm.test(\"Student enrolled successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"John\",\n    \"middlename\": \"Robert\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe@email.com\",\n    \"dob\": \"2005-05-15\",\n    \"address\": \"123 Main Street, New York, NY 10001\",\n    \"batchId\": {{batchId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/enroll",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "enroll"]
+						},
+						"description": "Enroll a single student into a batch."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Students",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.length > 0) {",
+									"    pm.environment.set(\"studentId\", jsonData.data[0].id);",
+									"    console.log(\"First student ID set: \" + jsonData.data[0].id);",
+									"}",
+									"",
+									"pm.test(\"Students fetched successfully\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
 								"type": "text/javascript"
 							}
 						}
-					]
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/students",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "students"]
+						},
+						"description": "Get all students across all batches"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Students By Batch",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/students/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "students", "{{batchId}}"]
+						},
+						"description": "Get all students enrolled in a specific batch"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/student/{{studentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "student", "{{studentId}}"]
+						},
+						"description": "Get details of a specific student by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Profile (Student)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/my-profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "my-profile"]
+						},
+						"description": "Get the current authenticated user's student profile. Used by students for QR attendance."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"John\",\n    \"lastname\": \"Smith\",\n    \"address\": \"456 Updated Street, New York, NY 10002\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/student/{{studentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "student", "{{studentId}}"]
+						},
+						"description": "Update a student's information"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Student (Soft)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/student/{{studentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "student", "{{studentId}}"]
+						},
+						"description": "Soft delete a student from the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Download CSV Template",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/csv/template",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "csv", "template"]
+						},
+						"description": "Download a sample CSV template for bulk student import"
+					},
+					"response": []
+				},
+				{
+					"name": "Preview CSV Import",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								},
+								{
+									"key": "batchId",
+									"value": "{{batchId}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/csv/preview",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "csv", "preview"]
+						},
+						"description": "Preview CSV data before importing"
+					},
+					"response": []
+				},
+				{
+					"name": "Import CSV",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								},
+								{
+									"key": "batchId",
+									"value": "{{batchId}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/csv/import",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "csv", "import"]
+						},
+						"description": "Import students from a CSV file"
+					},
+					"response": []
+				},
+				{
+					"name": "DANGER: Hard Delete Student",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/hard-delete/{{studentId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "hard-delete", "{{studentId}}"]
+						},
+						"description": "**DANGER ZONE:** Permanently delete a student with ALL their attendance records. This action cannot be undone!"
+					},
+					"response": []
+				},
+				{
+					"name": "DANGER: Hard Delete Multiple Students",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ids\": [1, 2, 3]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/hard-delete-many",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "hard-delete-many"]
+						},
+						"description": "**DANGER ZONE:** Permanently delete multiple students with ALL their attendance records. This action cannot be undone!"
+					},
+					"response": []
+				},
+				{
+					"name": "DANGER: Purge Deleted Students",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/student-enrollment/purge-deleted",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "student-enrollment", "purge-deleted"]
+						},
+						"description": "**DANGER ZONE:** Permanently delete ALL soft-deleted students with their attendance records. This action cannot be undone!"
+					},
+					"response": []
 				}
 			]
 		},
 		{
 			"name": "Attendance",
+			"description": "Attendance management including manual marking, QR-based attendance, and reports",
 			"item": [
 				{
-					"name": "Create Attendance Sheet",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
+					"name": "Manual Attendance",
+					"item": [
+						{
+							"name": "Mark Single Attendance",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"studentId\": {{studentId}},\n    \"batchId\": {{batchId}},\n    \"date\": \"2024-01-15\",\n    \"status\": \"PRESENT\",\n    \"time\": \"10:00:00\",\n    \"markedBy\": \"Admin\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/mark-attendance",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "mark-attendance"]
+								},
+								"description": "Mark attendance for a single student.\n\n**Status options:** PRESENT, ABSENT"
 							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"batchId\": 1,\n  \"month\": 1,\n  \"year\": 2024\n}"
+							"response": []
 						},
-						"url": {
-							"raw": "{{base_url}}/dashboard/attendance/create-attendance-sheet",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"attendance",
-								"create-attendance-sheet"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Mark Attendance",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
+						{
+							"name": "Mark Bulk Attendance",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"batchId\": {{batchId}},\n    \"date\": \"2024-01-15\",\n    \"attendances\": [\n        {\n            \"studentId\": {{studentId}},\n            \"status\": \"PRESENT\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/mark-bulk",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "mark-bulk"]
+								},
+								"description": "Mark attendance for multiple students at once"
 							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"studentId\": 1,\n  \"batchId\": 1,\n  \"date\": \"2024-01-01\",\n  \"markedBy\": \"Teacher\",\n  \"markedById\": 1,\n  \"method\": \"MANUAL\",\n  \"status\": \"PRESENT\"\n}"
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "QR Attendance",
+					"item": [
+						{
+							"name": "Generate QR Code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if (jsonData.success && jsonData.data && jsonData.data.qrData) {",
+											"    pm.environment.set(\"qrData\", jsonData.data.qrData);",
+											"    console.log(\"QR Data saved for scanning\");",
+											"}",
+											"",
+											"pm.test(\"QR code generated successfully\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/qr/generate/{{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "qr", "generate", "{{batchId}}"]
+								},
+								"description": "Generate a QR code for a batch.\n\nThe QR code is valid for the current day only."
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{base_url}}/dashboard/attendance/mark-attendance",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"attendance",
-								"mark-attendance"
-							]
+						{
+							"name": "Get QR Status",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/qr/status/{{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "qr", "status", "{{batchId}}"]
+								},
+								"description": "Check if a valid QR code exists for the batch today"
+							},
+							"response": []
+						},
+						{
+							"name": "Mark QR Attendance",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"studentId\": {{studentId}},\n    \"qrData\": \"{{qrData}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/qr/mark",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "qr", "mark"]
+								},
+								"description": "Mark attendance by scanning QR code.\n\n**Validation:**\n- QR must be valid and not expired\n- Student must be enrolled in the batch\n- Student email must match authenticated user"
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "Get Batch Attendance Sheet",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/dashboard/attendance/batch-attendance-sheet/:batchId",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"attendance",
-								"batch-attendance-sheet",
-								":batchId"
-							],
-							"variable": [
-								{
-									"key": "batchId",
-									"value": "1"
-								}
-							]
+					"name": "Reports & Data",
+					"item": [
+						{
+							"name": "Get Batch Attendance Sheet",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/batch-attendance-sheet/{{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "batch-attendance-sheet", "{{batchId}}"]
+								},
+								"description": "Get all attendance records for a batch"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Batch Attendance By Date",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/batch/{{batchId}}/date?date=2024-01-15",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "batch", "{{batchId}}", "date"],
+									"query": [
+										{
+											"key": "date",
+											"value": "2024-01-15"
+										}
+									]
+								},
+								"description": "Get attendance records for a batch on a specific date"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Student Attendance Matrix",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/student-attendance-matrix/{{studentId}}?month=1&year=2024",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "student-attendance-matrix", "{{studentId}}"],
+									"query": [
+										{
+											"key": "month",
+											"value": "1"
+										},
+										{
+											"key": "year",
+											"value": "2024"
+										}
+									]
+								},
+								"description": "Get student's attendance matrix for calendar view"
+							},
+							"response": []
+						},
+						{
+							"name": "Generate Attendance Report",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/attendance/report/{{batchId}}?startDate=2024-01-01&endDate=2024-01-31",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "attendance", "report", "{{batchId}}"],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2024-01-01"
+										},
+										{
+											"key": "endDate",
+											"value": "2024-01-31"
+										}
+									]
+								},
+								"description": "Generate an attendance report for a batch within a date range"
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Student Attendance Matrix",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/dashboard/attendance/student-attendance-matrix/:studentId",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"attendance",
-								"student-attendance-matrix",
-								":studentId"
-							],
-							"variable": [
-								{
-									"key": "studentId",
-									"value": "1"
-								}
-							]
-						}
-					},
-					"response": []
+					]
 				}
 			]
 		},
 		{
-			"name": "Youtube Videos",
+			"name": "YouTube Videos",
+			"description": "YouTube video content management",
 			"item": [
 				{
 					"name": "Upload Video",
@@ -798,54 +1010,86 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"Intro to React\",\n  \"description\": \"React basics\",\n  \"category\": \"Education\",\n  \"visibility\": \"PUBLIC\",\n  \"url\": \"https://youtube.com/watch?v=123\",\n  \"batchId\": 1\n}"
+							"raw": "{\n    \"title\": \"Introduction to JavaScript\",\n    \"description\": \"Learn the basics of JavaScript\",\n    \"url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n    \"category\": \"Programming\",\n    \"batchId\": {{batchId}}\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/dashboard/youtube-videos/upload",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"youtube-videos",
-								"upload"
-							]
-						}
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/upload",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "upload"]
+						},
+						"description": "Add a new YouTube video for a batch"
 					},
 					"response": []
 				},
 				{
-					"name": "Draft/Update Video",
+					"name": "Get All Videos",
 					"request": {
-						"method": "PUT",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/dashboard/youtube-videos/:videoId",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"youtube-videos",
-								":videoId"
-							],
-							"variable": [
+							"raw": "{{baseUrl}}/dashboard/youtube-videos?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos"],
+							"query": [
 								{
-									"key": "videoId",
+									"key": "page",
 									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
 								}
 							]
-						}
+						},
+						"description": "Get all videos with pagination"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Videos By Batch",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/batch/{{batchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "batch", "{{batchId}}"]
+						},
+						"description": "Get all videos for a specific batch"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Video",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashboard/youtube-videos/{{videoId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "youtube-videos", "{{videoId}}"]
+						},
+						"description": "Delete a video"
 					},
 					"response": []
 				}
@@ -853,6 +1097,7 @@
 		},
 		{
 			"name": "Notes",
+			"description": "Notes management with file upload support",
 			"item": [
 				{
 					"name": "Create Note",
@@ -861,66 +1106,42 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"body": {
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "files",
-									"type": "file",
-									"src": [],
-									"description": "Max 5 files (images, documents)"
-								},
-								{
 									"key": "title",
-									"value": "My New Note",
+									"value": "JavaScript Fundamentals Notes",
 									"type": "text"
 								},
 								{
 									"key": "batchId",
-									"value": "1",
+									"value": "{{batchId}}",
 									"type": "text"
 								},
 								{
 									"key": "category",
-									"value": "General",
+									"value": "Programming",
 									"type": "text"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": ""
 								}
 							]
 						},
 						"url": {
-							"raw": "{{base_url}}/dashboard/notes",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"notes"
-							]
+							"raw": "{{baseUrl}}/dashboard/notes",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "notes"]
 						},
-						"description": "Create a new note with optional file uploads"
+						"description": "Create a new note with optional file attachments"
 					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.success && jsonData.data && jsonData.data.id) {",
-									"    pm.environment.set(\"note_id\", jsonData.data.id);",
-									"    console.log(\"Note ID set: \" + jsonData.data.id);",
-									"}",
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "Get All Notes",
@@ -929,174 +1150,27 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/dashboard/notes?batchId=1&page=1&limit=10",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"notes"
-							],
+							"raw": "{{baseUrl}}/dashboard/notes?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "notes"],
 							"query": [
 								{
-									"key": "batchId",
-									"value": "1",
-									"description": "Filter by batch ID"
-								},
-								{
 									"key": "page",
-									"value": "1",
-									"description": "Page number"
+									"value": "1"
 								},
 								{
 									"key": "limit",
-									"value": "10",
-									"description": "Items per page"
-								},
-								{
-									"key": "category",
-									"value": "",
-									"description": "Filter by category",
-									"disabled": true
+									"value": "10"
 								}
 							]
 						},
-						"description": "Get all notes with pagination and filtering"
+						"description": "Get all notes with pagination"
 					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
-				},
-				{
-					"name": "Get Note by ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/dashboard/notes/:id",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"notes",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{note_id}}",
-									"description": "Note ID"
-								}
-							]
-						},
-						"description": "Get a single note by ID"
-					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
-				},
-				{
-					"name": "Update Note",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "files",
-									"type": "file",
-									"src": [],
-									"description": "Max 5 files"
-								},
-								{
-									"key": "title",
-									"value": "Updated Note Title",
-									"type": "text"
-								},
-								{
-									"key": "batchId",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "category",
-									"value": "Updated Category",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/dashboard/notes/:id",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"notes",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{note_id}}",
-									"description": "Note ID"
-								}
-							]
-						},
-						"description": "Update a note"
-					},
-					"response": [],
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					]
+					"response": []
 				},
 				{
 					"name": "Delete Note",
@@ -1105,64 +1179,1030 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
+								"value": "Bearer {{authToken}}"
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/dashboard/notes/:id",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"dashboard",
-								"notes",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "{{note_id}}",
-									"description": "Note ID"
-								}
-							]
+							"raw": "{{baseUrl}}/dashboard/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["dashboard", "notes", "{{noteId}}"]
 						},
-						"description": "Delete a note (Soft delete)"
+						"description": "Soft delete a note"
 					},
-					"response": [],
-					"event": [
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fees",
+			"description": "Fee management including fee structures, receipts, and summaries",
+			"item": [
+				{
+					"name": "Fee Structures",
+					"description": "Fee structure configuration per batch (Admin only)",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
+							"name": "Create Fee Structure",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"batchId\": {{batchId}},\n    \"name\": \"Monthly Tuition Fee\",\n    \"amount\": 5000,\n    \"frequency\": \"MONTHLY\",\n    \"dueDay\": 5,\n    \"lateFee\": 100,\n    \"gracePeriod\": 7,\n    \"description\": \"Regular monthly tuition fee for the batch\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/structures",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "structures"]
+								},
+								"description": "Create a new fee structure for a batch.\n\n**Frequency options:** MONTHLY, QUARTERLY, SEMI_ANNUAL, ANNUAL, ONE_TIME\n\n**Required fields:**\n- batchId: Target batch ID\n- name: Fee structure name\n- amount: Fee amount\n- frequency: Payment frequency"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Fee Structures By Batch",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/structures/batch/{{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "structures", "batch", "{{batchId}}"]
+								},
+								"description": "Get all fee structures for a specific batch"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Fee Structure",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Monthly Fee\",\n    \"amount\": 5500,\n    \"lateFee\": 150,\n    \"isActive\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/structures/{{feeStructureId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "structures", "{{feeStructureId}}"]
+								},
+								"description": "Update an existing fee structure"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Fee Structure",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/structures/{{feeStructureId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "structures", "{{feeStructureId}}"]
+								},
+								"description": "Delete a fee structure"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Fee Receipts",
+					"description": "Fee receipt management (Admin only)",
+					"item": [
+						{
+							"name": "Create Fee Receipt",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = pm.response.json();",
+											"if (jsonData.success && jsonData.data && jsonData.data.id) {",
+											"    pm.environment.set(\"receiptId\", jsonData.data.id);",
+											"    console.log(\"Receipt ID set: \" + jsonData.data.id);",
+											"}",
+											"",
+											"pm.test(\"Receipt created successfully\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"studentId\": {{studentId}},\n    \"batchId\": {{batchId}},\n    \"feeStructureId\": {{feeStructureId}},\n    \"totalAmount\": 5000,\n    \"paidAmount\": 5000,\n    \"discountAmount\": 0,\n    \"paymentMode\": \"UPI\",\n    \"transactionId\": \"TXN123456789\",\n    \"academicMonth\": 1,\n    \"academicYear\": 2024,\n    \"dueDate\": \"2024-01-05\",\n    \"paymentDate\": \"2024-01-03\",\n    \"paymentNotes\": \"Full payment received\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts"]
+								},
+								"description": "Create a single fee receipt.\n\n**Payment modes:** CASH, UPI, BANK_TRANSFER, CHEQUE, ONLINE\n\n**Status is auto-calculated:**\n- PAID: paidAmount >= totalAmount\n- PARTIAL: paidAmount > 0 but < totalAmount\n- PENDING: paidAmount = 0 and not overdue\n- OVERDUE: paidAmount < totalAmount and past due date"
+							},
+							"response": []
+						},
+						{
+							"name": "Bulk Create Receipts",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"batchId\": {{batchId}},\n    \"feeStructureId\": {{feeStructureId}},\n    \"academicMonth\": 1,\n    \"academicYear\": 2024,\n    \"dueDate\": \"2024-01-05\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/bulk",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "bulk"]
+								},
+								"description": "Bulk create fee receipts for all students in a batch.\n\nCreates PENDING receipts for each student who doesn't already have a receipt for the specified month/year."
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Receipts",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts?page=1&limit=20&batchId={{batchId}}&status=PENDING",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "batchId",
+											"value": "{{batchId}}",
+											"description": "Optional: filter by batch"
+										},
+										{
+											"key": "status",
+											"value": "PENDING",
+											"description": "Optional: PAID, PARTIAL, PENDING, OVERDUE"
+										}
+									]
+								},
+								"description": "Get all fee receipts with optional filters and pagination.\n\n**Available filters:**\n- batchId, studentId\n- status (PAID, PARTIAL, PENDING, OVERDUE)\n- academicMonth, academicYear\n- startDate, endDate\n- paymentMode"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Receipt By ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/{{receiptId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "{{receiptId}}"]
+								},
+								"description": "Get a specific fee receipt by ID with full details"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Receipt",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"paidAmount\": 5000,\n    \"paymentMode\": \"BANK_TRANSFER\",\n    \"transactionId\": \"BANK789456123\",\n    \"paymentDate\": \"2024-01-04\",\n    \"paymentNotes\": \"Payment updated via bank transfer\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/{{receiptId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "{{receiptId}}"]
+								},
+								"description": "Update a fee receipt. Status is auto-recalculated based on paid amount."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Receipt",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/{{receiptId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "{{receiptId}}"]
+								},
+								"description": "Delete a fee receipt"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Receipts Summary",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/receipts/summary?batchId={{batchId}}&academicYear=2024",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "receipts", "summary"],
+									"query": [
+										{
+											"key": "batchId",
+											"value": "{{batchId}}",
+											"description": "Optional: filter by batch"
+										},
+										{
+											"key": "academicYear",
+											"value": "2024",
+											"description": "Optional: filter by year"
+										}
+									]
+								},
+								"description": "Get summary statistics for fee receipts.\n\n**Returns:**\n- Total, paid, pending, overdue amounts\n- Receipt counts by status\n- Total receipts count"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Student Fees",
+					"description": "Student-specific fee endpoints",
+					"item": [
+						{
+							"name": "Get Student Fees Summary (Admin)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/student/{{studentId}}/summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "student", "{{studentId}}", "summary"]
+								},
+								"description": "Get fee summary for a specific student (Admin only).\n\n**Returns:**\n- Total due, paid, pending amounts\n- Receipt counts (total, paid, pending, overdue)"
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Receipts (Student)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/my-receipts",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "my-receipts"]
+								},
+								"description": "Get fee receipts for the authenticated student.\n\n**Note:** Requires the authenticated user to have a linked student profile."
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Summary (Student)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/fees/my-summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "fees", "my-summary"]
+								},
+								"description": "Get fee summary for the authenticated student.\n\n**Note:** Requires the authenticated user to have a linked student profile."
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Analytics",
+			"description": "Dashboard analytics and statistics endpoints",
+			"item": [
+				{
+					"name": "Basic Counts",
+					"item": [
+						{
+							"name": "Get Total Batches Count",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/batch-count",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "batch-count"]
+								},
+								"description": "Get total number of batches"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Total Students Count",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/student-count",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "student-count"]
+								},
+								"description": "Get total number of students"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Batch Student Count",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/batch/{{batchId}}/student-count",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "batch", "{{batchId}}", "student-count"]
+								},
+								"description": "Get student count for a specific batch"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Dashboard Stats",
+					"item": [
+						{
+							"name": "Get Dashboard Stats",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/dashboard-stats",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "dashboard-stats"]
+								},
+								"description": "Get comprehensive dashboard statistics including total students, batches, today's attendance, and monthly growth"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Batch Distribution",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/batch-distribution",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "batch-distribution"]
+								},
+								"description": "Get batch-wise student distribution for pie charts"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Recent Activities",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/recent-activities?limit=10",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "recent-activities"],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								},
+								"description": "Get recent enrollments and attendance activities for the activity feed"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Trends",
+					"item": [
+						{
+							"name": "Get Enrollment Trends",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/enrollment-trends?months=12",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "enrollment-trends"],
+									"query": [
+										{
+											"key": "months",
+											"value": "12"
+										}
+									]
+								},
+								"description": "Get student enrollment trends for the last N months for charts"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Attendance Trends (Daily)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/attendance-trends?days=30&batchId={{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "attendance-trends"],
+									"query": [
+										{
+											"key": "days",
+											"value": "30"
+										},
+										{
+											"key": "batchId",
+											"value": "{{batchId}}",
+											"description": "Optional: filter by batch"
+										}
+									]
+								},
+								"description": "Get daily attendance trends for the last N days"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Monthly Attendance Trends",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/monthly-attendance-trends?months=6&batchId={{batchId}}",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "monthly-attendance-trends"],
+									"query": [
+										{
+											"key": "months",
+											"value": "6"
+										},
+										{
+											"key": "batchId",
+											"value": "{{batchId}}",
+											"description": "Optional: filter by batch"
+										}
+									]
+								},
+								"description": "Get monthly attendance trends for the last N months for charts"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Attendance Matrix",
+					"item": [
+						{
+							"name": "Get Daily Attendance Matrix",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/batch/{{batchId}}/attendance/day?date=2024-01-15",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "batch", "{{batchId}}", "attendance", "day"],
+									"query": [
+										{
+											"key": "date",
+											"value": "2024-01-15"
+										}
+									]
+								},
+								"description": "Get attendance statistics for a batch on a specific day"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Monthly Attendance Matrix",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/dashboard/analytics/batch/{{batchId}}/attendance/month?month=1&year=2024",
+									"host": ["{{baseUrl}}"],
+									"path": ["dashboard", "analytics", "batch", "{{batchId}}", "attendance", "month"],
+									"query": [
+										{
+											"key": "month",
+											"value": "1"
+										},
+										{
+											"key": "year",
+											"value": "2024"
+										}
+									]
+								},
+								"description": "Get attendance statistics for a batch for an entire month"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Student App",
+			"description": "Student-facing mobile/portal APIs. All endpoints require student authentication (isStudent middleware).",
+			"item": [
+				{
+					"name": "Profile",
+					"description": "Student profile endpoints",
+					"item": [
+						{
+							"name": "Get My Profile",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/profile",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "profile"]
+								},
+								"description": "Get the authenticated student's profile including batch information.\n\n**Returns:**\n- id, fullname, email, dob, address\n- batch: { id, name }"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Dashboard",
+					"description": "Student dashboard endpoints",
+					"item": [
+						{
+							"name": "Get Dashboard",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/dashboard",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "dashboard"]
+								},
+								"description": "Get student dashboard data including attendance stats and recent activities.\n\n**Returns:**\n- attendanceStats: { present, absent, total, percentage }\n- upcomingAssignments, recentGrades, announcements"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Today's Lectures",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/dashboard/today-lectures",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "dashboard", "today-lectures"]
+								},
+								"description": "Get today's lecture schedule for the student's batch.\n\n**Returns:**\n- Array of lectures with time slots and subjects"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Quick Access",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/dashboard/quick-access",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "dashboard", "quick-access"]
+								},
+								"description": "Get quick access links and counts for the student.\n\n**Returns:**\n- pendingAssignments, unreadAnnouncements, availableResources"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Attendance",
+					"description": "Student attendance endpoints",
+					"item": [
+						{
+							"name": "Get My Attendance",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/attendance?month=1&year=2024",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "attendance"],
+									"query": [
+										{
+											"key": "month",
+											"value": "1",
+											"description": "Optional: filter by month (1-12)"
+										},
+										{
+											"key": "year",
+											"value": "2024",
+											"description": "Optional: filter by year"
+										}
+									]
+								},
+								"description": "Get the student's attendance records with optional month/year filter.\n\n**Returns:**\n- Array of attendance records with date, status, time"
+							},
+							"response": []
+						},
+						{
+							"name": "Mark QR Attendance",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"qrData\": \"{{qrData}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/app/attendance/mark-qr",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "attendance", "mark-qr"]
+								},
+								"description": "Mark attendance by scanning QR code (for students).\n\n**Note:** qrData should be the base64-encoded QR payload obtained from scanning the QR code.\n\n**Validation:**\n- QR must be valid and not expired\n- Student must be enrolled in the batch\n- Attendance not already marked for today\n- QR code must belong to the student's batch"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Assignments",
+					"description": "Student assignments endpoints",
+					"item": [
+						{
+							"name": "Get My Assignments",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/assignments",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "assignments"]
+								},
+								"description": "Get all assignments for the student's batch.\n\n**Returns:**\n- Array of assignments with title, description, dueDate, status"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Announcements",
+					"description": "Student announcements endpoints",
+					"item": [
+						{
+							"name": "Get Announcements",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/announcements",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "announcements"]
+								},
+								"description": "Get all announcements for the student's batch.\n\n**Returns:**\n- Array of announcements with title, content, createdAt"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Resources",
+					"description": "Student learning resources endpoints",
+					"item": [
+						{
+							"name": "Get Videos",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/resources/videos",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "resources", "videos"]
+								},
+								"description": "Get all YouTube videos for the student's batch.\n\n**Returns:**\n- Array of videos with id, title, description, url, category"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Notes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/resources/notes",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "resources", "notes"]
+								},
+								"description": "Get all notes for the student's batch.\n\n**Returns:**\n- Array of notes with id, title, content (file URLs), category"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Study Materials",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/resources/study-materials",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "resources", "study-materials"]
+								},
+								"description": "Get all study materials for the student's batch.\n\n**Returns:**\n- Array of materials with id, title, description, files, category"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Fees",
+					"description": "Student fees endpoints",
+					"item": [
+						{
+							"name": "Get My Fee Receipts",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/fees/receipts",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "fees", "receipts"]
+								},
+								"description": "Get all fee receipts for the authenticated student.\n\n**Returns:**\n- Array of receipts with receiptNumber, totalAmount, paidAmount, status, dueDate"
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Fees Summary",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/fees/summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "fees", "summary"]
+								},
+								"description": "Get fees summary for the authenticated student.\n\n**Returns:**\n- totalDue, totalPaid, totalPending\n- receiptCounts: { total, paid, pending, overdue }"
+							},
+							"response": []
 						}
 					]
 				}
 			]
 		}
 	],
-	"variable": [
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
 		{
-			"key": "base_url",
-			"value": "http://localhost:3000",
-			"type": "string"
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"console.log('Making request to: ' + pm.request.url.toString());"
+				]
+			}
 		},
 		{
-			"key": "auth_token",
-			"value": "",
-			"type": "string",
-			"description": "Regular user authentication token"
-		},
-		{
-			"key": "admin_token",
-			"value": "",
-			"type": "string",
-			"description": "Admin authentication token for admin-only routes"
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"console.log('Response status: ' + pm.response.code);"
+				]
+			}
 		}
 	]
 }

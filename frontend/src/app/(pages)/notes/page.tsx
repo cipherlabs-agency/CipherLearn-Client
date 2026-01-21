@@ -1,38 +1,54 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
 import { Input } from "@/components/ui/input"
-import { Search, Upload, Filter, FolderOpen } from "lucide-react"
+import { Search } from "lucide-react"
 import { NotesList } from "@/components/notes/NotesList"
+import { AddNoteDialog } from "@/components/notes/AddNoteDialog"
+import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store"
 
 export default function NotesPage() {
+    const [selectedBatchId, setSelectedBatchId] = useState<number | undefined>(undefined)
+
+    const { user } = useSelector((state: RootState) => state.auth)
+    const isAdmin = user?.role === "ADMIN" || user?.role === "TEACHER"
+
+    const { data: batchesData } = useGetAllBatchesQuery();
+    const batches = batchesData || [];
+
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-10 py-8 px-6 max-w-[1400px] mx-auto animate-fade-in">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 border-b border-border/40 pb-10">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Study Material</h1>
-                    <p className="text-muted-foreground">Manage notes, assignments, and documents.</p>
+                    <h1 className="text-3xl font-black tracking-tighter">
+                        Study Material
+                    </h1>
+                    <p className="text-muted-vercel mt-2">Curated notes, assignments, and architectural documentation for academic cycles.</p>
                 </div>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                    <Upload className="mr-2 h-4 w-4" /> Upload File
-                </Button>
+                {isAdmin && <AddNoteDialog />}
             </div>
 
             <div className="flex items-center gap-4">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder="Search files..."
-                        className="pl-8 bg-background"
-                    />
+                <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">Academic Filter</label>
+                    <div className="relative group">
+                        <select 
+                            className="h-10 w-full sm:w-72 bg-muted/30 border border-border/50 rounded-md px-3 text-xs font-black uppercase tracking-wider focus:bg-background focus:ring-1 focus:ring-foreground/20 focus:border-foreground/30 transition-all outline-none appearance-none cursor-pointer" 
+                            value={selectedBatchId || ""} 
+                            onChange={(e) => setSelectedBatchId(e.target.value ? Number(e.target.value) : undefined)}
+                        >
+                            <option value="" className="bg-background text-foreground lowercase">All academic nodes</option>
+                            {batches.map((batch) => (<option key={batch.id} value={batch.id} className="bg-background text-foreground lowercase">{batch.name}</option>))}
+                        </select>
+                    </div>
                 </div>
-                <Button variant="outline" size="icon">
-                    <Filter className="h-4 w-4" />
-                </Button>
             </div>
 
-            <NotesList />
+            <div className="card-vercel !px-0 !py-0 border-border/40 overflow-hidden">
+                <NotesList batchId={selectedBatchId} isAdmin={isAdmin} />
+            </div>
         </div>
     )
 }

@@ -1,22 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { ReduxProvider } from "@/redux/provider";
 import { AuthRehydrate } from "@/components/AuthRehydrate";
 import { ThemeProvider } from "@/components/theme-provider";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: 'swap',
-});
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: "CipherLearn - Smart Tuition Management",
@@ -31,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${poppins.variable} antialiased font-sans`}
+        className={`${GeistSans.variable} ${GeistMono.variable} antialiased font-sans`}
       >
         <ReduxProvider>
           <ThemeProvider

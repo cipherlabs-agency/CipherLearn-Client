@@ -7,42 +7,55 @@ import { ModeToggle } from "@/components/mode-toggle"
 
 export function Navbar() {
     return (
-        <header className="flex h-16 items-center gap-4 border-b bg-background px-6 shadow-sm z-30">
-            <Button variant="outline" size="icon" className="md:hidden shrink-0">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-            </Button>
+        <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
+            <div className="flex h-14 items-center px-4 gap-4">
+                <div className="flex items-center gap-2">
+                    <div className="h-6 w-6 bg-foreground rounded-md flex items-center justify-center text-background text-[10px] font-semibold">
+                        CL
+                    </div>
+                    <span className="font-semibold text-sm hidden md:block text-foreground">
+                        CipherLearn
+                    </span>
+                </div>
 
-            <div className="flex items-center gap-2">
-                <span className="font-semibold text-lg hidden md:block">Sky High Institute</span>
-            </div>
-
-            <div className="flex flex-1 items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
-                <form className="ml-auto flex-1 sm:flex-initial">
-                    <div className="relative">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <div className="flex flex-1 items-center justify-end gap-2">
+                    <form className="hidden sm:flex max-w-xs">
                         <Input
                             type="search"
-                            placeholder="Search students, batches..."
-                            className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px] bg-muted/50 focus:bg-background transition-colors"
+                            placeholder="Search..."
+                            className="h-8 text-xs"
+                            icon={<Search className="h-3.5 w-3.5" />}
                         />
-                    </div>
-                </form>
+                    </form>
 
-                <div className="flex items-center gap-2">
-                    <ModeToggle />
-                    <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
-                        <Bell className="h-5 w-5" />
-                        <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-600 border-2 border-background" />
-                        <span className="sr-only">Notifications</span>
-                    </Button>
+                    <nav className="flex items-center gap-1">
+                        <ModeToggle />
+                        
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                        >
+                            <Bell className="h-4 w-4" />
+                            <span className="sr-only">Notifications</span>
+                        </Button>
 
-                    <Button variant="ghost" size="icon" className="rounded-full overflow-hidden border border-border">
-                        <div className="h-full w-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                            SH
-                        </div>
-                        <span className="sr-only">Profile</span>
-                    </Button>
+                        <div className="h-4 w-px bg-border mx-1 hidden sm:block"></div>
+
+                        <Button 
+                            variant="ghost" 
+                            className="h-8 px-2 gap-2 hover:bg-secondary hidden sm:flex font-medium text-xs text-muted-foreground hover:text-foreground"
+                        >
+                            <div className="h-5 w-5 rounded-full bg-secondary border border-border flex items-center justify-center text-[10px] font-semibold">
+                                AD
+                            </div>
+                            <span className="hidden lg:block">Admin</span>
+                        </Button>
+
+                        <Button variant="ghost" size="icon" className="md:hidden h-8 w-8">
+                            <Menu className="h-4 w-4" />
+                        </Button>
+                    </nav>
                 </div>
             </div>
         </header>

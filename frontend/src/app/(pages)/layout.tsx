@@ -2,33 +2,75 @@
 
 import { Navbar } from "@/components/layout/Navbar"
 import { Sidebar } from "@/components/layout/Sidebar"
-import { useAppSelector } from "@/redux/hooks"
+import { useAppSelector, useAppDispatch } from "@/redux/hooks"
+import { isTokenExpired, checkAndClearExpiredToken } from "@/redux/slices/auth/authSlice"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 
 export default function DashboardLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
-    const { token } = useAppSelector((state) => state.auth)
+    const { token, tokenExpiry } = useAppSelector((state) => state.auth)
+    const dispatch = useAppDispatch()
     const router = useRouter()
     const [isClient, setIsClient] = useState(false)
+
+    const handleExpiredToken = useCallback(() => {
+        dispatch(checkAndClearExpiredToken())
+        router.push("/login")
+    }, [dispatch, router])
 
     // Wait for client-side hydration to complete
     useEffect(() => {
         setIsClient(true)
     }, [])
 
+    // Check token on mount and redirect if expired
     useEffect(() => {
-        // Only check auth after client-side hydration
-        if (isClient && !token) {
-            router.push("/login")
+        if (isClient) {
+            if (!token || isTokenExpired(token)) {
+                handleExpiredToken()
+            }
         }
-    }, [isClient, token, router])
+    }, [isClient, token, handleExpiredToken])
+
+    // Set up automatic redirect when token expires
+    useEffect(() => {
+        if (!isClient || !token || !tokenExpiry) return
+
+        const timeUntilExpiry = tokenExpiry - Date.now()
+
+        // If already expired, redirect immediately
+        if (timeUntilExpiry <= 0) {
+            handleExpiredToken()
+            return
+        }
+
+        // Set timeout to redirect when token expires
+        const timeoutId = setTimeout(() => {
+            handleExpiredToken()
+        }, timeUntilExpiry)
+
+        return () => clearTimeout(timeoutId)
+    }, [isClient, token, tokenExpiry, handleExpiredToken])
+
+    // Periodic check every minute for token expiration
+    useEffect(() => {
+        if (!isClient || !token) return
+
+        const intervalId = setInterval(() => {
+            if (isTokenExpired(token)) {
+                handleExpiredToken()
+            }
+        }, 60000) // Check every minute
+
+        return () => clearInterval(intervalId)
+    }, [isClient, token, handleExpiredToken])
 
     // Show nothing until client-side hydration is complete
-    if (!isClient || !token) {
+    if (!isClient || !token || isTokenExpired(token)) {
         return null
     }
 

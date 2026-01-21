@@ -21,8 +21,8 @@ import { toast } from "sonner"
 export function AddStudentDialog() {
     const [open, setOpen] = useState(false)
     const [enrollStudent, { isLoading }] = useEnrollStudentMutation()
-    const { data: batchesData } = useGetBatchesQuery(undefined)
-    const batches = batchesData?.batches || []
+    const { data: batchesData } = useGetBatchesQuery()
+    const batches = batchesData || []
 
     const [formData, setFormData] = useState({
         name: "",
@@ -66,7 +66,7 @@ export function AddStudentDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-primary hover:bg-primary/90">
+                <Button>
                     <Plus className="mr-2 h-4 w-4" /> Add Student
                 </Button>
             </DialogTrigger>
@@ -112,7 +112,7 @@ export function AddStudentDialog() {
                                 id="batchId"
                                 value={formData.batchId}
                                 onChange={handleChange}
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 col-span-3"
+                                className="flex w-full input-industrial col-span-3"
                                 required
                             >
                                 <option value="">Select a batch</option>

@@ -33,7 +33,7 @@ export default class BatchController {
 
       return res
         .status(201)
-        .json({ success: true, message: "Batch created", batch: created });
+        .json({ success: true, message: "Batch created", data: created });
     } catch (error) {
       logger.error("Batch.create error:", error);
       return res
@@ -53,7 +53,7 @@ export default class BatchController {
 
       return res
         .status(200)
-        .json({ success: true, message: "Batch updated", batch: updated });
+        .json({ success: true, message: "Batch updated", data: updated });
     } catch (error) {
       logger.error("Batch.update error:", error);
       if ((error as Error).message?.includes("not found"))
@@ -70,15 +70,31 @@ export default class BatchController {
     try {
       const batches = await batchService.getAll();
 
-      const formattedBatches = batches.map((batch: any) => ({
-        ...batch,
-        students: batch.totalStudents || 0,
-        time: batch.timings?.time || "",
-        days: Array.isArray(batch.timings?.days)
-          ? batch.timings.days.join(", ")
-          : "",
-        status: batch.isDeleted ? "Inactive" : "Active", // Assuming isDeleted determines status
-      }));
+      const formattedBatches = batches.map((batch: any) => {
+        const capacity = typeof batch.totalStudents === 'number'
+          ? batch.totalStudents
+          : (batch.totalStudents as any)?.capacity || 0;
+        const enrolled = batch._count?.students || 0;
+
+        return {
+          id: batch.id,
+          name: batch.name,
+          timings: batch.timings,
+          createdAt: batch.createdAt,
+          // Return totalStudents as object with both capacity and enrolled
+          totalStudents: {
+            capacity,
+            enrolled,
+          },
+          // Keep legacy fields for compatibility
+          students: enrolled,
+          time: batch.timings?.time || "",
+          days: Array.isArray(batch.timings?.days)
+            ? batch.timings.days.join(", ")
+            : "",
+          status: "Active",
+        };
+      });
 
       return res.status(200).json({ success: true, batches: formattedBatches });
     } catch (error) {
@@ -93,7 +109,7 @@ export default class BatchController {
     try {
       const { id } = req.params;
       const batch = await batchService.getById(Number(id));
-      return res.status(200).json({ success: true, batch });
+      return res.status(200).json({ success: true, data: batch });
     } catch (error) {
       logger.error("Batch.get error:", error);
       return res
@@ -128,12 +144,37 @@ export default class BatchController {
   public async getDrafts(req: Request, res: Response) {
     try {
       const drafts = await batchService.getDrafts();
-      return res.status(200).json({ success: true, drafts });
+      return res.status(200).json({ success: true, batches: drafts });
     } catch (error) {
       logger.error("Batch.getDrafts error:", error);
       return res
         .status(500)
         .json({ success: false, message: `Get drafts failed: ${error}` });
+    }
+  }
+
+  /**
+   * Restore soft-deleted batches
+   * PUT /batches/restore
+   */
+  public async restore(req: Request, res: Response) {
+    try {
+      const ids = (req.body.ids || []) as number[];
+      if (!Array.isArray(ids) || ids.length === 0)
+        return res
+          .status(400)
+          .json({ success: false, message: "ids array is required" });
+
+      const result = await batchService.restore(ids);
+      logger.info(`Batches restored: ${ids.join(", ")}`);
+      return res
+        .status(200)
+        .json({ success: true, message: "Batches restored", data: result });
+    } catch (error) {
+      logger.error("Batch.restore error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: `Restore failed: ${error}` });
     }
   }
 
@@ -155,6 +196,60 @@ export default class BatchController {
       return res
         .status(500)
         .json({ success: false, message: `Delete failed: ${error}` });
+    }
+  }
+
+  // =====================
+  // DANGER ZONE - HARD DELETE OPERATIONS
+  // =====================
+
+  /**
+   * Permanently delete a batch with all related data
+   * DELETE /batches/hard-delete/:id
+   */
+  public async hardDelete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const result = await batchService.hardDelete(Number(id));
+
+      logger.warn(`DANGER ZONE: Batch ${id} permanently deleted with all related data by ${req.user?.name}`);
+
+      return res.status(200).json({
+        success: true,
+        message: "Batch and all related data permanently deleted",
+        data: result,
+      });
+    } catch (error) {
+      logger.error("Batch.hardDelete error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to permanently delete batch: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Purge all soft-deleted batches with related data
+   * DELETE /batches/purge-deleted
+   */
+  public async purgeDeleted(req: Request, res: Response) {
+    try {
+      const result = await batchService.purgeDeleted();
+
+      logger.warn(`DANGER ZONE: ${result.deleted} soft-deleted batches purged by ${req.user?.name}`);
+
+      return res.status(200).json({
+        success: true,
+        message: `${result.deleted} soft-deleted batches permanently removed`,
+        data: result,
+      });
+    } catch (error) {
+      logger.error("Batch.purgeDeleted error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to purge deleted batches: ${error}`,
+      });
     }
   }
 }

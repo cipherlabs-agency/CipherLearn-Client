@@ -1,120 +1,340 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+@layer base {
+  :root {
+    /* ===== VERCEL EXACT COLORS (Light) ===== */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+ 
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+ 
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+ 
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+ 
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+ 
+    --border: 0 0% 91%;        /* #eaeaea */
+    --border-hover: 0 0% 0%;   /* black border on hover */
+    --input: 0 0% 91%;
+    --ring: 0 0% 0%;
+ 
+    --radius: 0.5rem;
+    
+    --font-geist-sans: "Geist Sans", sans-serif;
+    --font-geist-mono: "Geist Mono", monospace;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
 
+    /* Chart colors - visible in light mode */
+    --chart-primary: 221 83% 53%;     /* Blue #3b82f6 */
+    --chart-success: 142 71% 45%;     /* Green #22c55e */
+    --chart-warning: 38 92% 50%;      /* Amber #f59e0b */
+    --chart-line: 0 0% 20%;           /* Dark line for light mode */
+  }
+ 
+  .dark {
+    /* ===== VERCEL EXACT COLORS (Dark) ===== */
+    --background: 0 0% 0%;     /* Pure black */
+    --foreground: 0 0% 100%;   /* Pure white */
+ 
+    --card: 0 0% 3%;           /* rgb(10,10,10) - darker than before */
+    --card-foreground: 0 0% 100%;
+ 
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 100%;
+ 
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+ 
+    --secondary: 0 0% 10%;     /* Dark gray for secondary */
+    --secondary-foreground: 0 0% 98%;
+ 
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 63.9%;
+ 
+    --accent: 0 0% 10%;
+    --accent-foreground: 0 0% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+ 
+    --border: 0 0% 14%;        /* #222 - subtle dark border */
+    --border-hover: 0 0% 100%; /* white border on hover */
+    --input: 0 0% 14%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Chart colors - visible in dark mode */
+    --chart-primary: 217 91% 60%;     /* Brighter blue #3b82f6 */
+    --chart-success: 142 76% 50%;     /* Brighter green #22c55e */
+    --chart-warning: 38 92% 55%;      /* Brighter amber #f59e0b */
+    --chart-line: 0 0% 85%;           /* Light line for dark mode */
+  }
+}
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  
+  --color-border: hsl(var(--border));
+  --color-border-hover: hsl(var(--border-hover));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 }
-
-:root {
-  --background: #f8fafc; /* Slate 50 */
-  --foreground: #0f172a; /* Slate 900 */
-
-  /* Indigo Primary */
-  --primary: #4f46e5; /* Indigo 600 */
-  --primary-foreground: #ffffff;
-
-  /* Teal/Green Secondary */
-  --secondary: #0d9488; /* Teal 600 */
-  --secondary-foreground: #ffffff;
-
-  /* Soft Orange Accent */
-  --accent: #f97316; /* Orange 500 */
-  --accent-foreground: #ffffff;
-
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-
-  --muted: #f1f5f9; /* Slate 100 */
-  --muted-foreground: #64748b; /* Slate 500 */
-
-  --destructive: #ef4444; /* Red 500 */
-  --destructive-foreground: #ffffff;
-
-  --border: #e2e8f0; /* Slate 200 */
-  --input: #e2e8f0;
-  --ring: #4f46e5;
-
-  --radius: 0.75rem; /* 12px */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Vercel Typography - Exact Specs */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  
+  h1 { 
+    font-size: 36px;
+    font-weight: 700;
+  }
+  h2 { 
+    font-size: 30px;
+    font-weight: 600;
+  }
+  h3 { 
+    font-size: 24px;
+    font-weight: 600;
+  }
+  h4 { 
+    font-size: 20px;
+    font-weight: 600;
+  }
+  h5 { 
+    font-size: 16px;
+    font-weight: 600;
+  }
+  h6 { 
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  /* Body text variations */
+  p {
+    font-size: 14px;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+  
+  /* Small text */
+  small {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  
+  /* Code */
+  code {
+    font-family: var(--font-geist-mono), 'Courier New', monospace;
+    font-size: 13px;
+    letter-spacing: -0.01em;
+  }
 }
 
-.dark {
-  --background: #0f172a; /* Slate 900 */
-  --foreground: #f8fafc; /* Slate 50 */
-
-  --primary: #6366f1; /* Indigo 500 */
-  --primary-foreground: #ffffff;
-
-  --secondary: #14b8a6; /* Teal 500 */
-  --secondary-foreground: #ffffff;
-
-  --accent: #fb923c; /* Orange 400 */
-  --accent-foreground: #ffffff;
-
-  --card: #1e293b; /* Slate 800 */
-  --card-foreground: #f8fafc;
-
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
-
-  --muted: #334155; /* Slate 700 */
-  --muted-foreground: #94a3b8; /* Slate 400 */
-
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-
-  --border: #334155;
-  --input: #334155;
-  --ring: #6366f1;
+@layer utilities {
+  /* VERCEL CARD - 1px border, NO shadow */
+  .card-vercel {
+    @apply rounded-lg border border-border bg-card;
+  }
+  
+  /* VERCEL GRID LAYOUT */
+  .grid-vercel {
+    @apply border border-border;
+  }
+  
+  /* VERCEL BUTTON - exact heights */
+  .btn-vercel {
+    @apply h-10 px-4 rounded-lg font-medium text-sm;
+  }
+  
+  .btn-vercel-lg {
+    @apply h-12 px-6 rounded-lg font-medium text-sm;
+  }
+  
+  /* VERCEL INPUT - matches button height */
+  .input-vercel {
+    @apply h-10 px-3 rounded-lg border border-border bg-background;
+  }
+  
+  /* Skeleton with subtle pulse */
+  .skeleton-vercel {
+    @apply animate-pulse rounded-md bg-muted;
+  }
+  
+  /* Status badges - keep colorful */
+  .badge-success {
+    @apply inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium;
+    background-color: rgba(48, 164, 108, 0.1);
+    color: #30a46c;
+  }
+  
+  .badge-warning {
+    @apply inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium;
+    background-color: rgba(245, 159, 11, 0.1);
+    color: #f59f0b;
+  }
+  
+  .badge-error {
+    @apply inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium;
+    background-color: rgba(229, 72, 77, 0.1);
+    color: #e5484d;
+  }
+  
+  .badge-info {
+    @apply inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium;
+    background-color: rgba(0, 145, 255, 0.1);
+    color: #0091ff;
+  }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Animations */
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height) }
+  to { height: 0 }
 }
 
-/* Custom Scrollbar */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Scrollbar - minimal Vercel style */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: var(--muted-foreground);
-  opacity: 0.5;
+  background: var(--color-border);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted-foreground);
-  opacity: 0.8;
+  background: var(--color-muted-foreground);
+}
+/* Geist Spinner */
+.geist-spinner {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  display: inline-block;
+}
+
+.geist-spinner div {
+  transform-origin: 8px 8px;
+  animation: spinner-fade 1.2s linear infinite;
+}
+
+.geist-spinner div:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 7px;
+  width: 2px;
+  height: 4px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.geist-spinner div:nth-child(1) { transform: rotate(0deg); animation-delay: -1.1s; }
+.geist-spinner div:nth-child(2) { transform: rotate(30deg); animation-delay: -1.0s; }
+.geist-spinner div:nth-child(3) { transform: rotate(60deg); animation-delay: -0.9s; }
+.geist-spinner div:nth-child(4) { transform: rotate(90deg); animation-delay: -0.8s; }
+.geist-spinner div:nth-child(5) { transform: rotate(120deg); animation-delay: -0.7s; }
+.geist-spinner div:nth-child(6) { transform: rotate(150deg); animation-delay: -0.6s; }
+.geist-spinner div:nth-child(7) { transform: rotate(180deg); animation-delay: -0.5s; }
+.geist-spinner div:nth-child(8) { transform: rotate(210deg); animation-delay: -0.4s; }
+.geist-spinner div:nth-child(9) { transform: rotate(240deg); animation-delay: -0.3s; }
+.geist-spinner div:nth-child(10) { transform: rotate(270deg); animation-delay: -0.2s; }
+.geist-spinner div:nth-child(11) { transform: rotate(300deg); animation-delay: -0.1s; }
+.geist-spinner div:nth-child(12) { transform: rotate(330deg); animation-delay: 0s; }
+
+@keyframes spinner-fade {
+  0% { opacity: 1; }
+  100% { opacity: 0.15; }
 }

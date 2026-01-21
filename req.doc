@@ -1,0 +1,10 @@
+Prepare all API's for app Attendance, Upload assignment, Notification Announcements, Youtube videos, Study material, Fees, Time-table, Profile.
+
+- API for Students app to mark there Attendance by QR only, Student can only mark his attentdance once a day.
+- I think for qr generation you have used jwt token as a qr but i want the real QR code to scan it so student really have to come to class to mark there attendance add, generate qr option will for both Admin, Teacher, add option like download, share qr code.
+- Add a new feature to upload assignments for Students and by Teacher side he will create slots for assignments title, subject, batch and any other usefull info maintain it.
+- After that student will upload all his assignemnts like a pdf or multiple images into teachers created slots and teacher will verify that uploaded docs and mark it as accepted/rejected.
+- If assignment is Accepted App send a notification like your assignment title in this slot is accepted. If rejected same thing just with different messsage with re-upload option.
+- Maintain a Student profile with his all data, Attendance, Assignments completed, Fees status, Batch and any other required info for profile.
+- Create a study material(pdf, images) section in Admin, teacher side, only they can upload study materials batch-wise and students can use them.
+- Notification Announcements sections in Admin side to create Announcements title, description, date(optional), image(optional)

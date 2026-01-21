@@ -1,0 +1,277 @@
+Implement the following plan:                                                                                                                                                           
+                                                                                                                                                                                          
+  # CipherLearn - Fix Breaking Issues & Implement Fees Receipt System                                                                                                                     
+                                                                                                                                                                                          
+  ## Overview                                                                                                                                                                             
+  This plan covers fixing critical breaking issues and implementing a comprehensive fees receipt system.                                                                                  
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ## Part 1: Fix Breaking Issues                                                                                                                                                          
+                                                                                                                                                                                          
+  ### Phase 1A: Fix Batch Creation API Mismatch                                                                                                                                           
+                                                                                                                                                                                          
+  **Problem**: Backend returns `{ batch: {...} }` but frontend expects `{ data: {...} }`                                                                                                  
+                                                                                                                                                                                          
+  **Files to modify**:                                                                                                                                                                    
+  - `backend/src/modules/dashboard/batches/controller.ts` (lines 36, 83, 96)                                                                                                              
+                                                                                                                                                                                          
+  **Changes**:                                                                                                                                                                            
+  ```typescript                                                                                                                                                                           
+  // Change all responses from:                                                                                                                                                           
+  res.json({ success: true, batch: created })                                                                                                                                             
+  // To:                                                                                                                                                                                  
+  res.json({ success: true, data: created })                                                                                                                                              
+  ```                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ### Phase 1B: Add Hard Delete Redux Mutations & UI                                                                                                                                      
+                                                                                                                                                                                          
+  **Problem**: Backend has hard delete endpoints but frontend has no mutations or UI                                                                                                      
+                                                                                                                                                                                          
+  **Files to create/modify**:                                                                                                                                                             
+                                                                                                                                                                                          
+  1. **`frontend/src/redux/slices/batches/batchesApi.ts`** - Add mutations:                                                                                                               
+  - `hardDeleteBatch` - DELETE `/dashboard/batches/hard-delete/:id`                                                                                                                       
+  - `purgeDeletedBatches` - DELETE `/dashboard/batches/purge-deleted`                                                                                                                     
+                                                                                                                                                                                          
+  2. **`frontend/src/redux/slices/students/studentsApi.ts`** - Add mutations:                                                                                                             
+  - `hardDeleteStudent` - DELETE `/dashboard/student-enrollment/hard-delete/:id`                                                                                                          
+  - `hardDeleteManyStudents` - DELETE `/dashboard/student-enrollment/hard-delete-many`                                                                                                    
+  - `purgeDeletedStudents` - DELETE `/dashboard/student-enrollment/purge-deleted`                                                                                                         
+                                                                                                                                                                                          
+  3. **`frontend/src/components/settings/DangerZone.tsx`** - New component with:                                                                                                          
+  - Warning banners                                                                                                                                                                       
+  - Confirmation dialogs                                                                                                                                                                  
+  - Hard delete buttons for batches and students                                                                                                                                          
+                                                                                                                                                                                          
+  4. **`frontend/src/app/(pages)/settings/page.tsx`** - Add Danger Zone section                                                                                                           
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ### Phase 1C: Fix Dark/Light Theme Text Visibility                                                                                                                                      
+                                                                                                                                                                                          
+  **Problem**: Hard-coded `text-white` causes invisible text in light mode                                                                                                                
+                                                                                                                                                                                          
+  **Files to modify**:                                                                                                                                                                    
+                                                                                                                                                                                          
+  1. **`frontend/src/app/(auth)/layout.tsx`** (lines 12, 22):                                                                                                                             
+  - Change `text-white` to `text-primary-foreground` or use proper dark classes                                                                                                           
+                                                                                                                                                                                          
+  2. **`frontend/src/components/layout/Sidebar.tsx`** (lines 43-112):                                                                                                                     
+  - Replace hard-coded `text-white` with theme-aware colors                                                                                                                               
+  - Use `text-sidebar-foreground` or CSS variables                                                                                                                                        
+                                                                                                                                                                                          
+  3. **`frontend/src/app/globals.css`**:                                                                                                                                                  
+  - Add sidebar-specific CSS variables for theme consistency                                                                                                                              
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ## Part 2: Fees Receipt System Implementation                                                                                                                                           
+                                                                                                                                                                                          
+  ### Phase 2A: Database Schema                                                                                                                                                           
+                                                                                                                                                                                          
+  **File**: `backend/prisma/schema.prisma`                                                                                                                                                
+                                                                                                                                                                                          
+  **Add Enums**:                                                                                                                                                                          
+  ```prisma                                                                                                                                                                               
+  enum PaymentStatus {                                                                                                                                                                    
+  PAID                                                                                                                                                                                    
+  PARTIAL                                                                                                                                                                                 
+  PENDING                                                                                                                                                                                 
+  OVERDUE                                                                                                                                                                                 
+  }                                                                                                                                                                                       
+                                                                                                                                                                                          
+  enum PaymentMode {                                                                                                                                                                      
+  CASH                                                                                                                                                                                    
+  UPI                                                                                                                                                                                     
+  BANK_TRANSFER                                                                                                                                                                           
+  CHEQUE                                                                                                                                                                                  
+  ONLINE                                                                                                                                                                                  
+  }                                                                                                                                                                                       
+  ```                                                                                                                                                                                     
+                                                                                                                                                                                          
+  **Add Models**:                                                                                                                                                                         
+  - `FeeStructure` - Fee configuration per batch (amount, frequency, due day, late fees)                                                                                                  
+  - `FeeReceipt` - Individual payment records with:                                                                                                                                       
+  - Receipt number (auto-generated: RCP-2024-00001)                                                                                                                                       
+  - Student & Batch relations                                                                                                                                                             
+  - Amount details (total, paid, remaining, discount)                                                                                                                                     
+  - Payment details (mode, transaction ID, cheque number, bank)                                                                                                                           
+  - Academic period (month, year)                                                                                                                                                         
+  - Status (PAID, PARTIAL, PENDING, OVERDUE)                                                                                                                                              
+  - Dates (due date, payment date)                                                                                                                                                        
+  - Audit fields (generatedBy, modifiedBy)                                                                                                                                                
+                                                                                                                                                                                          
+  **Add Relations** to existing models:                                                                                                                                                   
+  - `Student.feeReceipts`                                                                                                                                                                 
+  - `Batch.feeStructures`                                                                                                                                                                 
+  - `Batch.feeReceipts`                                                                                                                                                                   
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ### Phase 2B: Backend Implementation                                                                                                                                                    
+                                                                                                                                                                                          
+  **Files to implement** in `backend/src/modules/dashboard/fees/`:                                                                                                                        
+                                                                                                                                                                                          
+  1. **`types.ts`** - Type definitions:                                                                                                                                                   
+  - CreateFeeStructureInput, UpdateFeeStructureInput                                                                                                                                      
+  - CreateFeeReceiptInput, UpdateFeeReceiptInput                                                                                                                                          
+  - BulkCreateReceiptsInput                                                                                                                                                               
+  - FeeReceiptFilters, FeeReceiptSummary                                                                                                                                                  
+  - Response types                                                                                                                                                                        
+                                                                                                                                                                                          
+  2. **`validation.ts`** - Zod schemas for all inputs                                                                                                                                     
+                                                                                                                                                                                          
+  3. **`service.ts`** - Business logic:                                                                                                                                                   
+  - Receipt number generation (RCP-YYYY-NNNNN)                                                                                                                                            
+  - Fee structure CRUD                                                                                                                                                                    
+  - Receipt CRUD + bulk creation                                                                                                                                                          
+  - Auto-calculate remaining amount                                                                                                                                                       
+  - Auto-update status based on payment                                                                                                                                                   
+  - Mark overdue receipts                                                                                                                                                                 
+  - Student fees summary                                                                                                                                                                  
+                                                                                                                                                                                          
+  4. **`controller.ts`** - Request handlers with error handling                                                                                                                           
+                                                                                                                                                                                          
+  5. **`route.ts`** - API endpoints:                                                                                                                                                      
+  - POST `/fees/structures` - Create structure (Admin)                                                                                                                                    
+  - GET `/fees/structures/batch/:batchId` - Get by batch (Admin)                                                                                                                          
+  - PUT/DELETE `/fees/structures/:id` - Update/Delete (Admin)                                                                                                                             
+  - POST `/fees/receipts` - Create single (Admin)                                                                                                                                         
+  - POST `/fees/receipts/bulk` - Bulk create (Admin)                                                                                                                                      
+  - GET `/fees/receipts` - List with filters (Admin)                                                                                                                                      
+  - GET `/fees/receipts/summary` - Statistics (Admin)                                                                                                                                     
+  - GET/PUT/DELETE `/fees/receipts/:id` - CRUD (Admin)                                                                                                                                    
+  - GET `/fees/my-receipts` - Student's own receipts                                                                                                                                      
+  - GET `/fees/my-summary` - Student's summary                                                                                                                                            
+                                                                                                                                                                                          
+  6. **`backend/src/modules/dashboard/routes.ts`** - Register fees routes                                                                                                                 
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ### Phase 2C: Frontend Types                                                                                                                                                            
+                                                                                                                                                                                          
+  **File**: `frontend/src/types/index.ts`                                                                                                                                                 
+                                                                                                                                                                                          
+  **Add types**:                                                                                                                                                                          
+  - PaymentStatus, PaymentMode, FeeFrequency enums                                                                                                                                        
+  - FeeStructure, FeeReceipt interfaces                                                                                                                                                   
+  - CreateFeeStructureInput, UpdateFeeStructureInput                                                                                                                                      
+  - CreateFeeReceiptInput, UpdateFeeReceiptInput                                                                                                                                          
+  - BulkCreateReceiptsInput, BulkCreateResult                                                                                                                                             
+  - FeeReceiptFilters, FeeReceiptSummary                                                                                                                                                  
+  - StudentFeesSummary                                                                                                                                                                    
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ### Phase 2D: Frontend Redux API                                                                                                                                                        
+                                                                                                                                                                                          
+  **File**: `frontend/src/redux/slices/fees/feesApi.ts` (new)                                                                                                                             
+                                                                                                                                                                                          
+  **Add tag**: `'Fees'` to `frontend/src/redux/api/api.ts` tagTypes                                                                                                                       
+                                                                                                                                                                                          
+  **Endpoints**:                                                                                                                                                                          
+  - Fee Structure: create, getByBatch, update, delete                                                                                                                                     
+  - Fee Receipts: create, bulkCreate, getAll, getById, update, delete                                                                                                                     
+  - Summary: getReceiptsSummary, getStudentFeesSummary                                                                                                                                    
+  - Student-facing: getMyReceipts, getMySummary                                                                                                                                           
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ### Phase 2E: Frontend UI Components                                                                                                                                                    
+                                                                                                                                                                                          
+  **New components** in `frontend/src/components/fees/`:                                                                                                                                  
+                                                                                                                                                                                          
+  1. **`FeeStructureManager.tsx`** - CRUD for fee structures per batch                                                                                                                    
+  2. **`CreateReceiptDialog.tsx`** - Single receipt creation form                                                                                                                         
+  3. **`BulkCreateReceiptsDialog.tsx`** - Bulk generation for batch                                                                                                                       
+  4. **`ReceiptsList.tsx`** - Table with filters and pagination                                                                                                                           
+  5. **`ReceiptDetailModal.tsx`** - View/Edit receipt details                                                                                                                             
+  6. **`FeesSummaryCard.tsx`** - Statistics overview                                                                                                                                      
+  7. **`StudentFeesView.tsx`** - Student-facing fees view                                                                                                                                 
+                                                                                                                                                                                          
+  **New page**: `frontend/src/app/(pages)/fees/page.tsx`                                                                                                                                  
+                                                                                                                                                                                          
+  **Add to Sidebar**: Fees menu item                                                                                                                                                      
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ### Phase 2F: Postman Collection Update                                                                                                                                                 
+                                                                                                                                                                                          
+  **File**: `postman/v.1.0.1.json`                                                                                                                                                        
+                                                                                                                                                                                          
+  **Add endpoints**:                                                                                                                                                                      
+  - Fee Structures folder (4 endpoints)                                                                                                                                                   
+  - Fee Receipts folder (10 endpoints)                                                                                                                                                    
+  - Student Fees folder (2 endpoints)                                                                                                                                                     
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ### Phase 2G: Cleanup                                                                                                                                                                   
+                                                                                                                                                                                          
+  **Delete files**:                                                                                                                                                                       
+  - `CipherLearn-API-Collection.postman_collection.json`                                                                                                                                  
+  - `CipherLearn-Environment.postman_environment.json`                                                                                                                                    
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ## Critical Files Summary                                                                                                                                                               
+                                                                                                                                                                                          
+  ### To Modify:                                                                                                                                                                          
+  1. `backend/prisma/schema.prisma` - Add fee models                                                                                                                                      
+  2. `backend/src/modules/dashboard/batches/controller.ts` - Fix response format                                                                                                          
+  3. `backend/src/modules/dashboard/routes.ts` - Register fees routes                                                                                                                     
+  4. `frontend/src/types/index.ts` - Add fee types                                                                                                                                        
+  5. `frontend/src/redux/api/api.ts` - Add 'Fees' tag                                                                                                                                     
+  6. `frontend/src/redux/slices/batches/batchesApi.ts` - Add hard delete                                                                                                                  
+  7. `frontend/src/redux/slices/students/studentsApi.ts` - Add hard delete                                                                                                                
+  8. `frontend/src/components/layout/Sidebar.tsx` - Fix theme + add Fees                                                                                                                  
+  9. `frontend/src/app/(auth)/layout.tsx` - Fix theme                                                                                                                                     
+  10. `postman/v.1.0.1.json` - Add fees endpoints                                                                                                                                         
+                                                                                                                                                                                          
+  ### To Create:                                                                                                                                                                          
+  1. `backend/src/modules/dashboard/fees/types.ts`                                                                                                                                        
+  2. `backend/src/modules/dashboard/fees/validation.ts`                                                                                                                                   
+  3. `backend/src/modules/dashboard/fees/service.ts`                                                                                                                                      
+  4. `backend/src/modules/dashboard/fees/controller.ts`                                                                                                                                   
+  5. `backend/src/modules/dashboard/fees/route.ts`                                                                                                                                        
+  6. `frontend/src/redux/slices/fees/feesApi.ts`                                                                                                                                          
+  7. `frontend/src/components/fees/*.tsx` (7 components)                                                                                                                                  
+  8. `frontend/src/components/settings/DangerZone.tsx`                                                                                                                                    
+  9. `frontend/src/app/(pages)/fees/page.tsx`                                                                                                                                             
+                                                                                                                                                                                          
+  ### To Delete:                                                                                                                                                                          
+  1. `CipherLearn-API-Collection.postman_collection.json`                                                                                                                                 
+  2. `CipherLearn-Environment.postman_environment.json`                                                                                                                                   
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ## Verification Steps                                                                                                                                                                   
+                                                                                                                                                                                          
+  1. **Database**: Run `npx prisma migrate dev` and verify new tables                                                                                                                     
+  2. **Backend**: Test all fees endpoints via Postman                                                                                                                                     
+  3. **Frontend**:                                                                                                                                                                        
+  - Verify batch creation works                                                                                                                                                           
+  - Test hard delete in Danger Zone                                                                                                                                                       
+  - Check theme text visibility in both modes                                                                                                                                             
+  - Test fee receipt creation (single & bulk)                                                                                                                                             
+  - Verify student can see their receipts                                                                                                                                                 
+  4. **Build**: Run `npm run build` in frontend - ensure no TypeScript errors                                                                                                             
+                                                                                                                                                                                          
+  ---                                                                                                                                                                                     
+                                                                                                                                                                                          
+  ## Execution Order                                                                                                                                                                      
+                                                                                                                                                                                          
+  1. Fix breaking issues first (Part 1A, 1B, 1C)                                                                                                                                          
+  2. Run build to verify fixes                                                                                                                                                            
+  3. Database migration (Phase 2A)                                                                                                                                                        
+  4. Backend fees implementation (Phase 2B)                                                                                                                                               
+  5. Frontend types (Phase 2C)                                                                                                                                                            
+  6. Frontend Redux API (Phase 2D)                                                                                                                                                        
+  7. Frontend UI components (Phase 2E)                                                                                                                                                    
+  8. Postman update (Phase 2F)                                                                                                                                                            
+  9. Cleanup files (Phase 2G)                                                                                                                                                             
+  10. Final build verification                                                                                                                                                            
+                                 

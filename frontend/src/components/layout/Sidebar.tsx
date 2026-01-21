@@ -2,148 +2,107 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
 import {
     LayoutDashboard,
     Users,
-    CalendarCheck,
-    Video,
+    BookOpen,
+    ClipboardList,
     FileText,
-    Layers,
-    GraduationCap,
+    Video,
+    LogOut,
     ChevronLeft,
+    ChevronRight,
+    FileUp,
+    Receipt,
     Settings,
-    LogOut
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion";
-import { useAppDispatch } from "@/redux/hooks";
-import { logoutLocal } from "@/redux/slices/auth/authSlice";
+import { useRouter } from "next/navigation"
 
-const sidebarItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-    { icon: Users, label: "Students", href: "/students" },
-    { icon: CalendarCheck, label: "Attendance", href: "/attendance" },
-    { icon: Layers, label: "Batches", href: "/batches" },
-    { icon: Video, label: "Videos", href: "/videos" },
-    { icon: FileText, label: "Notes", href: "/notes" },
+const navItems = [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/batches", label: "Batches", icon: BookOpen },
+    { href: "/students", label: "Students", icon: Users },
+    { href: "/attendance", label: "Attendance", icon: ClipboardList },
+    { href: "/fees", label: "Fees", icon: Receipt },
+    { href: "/assignments", label: "Assignments", icon: FileUp },
+    { href: "/notes", label: "Notes", icon: FileText },
+    { href: "/videos", label: "Videos", icon: Video },
+    { href: "/settings", label: "Settings", icon: Settings },
 ]
 
 export function Sidebar() {
     const pathname = usePathname()
+    const router = useRouter()
     const [isCollapsed, setIsCollapsed] = useState(false)
-    const dispatch = useAppDispatch()
 
-    // Determine if a link is active. Handle root dashboard path specifically.
-    const isActive = (href: string) => {
-        if (href === "/dashboard") {
-            // if we are on /dashboard or exactly /dashboard/, it is active. 
-            // Depending on routing, maybe we are at /. 
-            // Assuming app/(dashboard)/page.tsx maps to /. or /dashboard?
-            // The plan implies / is landing logic or dashboard. 
-            // Usually dashboard is /dashboard. 
-            // Let's assume dashboard root is /dashboard for now.
-            return pathname === href
-        }
-        return pathname.startsWith(href)
+    const handleLogout = () => {
+        localStorage.removeItem("token")
+        router.push("/login")
     }
 
     return (
         <aside
-            className={cn(
-                "relative flex flex-col border-r bg-card transition-[width] duration-300 ease-in-out h-screen sticky top-0 left-0 z-40",
-                isCollapsed ? "w-20" : "w-64"
-            )}
+            className={`sticky top-0 z-40 h-screen transition-all duration-200 border-r border-border shrink-0 bg-background ${
+                isCollapsed ? 'w-14' : 'w-56'
+            }`}
         >
-            <div className="flex h-16 items-center justify-between px-4 border-b">
-                <div className={cn("flex items-center gap-2 font-bold text-xl text-primary transition-all overflow-hidden whitespace-nowrap", isCollapsed && "w-0 opacity-0")}>
-                    <div className="bg-indigo-600 p-1 rounded-md shrink-0">
-                        <GraduationCap className="h-5 w-5 text-white" />
-                    </div>
-                    <span>CipherLearn</span>
-                </div>
-                {isCollapsed && (
-                    <div className="mx-auto bg-indigo-600 p-2 rounded-md shrink-0">
-                        <GraduationCap className="h-6 w-6 text-white" />
-                    </div>
-                )}
-
+            {/* Header - Vercel compact style */}
+            <div className="flex h-14 items-center justify-between px-3 border-b border-border">
                 {!isCollapsed && (
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 ml-auto"
-                        onClick={() => setIsCollapsed(!isCollapsed)}
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-md flex items-center justify-center bg-foreground text-background font-semibold text-xs">
+                            CL
+                        </div>
+                        <span className="font-semibold text-sm text-foreground">CipherLearn</span>
+                    </div>
                 )}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-accent"
+                >
+                    {isCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
+                </Button>
             </div>
 
-            {isCollapsed && (
-                <div className="flex justify-center py-2 absolute top-3 right-[-12px] z-50">
-                    <Button
-                        variant="secondary"
-                        size="icon"
-                        className="h-6 w-6 rounded-full border shadow-md"
-                        onClick={() => setIsCollapsed(false)}
-                    >
-                        <ChevronLeft className="h-3 w-3 rotate-180" />
-                    </Button>
-                </div>
-            )}
-
-            <div className="flex-1 overflow-y-auto py-4">
-                <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-                    {sidebarItems.map((item, index) => (
+            {/* Navigation - Vercel minimal spacing */}
+            <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto gap-8 ">
+                {navItems.map((item) => {
+                    const isActive = pathname === item.href
+                    return (
                         <Link
-                            key={index}
+                            key={item.href}
                             href={item.href}
-                            className={cn(
-                                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                                isActive(item.href) ? "bg-primary/10 text-primary hover:bg-primary/15" : "text-muted-foreground",
-                                isCollapsed && "justify-center px-2"
-                            )}
-                            title={isCollapsed ? item.label : undefined}
+                            className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors relative mb-0.5 ${
+                                isActive
+                                    ? 'text-foreground bg-secondary'
+                                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                            }`}
                         >
-                            <item.icon className={cn("h-5 w-5 shrink-0", isActive(item.href) && "text-primary")} />
+                            <item.icon className="h-4 w-4 shrink-0" />
                             {!isCollapsed && (
                                 <span className="truncate">{item.label}</span>
                             )}
                         </Link>
-                    ))}
-                </nav>
-            </div>
+                    )
+                })}
+            </nav>
 
-            <div className="border-t p-2 space-y-1">
-                <Link
-                    href="/settings"
-                    className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground text-muted-foreground",
-                        isCollapsed && "justify-center px-2"
-                    )}
+            {/* Footer - Logout */}
+            <div className="p-2 border-t border-border">
+                <Button
+                    variant="ghost"
+                    onClick={handleLogout}
+                    className={`w-full h-8 justify-start gap-2 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 ${
+                        isCollapsed ? 'justify-center px-0' : 'px-2'
+                    }`}
                 >
-                    <Settings className="h-5 w-5" />
-                    {!isCollapsed && (
-                        <span>Settings</span>
-                    )}
-                </Link>
-                <button
-                    onClick={() => {
-                        dispatch(logoutLocal())
-                        window.location.href = "/login"
-                    }}
-                    className={cn(
-                        "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-red-500/10 hover:text-red-600 text-muted-foreground",
-                        isCollapsed && "justify-center px-2"
-                    )}
-                >
-                    <LogOut className="h-5 w-5" />
-                    {!isCollapsed && (
-                        <span>Logout</span>
-                    )}
-                </button>
+                    <LogOut className="h-4 w-4 shrink-0" />
+                    {!isCollapsed && <span>Logout</span>}
+                </Button>
             </div>
         </aside>
     )

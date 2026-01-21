@@ -9,6 +9,25 @@
 * 🟢 You can import this file directly.
 */
 
+export const AnnouncementPriority = {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+} as const
+
+export type AnnouncementPriority = (typeof AnnouncementPriority)[keyof typeof AnnouncementPriority]
+
+
+export const SubmissionStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type SubmissionStatus = (typeof SubmissionStatus)[keyof typeof SubmissionStatus]
+
+
 export const UserRoles = {
   ADMIN: 'ADMIN',
   TEACHER: 'TEACHER',

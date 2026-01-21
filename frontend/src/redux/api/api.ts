@@ -1,9 +1,40 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { tagTypes } from '../constants/tags';
+import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../store';
 
+/**
+ * Standard API response wrapper
+ */
+export interface ApiResponse<T> {
+    success: boolean;
+    message?: string;
+    data?: T;
+    pagination?: PaginationInfo;
+}
+
+/**
+ * Pagination information from API
+ */
+export interface PaginationInfo {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}
+
+/**
+ * API Error response structure
+ */
+export interface ApiErrorResponse {
+    success: false;
+    message: string;
+    errors?: Array<{
+        field: string;
+        message: string;
+    }>;
+}
+
 const baseQuery = fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api', // Backend URL with /api prefix
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
     prepareHeaders: (headers, { getState }) => {
         const token = (getState() as RootState)?.auth?.token;
         if (token) {
@@ -13,13 +44,19 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
-const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
-    let result = await baseQuery(args, api, extraOptions);
+const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+    args,
+    api,
+    extraOptions
+) => {
+    const result = await baseQuery(args, api, extraOptions);
     if (result.error && result.error.status === 401) {
-        // Dispatch logout action or clear local storage
+        // Clear auth state and redirect to login
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+        }
     }
     return result;
 };
@@ -27,6 +64,8 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithReauth,
-    tagTypes: ['Auth', 'Students', 'Batches', 'Announcements', 'Attendance', 'Fees', 'Notes', 'Videos', 'Dashboard'],
+    refetchOnFocus: false,
+    refetchOnReconnect: false,
+    tagTypes: ['Auth', 'Students', 'Batches', 'Announcements', 'Attendance', 'Fees', 'Notes', 'Videos', 'Dashboard', 'Analytics', 'Assignments', 'Submissions', 'StudyMaterials'],
     endpoints: () => ({}),
 });
