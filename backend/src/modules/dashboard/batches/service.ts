@@ -41,17 +41,20 @@ export default class BatchService {
 
   async getAll() {
     try {
-      let select: Prisma.BatchSelect = {
-        id: true,
-        name: true,
-        timings: true,
-        totalStudents: true,
-        createdAt: true,
-      };
-
       const batches = await prisma.batch.findMany({
         where: { isDeleted: false },
-        select: select,
+        select: {
+          id: true,
+          name: true,
+          timings: true,
+          totalStudents: true,
+          createdAt: true,
+          _count: {
+            select: {
+              students: true,
+            },
+          },
+        },
       });
       return batches;
     } catch (error) {
@@ -124,13 +127,20 @@ export default class BatchService {
     }
   }
 
+  /**
+   * Soft delete batches (sets isDeleted to true)
+   * This is the same as draft but without tracking who deleted it
+   */
   async delete(ids: number[]) {
     try {
-      const deleted = await prisma.batch.deleteMany({
+      const deleted = await prisma.batch.updateMany({
         where: {
           id: {
             in: ids,
           },
+        },
+        data: {
+          isDeleted: true,
         },
       });
 
@@ -147,20 +157,30 @@ export default class BatchService {
   /**
    * Permanently delete a batch with all related data (DANGER: This cannot be undone!)
    */
-  async hardDelete(id: number): Promise<{ deleted: boolean; relatedData: { students: number; attendance: number; sheets: number; videos: number; notes: number; qrTokens: number } }> {
+  async hardDelete(id: number): Promise<{ deleted: boolean; relatedData: { students: number; attendance: number; sheets: number; videos: number; notes: number; qrTokens: number; feeReceipts: number; feeStructures: number; assignments: number; studyMaterials: number } }> {
     try {
       // Delete related QR tokens
       const qrTokens = await prisma.qRAttendanceToken.deleteMany({
         where: { batchId: id },
       });
 
-      // Delete related attendance records
+      // Delete related attendance records first (references sheets)
       const attendance = await prisma.attendance.deleteMany({
         where: { batchId: id },
       });
 
       // Delete related attendance sheets
       const sheets = await prisma.attendanceSheet.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete fee receipts (references students and fee structures)
+      const feeReceipts = await prisma.feeReceipt.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete fee structures
+      const feeStructures = await prisma.feeStructure.deleteMany({
         where: { batchId: id },
       });
 
@@ -171,6 +191,25 @@ export default class BatchService {
 
       // Delete related videos
       const videos = await prisma.youtubeVideo.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete assignment submissions first (references assignmentSlot)
+      const assignmentSlotIds = await prisma.assignmentSlot.findMany({
+        where: { batchId: id },
+        select: { id: true },
+      });
+      await prisma.studentSubmission.deleteMany({
+        where: { slotId: { in: assignmentSlotIds.map(a => a.id) } },
+      });
+
+      // Delete assignments
+      const assignments = await prisma.assignmentSlot.deleteMany({
+        where: { batchId: id },
+      });
+
+      // Delete study materials
+      const studyMaterials = await prisma.studyMaterial.deleteMany({
         where: { batchId: id },
       });
 
@@ -193,6 +232,10 @@ export default class BatchService {
           videos: videos.count,
           notes: notes.count,
           qrTokens: qrTokens.count,
+          feeReceipts: feeReceipts.count,
+          feeStructures: feeStructures.count,
+          assignments: assignments.count,
+          studyMaterials: studyMaterials.count,
         },
       };
     } catch (error) {
@@ -216,7 +259,7 @@ export default class BatchService {
         return { deleted: 0 };
       }
 
-      // Delete all related data
+      // Delete all related data in correct order (respecting foreign keys)
       await prisma.qRAttendanceToken.deleteMany({
         where: { batchId: { in: ids } },
       });
@@ -226,10 +269,30 @@ export default class BatchService {
       await prisma.attendanceSheet.deleteMany({
         where: { batchId: { in: ids } },
       });
+      await prisma.feeReceipt.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+      await prisma.feeStructure.deleteMany({
+        where: { batchId: { in: ids } },
+      });
       await prisma.note.deleteMany({
         where: { batchId: { in: ids } },
       });
       await prisma.youtubeVideo.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+      // Delete assignment submissions first
+      const assignmentSlotIds = await prisma.assignmentSlot.findMany({
+        where: { batchId: { in: ids } },
+        select: { id: true },
+      });
+      await prisma.studentSubmission.deleteMany({
+        where: { slotId: { in: assignmentSlotIds.map(a => a.id) } },
+      });
+      await prisma.assignmentSlot.deleteMany({
+        where: { batchId: { in: ids } },
+      });
+      await prisma.studyMaterial.deleteMany({
         where: { batchId: { in: ids } },
       });
       await prisma.student.deleteMany({

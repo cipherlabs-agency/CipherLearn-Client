@@ -176,12 +176,12 @@ export function ReceiptDetailDialog({ receipt, open, onOpenChange }: ReceiptDeta
                     <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
                         <div>
                             <p className="text-xs text-muted-foreground">Student</p>
-                            <p className="font-medium">{receipt.student.fullname}</p>
-                            <p className="text-sm text-muted-foreground">{receipt.student.email}</p>
+                            <p className="font-medium">{receipt.student?.fullname || "Unknown Student"}</p>
+                            <p className="text-sm text-muted-foreground">{receipt.student?.email || "-"}</p>
                         </div>
                         <div>
                             <p className="text-xs text-muted-foreground">Batch</p>
-                            <p className="font-medium">{receipt.batch.name}</p>
+                            <p className="font-medium">{receipt.batch?.name || "No Batch"}</p>
                         </div>
                     </div>
 

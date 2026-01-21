@@ -63,51 +63,52 @@ export function AttendanceChart() {
                         <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="presentGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="hsl(142.1 76.2% 36.3%)" stopOpacity={1} />
-                                    <stop offset="100%" stopColor="hsl(142.1 76.2% 36.3%)" stopOpacity={0.6} />
+                                    <stop offset="0%" stopColor="hsl(var(--chart-success))" stopOpacity={1} />
+                                    <stop offset="100%" stopColor="hsl(var(--chart-success))" stopOpacity={0.7} />
                                 </linearGradient>
                                 <linearGradient id="absentGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="var(--muted-foreground)" stopOpacity={0.4} />
-                                    <stop offset="100%" stopColor="var(--muted-foreground)" stopOpacity={0.1} />
+                                    <stop offset="0%" stopColor="hsl(var(--chart-warning))" stopOpacity={0.8} />
+                                    <stop offset="100%" stopColor="hsl(var(--chart-warning))" stopOpacity={0.4} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.2} vertical={false} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} vertical={false} />
                             <XAxis
                                 dataKey="name"
-                                tick={{ fontSize: 9, fill: 'var(--muted-foreground)', fontWeight: 500 }}
-                                axisLine={{ stroke: 'var(--border)', opacity: 0.5 }}
+                                tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}
+                                axisLine={{ stroke: 'hsl(var(--border))', strokeOpacity: 0.5 }}
                                 tickLine={false}
                             />
                             <YAxis
-                                tick={{ fontSize: 9, fill: 'var(--muted-foreground)', fontWeight: 500 }}
+                                tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}
                                 axisLine={false}
                                 tickLine={false}
                             />
                             <Tooltip
                                 contentStyle={{
-                                    backgroundColor: 'var(--background)',
-                                    border: '1px solid var(--border)',
+                                    backgroundColor: 'hsl(var(--background))',
+                                    border: '1px solid hsl(var(--border))',
                                     borderRadius: '8px',
                                     fontSize: '11px',
                                     fontWeight: '600',
                                     padding: '12px',
-                                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.15)',
+                                    color: 'hsl(var(--foreground))'
                                 }}
-                                labelStyle={{ fontWeight: 'bold', marginBottom: '4px', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '0.05em' }}
+                                labelStyle={{ fontWeight: 'bold', marginBottom: '4px', textTransform: 'uppercase', fontSize: '10px', letterSpacing: '0.05em', color: 'hsl(var(--foreground))' }}
                             />
-                            <Bar dataKey="present" fill="url(#presentGradient)" radius={[4, 4, 0, 0]} name="Present" barSize={14} />
-                            <Bar dataKey="absent" fill="url(#absentGradient)" radius={[4, 4, 0, 0]} name="Absent" barSize={14} />
+                            <Bar dataKey="present" fill="url(#presentGradient)" radius={[4, 4, 0, 0]} name="Present" barSize={16} />
+                            <Bar dataKey="absent" fill="url(#absentGradient)" radius={[4, 4, 0, 0]} name="Absent" barSize={16} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
                 <div className="flex items-center justify-center gap-6 pt-6 border-t border-border/40 mt-6">
                     <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest opacity-70">Present</span>
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: 'hsl(var(--chart-success))' }} />
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Present</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
-                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest opacity-70">Absent</span>
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: 'hsl(var(--chart-warning))' }} />
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Absent</span>
                     </div>
                 </div>
             </CardContent>

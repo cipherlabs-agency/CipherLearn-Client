@@ -343,15 +343,15 @@ function AdminFeesView() {
                   <TableCell>
                     <div>
                       <p className="font-medium text-foreground">
-                        {receipt.student.fullname}
+                        {receipt.student?.fullname || "Unknown Student"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {receipt.student.email}
+                        {receipt.student?.email || "-"}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {receipt.batch.name}
+                    {receipt.batch?.name || "No Batch"}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {getMonthName(receipt.academicMonth)} {receipt.academicYear}

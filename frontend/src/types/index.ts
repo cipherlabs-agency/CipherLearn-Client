@@ -488,15 +488,15 @@ export interface FeeReceipt {
     studentId: number;
     batchId: number;
     feeStructureId: number | null;
-    student: {
+    student?: {
         id: number;
         fullname: string;
         email: string;
-    };
-    batch: {
+    } | null;
+    batch?: {
         id: number;
         name: string;
-    };
+    } | null;
     feeStructure?: {
         id: number;
         name: string;

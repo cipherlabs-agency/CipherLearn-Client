@@ -70,15 +70,31 @@ export default class BatchController {
     try {
       const batches = await batchService.getAll();
 
-      const formattedBatches = batches.map((batch: any) => ({
-        ...batch,
-        students: batch.totalStudents || 0,
-        time: batch.timings?.time || "",
-        days: Array.isArray(batch.timings?.days)
-          ? batch.timings.days.join(", ")
-          : "",
-        status: batch.isDeleted ? "Inactive" : "Active", // Assuming isDeleted determines status
-      }));
+      const formattedBatches = batches.map((batch: any) => {
+        const capacity = typeof batch.totalStudents === 'number'
+          ? batch.totalStudents
+          : (batch.totalStudents as any)?.capacity || 0;
+        const enrolled = batch._count?.students || 0;
+
+        return {
+          id: batch.id,
+          name: batch.name,
+          timings: batch.timings,
+          createdAt: batch.createdAt,
+          // Return totalStudents as object with both capacity and enrolled
+          totalStudents: {
+            capacity,
+            enrolled,
+          },
+          // Keep legacy fields for compatibility
+          students: enrolled,
+          time: batch.timings?.time || "",
+          days: Array.isArray(batch.timings?.days)
+            ? batch.timings.days.join(", ")
+            : "",
+          status: "Active",
+        };
+      });
 
       return res.status(200).json({ success: true, batches: formattedBatches });
     } catch (error) {

@@ -3,7 +3,7 @@
 		"_postman_id": "cipherlearn-api-v1.0.1",
 		"name": "CipherLearn API v1.0.1",
 		"version": "1.0.1",
-		"description": "Comprehensive API collection for CipherLearn - Learning Management System.\n\nThis collection includes all endpoints for:\n- Authentication (Login, Signup, Logout)\n- Batches Management (CRUD + Danger Zone)\n- Student Enrollment (Single & CSV Import + Danger Zone)\n- Attendance (Manual, QR, Reports)\n- Fees Management (Structures, Receipts, Summaries)\n- YouTube Videos (CRUD)\n- Notes (CRUD with file uploads)\n- Analytics Dashboard (Stats, Trends, Distribution)\n\n**New in v1.0.1:**\n- Dashboard Analytics APIs (stats, enrollment trends, attendance trends)\n- Batch Distribution & Recent Activities\n- Danger Zone APIs for hard delete operations\n- Student Profile API for QR attendance\n- Fees Management System (Fee Structures, Receipts, Bulk Creation)\n\n**Setup:**\n1. Import this collection into Postman\n2. Create environment with baseUrl = http://localhost:5000/api\n3. Run the Login request first to auto-set the authToken\n\n**Base URL:** http://localhost:5000/api",
+		"description": "Comprehensive API collection for CipherLearn - Learning Management System.\n\nThis collection includes all endpoints for:\n- Authentication (Login, Signup, Logout)\n- Batches Management (CRUD + Danger Zone)\n- Student Enrollment (Single & CSV Import + Danger Zone)\n- Attendance (Manual, QR, Reports)\n- Fees Management (Structures, Receipts, Summaries)\n- YouTube Videos (CRUD)\n- Notes (CRUD with file uploads)\n- Analytics Dashboard (Stats, Trends, Distribution)\n- **Student App APIs** (Mobile/Student Portal)\n\n**New in v1.0.1:**\n- Dashboard Analytics APIs (stats, enrollment trends, attendance trends)\n- Batch Distribution & Recent Activities\n- Danger Zone APIs for hard delete operations\n- Student Profile API for QR attendance\n- Fees Management System (Fee Structures, Receipts, Bulk Creation)\n- Student App APIs (Profile, Dashboard, Attendance, Assignments, Announcements, Resources, Fees)\n\n**Setup:**\n1. Import this collection into Postman\n2. Create environment with baseUrl = http://localhost:5000/api\n3. Run the Login request first to auto-set the authToken\n4. For Student App APIs, login as a student user\n\n**Base URL:** http://localhost:5000/api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -1852,6 +1852,321 @@
 									]
 								},
 								"description": "Get attendance statistics for a batch for an entire month"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Student App",
+			"description": "Student-facing mobile/portal APIs. All endpoints require student authentication (isStudent middleware).",
+			"item": [
+				{
+					"name": "Profile",
+					"description": "Student profile endpoints",
+					"item": [
+						{
+							"name": "Get My Profile",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/profile",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "profile"]
+								},
+								"description": "Get the authenticated student's profile including batch information.\n\n**Returns:**\n- id, fullname, email, dob, address\n- batch: { id, name }"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Dashboard",
+					"description": "Student dashboard endpoints",
+					"item": [
+						{
+							"name": "Get Dashboard",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/dashboard",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "dashboard"]
+								},
+								"description": "Get student dashboard data including attendance stats and recent activities.\n\n**Returns:**\n- attendanceStats: { present, absent, total, percentage }\n- upcomingAssignments, recentGrades, announcements"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Today's Lectures",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/dashboard/today-lectures",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "dashboard", "today-lectures"]
+								},
+								"description": "Get today's lecture schedule for the student's batch.\n\n**Returns:**\n- Array of lectures with time slots and subjects"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Quick Access",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/dashboard/quick-access",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "dashboard", "quick-access"]
+								},
+								"description": "Get quick access links and counts for the student.\n\n**Returns:**\n- pendingAssignments, unreadAnnouncements, availableResources"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Attendance",
+					"description": "Student attendance endpoints",
+					"item": [
+						{
+							"name": "Get My Attendance",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/attendance?month=1&year=2024",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "attendance"],
+									"query": [
+										{
+											"key": "month",
+											"value": "1",
+											"description": "Optional: filter by month (1-12)"
+										},
+										{
+											"key": "year",
+											"value": "2024",
+											"description": "Optional: filter by year"
+										}
+									]
+								},
+								"description": "Get the student's attendance records with optional month/year filter.\n\n**Returns:**\n- Array of attendance records with date, status, time"
+							},
+							"response": []
+						},
+						{
+							"name": "Mark QR Attendance",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"qrData\": \"{{qrData}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/app/attendance/mark-qr",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "attendance", "mark-qr"]
+								},
+								"description": "Mark attendance by scanning QR code (for students).\n\n**Note:** qrData should be the base64-encoded QR payload obtained from scanning the QR code.\n\n**Validation:**\n- QR must be valid and not expired\n- Student must be enrolled in the batch\n- Attendance not already marked for today\n- QR code must belong to the student's batch"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Assignments",
+					"description": "Student assignments endpoints",
+					"item": [
+						{
+							"name": "Get My Assignments",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/assignments",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "assignments"]
+								},
+								"description": "Get all assignments for the student's batch.\n\n**Returns:**\n- Array of assignments with title, description, dueDate, status"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Announcements",
+					"description": "Student announcements endpoints",
+					"item": [
+						{
+							"name": "Get Announcements",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/announcements",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "announcements"]
+								},
+								"description": "Get all announcements for the student's batch.\n\n**Returns:**\n- Array of announcements with title, content, createdAt"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Resources",
+					"description": "Student learning resources endpoints",
+					"item": [
+						{
+							"name": "Get Videos",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/resources/videos",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "resources", "videos"]
+								},
+								"description": "Get all YouTube videos for the student's batch.\n\n**Returns:**\n- Array of videos with id, title, description, url, category"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Notes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/resources/notes",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "resources", "notes"]
+								},
+								"description": "Get all notes for the student's batch.\n\n**Returns:**\n- Array of notes with id, title, content (file URLs), category"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Study Materials",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/resources/study-materials",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "resources", "study-materials"]
+								},
+								"description": "Get all study materials for the student's batch.\n\n**Returns:**\n- Array of materials with id, title, description, files, category"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Fees",
+					"description": "Student fees endpoints",
+					"item": [
+						{
+							"name": "Get My Fee Receipts",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/fees/receipts",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "fees", "receipts"]
+								},
+								"description": "Get all fee receipts for the authenticated student.\n\n**Returns:**\n- Array of receipts with receiptNumber, totalAmount, paidAmount, status, dueDate"
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Fees Summary",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/app/fees/summary",
+									"host": ["{{baseUrl}}"],
+									"path": ["app", "fees", "summary"]
+								},
+								"description": "Get fees summary for the authenticated student.\n\n**Returns:**\n- totalDue, totalPaid, totalPending\n- receiptCounts: { total, paid, pending, overdue }"
 							},
 							"response": []
 						}
