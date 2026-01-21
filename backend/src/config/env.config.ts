@@ -39,5 +39,20 @@ export const config = {
     PORT: Number(process.env.NODE_MAILER_PORT) || 587,
     USER: process.env.NODE_MAILER_USER || "",
     PASSWORD: process.env.NODE_MAILER_PASSWORD || "",
+    FROM_EMAIL: process.env.NODE_MAILER_FROM_EMAIL || "noreply@cipherlearn.com",
+    FROM_NAME: process.env.NODE_MAILER_FROM_NAME || "CipherLearn",
+  },
+  RATE_LIMIT: {
+    LOGIN_MAX: Number(process.env.RATE_LIMIT_LOGIN_MAX) || 5,
+    LOGIN_WINDOW_MS: Number(process.env.RATE_LIMIT_LOGIN_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+    PASSWORD_RESET_MAX: Number(process.env.RATE_LIMIT_PASSWORD_RESET_MAX) || 3,
+    PASSWORD_RESET_WINDOW_MS: Number(process.env.RATE_LIMIT_PASSWORD_RESET_WINDOW_MS) || 60 * 60 * 1000, // 1 hour
+  },
+  ACCOUNT_LOCKOUT: {
+    MAX_FAILED_ATTEMPTS: Number(process.env.ACCOUNT_LOCKOUT_MAX_FAILED) || 5,
+    LOCKOUT_DURATION_MINUTES: Number(process.env.ACCOUNT_LOCKOUT_DURATION_MINUTES) || 30,
+  },
+  OTP: {
+    EXPIRY_MINUTES: Number(process.env.OTP_EXPIRY_MINUTES) || 10,
   },
 } as const;

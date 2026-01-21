@@ -14,14 +14,17 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  name     String
-  email    String    @unique
-  password String
-  role     UserRoles @default(STUDENT)
+  id                  Int       @id @default(autoincrement())
+  name                String
+  email               String    @unique
+  password            String
+  role                UserRoles @default(STUDENT)
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
 
-  updatedAt DateTime? @updatedAt
-  createdAt DateTime? @default(now())
+  updatedAt            DateTime?            @updatedAt
+  createdAt            DateTime?            @default(now())
+  passwordResetTokens  PasswordResetToken[]
 
   @@map("users")
 }
@@ -373,4 +376,47 @@ model FeeReceipt {
   @@index([academicMonth, academicYear])
   @@index([dueDate])
   @@map("fee_receipts")
+}
+
+// ============================================
+// Student Authentication Models
+// ============================================
+
+model PasswordResetToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([token])
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+model TokenBlacklist {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  expiresAt DateTime
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@map("token_blacklist")
+}
+
+model LoginAttempt {
+  id        Int      @id @default(autoincrement())
+  email     String?
+  ipAddress String
+  success   Boolean
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("login_attempts")
 }

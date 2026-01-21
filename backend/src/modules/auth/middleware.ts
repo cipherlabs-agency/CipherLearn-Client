@@ -4,6 +4,16 @@ import { prisma } from "../../config/db.config";
 import { UserRoles } from "../../../prisma/generated/prisma/enums";
 
 /**
+ * Check if a token is blacklisted
+ */
+const isTokenBlacklisted = async (token: string): Promise<boolean> => {
+  const blacklisted = await prisma.tokenBlacklist.findUnique({
+    where: { token },
+  });
+  return !!blacklisted;
+};
+
+/**
  * Middleware to check if user is Admin or Teacher
  * Used for routes that should be accessible to both roles (e.g., QR code generation)
  */
@@ -207,6 +217,15 @@ export const isStudent = async (
       });
     }
 
+    // Check if token is blacklisted (logged out)
+    const blacklisted = await isTokenBlacklisted(token);
+    if (blacklisted) {
+      return res.status(401).json({
+        success: false,
+        message: "Token has been revoked. Please login again.",
+      });
+    }
+
     const decoded = verifyToken(token);
 
     const user = await prisma.user.findUnique({
@@ -218,6 +237,7 @@ export const isStudent = async (
         password: true,
         role: true,
         createdAt: true,
+        lockedUntil: true,
       },
     });
 
@@ -225,6 +245,14 @@ export const isStudent = async (
       return res.status(401).json({
         success: false,
         message: "User not found",
+      });
+    }
+
+    // Check if account is locked
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      return res.status(403).json({
+        success: false,
+        message: "Account is locked. Please try again later.",
       });
     }
 

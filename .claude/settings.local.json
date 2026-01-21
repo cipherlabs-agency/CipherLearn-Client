@@ -12,7 +12,8 @@
       "mcp__ide__getDiagnostics",
       "Bash(npx prisma generate:*)",
       "Bash(find:*)",
-      "Bash(\"C:\\\\CipherLabs\\\\CipherLearn\\\\client\\\\frontend\\\\src\\\\app\\\\\\(pages\\)\\\\fees\\\\page.tsx\")"
+      "Bash(\"C:\\\\CipherLabs\\\\CipherLearn\\\\client\\\\frontend\\\\src\\\\app\\\\\\(pages\\)\\\\fees\\\\page.tsx\")",
+      "Bash(dir /b \"C:\\\\CipherLabs\")"
     ]
   }
 }

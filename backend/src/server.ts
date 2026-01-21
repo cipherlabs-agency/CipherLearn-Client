@@ -1,10 +1,27 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import httpLogger from "./middleware/httpLogger";
 import logger from "./utils/logger";
+import { config } from "./config/env.config";
 
 const app = express();
-app.use(cors());
+
+// Security headers
+app.use(helmet());
+
+// CORS configuration
+const corsOptions = {
+  origin: config.APP.CLIENT_URL,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+app.use(cors(corsOptions));
+
+// Trust proxy for rate limiting (important for production behind load balancer)
+app.set("trust proxy", 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(httpLogger);
