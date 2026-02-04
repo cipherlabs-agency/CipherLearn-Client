@@ -77,3 +77,28 @@ export type Announcement = Prisma.AnnouncementModel
  * 
  */
 export type StudyMaterial = Prisma.StudyMaterialModel
+/**
+ * Model FeeStructure
+ * 
+ */
+export type FeeStructure = Prisma.FeeStructureModel
+/**
+ * Model FeeReceipt
+ * 
+ */
+export type FeeReceipt = Prisma.FeeReceiptModel
+/**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
+ * Model TokenBlacklist
+ * 
+ */
+export type TokenBlacklist = Prisma.TokenBlacklistModel
+/**
+ * Model LoginAttempt
+ * 
+ */
+export type LoginAttempt = Prisma.LoginAttemptModel

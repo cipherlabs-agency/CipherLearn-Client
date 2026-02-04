@@ -157,253 +157,260 @@ export function CreateReceiptDialog({ onSuccess }: CreateReceiptDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="sm">
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Receipt
+                <Button size="sm" className="h-8 gap-1.5">
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>New Receipt</span>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle className="text-lg font-bold">Create Fee Receipt</DialogTitle>
-                    <DialogDescription>
+            <DialogContent className="sm:max-w-[560px] p-0 gap-0 overflow-hidden">
+                <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
+                    <DialogTitle className="text-base font-semibold">Create Fee Receipt</DialogTitle>
+                    <DialogDescription className="text-[13px] text-muted-foreground mt-1">
                         Generate a new fee receipt for a student.
                     </DialogDescription>
                 </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                    <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">
+                                    Batch <span className="text-destructive">*</span>
+                                </Label>
+                                <Select value={selectedBatchId} onValueChange={(v) => {
+                                    setSelectedBatchId(v)
+                                    setSelectedStudentId("")
+                                    setSelectedStructureId("")
+                                }}>
+                                    <SelectTrigger className="h-9 text-[13px]">
+                                        <SelectValue placeholder="Select batch" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {batches.map((batch) => (
+                                            <SelectItem key={batch.id} value={String(batch.id)} className="text-[13px]">
+                                                {batch.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">
+                                    Student <span className="text-destructive">*</span>
+                                </Label>
+                                <Select value={selectedStudentId} onValueChange={setSelectedStudentId} disabled={!selectedBatchId}>
+                                    <SelectTrigger className="h-9 text-[13px]">
+                                        <SelectValue placeholder="Select student" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {students.map((student) => (
+                                            <SelectItem key={student.id} value={String(student.id)} className="text-[13px]">
+                                                {student.fullname}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Batch Selection */}
-                        <div className="space-y-2">
-                            <Label>Batch *</Label>
-                            <Select value={selectedBatchId} onValueChange={(v) => {
-                                setSelectedBatchId(v)
-                                setSelectedStudentId("")
-                                setSelectedStructureId("")
-                            }}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select batch" />
+                        <div className="space-y-1.5">
+                            <Label className="text-[13px] font-medium">Fee Structure</Label>
+                            <Select value={selectedStructureId} onValueChange={setSelectedStructureId} disabled={!selectedBatchId}>
+                                <SelectTrigger className="h-9 text-[13px]">
+                                    <SelectValue placeholder="Select fee structure (optional)" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {batches.map((batch) => (
-                                        <SelectItem key={batch.id} value={String(batch.id)}>
-                                            {batch.name}
+                                    {feeStructures.map((structure) => (
+                                        <SelectItem key={structure.id} value={String(structure.id)} className="text-[13px]">
+                                            {structure.name} - ₹{structure.amount}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
                         </div>
 
-                        {/* Student Selection */}
-                        <div className="space-y-2">
-                            <Label>Student *</Label>
-                            <Select
-                                value={selectedStudentId}
-                                onValueChange={setSelectedStudentId}
-                                disabled={!selectedBatchId}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select student" />
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">
+                                    Academic Month <span className="text-destructive">*</span>
+                                </Label>
+                                <Select value={academicMonth} onValueChange={setAcademicMonth}>
+                                    <SelectTrigger className="h-9 text-[13px]">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {MONTHS.map((month) => (
+                                            <SelectItem key={month.value} value={String(month.value)} className="text-[13px]">
+                                                {month.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">
+                                    Academic Year <span className="text-destructive">*</span>
+                                </Label>
+                                <Select value={academicYear} onValueChange={setAcademicYear}>
+                                    <SelectTrigger className="h-9 text-[13px]">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {years.map((year) => (
+                                            <SelectItem key={year} value={String(year)} className="text-[13px]">
+                                                {year}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">
+                                    Total Amount <span className="text-destructive">*</span>
+                                </Label>
+                                <Input
+                                    type="number"
+                                    value={totalAmount}
+                                    onChange={(e) => setTotalAmount(e.target.value)}
+                                    placeholder="0"
+                                    min="0"
+                                    className="h-9 text-[13px]"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">Discount</Label>
+                                <Input
+                                    type="number"
+                                    value={discountAmount}
+                                    onChange={(e) => setDiscountAmount(e.target.value)}
+                                    placeholder="0"
+                                    min="0"
+                                    className="h-9 text-[13px]"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">Paid Amount</Label>
+                                <Input
+                                    type="number"
+                                    value={paidAmount}
+                                    onChange={(e) => setPaidAmount(e.target.value)}
+                                    placeholder="0"
+                                    min="0"
+                                    className="h-9 text-[13px]"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">
+                                    Due Date <span className="text-destructive">*</span>
+                                </Label>
+                                <Input
+                                    type="date"
+                                    value={dueDate}
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                    className="h-9 text-[13px]"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">Payment Date</Label>
+                                <Input
+                                    type="date"
+                                    value={paymentDate}
+                                    onChange={(e) => setPaymentDate(e.target.value)}
+                                    disabled={!paidAmount}
+                                    className="h-9 text-[13px]"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label className="text-[13px] font-medium">Payment Mode</Label>
+                            <Select value={paymentMode} onValueChange={(v) => setPaymentMode(v as PaymentMode)}>
+                                <SelectTrigger className="h-9 text-[13px]">
+                                    <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {students.map((student) => (
-                                        <SelectItem key={student.id} value={String(student.id)}>
-                                            {student.fullname}
+                                    {PAYMENT_MODES.map((mode) => (
+                                        <SelectItem key={mode.value} value={mode.value} className="text-[13px]">
+                                            {mode.label}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
+                        </div>
+
+                        {paymentMode === "CHEQUE" && (
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-1.5">
+                                    <Label className="text-[13px] font-medium">Cheque Number</Label>
+                                    <Input
+                                        value={chequeNumber}
+                                        onChange={(e) => setChequeNumber(e.target.value)}
+                                        placeholder="Enter cheque number"
+                                        className="h-9 text-[13px]"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Label className="text-[13px] font-medium">Bank Name</Label>
+                                    <Input
+                                        value={bankName}
+                                        onChange={(e) => setBankName(e.target.value)}
+                                        placeholder="Enter bank name"
+                                        className="h-9 text-[13px]"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {(paymentMode === "UPI" || paymentMode === "BANK_TRANSFER" || paymentMode === "ONLINE") && (
+                            <div className="space-y-1.5">
+                                <Label className="text-[13px] font-medium">Transaction ID</Label>
+                                <Input
+                                    value={transactionId}
+                                    onChange={(e) => setTransactionId(e.target.value)}
+                                    placeholder="Enter transaction ID"
+                                    className="h-9 text-[13px]"
+                                />
+                            </div>
+                        )}
+
+                        <div className="space-y-1.5">
+                            <Label className="text-[13px] font-medium">Notes</Label>
+                            <Textarea
+                                value={paymentNotes}
+                                onChange={(e) => setPaymentNotes(e.target.value)}
+                                placeholder="Additional notes..."
+                                rows={2}
+                                className="text-[13px] resize-none"
+                            />
                         </div>
                     </div>
-
-                    {/* Fee Structure */}
-                    <div className="space-y-2">
-                        <Label>Fee Structure (Optional)</Label>
-                        <Select
-                            value={selectedStructureId}
-                            onValueChange={setSelectedStructureId}
-                            disabled={!selectedBatchId}
+                    <DialogFooter className="px-6 py-4 border-t border-border bg-muted/30">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOpen(false)}
+                            disabled={isLoading}
+                            className="h-8 text-[13px]"
                         >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select fee structure" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {feeStructures.map((structure) => (
-                                    <SelectItem key={structure.id} value={String(structure.id)}>
-                                        {structure.name} - ₹{structure.amount}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Academic Month */}
-                        <div className="space-y-2">
-                            <Label>Academic Month *</Label>
-                            <Select value={academicMonth} onValueChange={setAcademicMonth}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {MONTHS.map((month) => (
-                                        <SelectItem key={month.value} value={String(month.value)}>
-                                            {month.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Academic Year */}
-                        <div className="space-y-2">
-                            <Label>Academic Year *</Label>
-                            <Select value={academicYear} onValueChange={setAcademicYear}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {years.map((year) => (
-                                        <SelectItem key={year} value={String(year)}>
-                                            {year}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                        {/* Total Amount */}
-                        <div className="space-y-2">
-                            <Label>Total Amount *</Label>
-                            <Input
-                                type="number"
-                                value={totalAmount}
-                                onChange={(e) => setTotalAmount(e.target.value)}
-                                placeholder="0"
-                                min="0"
-                                required
-                            />
-                        </div>
-
-                        {/* Discount */}
-                        <div className="space-y-2">
-                            <Label>Discount</Label>
-                            <Input
-                                type="number"
-                                value={discountAmount}
-                                onChange={(e) => setDiscountAmount(e.target.value)}
-                                placeholder="0"
-                                min="0"
-                            />
-                        </div>
-
-                        {/* Paid Amount */}
-                        <div className="space-y-2">
-                            <Label>Paid Amount</Label>
-                            <Input
-                                type="number"
-                                value={paidAmount}
-                                onChange={(e) => setPaidAmount(e.target.value)}
-                                placeholder="0"
-                                min="0"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Due Date */}
-                        <div className="space-y-2">
-                            <Label>Due Date *</Label>
-                            <Input
-                                type="date"
-                                value={dueDate}
-                                onChange={(e) => setDueDate(e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        {/* Payment Date */}
-                        <div className="space-y-2">
-                            <Label>Payment Date</Label>
-                            <Input
-                                type="date"
-                                value={paymentDate}
-                                onChange={(e) => setPaymentDate(e.target.value)}
-                                disabled={!paidAmount}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Payment Mode */}
-                    <div className="space-y-2">
-                        <Label>Payment Mode</Label>
-                        <Select value={paymentMode} onValueChange={(v) => setPaymentMode(v as PaymentMode)}>
-                            <SelectTrigger>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {PAYMENT_MODES.map((mode) => (
-                                    <SelectItem key={mode.value} value={mode.value}>
-                                        {mode.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {/* Conditional fields based on payment mode */}
-                    {paymentMode === "CHEQUE" && (
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Cheque Number</Label>
-                                <Input
-                                    value={chequeNumber}
-                                    onChange={(e) => setChequeNumber(e.target.value)}
-                                    placeholder="Enter cheque number"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Bank Name</Label>
-                                <Input
-                                    value={bankName}
-                                    onChange={(e) => setBankName(e.target.value)}
-                                    placeholder="Enter bank name"
-                                />
-                            </div>
-                        </div>
-                    )}
-
-                    {(paymentMode === "UPI" || paymentMode === "BANK_TRANSFER" || paymentMode === "ONLINE") && (
-                        <div className="space-y-2">
-                            <Label>Transaction ID</Label>
-                            <Input
-                                value={transactionId}
-                                onChange={(e) => setTransactionId(e.target.value)}
-                                placeholder="Enter transaction ID"
-                            />
-                        </div>
-                    )}
-
-                    {/* Notes */}
-                    <div className="space-y-2">
-                        <Label>Notes</Label>
-                        <Textarea
-                            value={paymentNotes}
-                            onChange={(e) => setPaymentNotes(e.target.value)}
-                            placeholder="Additional notes..."
-                            rows={2}
-                        />
-                    </div>
-
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isLoading || !selectedStudentId || !selectedBatchId || !totalAmount || !dueDate}>
+                        <Button
+                            type="submit"
+                            size="sm"
+                            disabled={isLoading || !selectedStudentId || !selectedBatchId || !totalAmount || !dueDate}
+                            className="h-8 text-[13px] min-w-[110px]"
+                        >
                             {isLoading ? (
                                 <>
-                                    <Spinner size="sm" className="mr-2" />
+                                    <Spinner size="sm" className="mr-1.5" />
                                     Creating...
                                 </>
                             ) : (

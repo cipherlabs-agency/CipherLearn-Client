@@ -33,6 +33,9 @@ import {
   Eye,
   MoreVertical,
   Trash2,
+  Paperclip,
+  X,
+  Download,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -76,20 +79,40 @@ export default function AssignmentsPage() {
     batchId: "",
     dueDate: "",
   });
+  const [attachments, setAttachments] = useState<File[]>([]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      setAttachments((prev) => [...prev, ...Array.from(files)]);
+    }
+    e.target.value = ""; // Reset input to allow re-selecting same file
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleCreateSlot = async () => {
     if (!formData.title || !formData.subject || !formData.batchId) return;
 
     try {
-      await createSlot({
-        title: formData.title,
-        subject: formData.subject,
-        description: formData.description || undefined,
-        batchId: parseInt(formData.batchId, 10),
-        dueDate: formData.dueDate || undefined,
-      }).unwrap();
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("subject", formData.subject);
+      if (formData.description) data.append("description", formData.description);
+      data.append("batchId", formData.batchId);
+      if (formData.dueDate) data.append("dueDate", formData.dueDate);
+
+      // Add attachments
+      attachments.forEach((file) => {
+        data.append("attachments", file);
+      });
+
+      await createSlot(data).unwrap();
 
       setFormData({ title: "", subject: "", description: "", batchId: "", dueDate: "" });
+      setAttachments([]);
       setShowCreateDialog(false);
     } catch (error) {
       console.error("Failed to create slot:", error);
@@ -235,6 +258,44 @@ export default function AssignmentsPage() {
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Attachments (Optional)</label>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-foreground/30 hover:bg-secondary/30 transition-colors">
+                        <Upload className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          Click to upload files (PDF, DOC, Images)
+                        </span>
+                        <input
+                          type="file"
+                          className="hidden"
+                          multiple
+                          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif,.webp"
+                          onChange={handleFileChange}
+                        />
+                      </label>
+                      {attachments.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {attachments.map((file, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 px-2.5 py-1.5 bg-secondary rounded-md text-xs"
+                            >
+                              <Paperclip className="h-3 w-3 text-muted-foreground" />
+                              <span className="truncate max-w-[120px]">{file.name}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeAttachment(index)}
+                                className="p-0.5 hover:bg-destructive/10 rounded"
+                              >
+                                <X className="h-3 w-3 text-muted-foreground hover:text-destructive" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
@@ -300,6 +361,27 @@ export default function AssignmentsPage() {
                 <p className="text-xs text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
                   {slot.description}
                 </p>
+              )}
+
+              {/* Attachments */}
+              {slot.attachments && (slot.attachments as string[]).length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {(slot.attachments as string[]).map((url, i) => {
+                    const fileName = url.split("/").pop() || `File ${i + 1}`;
+                    return (
+                      <a
+                        key={i}
+                        href={`${process.env.NEXT_PUBLIC_API_URL}${url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-2 py-1 bg-secondary/50 hover:bg-secondary rounded text-[10px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <Download className="h-2.5 w-2.5" />
+                        <span className="truncate max-w-[80px]">{fileName}</span>
+                      </a>
+                    );
+                  })}
+                </div>
               )}
 
               <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">

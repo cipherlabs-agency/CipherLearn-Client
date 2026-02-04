@@ -53,64 +53,128 @@ export function AddNoteDialog() {
             setOpen(false)
             setFormData({ title: "", category: "", batchId: "" })
             setFiles([])
-        } catch (error: any) {
-            toast.error(error?.data?.message || "Failed to upload note")
+        } catch (error: unknown) {
+            const err = error as { data?: { message?: string } }
+            toast.error(err?.data?.message || "Failed to upload note")
         }
     }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button><Upload className="mr-2 h-4 w-4" />Upload File</Button>
+                <Button size="sm" className="h-8 gap-1.5">
+                    <Upload className="h-3.5 w-3.5" />
+                    <span>Upload File</span>
+                </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                    <DialogTitle>Upload Study Material</DialogTitle>
-                    <DialogDescription>Upload PDFs, documents, or other files for students.</DialogDescription>
+            <DialogContent className="sm:max-w-[480px] p-0 gap-0 overflow-hidden">
+                <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
+                    <DialogTitle className="text-base font-semibold">Upload Study Material</DialogTitle>
+                    <DialogDescription className="text-[13px] text-muted-foreground mt-1">
+                        Upload PDFs, documents, or other files for students.
+                    </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
-                    <div className="grid gap-4 py-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Title *</Label>
-                            <Input id="title" value={formData.title} onChange={handleChange} placeholder="Enter document title" required />
+                    <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="title" className="text-[13px] font-medium">
+                                Title <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="title"
+                                value={formData.title}
+                                onChange={handleChange}
+                                placeholder="Enter document title"
+                                className="h-9 text-[13px]"
+                                required
+                            />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="batchId">Batch *</Label>
-                                <select id="batchId" className="w-full input-industrial rounded-md text-sm" value={formData.batchId} onChange={handleChange} required>
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="batchId" className="text-[13px] font-medium">
+                                    Batch <span className="text-destructive">*</span>
+                                </Label>
+                                <select
+                                    id="batchId"
+                                    value={formData.batchId}
+                                    onChange={handleChange}
+                                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-[13px] shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                    required
+                                >
                                     <option value="">Select batch...</option>
-                                    {batches.map((batch: any) => (<option key={batch.id} value={batch.id}>{batch.name}</option>))}
+                                    {batches.map((batch: { id: number; name: string }) => (
+                                        <option key={batch.id} value={batch.id}>{batch.name}</option>
+                                    ))}
                                 </select>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="category">Category</Label>
-                                <Input id="category" value={formData.category} onChange={handleChange} placeholder="e.g., Notes, Assignment" />
+                            <div className="space-y-1.5">
+                                <Label htmlFor="category" className="text-[13px] font-medium">Category</Label>
+                                <Input
+                                    id="category"
+                                    value={formData.category}
+                                    onChange={handleChange}
+                                    placeholder="e.g., Notes"
+                                    className="h-9 text-[13px]"
+                                />
                             </div>
                         </div>
-                        <div className="space-y-2">
-                            <Label>Files</Label>
-                            <div className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-colors" onClick={() => fileInputRef.current?.click()}>
-                                <FileText className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                                <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
-                                <p className="text-xs text-muted-foreground mt-1">PDF, DOC, DOCX, PPT, PPTX (max 10MB)</p>
-                                <input ref={fileInputRef} type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx" className="hidden" onChange={handleFileChange} />
+                        <div className="space-y-1.5">
+                            <Label className="text-[13px] font-medium">Files</Label>
+                            <div
+                                className="border border-dashed border-border rounded-lg p-5 text-center cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-colors"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                <FileText className="h-7 w-7 mx-auto mb-2 text-muted-foreground" />
+                                <p className="text-[13px] text-muted-foreground">Click to upload or drag and drop</p>
+                                <p className="text-[11px] text-muted-foreground/70 mt-1">PDF, DOC, DOCX, PPT, PPTX (max 10MB)</p>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    multiple
+                                    accept=".pdf,.doc,.docx,.ppt,.pptx"
+                                    className="hidden"
+                                    onChange={handleFileChange}
+                                />
                             </div>
                             {files.length > 0 && (
-                                <div className="space-y-2 mt-2">
+                                <div className="space-y-1.5 mt-2">
                                     {files.map((file, index) => (
-                                        <div key={index} className="flex items-center justify-between bg-muted p-2 rounded">
-                                            <span className="text-sm truncate">{file.name}</span>
-                                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeFile(index)}><X className="h-4 w-4" /></Button>
+                                        <div key={index} className="flex items-center justify-between bg-muted/50 px-3 py-2 rounded-md border border-border">
+                                            <span className="text-[13px] truncate flex-1 mr-2">{file.name}</span>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6 shrink-0"
+                                                onClick={() => removeFile(index)}
+                                            >
+                                                <X className="h-3.5 w-3.5" />
+                                            </Button>
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
                     </div>
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Uploading...</>) : "Upload"}
+                    <DialogFooter className="px-6 py-4 border-t border-border bg-muted/30">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOpen(false)}
+                            className="h-8 text-[13px]"
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit" size="sm" disabled={isLoading} className="h-8 text-[13px] min-w-[90px]">
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                                    Uploading...
+                                </>
+                            ) : (
+                                "Upload"
+                            )}
                         </Button>
                     </DialogFooter>
                 </form>

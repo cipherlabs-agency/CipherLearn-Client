@@ -52,7 +52,23 @@ export const batchesApi = api.injectEndpoints({
                 method: 'POST',
                 body: batchData,
             }),
-            invalidatesTags: ['Batches', 'Dashboard'],
+            // Optimistic update: add new batch to cache immediately
+            async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: newBatch } = await queryFulfilled;
+                    // Update the getAllBatches cache
+                    dispatch(
+                        batchesApi.util.updateQueryData('getAllBatches', undefined, (draft) => {
+                            if (newBatch.data) {
+                                draft.unshift(newBatch.data);
+                            }
+                        })
+                    );
+                } catch {
+                    // If mutation fails, the cache will be rolled back automatically
+                }
+            },
+            invalidatesTags: ['Dashboard'],
         }),
 
         getAllBatches: builder.query<Batch[], void>({
@@ -60,7 +76,14 @@ export const batchesApi = api.injectEndpoints({
             transformResponse: (response: BatchesResponse): Batch[] => {
                 return response.batches || [];
             },
-            providesTags: ['Batches'],
+            // Provide individual tags for each batch for granular invalidation
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ id }) => ({ type: 'Batches' as const, id })),
+                        { type: 'Batches', id: 'LIST' },
+                    ]
+                    : [{ type: 'Batches', id: 'LIST' }],
         }),
 
         getBatchById: builder.query<Batch, number>({
@@ -68,7 +91,7 @@ export const batchesApi = api.injectEndpoints({
             transformResponse: (response: BatchResponse): Batch => {
                 return response.data;
             },
-            providesTags: ['Batches'],
+            providesTags: (result, error, id) => [{ type: 'Batches', id }],
         }),
 
         updateBatch: builder.mutation<BatchResponse, UpdateBatchInput>({
@@ -77,7 +100,26 @@ export const batchesApi = api.injectEndpoints({
                 method: 'PUT',
                 body: batchData,
             }),
-            invalidatesTags: ['Batches', 'Dashboard'],
+            // Optimistic update: update batch in cache immediately
+            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+                const patchResult = dispatch(
+                    batchesApi.util.updateQueryData('getAllBatches', undefined, (draft) => {
+                        const batch = draft.find((b) => b.id === id);
+                        if (batch) {
+                            Object.assign(batch, patch);
+                        }
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResult.undo();
+                }
+            },
+            invalidatesTags: (result, error, { id }) => [
+                { type: 'Batches', id },
+                'Dashboard',
+            ],
         }),
 
         deleteBatch: builder.mutation<ApiResponse<void>, number>({
@@ -86,7 +128,28 @@ export const batchesApi = api.injectEndpoints({
                 method: 'DELETE',
                 body: { ids: [id] },
             }),
-            invalidatesTags: ['Batches', 'Dashboard', 'Students'],
+            // Optimistic delete: remove from cache immediately
+            async onQueryStarted(id, { dispatch, queryFulfilled }) {
+                const patchResult = dispatch(
+                    batchesApi.util.updateQueryData('getAllBatches', undefined, (draft) => {
+                        const index = draft.findIndex((b) => b.id === id);
+                        if (index !== -1) {
+                            draft.splice(index, 1);
+                        }
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResult.undo();
+                }
+            },
+            invalidatesTags: (result, error, id) => [
+                { type: 'Batches', id },
+                { type: 'Batches', id: 'LIST' },
+                'Dashboard',
+                'Students',
+            ],
         }),
 
         deleteBatches: builder.mutation<ApiResponse<void>, DeleteBatchInput>({
@@ -95,7 +158,25 @@ export const batchesApi = api.injectEndpoints({
                 method: 'DELETE',
                 body: payload,
             }),
-            invalidatesTags: ['Batches', 'Dashboard', 'Students'],
+            // Optimistic delete: remove all from cache immediately
+            async onQueryStarted({ ids }, { dispatch, queryFulfilled }) {
+                const patchResult = dispatch(
+                    batchesApi.util.updateQueryData('getAllBatches', undefined, (draft) => {
+                        return draft.filter((b) => !ids.includes(b.id));
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResult.undo();
+                }
+            },
+            invalidatesTags: (result, error, { ids }) => [
+                ...ids.map((id) => ({ type: 'Batches' as const, id })),
+                { type: 'Batches', id: 'LIST' },
+                'Dashboard',
+                'Students',
+            ],
         }),
 
         draftBatch: builder.mutation<ApiResponse<void>, DraftBatchInput>({
@@ -104,7 +185,10 @@ export const batchesApi = api.injectEndpoints({
                 method: 'PUT',
                 body: payload,
             }),
-            invalidatesTags: ['Batches'],
+            invalidatesTags: (result, error, { ids }) => [
+                ...ids.map((id) => ({ type: 'Batches' as const, id })),
+                { type: 'Batches', id: 'LIST' },
+            ],
         }),
 
         getDraftBatches: builder.query<Batch[], void>({
@@ -112,7 +196,7 @@ export const batchesApi = api.injectEndpoints({
             transformResponse: (response: DraftBatchesResponse): Batch[] => {
                 return response.batches || [];
             },
-            providesTags: ['Batches'],
+            providesTags: [{ type: 'Batches', id: 'DRAFTS' }],
         }),
 
         // Restore soft-deleted batches
@@ -122,7 +206,11 @@ export const batchesApi = api.injectEndpoints({
                 method: 'PUT',
                 body: { ids },
             }),
-            invalidatesTags: ['Batches', 'Dashboard'],
+            invalidatesTags: (result, error, ids) => [
+                ...ids.map((id) => ({ type: 'Batches' as const, id })),
+                { type: 'Batches', id: 'LIST' },
+                'Dashboard',
+            ],
         }),
 
         // DANGER ZONE - Hard Delete Operations
@@ -131,7 +219,13 @@ export const batchesApi = api.injectEndpoints({
                 url: `/dashboard/batches/hard-delete/${id}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Batches', 'Dashboard', 'Students', 'Attendance'],
+            invalidatesTags: (result, error, id) => [
+                { type: 'Batches', id },
+                { type: 'Batches', id: 'LIST' },
+                'Dashboard',
+                'Students',
+                'Attendance',
+            ],
         }),
 
         purgeDeletedBatches: builder.mutation<ApiResponse<{ deleted: number }>, void>({
@@ -139,7 +233,7 @@ export const batchesApi = api.injectEndpoints({
                 url: '/dashboard/batches/purge-deleted',
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Batches', 'Dashboard', 'Students', 'Attendance'],
+            invalidatesTags: [{ type: 'Batches', id: 'LIST' }, 'Dashboard', 'Students', 'Attendance'],
         }),
     }),
 });

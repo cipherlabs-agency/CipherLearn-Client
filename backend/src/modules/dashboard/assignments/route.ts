@@ -35,12 +35,20 @@ const fileFilter = (
     "image/png",
     "image/gif",
     "image/webp",
+    // Document types for assignment materials
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "text/plain",
   ];
 
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Only PDF and image files are allowed"));
+    cb(new Error("Only PDF, images, and document files are allowed"));
   }
 };
 
@@ -57,10 +65,11 @@ const router = Router();
 
 // ==================== ASSIGNMENT SLOTS (Admin/Teacher) ====================
 
-// Create assignment slot
+// Create assignment slot with optional file attachments
 router.post(
   "/slots",
   isAdminOrTeacher,
+  upload.array("attachments", 5),
   assignmentController.createSlot.bind(assignmentController)
 );
 
@@ -78,10 +87,11 @@ router.get(
   assignmentController.getSlotById.bind(assignmentController)
 );
 
-// Update assignment slot
+// Update assignment slot with optional file attachments
 router.put(
   "/slots/:id",
   isAdminOrTeacher,
+  upload.array("attachments", 5),
   assignmentController.updateSlot.bind(assignmentController)
 );
 

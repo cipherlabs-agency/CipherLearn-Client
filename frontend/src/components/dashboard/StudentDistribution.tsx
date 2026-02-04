@@ -4,22 +4,30 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
 import { useGetBatchDistributionQuery } from "@/redux/slices/analytics/analyticsApi"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Users } from "lucide-react"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
-const COLORS = ['hsl(var(--foreground))', 'hsl(var(--foreground) / 0.7)', 'hsl(var(--foreground) / 0.5)', 'hsl(var(--foreground) / 0.3)', 'hsl(var(--foreground) / 0.2)', 'hsl(var(--foreground) / 0.1)']
+const COLORS = [
+    'hsl(var(--foreground))',
+    'hsl(var(--foreground) / 0.75)',
+    'hsl(var(--foreground) / 0.55)',
+    'hsl(var(--foreground) / 0.4)',
+    'hsl(var(--foreground) / 0.25)',
+    'hsl(var(--foreground) / 0.15)'
+]
 
 export function StudentDistribution() {
     const { data: distribution, isLoading } = useGetBatchDistributionQuery()
 
     if (isLoading) {
         return (
-            <Card className="col-span-5 flex flex-col h-full border-border/60">
-                <div className="space-y-4 p-6">
-                    <Skeleton className="h-6 w-32 bg-muted/40" />
-                    <Skeleton className="h-4 w-48 bg-muted/20" />
-                    <Skeleton className="h-[280px] w-full bg-muted/30 rounded-full mx-auto aspect-square max-w-[200px]" />
+            <div className="col-span-5 rounded-lg border border-border bg-background flex flex-col h-full">
+                <div className="p-5 border-b border-border">
+                    <Skeleton className="h-4 w-24 mb-1" />
+                    <Skeleton className="h-3 w-20" />
                 </div>
-            </Card>
+                <div className="flex-1 p-5 flex items-center justify-center">
+                    <Skeleton className="h-40 w-40 rounded-full" />
+                </div>
+            </div>
         )
     }
 
@@ -33,39 +41,39 @@ export function StudentDistribution() {
 
     if (!hasData) {
         return (
-            <Card className="col-span-5 flex flex-col h-full border-border/60">
-                <div className="flex flex-col gap-1 p-6 border-b border-border/40">
-                    <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">Distribution</h3>
-                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest opacity-60">Batch Allocation</p>
+            <div className="col-span-5 rounded-lg border border-border bg-background flex flex-col h-full">
+                <div className="p-5 border-b border-border">
+                    <h3 className="text-sm font-medium text-foreground">Distribution</h3>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Batch Allocation</p>
                 </div>
-                <div className="flex-1 flex flex-col items-center justify-center py-12 text-center p-6">
-                    <div className="p-4 rounded-md bg-foreground/5 mb-4 border border-border/20">
-                        <Users className="h-6 w-6 text-foreground/40" />
+                <div className="flex-1 flex flex-col items-center justify-center p-5">
+                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center mb-3">
+                        <Users className="h-5 w-5 text-muted-foreground" />
                     </div>
-                    <h3 className="text-sm font-semibold tracking-tight">No Students Yet</h3>
-                    <p className="text-[11px] text-muted-foreground max-w-[180px] mx-auto mt-1 leading-relaxed">
-                        Add students to batches to see distribution metrics.
+                    <p className="text-sm font-medium text-foreground">No Students Yet</p>
+                    <p className="text-xs text-muted-foreground mt-1 text-center max-w-[180px]">
+                        Add students to batches to see distribution
                     </p>
                 </div>
-            </Card>
+            </div>
         )
     }
 
     return (
-        <Card className="col-span-5 flex flex-col h-full border-border/60 shadow-sm">
-            <div className="flex items-center justify-between p-6 border-b border-border/40">
-                <div className="flex flex-col gap-1">
-                    <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">Distribution</h3>
-                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest opacity-60">Batch Allocation</p>
+        <div className="col-span-5 rounded-lg border border-border bg-background flex flex-col h-full">
+            <div className="flex items-center justify-between p-5 border-b border-border">
+                <div>
+                    <h3 className="text-sm font-medium text-foreground">Distribution</h3>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Batch Allocation</p>
                 </div>
                 <div className="text-right">
-                    <div className="text-2xl font-bold tracking-tighter">{totalStudents}</div>
-                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider opacity-60">Total</div>
+                    <div className="text-2xl font-semibold tracking-tight">{totalStudents}</div>
+                    <div className="text-[11px] text-muted-foreground">Total</div>
                 </div>
             </div>
 
-            <CardContent className="flex-1 py-6">
-                <div className="h-[220px] w-full">
+            <div className="flex-1 p-5">
+                <div className="h-[200px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
@@ -73,55 +81,48 @@ export function StudentDistribution() {
                                 cx="50%"
                                 cy="50%"
                                 labelLine={false}
-                                stroke="none"
-                                outerRadius={80}
-                                innerRadius={40}
+                                outerRadius={75}
+                                innerRadius={45}
                                 dataKey="value"
                                 paddingAngle={2}
+                                stroke="hsl(var(--background))"
+                                strokeWidth={2}
                             >
-                                {data.map((entry: any, index: number) => (
+                                {data.map((entry: { name: string; value: number }, index: number) => (
                                     <Cell
                                         key={`cell-${index}`}
                                         fill={COLORS[index % COLORS.length]}
-                                        className="stroke-background stroke-2"
                                     />
                                 ))}
                             </Pie>
                             <Tooltip
                                 contentStyle={{
-                                    backgroundColor: 'var(--background)',
-                                    border: '1px solid var(--border)',
-                                    borderRadius: '8px',
-                                    fontSize: '11px',
-                                    fontWeight: '600',
-                                    padding: '12px',
-                                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                                    backgroundColor: 'hsl(var(--background))',
+                                    border: '1px solid hsl(var(--border))',
+                                    borderRadius: '6px',
+                                    fontSize: '12px',
+                                    padding: '8px 12px',
+                                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                                 }}
-                                itemStyle={{ color: 'var(--foreground)' }}
-                                cursor={{ fill: 'transparent' }}
                                 formatter={(value: number, name: string) => [`${value} students`, name]}
                             />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
 
-                <div className="flex flex-wrap gap-2 justify-center px-4 pt-4">
-                    {data.map((entry: any, index: number) => (
-                        <div key={index} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-muted/10 border border-border/40">
-                            <div
+                <div className="flex flex-wrap gap-2 justify-center pt-4 border-t border-border mt-4">
+                    {data.map((entry: { name: string; value: number }, index: number) => (
+                        <div key={index} className="flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-xs">
+                            <span
                                 className="h-2 w-2 rounded-full"
                                 style={{ backgroundColor: COLORS[index % COLORS.length] }}
                             />
-                            <span className="text-[10px] font-semibold text-muted-foreground/80 tracking-tight">
-                                {entry.name}
-                            </span>
-                            <span className="text-[10px] font-bold text-foreground">
-                                {entry.value}
-                            </span>
+                            <span className="text-muted-foreground">{entry.name}</span>
+                            <span className="font-medium text-foreground">{entry.value}</span>
                         </div>
                     ))}
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     )
 }

@@ -395,7 +395,12 @@ export const ModelName = {
   AssignmentSlot: 'AssignmentSlot',
   StudentSubmission: 'StudentSubmission',
   Announcement: 'Announcement',
-  StudyMaterial: 'StudyMaterial'
+  StudyMaterial: 'StudyMaterial',
+  FeeStructure: 'FeeStructure',
+  FeeReceipt: 'FeeReceipt',
+  PasswordResetToken: 'PasswordResetToken',
+  TokenBlacklist: 'TokenBlacklist',
+  LoginAttempt: 'LoginAttempt'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -411,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "studyMaterial"
+    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "loginAttempt"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1303,6 +1308,376 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FeeStructure: {
+      payload: Prisma.$FeeStructurePayload<ExtArgs>
+      fields: Prisma.FeeStructureFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FeeStructureFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FeeStructureFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>
+        }
+        findFirst: {
+          args: Prisma.FeeStructureFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FeeStructureFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>
+        }
+        findMany: {
+          args: Prisma.FeeStructureFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>[]
+        }
+        create: {
+          args: Prisma.FeeStructureCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>
+        }
+        createMany: {
+          args: Prisma.FeeStructureCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FeeStructureCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>[]
+        }
+        delete: {
+          args: Prisma.FeeStructureDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>
+        }
+        update: {
+          args: Prisma.FeeStructureUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>
+        }
+        deleteMany: {
+          args: Prisma.FeeStructureDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FeeStructureUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FeeStructureUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>[]
+        }
+        upsert: {
+          args: Prisma.FeeStructureUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeStructurePayload>
+        }
+        aggregate: {
+          args: Prisma.FeeStructureAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFeeStructure>
+        }
+        groupBy: {
+          args: Prisma.FeeStructureGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FeeStructureGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FeeStructureCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FeeStructureCountAggregateOutputType> | number
+        }
+      }
+    }
+    FeeReceipt: {
+      payload: Prisma.$FeeReceiptPayload<ExtArgs>
+      fields: Prisma.FeeReceiptFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FeeReceiptFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FeeReceiptFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>
+        }
+        findFirst: {
+          args: Prisma.FeeReceiptFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FeeReceiptFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>
+        }
+        findMany: {
+          args: Prisma.FeeReceiptFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>[]
+        }
+        create: {
+          args: Prisma.FeeReceiptCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>
+        }
+        createMany: {
+          args: Prisma.FeeReceiptCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FeeReceiptCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>[]
+        }
+        delete: {
+          args: Prisma.FeeReceiptDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>
+        }
+        update: {
+          args: Prisma.FeeReceiptUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>
+        }
+        deleteMany: {
+          args: Prisma.FeeReceiptDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FeeReceiptUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FeeReceiptUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>[]
+        }
+        upsert: {
+          args: Prisma.FeeReceiptUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FeeReceiptPayload>
+        }
+        aggregate: {
+          args: Prisma.FeeReceiptAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFeeReceipt>
+        }
+        groupBy: {
+          args: Prisma.FeeReceiptGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FeeReceiptGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FeeReceiptCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FeeReceiptCountAggregateOutputType> | number
+        }
+      }
+    }
+    PasswordResetToken: {
+      payload: Prisma.$PasswordResetTokenPayload<ExtArgs>
+      fields: Prisma.PasswordResetTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PasswordResetTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PasswordResetTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.PasswordResetTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PasswordResetTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findMany: {
+          args: Prisma.PasswordResetTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        create: {
+          args: Prisma.PasswordResetTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        createMany: {
+          args: Prisma.PasswordResetTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PasswordResetTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.PasswordResetTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        update: {
+          args: Prisma.PasswordResetTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.PasswordResetTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PasswordResetTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PasswordResetTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.PasswordResetTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.PasswordResetTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePasswordResetToken>
+        }
+        groupBy: {
+          args: Prisma.PasswordResetTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PasswordResetTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenCountAggregateOutputType> | number
+        }
+      }
+    }
+    TokenBlacklist: {
+      payload: Prisma.$TokenBlacklistPayload<ExtArgs>
+      fields: Prisma.TokenBlacklistFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TokenBlacklistFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TokenBlacklistFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>
+        }
+        findFirst: {
+          args: Prisma.TokenBlacklistFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TokenBlacklistFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>
+        }
+        findMany: {
+          args: Prisma.TokenBlacklistFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>[]
+        }
+        create: {
+          args: Prisma.TokenBlacklistCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>
+        }
+        createMany: {
+          args: Prisma.TokenBlacklistCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TokenBlacklistCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>[]
+        }
+        delete: {
+          args: Prisma.TokenBlacklistDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>
+        }
+        update: {
+          args: Prisma.TokenBlacklistUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>
+        }
+        deleteMany: {
+          args: Prisma.TokenBlacklistDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TokenBlacklistUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TokenBlacklistUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>[]
+        }
+        upsert: {
+          args: Prisma.TokenBlacklistUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TokenBlacklistPayload>
+        }
+        aggregate: {
+          args: Prisma.TokenBlacklistAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTokenBlacklist>
+        }
+        groupBy: {
+          args: Prisma.TokenBlacklistGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TokenBlacklistGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TokenBlacklistCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TokenBlacklistCountAggregateOutputType> | number
+        }
+      }
+    }
+    LoginAttempt: {
+      payload: Prisma.$LoginAttemptPayload<ExtArgs>
+      fields: Prisma.LoginAttemptFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LoginAttemptFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LoginAttemptFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>
+        }
+        findFirst: {
+          args: Prisma.LoginAttemptFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LoginAttemptFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>
+        }
+        findMany: {
+          args: Prisma.LoginAttemptFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>[]
+        }
+        create: {
+          args: Prisma.LoginAttemptCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>
+        }
+        createMany: {
+          args: Prisma.LoginAttemptCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LoginAttemptCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>[]
+        }
+        delete: {
+          args: Prisma.LoginAttemptDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>
+        }
+        update: {
+          args: Prisma.LoginAttemptUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>
+        }
+        deleteMany: {
+          args: Prisma.LoginAttemptDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LoginAttemptUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LoginAttemptUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>[]
+        }
+        upsert: {
+          args: Prisma.LoginAttemptUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoginAttemptPayload>
+        }
+        aggregate: {
+          args: Prisma.LoginAttemptAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLoginAttempt>
+        }
+        groupBy: {
+          args: Prisma.LoginAttemptGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LoginAttemptGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LoginAttemptCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LoginAttemptCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1348,6 +1723,9 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  isPasswordSet: 'isPasswordSet',
+  failedLoginAttempts: 'failedLoginAttempts',
+  lockedUntil: 'lockedUntil',
   updatedAt: 'updatedAt',
   createdAt: 'createdAt'
 } as const
@@ -1364,6 +1742,7 @@ export const StudentScalarFieldEnum = {
   email: 'email',
   dob: 'dob',
   batchId: 'batchId',
+  userId: 'userId',
   attendance: 'attendance',
   address: 'address',
   isDeleted: 'isDeleted',
@@ -1471,6 +1850,7 @@ export const AssignmentSlotScalarFieldEnum = {
   title: 'title',
   subject: 'subject',
   description: 'description',
+  attachments: 'attachments',
   batchId: 'batchId',
   dueDate: 'dueDate',
   createdBy: 'createdBy',
@@ -1528,6 +1908,92 @@ export const StudyMaterialScalarFieldEnum = {
 } as const
 
 export type StudyMaterialScalarFieldEnum = (typeof StudyMaterialScalarFieldEnum)[keyof typeof StudyMaterialScalarFieldEnum]
+
+
+export const FeeStructureScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  name: 'name',
+  amount: 'amount',
+  frequency: 'frequency',
+  dueDay: 'dueDay',
+  lateFee: 'lateFee',
+  gracePeriod: 'gracePeriod',
+  isActive: 'isActive',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeeStructureScalarFieldEnum = (typeof FeeStructureScalarFieldEnum)[keyof typeof FeeStructureScalarFieldEnum]
+
+
+export const FeeReceiptScalarFieldEnum = {
+  id: 'id',
+  receiptNumber: 'receiptNumber',
+  studentId: 'studentId',
+  batchId: 'batchId',
+  feeStructureId: 'feeStructureId',
+  totalAmount: 'totalAmount',
+  paidAmount: 'paidAmount',
+  discountAmount: 'discountAmount',
+  lateFeeAmount: 'lateFeeAmount',
+  remainingAmount: 'remainingAmount',
+  paymentMode: 'paymentMode',
+  transactionId: 'transactionId',
+  chequeNumber: 'chequeNumber',
+  bankName: 'bankName',
+  paymentNotes: 'paymentNotes',
+  academicMonth: 'academicMonth',
+  academicYear: 'academicYear',
+  status: 'status',
+  dueDate: 'dueDate',
+  paymentDate: 'paymentDate',
+  generatedBy: 'generatedBy',
+  generatedById: 'generatedById',
+  modifiedBy: 'modifiedBy',
+  modifiedById: 'modifiedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeeReceiptScalarFieldEnum = (typeof FeeReceiptScalarFieldEnum)[keyof typeof FeeReceiptScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
+
+
+export const TokenBlacklistScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type TokenBlacklistScalarFieldEnum = (typeof TokenBlacklistScalarFieldEnum)[keyof typeof TokenBlacklistScalarFieldEnum]
+
+
+export const LoginAttemptScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  ipAddress: 'ipAddress',
+  success: 'success',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type LoginAttemptScalarFieldEnum = (typeof LoginAttemptScalarFieldEnum)[keyof typeof LoginAttemptScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1627,6 +2093,13 @@ export type ListEnumUserRolesFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -1651,13 +2124,6 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1742,6 +2208,48 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'FeeFrequency'
+ */
+export type EnumFeeFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeeFrequency'>
+    
+
+
+/**
+ * Reference to a field of type 'FeeFrequency[]'
+ */
+export type ListEnumFeeFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeeFrequency[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentMode'
+ */
+export type EnumPaymentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMode'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentMode[]'
+ */
+export type ListEnumPaymentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMode[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentStatus'
+ */
+export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentStatus[]'
+ */
+export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
     
 
 /**
@@ -1851,6 +2359,11 @@ export type GlobalOmitConfig = {
   studentSubmission?: Prisma.StudentSubmissionOmit
   announcement?: Prisma.AnnouncementOmit
   studyMaterial?: Prisma.StudyMaterialOmit
+  feeStructure?: Prisma.FeeStructureOmit
+  feeReceipt?: Prisma.FeeReceiptOmit
+  passwordResetToken?: Prisma.PasswordResetTokenOmit
+  tokenBlacklist?: Prisma.TokenBlacklistOmit
+  loginAttempt?: Prisma.LoginAttemptOmit
 }
 
 /* Types for Logging */

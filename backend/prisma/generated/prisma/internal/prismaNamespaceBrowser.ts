@@ -62,7 +62,12 @@ export const ModelName = {
   AssignmentSlot: 'AssignmentSlot',
   StudentSubmission: 'StudentSubmission',
   Announcement: 'Announcement',
-  StudyMaterial: 'StudyMaterial'
+  StudyMaterial: 'StudyMaterial',
+  FeeStructure: 'FeeStructure',
+  FeeReceipt: 'FeeReceipt',
+  PasswordResetToken: 'PasswordResetToken',
+  TokenBlacklist: 'TokenBlacklist',
+  LoginAttempt: 'LoginAttempt'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -87,6 +92,9 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  isPasswordSet: 'isPasswordSet',
+  failedLoginAttempts: 'failedLoginAttempts',
+  lockedUntil: 'lockedUntil',
   updatedAt: 'updatedAt',
   createdAt: 'createdAt'
 } as const
@@ -103,6 +111,7 @@ export const StudentScalarFieldEnum = {
   email: 'email',
   dob: 'dob',
   batchId: 'batchId',
+  userId: 'userId',
   attendance: 'attendance',
   address: 'address',
   isDeleted: 'isDeleted',
@@ -210,6 +219,7 @@ export const AssignmentSlotScalarFieldEnum = {
   title: 'title',
   subject: 'subject',
   description: 'description',
+  attachments: 'attachments',
   batchId: 'batchId',
   dueDate: 'dueDate',
   createdBy: 'createdBy',
@@ -267,6 +277,92 @@ export const StudyMaterialScalarFieldEnum = {
 } as const
 
 export type StudyMaterialScalarFieldEnum = (typeof StudyMaterialScalarFieldEnum)[keyof typeof StudyMaterialScalarFieldEnum]
+
+
+export const FeeStructureScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  name: 'name',
+  amount: 'amount',
+  frequency: 'frequency',
+  dueDay: 'dueDay',
+  lateFee: 'lateFee',
+  gracePeriod: 'gracePeriod',
+  isActive: 'isActive',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeeStructureScalarFieldEnum = (typeof FeeStructureScalarFieldEnum)[keyof typeof FeeStructureScalarFieldEnum]
+
+
+export const FeeReceiptScalarFieldEnum = {
+  id: 'id',
+  receiptNumber: 'receiptNumber',
+  studentId: 'studentId',
+  batchId: 'batchId',
+  feeStructureId: 'feeStructureId',
+  totalAmount: 'totalAmount',
+  paidAmount: 'paidAmount',
+  discountAmount: 'discountAmount',
+  lateFeeAmount: 'lateFeeAmount',
+  remainingAmount: 'remainingAmount',
+  paymentMode: 'paymentMode',
+  transactionId: 'transactionId',
+  chequeNumber: 'chequeNumber',
+  bankName: 'bankName',
+  paymentNotes: 'paymentNotes',
+  academicMonth: 'academicMonth',
+  academicYear: 'academicYear',
+  status: 'status',
+  dueDate: 'dueDate',
+  paymentDate: 'paymentDate',
+  generatedBy: 'generatedBy',
+  generatedById: 'generatedById',
+  modifiedBy: 'modifiedBy',
+  modifiedById: 'modifiedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeeReceiptScalarFieldEnum = (typeof FeeReceiptScalarFieldEnum)[keyof typeof FeeReceiptScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
+
+
+export const TokenBlacklistScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type TokenBlacklistScalarFieldEnum = (typeof TokenBlacklistScalarFieldEnum)[keyof typeof TokenBlacklistScalarFieldEnum]
+
+
+export const LoginAttemptScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  ipAddress: 'ipAddress',
+  success: 'success',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type LoginAttemptScalarFieldEnum = (typeof LoginAttemptScalarFieldEnum)[keyof typeof LoginAttemptScalarFieldEnum]
 
 
 export const SortOrder = {

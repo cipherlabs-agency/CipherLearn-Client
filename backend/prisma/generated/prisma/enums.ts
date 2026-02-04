@@ -60,3 +60,35 @@ export const YoutubeVideoVisibility = {
 } as const
 
 export type YoutubeVideoVisibility = (typeof YoutubeVideoVisibility)[keyof typeof YoutubeVideoVisibility]
+
+
+export const PaymentStatus = {
+  PAID: 'PAID',
+  PARTIAL: 'PARTIAL',
+  PENDING: 'PENDING',
+  OVERDUE: 'OVERDUE'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const PaymentMode = {
+  CASH: 'CASH',
+  UPI: 'UPI',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  CHEQUE: 'CHEQUE',
+  ONLINE: 'ONLINE'
+} as const
+
+export type PaymentMode = (typeof PaymentMode)[keyof typeof PaymentMode]
+
+
+export const FeeFrequency = {
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  SEMI_ANNUAL: 'SEMI_ANNUAL',
+  ANNUAL: 'ANNUAL',
+  ONE_TIME: 'ONE_TIME'
+} as const
+
+export type FeeFrequency = (typeof FeeFrequency)[keyof typeof FeeFrequency]

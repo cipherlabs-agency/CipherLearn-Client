@@ -180,6 +180,7 @@ model AssignmentSlot {
   title       String
   subject     String
   description String?
+  attachments Json?     // Array of file URLs for assignment materials (PDFs, docs)
   batchId     Int
   batch       Batch     @relation(fields: [batchId], references: [id])
   dueDate     DateTime?

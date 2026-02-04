@@ -7,6 +7,7 @@ export interface CreateAssignmentSlotInput {
   title: string;
   subject: string;
   description?: string;
+  attachments?: string[]; // Array of file URLs for assignment materials
   batchId: number;
   dueDate?: Date | string;
   createdBy: string;
@@ -16,6 +17,7 @@ export interface UpdateAssignmentSlotInput {
   title?: string;
   subject?: string;
   description?: string;
+  attachments?: string[]; // Array of file URLs for assignment materials
   batchId?: number;
   dueDate?: Date | string;
 }

@@ -65,7 +65,9 @@ export const api = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithReauth,
     refetchOnFocus: false,
-    refetchOnReconnect: false,
+    refetchOnReconnect: true,
+    // Cache unused data for 5 minutes to improve performance
+    keepUnusedDataFor: 300,
     tagTypes: ['Auth', 'Students', 'Batches', 'Announcements', 'Attendance', 'Fees', 'Notes', 'Videos', 'Dashboard', 'Analytics', 'Assignments', 'Submissions', 'StudyMaterials'],
     endpoints: () => ({}),
 });

@@ -6,6 +6,7 @@ export interface AssignmentSlot {
   title: string;
   subject: string;
   description: string | null;
+  attachments: string[] | null; // Array of file URLs for assignment materials
   batchId: number;
   batch: { id: number; name: string };
   dueDate: string | null;
@@ -132,11 +133,11 @@ export const assignmentsApi = api.injectEndpoints({
       providesTags: ["Assignments"],
     }),
 
-    createSlot: builder.mutation<SlotResponse, CreateSlotInput>({
-      query: (body) => ({
+    createSlot: builder.mutation<SlotResponse, FormData>({
+      query: (formData) => ({
         url: "/dashboard/assignments/slots",
         method: "POST",
-        body,
+        body: formData,
       }),
       invalidatesTags: ["Assignments"],
     }),

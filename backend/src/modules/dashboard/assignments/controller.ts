@@ -13,11 +13,16 @@ export class AssignmentController {
     try {
       const { title, subject, description, batchId, dueDate } = req.body;
       const createdBy = req.user?.name || "Unknown";
+      const files = req.files as Express.Multer.File[] | undefined;
+
+      // Map uploaded files to URLs
+      const attachments = files?.map((file) => `/uploads/assignments/${file.filename}`) || [];
 
       const input: CreateAssignmentSlotInput = {
         title,
         subject,
         description,
+        attachments,
         batchId: parseInt(batchId, 10),
         dueDate,
         createdBy,
@@ -77,12 +82,21 @@ export class AssignmentController {
   async updateSlot(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const { title, subject, description, batchId, dueDate } = req.body;
+      const { title, subject, description, batchId, dueDate, existingAttachments } = req.body;
+      const files = req.files as Express.Multer.File[] | undefined;
+
+      // Map new uploaded files to URLs
+      const newAttachments = files?.map((file) => `/uploads/assignments/${file.filename}`) || [];
+
+      // Combine existing attachments with new ones
+      const existingFiles = existingAttachments ? JSON.parse(existingAttachments) : [];
+      const attachments = [...existingFiles, ...newAttachments];
 
       const input: UpdateAssignmentSlotInput = {
         title,
         subject,
         description,
+        attachments: attachments.length > 0 ? attachments : undefined,
         batchId: batchId ? parseInt(batchId, 10) : undefined,
         dueDate,
       };

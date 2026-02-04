@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Plus } from "lucide-react"
+import { Plus, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useCreateBatchMutation } from "@/redux/slices/batches/batchesApi"
 import { toast } from "sonner"
@@ -31,7 +31,7 @@ const DAYS_OF_WEEK = [
 export function CreateBatchDialog() {
     const [open, setOpen] = useState(false)
     const [createBatch, { isLoading }] = useCreateBatchMutation()
-    
+
     const [name, setName] = useState("")
     const [capacity, setCapacity] = useState(30)
     const [selectedDays, setSelectedDays] = useState<string[]>([])
@@ -39,8 +39,8 @@ export function CreateBatchDialog() {
     const [endTime, setEndTime] = useState("")
 
     const handleDayToggle = (day: string) => {
-        setSelectedDays(prev => 
-            prev.includes(day) 
+        setSelectedDays(prev =>
+            prev.includes(day)
                 ? prev.filter(d => d !== day)
                 : [...prev, day]
         )
@@ -48,7 +48,7 @@ export function CreateBatchDialog() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        
+
         if (selectedDays.length === 0) {
             toast.error("Please select at least one day")
             return
@@ -71,102 +71,109 @@ export function CreateBatchDialog() {
                     enrolled: 0
                 }
             }).unwrap()
-            
+
             toast.success("Batch created successfully")
             setOpen(false)
-            
+
             // Reset form
             setName("")
             setCapacity(30)
             setSelectedDays([])
             setStartTime("")
             setEndTime("")
-        } catch (error: any) {
-            toast.error(error?.data?.message || "Failed to create batch")
+        } catch (error: unknown) {
+            const err = error as { data?: { message?: string } }
+            toast.error(err?.data?.message || "Failed to create batch")
         }
     }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <Plus className="mr-2 h-4 w-4" /> Create New Batch
+                <Button size="sm" className="h-8 gap-1.5">
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Create Batch</span>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                    <DialogTitle>Create New Batch</DialogTitle>
-                    <DialogDescription>
-                        Enter details for the new batch.
+            <DialogContent className="sm:max-w-[480px] p-0 gap-0 overflow-hidden">
+                <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
+                    <DialogTitle className="text-base font-semibold">Create New Batch</DialogTitle>
+                    <DialogDescription className="text-[13px] text-muted-foreground mt-1">
+                        Configure batch name, schedule, and capacity.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">
-                                Batch Name
+                    <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                        {/* Batch Name */}
+                        <div className="space-y-1.5">
+                            <Label htmlFor="name" className="text-[13px] font-medium">
+                                Batch Name <span className="text-destructive">*</span>
                             </Label>
                             <Input
                                 id="name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="col-span-3"
-                                required
                                 placeholder="e.g. Morning Batch A"
+                                className="h-9 text-[13px]"
+                                required
                             />
                         </div>
 
-                        <div className="grid grid-cols-4 items-start gap-4">
-                            <Label className="text-right pt-2">
-                                Days
+                        {/* Schedule Days */}
+                        <div className="space-y-1.5">
+                            <Label className="text-[13px] font-medium">
+                                Schedule Days <span className="text-destructive">*</span>
                             </Label>
-                            <div className="col-span-3 grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-4 gap-2 pt-1">
                                 {DAYS_OF_WEEK.map((day) => (
                                     <div key={day} className="flex items-center space-x-2">
-                                        <Checkbox 
-                                            id={`day-${day}`} 
+                                        <Checkbox
+                                            id={`day-${day}`}
                                             checked={selectedDays.includes(day)}
                                             onCheckedChange={() => handleDayToggle(day)}
+                                            className="h-4 w-4"
                                         />
                                         <label
                                             htmlFor={`day-${day}`}
-                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                            className="text-[13px] font-normal leading-none cursor-pointer"
                                         >
-                                            {day}
+                                            {day.slice(0, 3)}
                                         </label>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="startTime" className="text-right">
-                                Time
+                        {/* Time Range */}
+                        <div className="space-y-1.5">
+                            <Label className="text-[13px] font-medium">
+                                Time Slot <span className="text-destructive">*</span>
                             </Label>
-                            <div className="col-span-3 flex items-center gap-2">
+                            <div className="flex items-center gap-3">
                                 <Input
                                     id="startTime"
                                     type="time"
                                     value={startTime}
                                     onChange={(e) => setStartTime(e.target.value)}
+                                    className="h-9 text-[13px] flex-1"
                                     required
-                                    className="flex-1"
                                 />
-                                <span>to</span>
+                                <span className="text-[13px] text-muted-foreground">to</span>
                                 <Input
                                     id="endTime"
                                     type="time"
                                     value={endTime}
                                     onChange={(e) => setEndTime(e.target.value)}
+                                    className="h-9 text-[13px] flex-1"
                                     required
-                                    className="flex-1"
                                 />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="capacity" className="text-right">
-                                Capacity
+                        {/* Capacity */}
+                        <div className="space-y-1.5">
+                            <Label htmlFor="capacity" className="text-[13px] font-medium">
+                                Student Capacity <span className="text-destructive">*</span>
                             </Label>
                             <Input
                                 id="capacity"
@@ -174,14 +181,33 @@ export function CreateBatchDialog() {
                                 min="1"
                                 value={capacity}
                                 onChange={(e) => setCapacity(Number(e.target.value))}
-                                className="col-span-3"
+                                className="h-9 text-[13px] w-32"
                                 required
                             />
+                            <p className="text-[12px] text-muted-foreground">
+                                Maximum students allowed in this batch
+                            </p>
                         </div>
                     </div>
-                    <DialogFooter>
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? "Creating..." : "Create Batch"}
+                    <DialogFooter className="px-6 py-4 border-t border-border bg-muted/30">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOpen(false)}
+                            className="h-8 text-[13px]"
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit" size="sm" disabled={isLoading} className="h-8 text-[13px] min-w-[100px]">
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                                    Creating...
+                                </>
+                            ) : (
+                                "Create Batch"
+                            )}
                         </Button>
                     </DialogFooter>
                 </form>

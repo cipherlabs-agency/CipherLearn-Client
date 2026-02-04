@@ -13,7 +13,11 @@
       "Bash(npx prisma generate:*)",
       "Bash(find:*)",
       "Bash(\"C:\\\\CipherLabs\\\\CipherLearn\\\\client\\\\frontend\\\\src\\\\app\\\\\\(pages\\)\\\\fees\\\\page.tsx\")",
-      "Bash(dir /b \"C:\\\\CipherLabs\")"
+      "Bash(dir /b \"C:\\\\CipherLabs\")",
+      "WebSearch",
+      "WebFetch(domain:vercel.com)",
+      "Bash(node -e:*)",
+      "Bash(node:*)"
     ]
   }
 }
