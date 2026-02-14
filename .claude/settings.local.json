@@ -18,7 +18,8 @@
       "WebFetch(domain:vercel.com)",
       "Bash(node -e:*)",
       "Bash(node:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(cat:*)"
     ]
   }
 }
