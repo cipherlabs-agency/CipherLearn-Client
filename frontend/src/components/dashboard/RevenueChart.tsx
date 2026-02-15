@@ -112,8 +112,8 @@ export function RevenueChart() {
                         <AreaChart data={chartData} margin={CHART_MARGINS}>
                             <defs>
                                 <linearGradient id="enrollmentGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor={CHART_COLORS.primary} stopOpacity={0.12} />
-                                    <stop offset="100%" stopColor={CHART_COLORS.primary} stopOpacity={0} />
+                                    <stop offset="0%" stopColor={CHART_COLORS.primary} stopOpacity={0.25} />
+                                    <stop offset="100%" stopColor={CHART_COLORS.primary} stopOpacity={0.02} />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid {...gridConfig} />

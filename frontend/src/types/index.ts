@@ -62,6 +62,191 @@ export interface Teacher {
 }
 
 // ============================================
+// Lecture Types
+// ============================================
+
+export type LectureStatus = 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+
+export interface Lecture {
+    id: number;
+    title: string;
+    subject: string;
+    description: string | null;
+    room: string | null;
+    batchId: number;
+    batch: { id: number; name: string };
+    teacherId: number | null;
+    teacher: { id: number; name: string } | null;
+    assignedBy: string | null;
+    date: string;
+    startTime: string;
+    endTime: string;
+    duration: number;
+    status: LectureStatus;
+    notes: string | null;
+    recurrenceId: string | null;
+    createdBy: number;
+    createdAt: string;
+}
+
+export interface CreateLectureInput {
+    title: string;
+    subject: string;
+    description?: string;
+    room?: string;
+    batchId: number;
+    teacherId?: number | null;
+    autoAssign?: boolean;
+    date: string;
+    startTime: string;
+    endTime: string;
+}
+
+export interface CreateBulkLecturesInput {
+    title: string;
+    subject: string;
+    description?: string;
+    room?: string;
+    batchId: number;
+    teacherId?: number | null;
+    startTime: string;
+    endTime: string;
+    recurrence: {
+        days: string[];
+        startDate: string;
+        endDate: string;
+    };
+}
+
+export interface UpdateLectureInput {
+    title?: string;
+    subject?: string;
+    description?: string;
+    room?: string;
+    batchId?: number;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+}
+
+// ============================================
+// Test & Score Types
+// ============================================
+
+export type TestType = 'UNIT_TEST' | 'MIDTERM' | 'FINAL' | 'QUIZ' | 'PRACTICE';
+export type TestStatus = 'DRAFT' | 'SCHEDULED' | 'ONGOING' | 'COMPLETED' | 'PUBLISHED';
+export type ScoreStatus = 'PASS' | 'FAIL' | 'ABSENT';
+
+export interface Test {
+    id: number;
+    title: string;
+    subject: string;
+    description: string | null;
+    testType: TestType;
+    batchId: number;
+    batch: { id: number; name: string };
+    totalMarks: number;
+    passingMarks: number | null;
+    date: string;
+    time: string | null;
+    duration: number | null;
+    hall: string | null;
+    syllabus: string | null;
+    instructions: string | null;
+    status: TestStatus;
+    createdBy: number;
+    createdAt: string;
+    _count?: { scores: number };
+}
+
+export interface TestScore {
+    id: number;
+    testId: number;
+    studentId: number;
+    student: { id: number; firstname: string; lastname: string; fullname: string };
+    marksObtained: number;
+    percentage: number;
+    grade: string | null;
+    status: ScoreStatus;
+    remarks: string | null;
+    uploadedBy: number;
+    createdAt: string;
+}
+
+export interface TestWithScores extends Test {
+    scores: TestScore[];
+}
+
+export interface CreateTestInput {
+    title: string;
+    subject: string;
+    description?: string;
+    testType?: TestType;
+    batchId: number;
+    totalMarks: number;
+    passingMarks?: number;
+    date: string;
+    time?: string;
+    duration?: number;
+    hall?: string;
+    syllabus?: string;
+    instructions?: string;
+}
+
+export interface UpdateTestInput {
+    title?: string;
+    subject?: string;
+    description?: string;
+    testType?: TestType;
+    batchId?: number;
+    totalMarks?: number;
+    passingMarks?: number;
+    date?: string;
+    time?: string;
+    duration?: number;
+    hall?: string;
+    syllabus?: string;
+    instructions?: string;
+    status?: TestStatus;
+}
+
+export interface UploadScoreInput {
+    studentId: number;
+    marksObtained: number;
+    remarks?: string;
+}
+
+export interface TestStats {
+    testId: number;
+    title: string;
+    totalStudents: number;
+    appeared: number;
+    absent: number;
+    passed: number;
+    failed: number;
+    passPercentage: number;
+    average: number;
+    median: number;
+    highest: number;
+    lowest: number;
+    gradeDistribution: Record<string, number>;
+    topScorers: Array<{
+        studentId: number;
+        fullname: string;
+        marks: number;
+        percentage: number;
+    }>;
+}
+
+export interface BulkScoreResult {
+    total: number;
+    uploaded: number;
+    absent: number;
+    failed: number;
+    errors: Array<{ row: number; message: string }>;
+}
+
+// ============================================
 // Batch Types (Matching Prisma Schema)
 // ============================================
 

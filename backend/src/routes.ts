@@ -3,16 +3,20 @@ import authRoutes from "./modules/auth/routes.auth";
 import dashboardRoutes from "./modules/dashboard/routes";
 import appRoutes from "./modules/app/route";
 import studentAuthRoutes from "./modules/app/auth/route";
+import { generalRateLimiter, loginRateLimiter } from "./middleware/rateLimiter";
 
 const router = Router();
 
-router.use("/auth", authRoutes);
-router.use("/dashboard", dashboardRoutes);
+// Dashboard auth routes (login/signup have their own limiters)
+router.use("/auth", loginRateLimiter, authRoutes);
+
+// Dashboard routes - general rate limit (auth handled per-route by isAdmin/isAdminOrTeacher)
+router.use("/dashboard", generalRateLimiter, dashboardRoutes);
 
 // Student app auth routes (public - before protected app routes)
 router.use("/app/auth", studentAuthRoutes);
 
-// Protected student app routes
-router.use("/app", appRoutes);
+// Protected student app routes with rate limiting
+router.use("/app", generalRateLimiter, appRoutes);
 
 export default router;

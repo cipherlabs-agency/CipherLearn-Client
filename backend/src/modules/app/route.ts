@@ -7,6 +7,8 @@ import assignmentsRoutes from "./assignments/route";
 import announcementsRoutes from "./announcements/route";
 import resourcesRoutes from "./resources/route";
 import feesRoutes from "./fees/route";
+import appLecturesRoutes from "./lectures/route";
+import appTestsRoutes from "./tests/route";
 
 const router = Router();
 
@@ -38,5 +40,11 @@ router.use("/announcements", isAppUser, announcementsRoutes);
 
 // Resources - all app users can view study materials
 router.use("/resources", isAppUser, resourcesRoutes);
+
+// Lectures - schedule for students and teachers
+router.use("/lectures", isAppUser, appLecturesRoutes);
+
+// Tests - student scores and teacher batch views
+router.use("/tests", appTestsRoutes);
 
 export default router;

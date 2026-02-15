@@ -122,3 +122,18 @@ export type TokenBlacklist = Prisma.TokenBlacklistModel
  * 
  */
 export type LoginAttempt = Prisma.LoginAttemptModel
+/**
+ * Model Lecture
+ * 
+ */
+export type Lecture = Prisma.LectureModel
+/**
+ * Model Test
+ * 
+ */
+export type Test = Prisma.TestModel
+/**
+ * Model TestScore
+ * 
+ */
+export type TestScore = Prisma.TestScoreModel

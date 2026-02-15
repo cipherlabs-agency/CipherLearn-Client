@@ -92,3 +92,44 @@ export const FeeFrequency = {
 } as const
 
 export type FeeFrequency = (typeof FeeFrequency)[keyof typeof FeeFrequency]
+
+
+export const LectureStatus = {
+  SCHEDULED: 'SCHEDULED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type LectureStatus = (typeof LectureStatus)[keyof typeof LectureStatus]
+
+
+export const TestType = {
+  UNIT_TEST: 'UNIT_TEST',
+  MIDTERM: 'MIDTERM',
+  FINAL: 'FINAL',
+  QUIZ: 'QUIZ',
+  PRACTICE: 'PRACTICE'
+} as const
+
+export type TestType = (typeof TestType)[keyof typeof TestType]
+
+
+export const TestStatus = {
+  DRAFT: 'DRAFT',
+  SCHEDULED: 'SCHEDULED',
+  ONGOING: 'ONGOING',
+  COMPLETED: 'COMPLETED',
+  PUBLISHED: 'PUBLISHED'
+} as const
+
+export type TestStatus = (typeof TestStatus)[keyof typeof TestStatus]
+
+
+export const ScoreStatus = {
+  PASS: 'PASS',
+  FAIL: 'FAIL',
+  ABSENT: 'ABSENT'
+} as const
+
+export type ScoreStatus = (typeof ScoreStatus)[keyof typeof ScoreStatus]

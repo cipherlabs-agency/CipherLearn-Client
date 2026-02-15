@@ -17,6 +17,8 @@ import {
     Settings,
     Megaphone,
     GraduationCap,
+    Calendar,
+    ClipboardCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -37,6 +39,13 @@ const navGroups = [
             { href: "/teachers", label: "Teachers", icon: GraduationCap },
             { href: "/attendance", label: "Attendance", icon: ClipboardList },
             { href: "/fees", label: "Fees", icon: Receipt },
+        ]
+    },
+    {
+        label: "Schedule",
+        items: [
+            { href: "/lectures", label: "Lectures", icon: Calendar },
+            { href: "/tests", label: "Tests", icon: ClipboardCheck },
         ]
     },
     {

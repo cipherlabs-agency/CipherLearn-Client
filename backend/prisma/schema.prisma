@@ -27,6 +27,7 @@ model User {
   createdAt            DateTime?            @default(now())
   passwordResetTokens  PasswordResetToken[]
   student              Student?
+  lectures             Lecture[]            @relation("TeacherLectures")
 
   @@map("users")
 }
@@ -53,6 +54,7 @@ model Student {
   attendances Attendance[]
   submissions StudentSubmission[]
   feeReceipts FeeReceipt[]
+  testScores  TestScore[]
 
   @@index([batchId])
   @@index([userId])
@@ -74,6 +76,8 @@ model Batch {
   studyMaterials     StudyMaterial[]
   feeStructures      FeeStructure[]
   feeReceipts        FeeReceipt[]
+  lectures           Lecture[]
+  tests              Test[]
 
   updatedAt   DateTime?    @updatedAt
   createdAt   DateTime?    @default(now())
@@ -425,4 +429,148 @@ model LoginAttempt {
   @@index([email, createdAt])
   @@index([ipAddress, createdAt])
   @@map("login_attempts")
+}
+
+// ============================================
+// Lectures System
+// ============================================
+
+model Lecture {
+  id            Int           @id @default(autoincrement())
+  title         String
+  subject       String
+  description   String?
+  room          String?
+  batchId       Int
+  batch         Batch         @relation(fields: [batchId], references: [id])
+  teacherId     Int?
+  teacher       User?         @relation("TeacherLectures", fields: [teacherId], references: [id])
+  assignedBy    String?
+
+  // Schedule
+  date          DateTime
+  startTime     String
+  endTime       String
+  duration      Int
+
+  // Status
+  status        LectureStatus @default(SCHEDULED)
+  notes         String?
+
+  // Recurrence
+  recurrenceId  String?
+
+  // Audit
+  createdBy     Int
+  isDeleted     Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([batchId])
+  @@index([teacherId])
+  @@index([date])
+  @@index([batchId, date])
+  @@map("lectures")
+}
+
+enum LectureStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================
+// Tests & Scores System
+// ============================================
+
+model Test {
+  id            Int        @id @default(autoincrement())
+  title         String
+  subject       String
+  description   String?
+  testType      TestType   @default(UNIT_TEST)
+  batchId       Int
+  batch         Batch      @relation(fields: [batchId], references: [id])
+
+  // Scoring
+  totalMarks    Float
+  passingMarks  Float?
+
+  // Schedule
+  date          DateTime
+  time          String?
+  duration      Int?
+  hall          String?
+
+  // Content
+  syllabus      String?
+  instructions  String?
+
+  // Status
+  status        TestStatus @default(DRAFT)
+
+  // Relations
+  scores        TestScore[]
+
+  // Audit
+  createdBy     Int
+  isDeleted     Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([batchId])
+  @@index([batchId, date])
+  @@map("tests")
+}
+
+model TestScore {
+  id            Int         @id @default(autoincrement())
+  testId        Int
+  test          Test        @relation(fields: [testId], references: [id], onDelete: Cascade)
+  studentId     Int
+  student       Student     @relation(fields: [studentId], references: [id])
+
+  // Score
+  marksObtained Float
+  percentage    Float
+  grade         String?
+  status        ScoreStatus @default(PASS)
+
+  // Feedback
+  remarks       String?
+
+  // Who uploaded
+  uploadedBy    Int
+
+  // Audit
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([testId, studentId])
+  @@index([testId])
+  @@index([studentId])
+  @@map("test_scores")
+}
+
+enum TestType {
+  UNIT_TEST
+  MIDTERM
+  FINAL
+  QUIZ
+  PRACTICE
+}
+
+enum TestStatus {
+  DRAFT
+  SCHEDULED
+  ONGOING
+  COMPLETED
+  PUBLISHED
+}
+
+enum ScoreStatus {
+  PASS
+  FAIL
+  ABSENT
 }

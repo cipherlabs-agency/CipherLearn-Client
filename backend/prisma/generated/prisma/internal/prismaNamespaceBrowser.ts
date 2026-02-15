@@ -67,7 +67,10 @@ export const ModelName = {
   FeeReceipt: 'FeeReceipt',
   PasswordResetToken: 'PasswordResetToken',
   TokenBlacklist: 'TokenBlacklist',
-  LoginAttempt: 'LoginAttempt'
+  LoginAttempt: 'LoginAttempt',
+  Lecture: 'Lecture',
+  Test: 'Test',
+  TestScore: 'TestScore'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -363,6 +366,73 @@ export const LoginAttemptScalarFieldEnum = {
 } as const
 
 export type LoginAttemptScalarFieldEnum = (typeof LoginAttemptScalarFieldEnum)[keyof typeof LoginAttemptScalarFieldEnum]
+
+
+export const LectureScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  subject: 'subject',
+  description: 'description',
+  room: 'room',
+  batchId: 'batchId',
+  teacherId: 'teacherId',
+  assignedBy: 'assignedBy',
+  date: 'date',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  duration: 'duration',
+  status: 'status',
+  notes: 'notes',
+  recurrenceId: 'recurrenceId',
+  createdBy: 'createdBy',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LectureScalarFieldEnum = (typeof LectureScalarFieldEnum)[keyof typeof LectureScalarFieldEnum]
+
+
+export const TestScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  subject: 'subject',
+  description: 'description',
+  testType: 'testType',
+  batchId: 'batchId',
+  totalMarks: 'totalMarks',
+  passingMarks: 'passingMarks',
+  date: 'date',
+  time: 'time',
+  duration: 'duration',
+  hall: 'hall',
+  syllabus: 'syllabus',
+  instructions: 'instructions',
+  status: 'status',
+  createdBy: 'createdBy',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TestScalarFieldEnum = (typeof TestScalarFieldEnum)[keyof typeof TestScalarFieldEnum]
+
+
+export const TestScoreScalarFieldEnum = {
+  id: 'id',
+  testId: 'testId',
+  studentId: 'studentId',
+  marksObtained: 'marksObtained',
+  percentage: 'percentage',
+  grade: 'grade',
+  status: 'status',
+  remarks: 'remarks',
+  uploadedBy: 'uploadedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TestScoreScalarFieldEnum = (typeof TestScoreScalarFieldEnum)[keyof typeof TestScoreScalarFieldEnum]
 
 
 export const SortOrder = {
