@@ -1,0 +1,548 @@
+{
+	"info": {
+		"_postman_id": "cipherlearn-app-api-v1.0.1",
+		"name": "CipherLearn App API v1.0.1",
+		"version": "1.0.1",
+		"description": "Complete API collection for CipherLearn Mobile App (Student/Teacher).\n\nIncludes all App API endpoints matching the mobile UI designs:\n- App Auth (enrollment check, login, password setup, token refresh)\n- Profile & Dashboard\n- Daily Timetable (lectures/schedule)\n- Tests & Exams (upcoming, complete, results, performance)\n- Attendance\n- Assignments (submit, review)\n- Announcements\n- Resources (videos, notes, study materials)\n- Fees (receipts, summary)\n\n**Setup:**\n1. Import this collection into Postman\n2. Create environment with baseUrl = http://localhost:5000/api\n3. Run 'App Login' first to auto-set appToken\n4. Use student credentials for student-only routes\n\n**Base URL:** http://localhost:5000/api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "App Auth",
+			"description": "Student/Teacher mobile app authentication",
+			"item": [
+				{
+					"name": "Check Enrollment",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\"\n}"},
+						"url": {"raw": "{{baseUrl}}/app/auth/check-enrollment", "host": ["{{baseUrl}}"], "path": ["app", "auth", "check-enrollment"]},
+						"description": "Check if a student is enrolled in the system before allowing password setup."
+					},
+					"response": []
+				},
+				{
+					"name": "Setup Password",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\",\n    \"password\": \"Student@123\",\n    \"confirmPassword\": \"Student@123\"\n}"},
+						"url": {"raw": "{{baseUrl}}/app/auth/setup-password", "host": ["{{baseUrl}}"], "path": ["app", "auth", "setup-password"]},
+						"description": "First-time password setup for enrolled students."
+					},
+					"response": []
+				},
+				{
+					"name": "App Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    if (jsonData.data.token) {",
+									"        pm.environment.set('appToken', jsonData.data.token);",
+									"        console.log('App token set successfully');",
+									"    }",
+									"    if (jsonData.data.user) {",
+									"        pm.environment.set('appUserId', jsonData.data.user.id);",
+									"        pm.environment.set('appUserRole', jsonData.data.user.role);",
+									"    }",
+									"}",
+									"pm.test('Login successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\",\n    \"password\": \"Student@123\"\n}"},
+						"url": {"raw": "{{baseUrl}}/app/auth/login", "host": ["{{baseUrl}}"], "path": ["app", "auth", "login"]},
+						"description": "Student/Teacher login. Token is auto-saved to appToken env variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/auth/refresh-token", "host": ["{{baseUrl}}"], "path": ["app", "auth", "refresh-token"]},
+						"description": "Refresh JWT token before expiry."
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\"\n}"},
+						"url": {"raw": "{{baseUrl}}/app/auth/forgot-password", "host": ["{{baseUrl}}"], "path": ["app", "auth", "forgot-password"]},
+						"description": "Request password reset OTP via email."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\",\n    \"otp\": \"123456\"\n}"},
+						"url": {"raw": "{{baseUrl}}/app/auth/verify-otp", "host": ["{{baseUrl}}"], "path": ["app", "auth", "verify-otp"]},
+						"description": "Verify the OTP sent to email for password reset."
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\",\n    \"otp\": \"123456\",\n    \"newPassword\": \"NewPassword@123\"\n}"},
+						"url": {"raw": "{{baseUrl}}/app/auth/reset-password", "host": ["{{baseUrl}}"], "path": ["app", "auth", "reset-password"]},
+						"description": "Reset password using verified OTP."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Me",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/auth/me", "host": ["{{baseUrl}}"], "path": ["app", "auth", "me"]},
+						"description": "Get current authenticated user profile."
+					},
+					"response": []
+				},
+				{
+					"name": "App Logout",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/auth/logout", "host": ["{{baseUrl}}"], "path": ["app", "auth", "logout"]},
+						"description": "Logout and blacklist the current token."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"description": "Student profile (student-only)",
+			"item": [
+				{
+					"name": "Get My Profile",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/profile", "host": ["{{baseUrl}}"], "path": ["app", "profile"]},
+						"description": "Get full student profile with batch details."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dashboard",
+			"description": "App dashboard data (student + teacher)",
+			"item": [
+				{
+					"name": "Get Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/dashboard", "host": ["{{baseUrl}}"], "path": ["app", "dashboard"]},
+						"description": "Get dashboard overview data. Different content for students vs teachers."
+					},
+					"response": []
+				},
+				{
+					"name": "Today's Lectures",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/dashboard/today-lectures", "host": ["{{baseUrl}}"], "path": ["app", "dashboard", "today-lectures"]},
+						"description": "Get today's lecture schedule for the dashboard."
+					},
+					"response": []
+				},
+				{
+					"name": "Quick Access",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/dashboard/quick-access", "host": ["{{baseUrl}}"], "path": ["app", "dashboard", "quick-access"]},
+						"description": "Get quick access items for dashboard."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lectures (Timetable)",
+			"description": "Daily timetable / lecture schedule matching the Timetable UI",
+			"item": [
+				{
+					"name": "Get My Schedule (Today)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/lectures/my-schedule", "host": ["{{baseUrl}}"], "path": ["app", "lectures", "my-schedule"]},
+						"description": "Get today's schedule. Returns: date, totalClasses, lectures (title, teacher, startTime, endTime, room, status: FINISHED/ONGOING/UPCOMING), nextClass with countdown."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Schedule (Specific Date)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/lectures/my-schedule?date=2026-02-15",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "lectures", "my-schedule"],
+							"query": [{"key": "date", "value": "2026-02-15"}]
+						},
+						"description": "Get schedule for a specific date. Used when selecting a day on the date picker."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Lecture Detail",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/lectures/1", "host": ["{{baseUrl}}"], "path": ["app", "lectures", "1"]},
+						"description": "Get single lecture details including description, notes, and status."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Post-Lecture Notes (Teacher)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}, {"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"notes\": \"Covered chapters 3-4. Students need to review quadratic formula.\"\n}"},
+						"url": {"raw": "{{baseUrl}}/app/lectures/1/notes", "host": ["{{baseUrl}}"], "path": ["app", "lectures", "1", "notes"]},
+						"description": "Teacher adds post-lecture notes after completing a class."
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Lecture Complete (Teacher)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/lectures/1/complete", "host": ["{{baseUrl}}"], "path": ["app", "lectures", "1", "complete"]},
+						"description": "Teacher marks a lecture as completed."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tests & Exams",
+			"description": "Tests, scores, and performance analytics matching the Tests & Exams UI",
+			"item": [
+				{
+					"name": "Get All Tests",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/tests", "host": ["{{baseUrl}}"], "path": ["app", "tests"]},
+						"description": "Get all tests for the student. Returns: title, subject, testType (MIDTERM/UNIT_TEST/QUIZ etc), date, time, syllabus, daysUntil countdown."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Upcoming Tests",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/tests?status=upcoming",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "tests"],
+							"query": [{"key": "status", "value": "upcoming"}]
+						},
+						"description": "Filter: upcoming tests only (SCHEDULED/ONGOING)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Completed Tests",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/tests?status=complete",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "tests"],
+							"query": [{"key": "status", "value": "complete"}]
+						},
+						"description": "Filter: completed tests (COMPLETED/PUBLISHED)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Results (Published)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/tests?status=results",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "tests"],
+							"query": [{"key": "status", "value": "results"}]
+						},
+						"description": "Filter: published results with 'VIEW SCORE' button."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Test Detail (Student)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/tests/1", "host": ["{{baseUrl}}"], "path": ["app", "tests", "1"]},
+						"description": "Get test details: type, subject, date, time, duration, totalMarks, hall, syllabus, instructions, daysUntil. If PUBLISHED: includes myScore (marksObtained, percentage, grade, status, remarks, checkedBy)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Performance Analytics (Student)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/tests/performance", "host": ["{{baseUrl}}"], "path": ["app", "tests", "performance"]},
+						"description": "Student performance analytics: overallAverage, totalTests, passed, failed, highestScore, lowestScore, subjectWise averages, trend over time."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Batch Tests (Teacher)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/tests/batch/1", "host": ["{{baseUrl}}"], "path": ["app", "tests", "batch", "1"]},
+						"description": "Teacher view: all tests for a specific batch."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Test Scores (Teacher)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/tests/1/scores", "host": ["{{baseUrl}}"], "path": ["app", "tests", "1", "scores"]},
+						"description": "Teacher view: all student scores for a test, sorted by marks descending."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attendance",
+			"description": "Student attendance records",
+			"item": [
+				{
+					"name": "Get My Attendance",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/attendance", "host": ["{{baseUrl}}"], "path": ["app", "attendance"]},
+						"description": "Get student's own attendance records with percentages and history."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Assignments",
+			"description": "Assignment slots, submissions, and reviews",
+			"item": [
+				{
+					"name": "Get My Stats",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/assignments/stats", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "stats"]},
+						"description": "Get student's assignment statistics."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Assignments",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/assignments", "host": ["{{baseUrl}}"], "path": ["app", "assignments"]},
+						"description": "Get all assignment slots. Students see their batch assignments, teachers see all."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assignment Detail",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/assignments/1", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "1"]},
+						"description": "Get single assignment slot details."
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Assignment (Student)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{"key": "content", "value": "My completed assignment work", "type": "text"},
+								{"key": "attachments", "type": "file", "src": ""}
+							]
+						},
+						"url": {"raw": "{{baseUrl}}/app/assignments/1/submit", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "1", "submit"]},
+						"description": "Student submits assignment with optional file attachments (max 5 files)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Submission",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/assignments/1/my-submission", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "1", "my-submission"]},
+						"description": "Get student's own submission for an assignment slot."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Slot Submissions (Teacher)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/assignments/1/submissions", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "1", "submissions"]},
+						"description": "Teacher/Admin: get all submissions for an assignment slot."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Submission Detail",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/assignments/submissions/1", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "submissions", "1"]},
+						"description": "Get detailed submission with attachments."
+					},
+					"response": []
+				},
+				{
+					"name": "Review Submission (Teacher)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}, {"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"marks\": 85,\n    \"feedback\": \"Good work! Well structured approach.\",\n    \"status\": \"REVIEWED\"\n}"},
+						"url": {"raw": "{{baseUrl}}/app/assignments/submissions/1/review", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "submissions", "1", "review"]},
+						"description": "Teacher reviews and grades a student submission."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Announcements",
+			"description": "View announcements",
+			"item": [
+				{
+					"name": "Get Announcements",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/announcements", "host": ["{{baseUrl}}"], "path": ["app", "announcements"]},
+						"description": "Get all active announcements for the app user."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Resources",
+			"description": "Study resources: videos, notes, materials",
+			"item": [
+				{
+					"name": "Get Videos",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/resources/videos", "host": ["{{baseUrl}}"], "path": ["app", "resources", "videos"]},
+						"description": "Get YouTube videos for the student's batch."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notes",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/resources/notes", "host": ["{{baseUrl}}"], "path": ["app", "resources", "notes"]},
+						"description": "Get notes for the student's batch."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Study Materials",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/resources/study-materials", "host": ["{{baseUrl}}"], "path": ["app", "resources", "study-materials"]},
+						"description": "Get study materials with file downloads for the student's batch."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fees",
+			"description": "Student fee receipts and summary (student-only)",
+			"item": [
+				{
+					"name": "Get My Receipts",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/fees/receipts", "host": ["{{baseUrl}}"], "path": ["app", "fees", "receipts"]},
+						"description": "Get all fee receipts for the authenticated student."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Fees Summary",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/fees/summary", "host": ["{{baseUrl}}"], "path": ["app", "fees", "summary"]},
+						"description": "Get fees summary: total due, total paid, balance, payment history."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

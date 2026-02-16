@@ -19,7 +19,9 @@
       "Bash(node -e:*)",
       "Bash(node:*)",
       "Bash(wc:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npx next info:*)",
+      "Bash(grep:*)"
     ]
   }
 }

@@ -10,7 +10,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             <textarea
                 className={cn(
                     // Geist textarea - match input styling
-                    "flex min-h-[80px] w-full rounded-md border bg-background px-3 py-2",
+                    "flex min-h-[80px] w-full rounded-lg border bg-background px-3 py-2",
                     "text-sm ring-offset-background placeholder:text-muted-foreground/60",
                     "border-input transition-colors duration-150",
                     "hover:border-border-hover",

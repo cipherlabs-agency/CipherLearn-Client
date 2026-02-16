@@ -38,23 +38,23 @@ export const TeacherTable: FC = () => {
                 <div className="border-b border-border bg-muted/5 px-6 py-3">
                     <div className="grid grid-cols-5 gap-4">
                         {[1, 2, 3, 4, 5].map((i) => (
-                            <Skeleton key={i} className="h-3 w-20 bg-muted/40" />
+                            <Skeleton key={i} className="h-3 w-20" />
                         ))}
                     </div>
                 </div>
                 {[1, 2, 3, 4, 5].map((row) => (
-                    <div key={row} className="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
+                    <div key={row} className="px-6 py-4 border-b border-border/60 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-1">
-                            <Skeleton className="h-8 w-8 rounded-full bg-muted/30" />
+                            <Skeleton className="h-8 w-8 rounded-full" />
                             <div className="space-y-1.5 flex-1">
-                                <Skeleton className="h-4 w-32 bg-muted/20" />
-                                <Skeleton className="h-3 w-16 bg-muted/10" />
+                                <Skeleton className="h-4 w-32" />
+                                <Skeleton className="h-3 w-16" />
                             </div>
                         </div>
-                        <Skeleton className="h-3 w-32 bg-muted/20" />
-                        <Skeleton className="h-5 w-20 bg-muted/30 rounded-md" />
-                        <Skeleton className="h-3 w-20 bg-muted/20" />
-                        <Skeleton className="h-8 w-8 bg-muted/40 rounded-md" />
+                        <Skeleton className="h-3 w-32" />
+                        <Skeleton className="h-5 w-20 rounded-md" />
+                        <Skeleton className="h-3 w-20" />
+                        <Skeleton className="h-8 w-8 rounded-md" />
                     </div>
                 ))}
             </div>

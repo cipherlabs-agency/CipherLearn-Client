@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
 @layer base {
   :root {
@@ -117,6 +118,7 @@
   
   --color-border: hsl(var(--border));
   --color-border-hover: hsl(var(--border-hover));
+  --color-border-active: hsl(var(--ring));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
   

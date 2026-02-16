@@ -5,6 +5,7 @@ import "./globals.css";
 import { ReduxProvider } from "@/redux/provider";
 import { AuthRehydrate } from "@/components/AuthRehydrate";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "CipherLearn - Smart Tuition Management",
@@ -30,6 +31,7 @@ export default function RootLayout({
           >
             <AuthRehydrate />
             {children}
+            <Toaster position="top-right" richColors closeButton />
           </ThemeProvider>
         </ReduxProvider>
       </body>

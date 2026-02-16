@@ -57,32 +57,32 @@ export const LectureTable: FC = () => {
         return (
             <div className="w-full">
                 <div className="px-6 py-3 border-b border-border/60">
-                    <Skeleton className="h-8 w-[180px] bg-muted/30 rounded-md" />
+                    <Skeleton className="h-8 w-[180px] rounded-md" />
                 </div>
                 <div className="border-b border-border bg-muted/5 px-6 py-3">
                     <div className="grid grid-cols-7 gap-4">
                         {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-                            <Skeleton key={i} className="h-3 w-20 bg-muted/40" />
+                            <Skeleton key={i} className="h-3 w-20" />
                         ))}
                     </div>
                 </div>
                 {[1, 2, 3, 4, 5].map((row) => (
-                    <div key={row} className="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
+                    <div key={row} className="px-6 py-4 border-b border-border/60 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-1">
                             <div className="space-y-1.5">
-                                <Skeleton className="h-4 w-36 bg-muted/20" />
-                                <Skeleton className="h-3 w-16 bg-muted/10" />
+                                <Skeleton className="h-4 w-36" />
+                                <Skeleton className="h-3 w-16" />
                             </div>
                         </div>
-                        <Skeleton className="h-3 w-24 bg-muted/20" />
-                        <Skeleton className="h-3 w-20 bg-muted/20" />
-                        <Skeleton className="h-3 w-28 bg-muted/20" />
+                        <Skeleton className="h-3 w-24" />
+                        <Skeleton className="h-3 w-20" />
+                        <Skeleton className="h-3 w-28" />
                         <div className="space-y-1">
-                            <Skeleton className="h-3 w-16 bg-muted/20" />
-                            <Skeleton className="h-3 w-24 bg-muted/10" />
+                            <Skeleton className="h-3 w-16" />
+                            <Skeleton className="h-3 w-24" />
                         </div>
-                        <Skeleton className="h-5 w-16 bg-muted/30 rounded-md" />
-                        <Skeleton className="h-8 w-8 bg-muted/40 rounded-md" />
+                        <Skeleton className="h-5 w-16 rounded-md" />
+                        <Skeleton className="h-8 w-8 rounded-md" />
                     </div>
                 ))}
             </div>
@@ -142,7 +142,7 @@ export const LectureTable: FC = () => {
                         {lectures.map((lecture: Lecture) => {
                             const statusStyle = STATUS_STYLES[lecture.status]
                             return (
-                                <TableRow key={lecture.id} className="group border-border/40 hover:bg-muted/10 transition-colors">
+                                <TableRow key={lecture.id} className="group border-border/40 hover:bg-muted/30 transition-colors">
                                     <TableCell className="py-4 pl-8">
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{lecture.title}</span>

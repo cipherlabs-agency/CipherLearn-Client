@@ -63,18 +63,18 @@ export default function TestDetailPage({ params }: { params: Promise<{ id: strin
         return (
             <div className="py-10 px-8 max-w-[1400px] mx-auto space-y-8 animate-in fade-in duration-700">
                 <div className="flex items-center gap-4 border-b border-border/40 pb-8">
-                    <Skeleton className="h-8 w-8 rounded-md bg-muted/30" />
+                    <Skeleton className="h-8 w-8 rounded-md" />
                     <div className="space-y-2">
-                        <Skeleton className="h-6 w-48 bg-muted/20" />
-                        <Skeleton className="h-4 w-64 bg-muted/10" />
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-4 w-64" />
                     </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {[1, 2, 3, 4].map((i) => (
                         <div key={i} className="rounded-lg border border-border/60 p-4 space-y-2">
-                            <Skeleton className="h-3 w-20 bg-muted/30" />
-                            <Skeleton className="h-7 w-16 bg-muted/20" />
-                            <Skeleton className="h-3 w-24 bg-muted/10" />
+                            <Skeleton className="h-3 w-20" />
+                            <Skeleton className="h-7 w-16" />
+                            <Skeleton className="h-3 w-24" />
                         </div>
                     ))}
                 </div>
@@ -82,18 +82,18 @@ export default function TestDetailPage({ params }: { params: Promise<{ id: strin
                     <div className="border-b border-border bg-muted/5 px-6 py-3">
                         <div className="grid grid-cols-6 gap-4">
                             {[1, 2, 3, 4, 5, 6].map((i) => (
-                                <Skeleton key={i} className="h-3 w-16 bg-muted/40" />
+                                <Skeleton key={i} className="h-3 w-16" />
                             ))}
                         </div>
                     </div>
                     {[1, 2, 3, 4, 5].map((row) => (
-                        <div key={row} className="px-6 py-4 border-b border-border flex items-center gap-4">
-                            <Skeleton className="h-4 w-32 bg-muted/20" />
-                            <Skeleton className="h-4 w-16 bg-muted/20" />
-                            <Skeleton className="h-4 w-12 bg-muted/20" />
-                            <Skeleton className="h-4 w-8 bg-muted/20" />
-                            <Skeleton className="h-5 w-12 bg-muted/30 rounded-md" />
-                            <Skeleton className="h-3 w-24 bg-muted/10" />
+                        <div key={row} className="px-6 py-4 border-b border-border/60 flex items-center gap-4">
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-4 w-16" />
+                            <Skeleton className="h-4 w-12" />
+                            <Skeleton className="h-4 w-8" />
+                            <Skeleton className="h-5 w-12 rounded-md" />
+                            <Skeleton className="h-3 w-24" />
                         </div>
                     ))}
                 </div>

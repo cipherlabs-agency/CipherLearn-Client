@@ -20,6 +20,9 @@ router.post(
 // Get all tests (Admin or Teacher)
 router.get("/", isAdminOrTeacher, controller.getAll.bind(controller));
 
+// Get test statistics (Admin or Teacher) - must be before /:id
+router.get("/:id/stats", isAdminOrTeacher, controller.getStats.bind(controller));
+
 // Get test by ID with scores (Admin or Teacher)
 router.get("/:id", isAdminOrTeacher, controller.getById.bind(controller));
 
@@ -60,8 +63,5 @@ router.put(
   validateRequest(TestValidations.updateScore),
   controller.updateScore.bind(controller)
 );
-
-// Get test statistics (Admin or Teacher)
-router.get("/:id/stats", isAdminOrTeacher, controller.getStats.bind(controller));
 
 export default router;

@@ -20,7 +20,7 @@ const SelectTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       // Geist select trigger - match input styling
-      "flex h-10 w-full items-center justify-between rounded-md border bg-background px-3 py-2",
+      "flex h-10 w-full items-center justify-between rounded-lg border bg-background px-3 py-2",
       "text-sm ring-offset-background placeholder:text-muted-foreground/60",
       "border-input transition-colors duration-150",
       "hover:border-border-hover",

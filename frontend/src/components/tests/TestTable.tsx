@@ -84,29 +84,29 @@ export const TestTable: FC = () => {
         return (
             <div className="w-full">
                 <div className="px-6 py-3 border-b border-border/60 flex items-center gap-3">
-                    <Skeleton className="h-8 w-[180px] bg-muted/30 rounded-md" />
-                    <Skeleton className="h-8 w-[140px] bg-muted/30 rounded-md" />
+                    <Skeleton className="h-8 w-[180px] rounded-md" />
+                    <Skeleton className="h-8 w-[140px] rounded-md" />
                 </div>
                 <div className="border-b border-border bg-muted/5 px-6 py-3">
                     <div className="grid grid-cols-8 gap-4">
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                            <Skeleton key={i} className="h-3 w-20 bg-muted/40" />
+                            <Skeleton key={i} className="h-3 w-20" />
                         ))}
                     </div>
                 </div>
                 {[1, 2, 3, 4, 5].map((row) => (
-                    <div key={row} className="px-6 py-4 border-b border-border flex items-center justify-between gap-4">
+                    <div key={row} className="px-6 py-4 border-b border-border/60 flex items-center justify-between gap-4">
                         <div className="space-y-1.5 flex-1">
-                            <Skeleton className="h-4 w-36 bg-muted/20" />
-                            <Skeleton className="h-3 w-20 bg-muted/10" />
+                            <Skeleton className="h-4 w-36" />
+                            <Skeleton className="h-3 w-20" />
                         </div>
-                        <Skeleton className="h-5 w-16 bg-muted/30 rounded-md" />
-                        <Skeleton className="h-3 w-20 bg-muted/20" />
-                        <Skeleton className="h-3 w-20 bg-muted/20" />
-                        <Skeleton className="h-3 w-12 bg-muted/20" />
-                        <Skeleton className="h-5 w-16 bg-muted/30 rounded-md" />
-                        <Skeleton className="h-3 w-8 bg-muted/20" />
-                        <Skeleton className="h-8 w-20 bg-muted/40 rounded-md" />
+                        <Skeleton className="h-5 w-16 rounded-md" />
+                        <Skeleton className="h-3 w-20" />
+                        <Skeleton className="h-3 w-20" />
+                        <Skeleton className="h-3 w-12" />
+                        <Skeleton className="h-5 w-16 rounded-md" />
+                        <Skeleton className="h-3 w-8" />
+                        <Skeleton className="h-8 w-20 rounded-md" />
                     </div>
                 ))}
             </div>
@@ -178,7 +178,7 @@ export const TestTable: FC = () => {
                         {tests.map((test: Test) => {
                             const statusStyle = STATUS_STYLES[test.status]
                             return (
-                                <TableRow key={test.id} className="group border-border/40 hover:bg-muted/10 transition-colors">
+                                <TableRow key={test.id} className="group border-border/40 hover:bg-muted/30 transition-colors">
                                     <TableCell className="py-4 pl-8">
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{test.title}</span>
@@ -186,7 +186,7 @@ export const TestTable: FC = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded border border-border bg-muted/30 uppercase tracking-tighter">
+                                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded border border-border bg-muted/50 uppercase tracking-tighter">
                                             {TYPE_LABELS[test.testType]}
                                         </span>
                                     </TableCell>
