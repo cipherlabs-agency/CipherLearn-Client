@@ -37,6 +37,18 @@ const enroll = joi.object({
     "number.integer": "Batch ID must be an integer",
     "number.positive": "Batch ID must be a positive number",
   }),
+  phone: joi.string().allow(null, "").max(20).optional().messages({
+    "string.max": "Phone cannot exceed 20 characters",
+  }),
+  parentName: joi.string().allow(null, "").max(100).optional().messages({
+    "string.max": "Parent name cannot exceed 100 characters",
+  }),
+  grade: joi.string().allow(null, "").max(20).optional().messages({
+    "string.max": "Grade cannot exceed 20 characters",
+  }),
+  instituteId: joi.string().allow(null, "").max(50).optional().messages({
+    "string.max": "Institute ID cannot exceed 50 characters",
+  }),
 });
 
 const update = joi.object({
@@ -63,6 +75,18 @@ const update = joi.object({
     "number.base": "Batch ID must be a number",
     "number.integer": "Batch ID must be an integer",
     "number.positive": "Batch ID must be a positive number",
+  }),
+  phone: joi.string().allow(null, "").max(20).optional().messages({
+    "string.max": "Phone cannot exceed 20 characters",
+  }),
+  parentName: joi.string().allow(null, "").max(100).optional().messages({
+    "string.max": "Parent name cannot exceed 100 characters",
+  }),
+  grade: joi.string().allow(null, "").max(20).optional().messages({
+    "string.max": "Grade cannot exceed 20 characters",
+  }),
+  instituteId: joi.string().allow(null, "").max(50).optional().messages({
+    "string.max": "Institute ID cannot exceed 50 characters",
   }),
 }).min(1).messages({
   "object.min": "At least one field must be provided for update",

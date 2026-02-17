@@ -6,6 +6,12 @@ const router = Router();
 // Get student's own attendance records
 router.get("/", attendanceController.getAttendance.bind(attendanceController));
 
+// Get attendance history with filters
+router.get("/history", attendanceController.getHistory.bind(attendanceController));
+
+// Get attendance calendar for a month
+router.get("/calendar", attendanceController.getCalendar.bind(attendanceController));
+
 // =====================
 // QR CODE ATTENDANCE - TEMPORARILY DISABLED
 // =====================

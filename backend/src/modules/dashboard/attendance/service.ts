@@ -384,18 +384,21 @@ export default class AttendanceService {
         const presentCount = studentAttendances.filter(
           (a) => a.status === AttendanceStatus.PRESENT
         ).length;
+        const lateCount = studentAttendances.filter(
+          (a) => a.status === AttendanceStatus.LATE
+        ).length;
         const absentCount = studentAttendances.filter(
           (a) => a.status === AttendanceStatus.ABSENT
         ).length;
-        const totalDays = presentCount + absentCount;
+        const totalDays = presentCount + lateCount + absentCount;
         const percentage =
-          totalDays > 0 ? Math.round((presentCount / totalDays) * 100) : 0;
+          totalDays > 0 ? Math.round(((presentCount + lateCount) / totalDays) * 100) : 0;
 
         return {
           studentId: student.id,
           studentName: student.fullname,
           email: student.email,
-          presentDays: presentCount,
+          presentDays: presentCount + lateCount,
           absentDays: absentCount,
           totalDays,
           percentage,

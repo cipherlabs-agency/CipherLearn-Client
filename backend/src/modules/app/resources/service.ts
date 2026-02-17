@@ -1,19 +1,40 @@
+import { Prisma } from "../../../../prisma/generated/prisma/client";
 import { prisma } from "../../../config/db.config";
-import type { AppVideo, AppNote, AppStudyMaterial } from "./types";
+import type {
+  AppVideo,
+  AppNote,
+  AppStudyMaterial,
+  AppResourceFile,
+  AppResourceQuery,
+} from "./types";
 
 class ResourcesService {
   /**
-   * Get videos for student's batch
+   * Get videos for student's batch with optional search/category filters
    */
-  async getVideos(batchId: number | null, limit?: number): Promise<AppVideo[]> {
+  async getVideos(
+    batchId: number | null,
+    limit?: number,
+    query?: AppResourceQuery
+  ): Promise<AppVideo[]> {
     if (!batchId) return [];
 
+    const where: Prisma.YoutubeVideoWhereInput = {
+      batchId,
+      isDeleted: false,
+      visibility: { not: "PRIVATE" },
+    };
+
+    if (query?.search) {
+      where.title = { contains: query.search, mode: "insensitive" };
+    }
+
+    if (query?.category) {
+      where.category = query.category;
+    }
+
     const videos = await prisma.youtubeVideo.findMany({
-      where: {
-        batchId,
-        isDeleted: false,
-        visibility: { not: "PRIVATE" },
-      },
+      where,
       orderBy: { createdAt: "desc" },
       take: limit,
     });
@@ -29,16 +50,30 @@ class ResourcesService {
   }
 
   /**
-   * Get notes for student's batch
+   * Get notes for student's batch with optional search/category filters
    */
-  async getNotes(batchId: number | null, limit?: number): Promise<AppNote[]> {
+  async getNotes(
+    batchId: number | null,
+    limit?: number,
+    query?: AppResourceQuery
+  ): Promise<AppNote[]> {
     if (!batchId) return [];
 
+    const where: Prisma.NoteWhereInput = {
+      batchId,
+      isDeleted: false,
+    };
+
+    if (query?.search) {
+      where.title = { contains: query.search, mode: "insensitive" };
+    }
+
+    if (query?.category) {
+      where.category = query.category;
+    }
+
     const notes = await prisma.note.findMany({
-      where: {
-        batchId,
-        isDeleted: false,
-      },
+      where,
       orderBy: { createdAt: "desc" },
       take: limit,
     });
@@ -53,19 +88,30 @@ class ResourcesService {
   }
 
   /**
-   * Get study materials for student's batch
+   * Get study materials for student's batch with optional search/category filters
    */
   async getStudyMaterials(
     batchId: number | null,
-    limit?: number
+    limit?: number,
+    query?: AppResourceQuery
   ): Promise<AppStudyMaterial[]> {
     if (!batchId) return [];
 
+    const where: Prisma.StudyMaterialWhereInput = {
+      batchId,
+      isDeleted: false,
+    };
+
+    if (query?.search) {
+      where.title = { contains: query.search, mode: "insensitive" };
+    }
+
+    if (query?.category) {
+      where.category = query.category;
+    }
+
     const materials = await prisma.studyMaterial.findMany({
-      where: {
-        batchId,
-        isDeleted: false,
-      },
+      where,
       orderBy: { createdAt: "desc" },
       take: limit,
     });
@@ -74,7 +120,7 @@ class ResourcesService {
       id: m.id,
       title: m.title,
       description: m.description,
-      files: m.files,
+      files: (m.files as unknown as AppResourceFile[]) || [],
       category: m.category,
       createdAt: m.createdAt.toISOString(),
     }));

@@ -46,6 +46,10 @@ model Student {
   user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   attendance Json?
   address    String?
+  phone       String?
+  parentName  String?
+  grade       String?
+  instituteId String?
   isDeleted  Boolean? @default(false)
   deletedBy  String?
 
@@ -133,6 +137,10 @@ model Attendance {
   method     AttendanceMethod @default(MANUAL)
   status     AttendanceStatus @default(ABSENT)
 
+  reason    String?
+  lectureId Int?
+  lecture   Lecture?  @relation(fields: [lectureId], references: [id])
+
   attendanceSheet   AttendanceSheet? @relation(fields: [attendanceSheetId], references: [id])
   attendanceSheetId Int?
 
@@ -143,6 +151,7 @@ model Attendance {
   @@index([studentId, date])
   @@index([batchId, date])
   @@index([attendanceSheetId])
+  @@index([lectureId])
   @@map("attendances")
 }
 
@@ -278,6 +287,7 @@ enum AttendanceMethod {
 enum AttendanceStatus {
   PRESENT
   ABSENT
+  LATE
 }
 
 enum YoutubeVideoVisibility {
@@ -465,6 +475,8 @@ model Lecture {
   isDeleted     Boolean       @default(false)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+
+  attendances   Attendance[]
 
   @@index([batchId])
   @@index([teacherId])

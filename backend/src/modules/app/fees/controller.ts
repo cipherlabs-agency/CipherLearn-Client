@@ -60,6 +60,41 @@ class FeesController {
       });
     }
   }
+  /**
+   * Get fee structures for student's batch
+   * GET /app/fees/structures
+   */
+  async getFeeStructures(req: Request, res: Response) {
+    try {
+      const student = req.student;
+      if (!student) {
+        return res.status(401).json({
+          success: false,
+          message: "Student not authenticated",
+        });
+      }
+
+      if (!student.batchId) {
+        return res.status(400).json({
+          success: false,
+          message: "Student is not assigned to a batch",
+        });
+      }
+
+      const structures = await feesService.getFeeStructures(student.batchId);
+
+      return res.status(200).json({
+        success: true,
+        data: structures,
+      });
+    } catch (error) {
+      logger.error("FeesController.getFeeStructures error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get fee structures: ${error}`,
+      });
+    }
+  }
 }
 
 export const feesController = new FeesController();

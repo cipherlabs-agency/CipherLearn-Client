@@ -500,7 +500,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstname\": \"John\",\n    \"middlename\": \"Robert\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe@email.com\",\n    \"dob\": \"2005-05-15\",\n    \"address\": \"123 Main Street, New York, NY 10001\",\n    \"batchId\": {{batchId}}\n}"
+							"raw": "{\n    \"firstname\": \"John\",\n    \"middlename\": \"Robert\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe@email.com\",\n    \"dob\": \"2005-05-15\",\n    \"address\": \"123 Main Street, New York, NY 10001\",\n    \"batchId\": {{batchId}},\n    \"phone\": \"+91 9876543210\",\n    \"parentName\": \"Jane Doe\",\n    \"grade\": \"10th\",\n    \"instituteId\": \"STU-001\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/dashboard/student-enrollment/enroll",
@@ -654,7 +654,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstname\": \"John\",\n    \"lastname\": \"Smith\",\n    \"address\": \"456 Updated Street, New York, NY 10002\"\n}"
+							"raw": "{\n    \"firstname\": \"John\",\n    \"lastname\": \"Smith\",\n    \"address\": \"456 Updated Street, New York, NY 10002\",\n    \"phone\": \"+91 9876543211\",\n    \"parentName\": \"Jane Smith\",\n    \"grade\": \"11th\",\n    \"instituteId\": \"STU-002\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/dashboard/student-enrollment/student/{{studentId}}",

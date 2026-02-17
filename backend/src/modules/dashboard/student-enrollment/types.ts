@@ -21,6 +21,10 @@ export interface EnrollStudentInput {
   dob: string;
   batchId: number;
   address: string;
+  phone?: string;
+  parentName?: string;
+  grade?: string;
+  instituteId?: string;
 }
 
 /**
@@ -34,6 +38,10 @@ export interface UpdateStudentInput {
   dob?: string;
   batchId?: number;
   address?: string;
+  phone?: string;
+  parentName?: string;
+  grade?: string;
+  instituteId?: string;
 }
 
 /**

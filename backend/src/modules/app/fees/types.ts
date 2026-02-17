@@ -1,4 +1,4 @@
-import { PaymentStatus, PaymentMode } from "../../../../prisma/generated/prisma/client";
+import { PaymentStatus, PaymentMode, FeeFrequency } from "../../../../prisma/generated/prisma/client";
 
 export interface AppFeeReceipt {
   id: number;
@@ -26,4 +26,15 @@ export interface AppFeesSummary {
   paidCount: number;
   pendingCount: number;
   overdueCount: number;
+}
+
+export interface AppFeeStructure {
+  id: number;
+  name: string;
+  amount: number;
+  frequency: FeeFrequency;
+  dueDay: number;
+  lateFee: number;
+  gracePeriod: number;
+  description: string | null;
 }

@@ -297,6 +297,10 @@ export interface Student {
     dob: string;
     batchId: number;
     address: string | null;
+    phone?: string | null;
+    parentName?: string | null;
+    grade?: string | null;
+    instituteId?: string | null;
     createdAt: string;
     updatedAt: string;
 }
@@ -324,13 +328,17 @@ export interface EnrollStudentInput {
     dob: string;
     batchId: number;
     address?: string;
+    phone?: string;
+    parentName?: string;
+    grade?: string;
+    instituteId?: string;
 }
 
 // ============================================
 // Attendance Types (Matching Prisma Schema)
 // ============================================
 
-export type AttendanceStatus = 'PRESENT' | 'ABSENT';
+export type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE';
 export type AttendanceMethod = 'MANUAL' | 'QR';
 
 export interface AttendanceStudent {

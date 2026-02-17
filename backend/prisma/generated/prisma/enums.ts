@@ -47,7 +47,8 @@ export type AttendanceMethod = (typeof AttendanceMethod)[keyof typeof Attendance
 
 export const AttendanceStatus = {
   PRESENT: 'PRESENT',
-  ABSENT: 'ABSENT'
+  ABSENT: 'ABSENT',
+  LATE: 'LATE'
 } as const
 
 export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]

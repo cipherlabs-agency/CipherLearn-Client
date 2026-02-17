@@ -358,7 +358,7 @@
 		},
 		{
 			"name": "Attendance",
-			"description": "Student attendance records",
+			"description": "Student attendance records, history, and calendar",
 			"item": [
 				{
 					"name": "Get My Attendance",
@@ -366,7 +366,44 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/attendance", "host": ["{{baseUrl}}"], "path": ["app", "attendance"]},
-						"description": "Get student's own attendance records with percentages and history."
+						"description": "Get student's attendance performance: totalClasses, present, absent, late, attendancePercentage, statusLabel, monthlyBreakdown, recentAttendance with subject/reason/time."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attendance History",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/attendance/history?month=2&year=2026&status=PRESENT",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "attendance", "history"],
+							"query": [
+								{"key": "month", "value": "2", "description": "Filter by month (1-12). Optional."},
+								{"key": "year", "value": "2026", "description": "Filter by year. Optional."},
+								{"key": "status", "value": "PRESENT", "description": "Filter by status: PRESENT, ABSENT, LATE. Optional."}
+							]
+						},
+						"description": "Get filtered attendance history. All query params are optional."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attendance Calendar",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/attendance/calendar?month=2&year=2026",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "attendance", "calendar"],
+							"query": [
+								{"key": "month", "value": "2", "description": "Month (1-12). Required."},
+								{"key": "year", "value": "2026", "description": "Year. Required."}
+							]
+						},
+						"description": "Get per-day attendance calendar for a month. Returns array of {date, status, subject} for calendar view."
 					},
 					"response": []
 				}
@@ -491,8 +528,16 @@
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
-						"url": {"raw": "{{baseUrl}}/app/resources/videos", "host": ["{{baseUrl}}"], "path": ["app", "resources", "videos"]},
-						"description": "Get YouTube videos for the student's batch."
+						"url": {
+							"raw": "{{baseUrl}}/app/resources/videos?search=&category=",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "resources", "videos"],
+							"query": [
+								{"key": "search", "value": "", "description": "Search by title. Optional."},
+								{"key": "category", "value": "", "description": "Filter by category. Optional."}
+							]
+						},
+						"description": "Get YouTube videos for the student's batch. Supports ?search= and ?category= filters."
 					},
 					"response": []
 				},
@@ -501,8 +546,16 @@
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
-						"url": {"raw": "{{baseUrl}}/app/resources/notes", "host": ["{{baseUrl}}"], "path": ["app", "resources", "notes"]},
-						"description": "Get notes for the student's batch."
+						"url": {
+							"raw": "{{baseUrl}}/app/resources/notes?search=&category=",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "resources", "notes"],
+							"query": [
+								{"key": "search", "value": "", "description": "Search by title. Optional."},
+								{"key": "category", "value": "", "description": "Filter by category. Optional."}
+							]
+						},
+						"description": "Get notes for the student's batch. Supports ?search= and ?category= filters."
 					},
 					"response": []
 				},
@@ -511,8 +564,16 @@
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
-						"url": {"raw": "{{baseUrl}}/app/resources/study-materials", "host": ["{{baseUrl}}"], "path": ["app", "resources", "study-materials"]},
-						"description": "Get study materials with file downloads for the student's batch."
+						"url": {
+							"raw": "{{baseUrl}}/app/resources/study-materials?search=&category=",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "resources", "study-materials"],
+							"query": [
+								{"key": "search", "value": "", "description": "Search by title. Optional."},
+								{"key": "category", "value": "", "description": "Filter by category. Optional."}
+							]
+						},
+						"description": "Get study materials with typed file arrays for the student's batch. Supports ?search= and ?category= filters."
 					},
 					"response": []
 				}
@@ -539,6 +600,16 @@
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/fees/summary", "host": ["{{baseUrl}}"], "path": ["app", "fees", "summary"]},
 						"description": "Get fees summary: total due, total paid, balance, payment history."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Fee Structures",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/fees/structures", "host": ["{{baseUrl}}"], "path": ["app", "fees", "structures"]},
+						"description": "Get active fee structures for the student's batch: name, amount, frequency, dueDay, lateFee, gracePeriod, description."
 					},
 					"response": []
 				}

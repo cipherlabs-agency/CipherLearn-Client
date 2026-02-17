@@ -5,5 +5,6 @@ const router = Router();
 
 router.get("/receipts", feesController.getFeeReceipts.bind(feesController));
 router.get("/summary", feesController.getFeesSummary.bind(feesController));
+router.get("/structures", feesController.getFeeStructures.bind(feesController));
 
 export default router;

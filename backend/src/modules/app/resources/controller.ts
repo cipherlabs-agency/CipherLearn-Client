@@ -1,8 +1,19 @@
 import type { Request, Response } from "express";
 import { resourcesService } from "./service";
 import logger from "../../../utils/logger";
+import type { AppResourceQuery } from "./types";
 
 class ResourcesController {
+  /**
+   * Parse common search/category query params
+   */
+  private parseResourceQuery(req: Request): AppResourceQuery {
+    return {
+      search: req.query.search ? String(req.query.search) : undefined,
+      category: req.query.category ? String(req.query.category) : undefined,
+    };
+  }
+
   /**
    * Get videos for student's batch
    * GET /app/resources/videos
@@ -18,7 +29,8 @@ class ResourcesController {
       }
 
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-      const videos = await resourcesService.getVideos(student.batchId, limit);
+      const query = this.parseResourceQuery(req);
+      const videos = await resourcesService.getVideos(student.batchId, limit, query);
 
       return res.status(200).json({
         success: true,
@@ -48,7 +60,8 @@ class ResourcesController {
       }
 
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-      const notes = await resourcesService.getNotes(student.batchId, limit);
+      const query = this.parseResourceQuery(req);
+      const notes = await resourcesService.getNotes(student.batchId, limit, query);
 
       return res.status(200).json({
         success: true,
@@ -78,7 +91,8 @@ class ResourcesController {
       }
 
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-      const materials = await resourcesService.getStudyMaterials(student.batchId, limit);
+      const query = this.parseResourceQuery(req);
+      const materials = await resourcesService.getStudyMaterials(student.batchId, limit, query);
 
       return res.status(200).json({
         success: true,

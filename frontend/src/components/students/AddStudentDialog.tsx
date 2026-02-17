@@ -32,7 +32,11 @@ export function AddStudentDialog() {
         lastname: "",
         middlename: "",
         dob: "",
-        address: ""
+        address: "",
+        phone: "",
+        parentName: "",
+        grade: "",
+        instituteId: ""
     })
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -56,7 +60,11 @@ export function AddStudentDialog() {
                 lastname: "",
                 middlename: "",
                 dob: "",
-                address: ""
+                address: "",
+                phone: "",
+                parentName: "",
+                grade: "",
+                instituteId: ""
             })
         } catch (error: unknown) {
             const err = error as { data?: { message?: string } }
@@ -188,6 +196,61 @@ export function AddStudentDialog() {
                                 className="flex min-h-[72px] w-full rounded-md border border-input bg-background px-3 py-2 text-[13px] shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
                                 required
                             />
+                        </div>
+
+                        {/* Optional Fields */}
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="phone" className="text-[13px] font-medium">
+                                    Phone
+                                </Label>
+                                <Input
+                                    id="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    placeholder="+91 9876543210"
+                                    className="h-9 text-[13px]"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="parentName" className="text-[13px] font-medium">
+                                    Parent Name
+                                </Label>
+                                <Input
+                                    id="parentName"
+                                    value={formData.parentName}
+                                    onChange={handleChange}
+                                    placeholder="Parent/Guardian"
+                                    className="h-9 text-[13px]"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="grade" className="text-[13px] font-medium">
+                                    Grade
+                                </Label>
+                                <Input
+                                    id="grade"
+                                    value={formData.grade}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 10th"
+                                    className="h-9 text-[13px]"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="instituteId" className="text-[13px] font-medium">
+                                    Institute ID
+                                </Label>
+                                <Input
+                                    id="instituteId"
+                                    value={formData.instituteId}
+                                    onChange={handleChange}
+                                    placeholder="e.g. STU-001"
+                                    className="h-9 text-[13px]"
+                                />
+                            </div>
                         </div>
                     </div>
                     <DialogFooter className="px-6 py-4 border-t border-border bg-muted/30">

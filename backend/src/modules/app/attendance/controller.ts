@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { attendanceService } from "./service";
 import logger from "../../../utils/logger";
+import type { AttendanceHistoryQuery } from "./types";
 
 class AttendanceController {
   /**
@@ -31,6 +32,82 @@ class AttendanceController {
       return res.status(500).json({
         success: false,
         message: `Failed to get attendance: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Get attendance history with filters
+   * GET /app/attendance/history
+   */
+  async getHistory(req: Request, res: Response) {
+    try {
+      const student = req.student;
+      if (!student) {
+        return res.status(401).json({
+          success: false,
+          message: "Student not authenticated",
+        });
+      }
+
+      const query: AttendanceHistoryQuery = {
+        month: req.query.month ? Number(req.query.month) : undefined,
+        year: req.query.year ? Number(req.query.year) : undefined,
+        status: req.query.status as AttendanceHistoryQuery["status"],
+      };
+
+      const history = await attendanceService.getHistory(
+        student.id,
+        student.batchId,
+        query
+      );
+
+      return res.status(200).json({
+        success: true,
+        data: history,
+      });
+    } catch (error) {
+      logger.error("AttendanceController.getHistory error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get attendance history: ${error}`,
+      });
+    }
+  }
+
+  /**
+   * Get attendance calendar for a month
+   * GET /app/attendance/calendar
+   */
+  async getCalendar(req: Request, res: Response) {
+    try {
+      const student = req.student;
+      if (!student) {
+        return res.status(401).json({
+          success: false,
+          message: "Student not authenticated",
+        });
+      }
+
+      const month = Number(req.query.month);
+      const year = Number(req.query.year);
+
+      const calendar = await attendanceService.getCalendar(
+        student.id,
+        student.batchId,
+        month,
+        year
+      );
+
+      return res.status(200).json({
+        success: true,
+        data: calendar,
+      });
+    } catch (error) {
+      logger.error("AttendanceController.getCalendar error:", error);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to get attendance calendar: ${error}`,
       });
     }
   }

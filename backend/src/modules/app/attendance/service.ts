@@ -6,9 +6,22 @@ import type {
   MonthlyAttendance,
   RecentAttendance,
   QRAttendanceResult,
+  AttendanceCalendarDay,
+  AttendanceHistoryQuery,
 } from "./types";
 
 class AttendanceService {
+  /**
+   * Compute a human-readable status label from attendance percentage
+   */
+  private getStatusLabel(percentage: number): string {
+    if (percentage >= 90) return "Excellent";
+    if (percentage >= 75) return "Good";
+    if (percentage >= 60) return "Average";
+    if (percentage >= 40) return "Below Average";
+    return "Poor";
+  }
+
   /**
    * Get attendance performance for a student
    */
@@ -21,25 +34,34 @@ class AttendanceService {
         totalClasses: 0,
         present: 0,
         absent: 0,
+        late: 0,
         attendancePercentage: 0,
+        statusLabel: "N/A",
         monthlyBreakdown: [],
         recentAttendance: [],
       };
     }
 
-    // Get all attendance records
+    // Get all attendance records with lecture relation for subject
     const attendances = await prisma.attendance.findMany({
       where: {
         studentId,
         batchId,
+      },
+      include: {
+        lecture: {
+          select: { subject: true },
+        },
       },
       orderBy: { date: "desc" },
     });
 
     const totalClasses = attendances.length;
     const present = attendances.filter((a) => a.status === AttendanceStatus.PRESENT).length;
-    const absent = totalClasses - present;
-    const attendancePercentage = totalClasses > 0 ? Math.round((present / totalClasses) * 100) : 0;
+    const late = attendances.filter((a) => a.status === AttendanceStatus.LATE).length;
+    const absent = attendances.filter((a) => a.status === AttendanceStatus.ABSENT).length;
+    const attendancePercentage =
+      totalClasses > 0 ? Math.round(((present + late) / totalClasses) * 100) : 0;
 
     // Monthly breakdown
     const monthlyMap = new Map<string, MonthlyAttendance>();
@@ -56,6 +78,7 @@ class AttendanceService {
           year,
           present: 0,
           absent: 0,
+          late: 0,
           total: 0,
           percentage: 0,
         });
@@ -65,30 +88,119 @@ class AttendanceService {
       entry.total++;
       if (a.status === AttendanceStatus.PRESENT) {
         entry.present++;
+      } else if (a.status === AttendanceStatus.LATE) {
+        entry.late++;
       } else {
         entry.absent++;
       }
-      entry.percentage = Math.round((entry.present / entry.total) * 100);
+      entry.percentage = Math.round(((entry.present + entry.late) / entry.total) * 100);
     });
 
     const monthlyBreakdown = Array.from(monthlyMap.values()).slice(0, 6);
 
-    // Recent attendance (last 10)
+    // Recent attendance (last 10) with subject/reason/time
     const recentAttendance: RecentAttendance[] = attendances.slice(0, 10).map((a) => ({
       date: a.date.toISOString(),
       status: a.status,
       markedBy: a.markedBy || undefined,
       method: a.method,
+      subject: a.lecture?.subject || undefined,
+      reason: a.reason || undefined,
+      time: a.time || undefined,
     }));
 
     return {
       totalClasses,
       present,
       absent,
+      late,
       attendancePercentage,
+      statusLabel: this.getStatusLabel(attendancePercentage),
       monthlyBreakdown,
       recentAttendance,
     };
+  }
+
+  /**
+   * Get paginated attendance history with filters
+   */
+  async getHistory(
+    studentId: number,
+    batchId: number | null,
+    query: AttendanceHistoryQuery
+  ): Promise<RecentAttendance[]> {
+    if (!batchId) return [];
+
+    const where: Record<string, unknown> = { studentId, batchId };
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    if (query.month && query.year) {
+      const start = new Date(query.year, query.month - 1, 1);
+      const end = new Date(query.year, query.month, 0, 23, 59, 59, 999);
+      where.date = { gte: start, lte: end };
+    } else if (query.year) {
+      const start = new Date(query.year, 0, 1);
+      const end = new Date(query.year, 11, 31, 23, 59, 59, 999);
+      where.date = { gte: start, lte: end };
+    }
+
+    const attendances = await prisma.attendance.findMany({
+      where,
+      include: {
+        lecture: {
+          select: { subject: true },
+        },
+      },
+      orderBy: { date: "desc" },
+    });
+
+    return attendances.map((a) => ({
+      date: a.date.toISOString(),
+      status: a.status,
+      markedBy: a.markedBy || undefined,
+      method: a.method,
+      subject: a.lecture?.subject || undefined,
+      reason: a.reason || undefined,
+      time: a.time || undefined,
+    }));
+  }
+
+  /**
+   * Get per-day attendance calendar for a given month/year
+   */
+  async getCalendar(
+    studentId: number,
+    batchId: number | null,
+    month: number,
+    year: number
+  ): Promise<AttendanceCalendarDay[]> {
+    if (!batchId) return [];
+
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 0, 23, 59, 59, 999);
+
+    const attendances = await prisma.attendance.findMany({
+      where: {
+        studentId,
+        batchId,
+        date: { gte: start, lte: end },
+      },
+      include: {
+        lecture: {
+          select: { subject: true },
+        },
+      },
+      orderBy: { date: "asc" },
+    });
+
+    return attendances.map((a) => ({
+      date: a.date.toISOString().slice(0, 10),
+      status: a.status,
+      subject: a.lecture?.subject || undefined,
+    }));
   }
 
   /**
