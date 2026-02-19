@@ -153,12 +153,13 @@ function DockItem({ children, className, onClick }: DockItemProps) {
      const distanceVal = d as number;
      const magVal = mag as number;
      const baseSizeVal = bs as number;
+     const valNumber = val as number;
      
-     if (val < -distanceVal || val > distanceVal) {
+     if (valNumber < -distanceVal || valNumber > distanceVal) {
         return baseSizeVal;
      }
 
-     const distancePercent = (distanceVal - Math.abs(val)) / distanceVal; // 0 at edge, 1 at center
+     const distancePercent = (distanceVal - Math.abs(valNumber)) / distanceVal; // 0 at edge, 1 at center
      return baseSizeVal + (magVal - baseSizeVal) * distancePercent;
     }
   );
