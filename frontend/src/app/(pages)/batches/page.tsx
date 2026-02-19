@@ -14,7 +14,7 @@ export default function BatchesPage() {
                     <h1 className="text-3xl font-black tracking-tighter">
                         Batches
                     </h1>
-                    <p className="text-muted-vercel mt-2">Manage your academic programs and student rosters.</p>
+                    <p className="text-muted-foreground mt-2 text-sm font-medium">Organise your classes, schedules, and student groups.</p>
                 </div>
                 <CreateBatchDialog />
             </div>
@@ -24,8 +24,8 @@ export default function BatchesPage() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                     <input
                         type="search"
-                        placeholder="Filter records..."
-                        className="w-full pl-9 pr-4 h-9 bg-muted/30 border border-border/50 rounded-md text-xs focus:bg-background focus:ring-1 focus:ring-foreground/20 focus:border-foreground/30 transition-all outline-none"
+                        placeholder="Search batches..."
+                        className="w-full pl-9 pr-4 h-9 bg-muted/30 border border-border/50 rounded-md text-[13px] focus:bg-background focus:ring-1 focus:ring-foreground/20 focus:border-foreground/30 transition-all outline-none"
                     />
                 </div>
                 <Button 

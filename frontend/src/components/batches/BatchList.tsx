@@ -2,12 +2,13 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { MoreHorizontal, Users, Calendar, Clock, Loader2, Trash2 } from "lucide-react"
+import { Users, Calendar, Clock, Loader2, Trash2, ArrowRight } from "lucide-react"
 import { useGetAllBatchesQuery, useDeleteBatchMutation } from "@/redux/slices/batches/batchesApi"
 import { toast } from "sonner"
 import type { Batch } from "@/types"
 import type { FC } from "react"
 import { CreateBatchDialog } from "./CreateBatchDialog"
+import { useRouter } from "next/navigation"
 
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -16,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 export const BatchList: FC = () => {
     const { data: batches, isLoading, isError } = useGetAllBatchesQuery()
     const [deleteBatch, { isLoading: isDeleting }] = useDeleteBatchMutation()
+    const router = useRouter()
 
     const handleDelete = async (id: number) => {
         if (!confirm("Are you sure you want to delete this batch?")) return
@@ -60,17 +62,17 @@ export const BatchList: FC = () => {
                 <div className="bg-destructive/10 p-3 rounded-full mb-4">
                     <Loader2 className="h-6 w-6 text-destructive" />
                 </div>
-                <h3 className="font-semibold text-destructive mb-1 uppercase text-sm tracking-tight">Access Denied</h3>
-                <p className="text-[13.5px] text-muted-foreground max-w-[250px] mb-6 font-medium leading-relaxed">
-                    The connection to the batch database has been interrupted. Verify your credentials.
+                <h3 className="font-semibold text-destructive mb-1 text-sm tracking-tight">Something Went Wrong</h3>
+                <p className="text-[13.5px] text-muted-foreground max-w-[280px] mb-6 font-medium leading-relaxed">
+                    We couldn&apos;t load your batches. Please check your connection and try again.
                 </p>
                 <Button 
                     variant="outline" 
                     size="sm"
-                    className="h-8 text-[13px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all"
+                    className="h-9 text-[13px] font-semibold border-destructive/20 hover:bg-destructive hover:text-white transition-all"
                     onClick={() => window.location.reload()}
                 >
-                    Reset Connection
+                    Try Again
                 </Button>
             </Card>
         )
@@ -82,9 +84,9 @@ export const BatchList: FC = () => {
                 <div className="bg-foreground/5 p-4 rounded-full mb-4 border border-border/20">
                     <Calendar className="h-8 w-8 text-foreground/40" />
                 </div>
-                <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80 mb-2">No Clusters Found</h3>
-                <p className="text-[13.5px] text-muted-foreground max-w-[300px] text-center mb-10 font-medium leading-relaxed">
-                    Initialize your first training cluster to start managing student deployments and schedules.
+                <h3 className="text-base font-semibold tracking-tight mb-2">No Batches Yet</h3>
+                <p className="text-[14px] text-muted-foreground max-w-[320px] text-center mb-10 font-medium leading-relaxed">
+                    Create your first batch to start managing students and schedules.
                 </p>
                 <div className="transform scale-105">
                      <CreateBatchDialog />
@@ -94,82 +96,106 @@ export const BatchList: FC = () => {
     }
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {batches.map((batch: Batch) => (
-                <Card 
-                    key={batch.id} 
-                    className="flex flex-col justify-between group relative overflow-hidden h-[280px] hover:border-foreground/20 hover:shadow-sm transition-all border-border/60"
-                >
-                    <div className="p-6 flex flex-col h-full">
-                        <div className="flex items-start justify-between mb-6">
-                            <div className="space-y-1">
-                                <h3 className="font-semibold text-base tracking-tight leading-none text-foreground">
-                                    {batch.name}
-                                </h3>
-                                <p className="text-[13px] font-semibold text-muted-foreground uppercase tracking-[0.1em] opacity-50">
-                                    Node • {batch.id.toString().padStart(4, '0')}
-                                </p>
-                            </div>
-                            <Badge 
-                                variant="outline" 
-                                className={`text-[12.5px] px-2 py-0 h-5 font-semibold tracking-widest border-0 ${
-                                    batch.isDeleted 
-                                    ? 'bg-rose-500/10 text-rose-500' 
-                                    : 'bg-emerald-500/10 text-emerald-500'
-                                }`}
-                            >
-                                {batch.isDeleted ? 'OFFLINE' : 'ONLINE'}
-                            </Badge>
-                        </div>
-                        
-                        <div className="grid gap-3 pt-6 border-t border-border/40 flex-1">
-                            <div className="flex items-center justify-between text-[13.5px]">
-                                <div className="flex items-center text-muted-foreground font-semibold uppercase tracking-wider opacity-60">
-                                    <Users className="h-3 w-3 mr-2" />
-                                    <span>Deployment</span>
-                                </div>
-                                <span className="font-bold tabular-nums text-foreground/80">
-                                    {typeof batch.totalStudents === 'object' ? batch.totalStudents?.enrolled ?? 0 : 0} <span className="text-muted-foreground/40 font-medium">/</span> {typeof batch.totalStudents === 'object' ? batch.totalStudents?.capacity ?? 0 : batch.totalStudents ?? 0}
-                                </span>
-                            </div>
-                            <div className="flex items-center justify-between text-[13.5px]">
-                                <div className="flex items-center text-muted-foreground font-semibold uppercase tracking-wider opacity-60">
-                                    <Clock className="h-3 w-3 mr-2" />
-                                    <span>Sync Time</span>
-                                </div>
-                                <span className="font-bold tabular-nums text-foreground/80">{batch.timings.time || '--:--'}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-[13.5px]">
-                                <div className="flex items-center text-muted-foreground font-semibold uppercase tracking-wider opacity-60">
-                                    <Calendar className="h-3 w-3 mr-2" />
-                                    <span>Frequency</span>
-                                </div>
-                                <span className="font-bold text-foreground/80 truncate max-w-[100px]" title={batch.timings.days.join(', ')}>
-                                    {batch.timings.days.length > 0 ? batch.timings.days.slice(0, 2).join(', ') + (batch.timings.days.length > 2 ? '...' : '') : '--'}
-                                </span>
-                            </div>
-                        </div>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {batches.map((batch: Batch) => {
+                const enrolled = typeof batch.totalStudents === 'object' ? batch.totalStudents?.enrolled ?? 0 : 0
+                const capacity = typeof batch.totalStudents === 'object' ? batch.totalStudents?.capacity ?? 0 : batch.totalStudents ?? 0
+                const fillPercent = capacity > 0 ? Math.round((enrolled / Number(capacity)) * 100) : 0
 
-                        <div className="flex items-center gap-2 mt-6 pt-4 border-t border-border/40">
-                            <Button 
-                                variant="secondary" 
-                                className="flex-1 h-8 text-[13px] font-semibold uppercase tracking-widest hover:bg-foreground hover:text-background transition-all"
-                            >
-                                Interface
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground/50 hover:text-rose-500 hover:bg-rose-500/5"
-                                onClick={() => handleDelete(batch.id)}
-                                disabled={isDeleting}
-                            >
-                                {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                            </Button>
+                return (
+                    <Card 
+                        key={batch.id} 
+                        className="flex flex-col justify-between group relative overflow-hidden hover:border-foreground/20 hover:shadow-md transition-all duration-200 border-border/60 cursor-pointer"
+                        onClick={() => router.push(`/batches/${batch.id}`)}
+                    >
+                        <div className="p-6 flex flex-col h-full">
+                            {/* Header */}
+                            <div className="flex items-start justify-between mb-5">
+                                <div className="space-y-1 min-w-0 flex-1 mr-3">
+                                    <h3 className="font-semibold text-[16px] tracking-tight leading-snug text-foreground">
+                                        {batch.name}
+                                    </h3>
+                                    <p className="text-[13px] font-medium text-muted-foreground">
+                                        Batch #{batch.id}
+                                    </p>
+                                </div>
+                                <Badge 
+                                    variant="outline" 
+                                    className={`text-[12px] px-2.5 py-0.5 h-auto font-semibold border-0 shrink-0 ${
+                                        batch.isDeleted 
+                                        ? 'bg-rose-500/10 text-rose-500' 
+                                        : 'bg-emerald-500/10 text-emerald-500'
+                                    }`}
+                                >
+                                    {batch.isDeleted ? 'Archived' : 'Active'}
+                                </Badge>
+                            </div>
+                            
+                            {/* Info rows */}
+                            <div className="grid gap-3.5 pt-5 border-t border-border/40 flex-1">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Users className="h-3.5 w-3.5" />
+                                        <span className="text-[13.5px] font-medium">Students</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[13.5px] font-semibold tabular-nums text-foreground">
+                                            {enrolled} <span className="text-muted-foreground/50 font-normal">of</span> {Number(capacity)}
+                                        </span>
+                                        <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
+                                            <div 
+                                                className={`h-full rounded-full transition-all ${
+                                                    fillPercent >= 90 ? 'bg-amber-500' : 'bg-emerald-500'
+                                                }`}
+                                                style={{ width: `${Math.min(fillPercent, 100)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Clock className="h-3.5 w-3.5" />
+                                        <span className="text-[13.5px] font-medium">Class Time</span>
+                                    </div>
+                                    <span className="text-[13.5px] font-semibold tabular-nums text-foreground">{batch.timings.time || 'Not set'}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Calendar className="h-3.5 w-3.5" />
+                                        <span className="text-[13.5px] font-medium">Schedule</span>
+                                    </div>
+                                    <span className="text-[13.5px] font-semibold text-foreground truncate max-w-[140px]" title={batch.timings.days.join(', ')}>
+                                        {batch.timings.days.length > 0 
+                                            ? batch.timings.days.map(d => d.slice(0, 3)).join(', ')
+                                            : 'Not set'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-2 mt-5 pt-4 border-t border-border/40">
+                                <Button 
+                                    variant="secondary" 
+                                    className="flex-1 h-9 text-[13px] font-semibold gap-2 hover:bg-primary hover:text-primary-foreground transition-all"
+                                    onClick={(e) => { e.stopPropagation(); router.push(`/batches/${batch.id}`) }}
+                                >
+                                    View Students
+                                    <ArrowRight className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-9 w-9 text-muted-foreground/50 hover:text-rose-500 hover:bg-rose-500/5"
+                                    onClick={(e) => { e.stopPropagation(); handleDelete(batch.id) }}
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                                </Button>
+                            </div>
                         </div>
-                    </div>
-                </Card>
-            ))}
+                    </Card>
+                )
+            })}
         </div>
     )
 }
