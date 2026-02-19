@@ -26,13 +26,15 @@ import {
     UserCheck,
     AlertCircle,
     CheckCircle2,
+    Settings2,
 } from "lucide-react"
 import { useGetBatchByIdQuery } from "@/redux/slices/batches/batchesApi"
 import { useGetStudentsQuery } from "@/redux/slices/students/studentsApi"
 import { useGetAttendanceReportQuery } from "@/redux/slices/attendance/attendanceApi"
 import { useGetFeeReceiptsQuery, useGetReceiptsSummaryQuery } from "@/redux/slices/fees/feesApi"
+import { EditBatchDialog } from "@/components/batches/EditBatchDialog"
 import type { Student, StudentAttendanceStats, FeeReceipt } from "@/types"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 
 // ─── Helpers ──────────────────────────────────────────────
 
@@ -41,9 +43,9 @@ function formatCurrency(amt: number): string {
 }
 
 function attColor(pct: number) {
-    if (pct >= 85) return { text: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500", ring: "ring-emerald-500/20" }
-    if (pct >= 60) return { text: "text-amber-600 dark:text-amber-400", bg: "bg-amber-500", ring: "ring-amber-500/20" }
-    return { text: "text-red-600 dark:text-red-400", bg: "bg-red-500", ring: "ring-red-500/20" }
+    if (pct >= 85) return { text: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500" }
+    if (pct >= 60) return { text: "text-amber-600 dark:text-amber-400", bg: "bg-amber-500" }
+    return { text: "text-red-600 dark:text-red-400", bg: "bg-red-500" }
 }
 
 function isTodayClassDay(days: string[]): boolean {
@@ -98,6 +100,7 @@ export default function BatchDetailPage() {
     const params = useParams()
     const router = useRouter()
     const batchId = Number(params.id)
+    const [editOpen, setEditOpen] = useState(false)
 
     // Data
     const { data: batch, isLoading: batchLoading, isError: batchError } = useGetBatchByIdQuery(batchId)
@@ -204,6 +207,16 @@ export default function BatchDetailPage() {
                         <span>Batch #{batch.id}</span>
                     </div>
                 </div>
+                {/* Edit Batch */}
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1.5 text-[12.5px] font-semibold border-border/60 hover:border-foreground/20 hover:bg-muted/30 transition-all"
+                    onClick={() => setEditOpen(true)}
+                >
+                    <Settings2 className="h-3.5 w-3.5" />
+                    Edit Batch
+                </Button>
             </div>
 
             {/* ─── Stats ─── */}
@@ -236,7 +249,7 @@ export default function BatchDetailPage() {
                     </div>
                 </div>
 
-                {/* Fees */}
+                {/* Fees — BOLD */}
                 <div className="rounded-lg border border-border/60 bg-card px-4 py-3.5 hover:border-foreground/10 transition-colors">
                     <div className="flex items-center gap-3">
                         <div className={`rounded-lg p-2 ${feeSummary?.paidAmount ? "bg-emerald-500/8" : "bg-muted/60"}`}>
@@ -244,11 +257,13 @@ export default function BatchDetailPage() {
                         </div>
                         <div>
                             <p className="text-[11.5px] text-muted-foreground font-medium leading-none mb-1">Fees Collected</p>
-                            <p className="text-lg font-bold tracking-tight leading-none text-foreground">
+                            <p className="text-lg font-extrabold tracking-tight leading-none text-foreground">
                                 {feeSummary?.paidAmount ? formatCurrency(feeSummary.paidAmount) : "—"}
                             </p>
                             <p className="text-[10.5px] text-muted-foreground/60 mt-0.5 leading-none">
-                                {collectionRate !== null ? `${collectionRate}% collected` : "No records"}
+                                {feeSummary?.totalAmount ? (
+                                    <>of <span className="font-bold text-muted-foreground/80">{formatCurrency(feeSummary.totalAmount)}</span> · {collectionRate}%</>
+                                ) : "No records"}
                             </p>
                         </div>
                     </div>
@@ -292,12 +307,12 @@ export default function BatchDetailPage() {
                                     <TableHead className="text-[11px] font-semibold py-2 text-muted-foreground/80 uppercase tracking-wider w-[130px]">Phone</TableHead>
                                     <TableHead className="text-[11px] font-semibold py-2 text-muted-foreground/80 uppercase tracking-wider w-[80px]">Grade</TableHead>
                                     <TableHead className="text-[11px] font-semibold py-2 text-muted-foreground/80 uppercase tracking-wider w-[170px]">Attendance</TableHead>
-                                    <TableHead className="text-[11px] font-semibold py-2 text-muted-foreground/80 uppercase tracking-wider w-[110px]">Fees</TableHead>
+                                    <TableHead className="text-[11px] font-semibold py-2 text-muted-foreground/80 uppercase tracking-wider w-[130px]">Fees</TableHead>
                                     <TableHead className="text-[11px] font-semibold py-2 text-muted-foreground/80 uppercase tracking-wider text-right pr-5 w-[80px]">Joined</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {students.map((student: Student, idx: number) => {
+                                {students.map((student: Student) => {
                                     const att = attendanceMap[student.id]
                                     const fee = feeMap[student.id]
                                     const ac = att ? attColor(att.percentage) : null
@@ -360,20 +375,23 @@ export default function BatchDetailPage() {
                                                 )}
                                             </TableCell>
 
-                                            {/* Fees */}
+                                            {/* Fees — BOLD */}
                                             <TableCell className="py-2.5">
                                                 {fee ? (
                                                     <div>
                                                         <StatusBadge
                                                             variant={fee.worst === "PAID" ? "paid" : fee.worst === "PARTIAL" ? "partial" : fee.worst === "OVERDUE" ? "overdue" : "pending"}
                                                             pulse={fee.worst === "OVERDUE"}
-                                                            className="text-[10.5px]"
+                                                            className="text-[10.5px] font-bold"
                                                         >
                                                             {fee.worst === "PAID" ? "Paid" : fee.worst === "PARTIAL" ? "Partial" : fee.worst === "OVERDUE" ? "Overdue" : "Pending"}
                                                         </StatusBadge>
-                                                        {fee.worst !== "PAID" && fee.due > 0 && (
-                                                            <p className="text-[10px] text-muted-foreground/60 mt-0.5 tabular-nums">{formatCurrency(fee.paid)}/{formatCurrency(fee.due)}</p>
-                                                        )}
+                                                        <p className="text-[11px] font-bold text-foreground/70 mt-0.5 tabular-nums">
+                                                            {formatCurrency(fee.paid)}
+                                                            {fee.worst !== "PAID" && fee.due > 0 && (
+                                                                <span className="font-normal text-muted-foreground/50"> / {formatCurrency(fee.due)}</span>
+                                                            )}
+                                                        </p>
                                                     </div>
                                                 ) : (
                                                     <div className="flex items-center gap-1">
@@ -404,6 +422,9 @@ export default function BatchDetailPage() {
                     {students.length} student{students.length !== 1 ? "s" : ""} · Attendance from last 30 days · Fees for {today.getFullYear()}
                 </p>
             </div>
+
+            {/* Edit Dialog */}
+            <EditBatchDialog batch={batch} open={editOpen} onOpenChange={setEditOpen} />
         </div>
     )
 }
