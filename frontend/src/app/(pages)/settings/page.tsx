@@ -20,7 +20,7 @@ function DockPreview() {
             distance={preferences.distance}
             panelHeight={preferences.panelHeight}
             baseSize={preferences.baseSize}
-            className="items-end pb-3 px-4 mx-auto rounded-2xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-md shadow-xl"
+            className="items-end pb-3 px-4 mx-auto rounded-2xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/10 backdrop-blur-md shadow-xl"
         >
             {visibleApps.map((item) => (
                 <DockItem
@@ -29,7 +29,7 @@ function DockPreview() {
                 >
                     <DockLabel>{item.label}</DockLabel>
                     <DockIcon>
-                        <item.icon className="h-full w-full p-2 text-neutral-600 dark:text-neutral-300" />
+                        <item.icon className="h-full w-full p-2 text-neutral-600 dark:text-neutral-300" strokeWidth={2.5} />
                     </DockIcon>
                 </DockItem>
             ))}

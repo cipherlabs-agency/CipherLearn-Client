@@ -70,7 +70,7 @@ export function DashboardDock() {
                 distance={preferences.distance}
                 panelHeight={preferences.panelHeight}
                 baseSize={preferences.baseSize}
-                className="items-end pb-3 px-4 mx-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-md shadow-2xl shadow-black/5"
+                className="items-end pb-3 px-4 mx-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/50 dark:bg-white/10 backdrop-blur-md shadow-2xl shadow-black/5"
             >
                 {visibleApps.map((item) => {
                     const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
@@ -86,8 +86,9 @@ export function DashboardDock() {
                                     className={`h-full w-full p-1 transition-colors ${
                                         isActive
                                             ? "text-primary"
-                                            : "text-neutral-600 dark:text-neutral-300"
+                                            : "text-neutral-600 dark:text-neutral-400"
                                     }`}
+                                    strokeWidth={2.5}
                                 />
                             </DockIcon>
                             {/* Active indicator dot */}
