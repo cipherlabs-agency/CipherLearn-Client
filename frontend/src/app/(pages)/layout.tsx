@@ -73,7 +73,7 @@ export default function DashboardLayout({
             <Sidebar />
             <div className="flex flex-col flex-1 overflow-hidden min-w-0">
                 <Navbar />
-                <main className="flex-1 overflow-y-auto pb-20">
+                <main className="flex-1 overflow-y-auto pb-32">
                     <div className="p-5 md:p-7 max-w-[1600px] mx-auto animate-fade-in">
                         {children}
                     </div>

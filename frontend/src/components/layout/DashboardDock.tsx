@@ -51,26 +51,26 @@ export function DashboardDock() {
     return (
         <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 max-w-full">
             <Dock
-                magnification={60}
-                distance={120}
-                panelHeight={52}
-                className="items-end pb-2.5 border border-border/40 bg-background/80 backdrop-blur-xl shadow-lg shadow-black/5 dark:shadow-black/20"
+                magnification={80}
+                distance={140}
+                panelHeight={70}
+                className="items-end pb-3 px-4 mx-auto rounded-2xl border border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-md shadow-2xl shadow-black/5"
             >
                 {dockItems.map((item) => {
                     const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
                     return (
                         <DockItem
                             key={item.href}
-                            className="aspect-square rounded-full cursor-pointer"
+                            className="aspect-square rounded-full cursor-pointer bg-white/40 dark:bg-white/5 border border-white/20 shadow-sm"
                             onClick={() => router.push(item.href)}
                         >
                             <DockLabel>{item.label}</DockLabel>
                             <DockIcon>
                                 <item.icon
-                                    className={`h-full w-full transition-colors ${
+                                    className={`h-full w-full p-1 transition-colors ${
                                         isActive
                                             ? "text-primary"
-                                            : "text-neutral-500 dark:text-neutral-400"
+                                            : "text-neutral-600 dark:text-neutral-300"
                                     }`}
                                 />
                             </DockIcon>
