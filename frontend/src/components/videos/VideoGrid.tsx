@@ -93,7 +93,7 @@ export function VideoGrid({ batchId, searchQuery, isAdmin = true }: VideoGridPro
         return (
             <Card className="text-center py-32 border-dashed border-border/60 bg-muted/5 flex flex-col items-center">
                 <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">Archive Empty</h3>
-                <p className="text-[11px] text-muted-foreground mt-2 max-w-[280px] mx-auto font-medium leading-relaxed">No recorded lectures or technical sessions match your current filter parameters.</p>
+                <p className="text-[13.5px] text-muted-foreground mt-2 max-w-[280px] mx-auto font-medium leading-relaxed">No recorded lectures or technical sessions match your current filter parameters.</p>
             </Card>
         )
     }
@@ -141,10 +141,10 @@ export function VideoGrid({ batchId, searchQuery, isAdmin = true }: VideoGridPro
                                                     <Button variant="ghost" size="icon" className="h-6 w-6 rounded-md hover:bg-muted/50"><MoreVertical className="h-3.5 w-3.5" /></Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="bg-background border border-border rounded-md p-1.5 w-48 shadow-2xl">
-                                                    <DropdownMenuItem onClick={() => handlePlayVideo(video)} className="rounded-sm text-[10px] font-semibold uppercase tracking-widest py-2 cursor-pointer focus:bg-muted">Watch</DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => window.open(video.url, "_blank")} className="rounded-sm text-[10px] font-semibold uppercase tracking-widest py-2 cursor-pointer focus:bg-muted">Source</DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handlePlayVideo(video)} className="rounded-sm text-[13px] font-semibold uppercase tracking-widest py-2 cursor-pointer focus:bg-muted">Watch</DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => window.open(video.url, "_blank")} className="rounded-sm text-[13px] font-semibold uppercase tracking-widest py-2 cursor-pointer focus:bg-muted">Source</DropdownMenuItem>
                                                     <div className="h-px bg-border my-1" />
-                                                    <DropdownMenuItem onClick={() => handleDelete(video.id)} className="rounded-sm text-[10px] font-semibold uppercase tracking-widest py-2 cursor-pointer text-rose-500 focus:bg-rose-500/10 focus:text-rose-500">Delete</DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleDelete(video.id)} className="rounded-sm text-[13px] font-semibold uppercase tracking-widest py-2 cursor-pointer text-rose-500 focus:bg-rose-500/10 focus:text-rose-500">Delete</DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
@@ -152,10 +152,10 @@ export function VideoGrid({ batchId, searchQuery, isAdmin = true }: VideoGridPro
                                 </div>
                                 <div className="mt-auto space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[9px] font-semibold text-muted-foreground/60 uppercase tracking-widest">Node {getBatchName(video.batchId)}</span>
+                                        <span className="text-[12.5px] font-semibold text-muted-foreground/60 uppercase tracking-widest">Node {getBatchName(video.batchId)}</span>
                                         {video.category && <div className="text-[8px] font-semibold text-muted-foreground/40 uppercase tracking-tighter bg-muted/30 px-1.5 py-0.5 rounded-sm border border-border">{video.category}</div>}
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-[9px] font-medium text-muted-foreground/40 uppercase tracking-widest pt-2.5 border-t border-border">
+                                    <div className="flex items-center gap-1.5 text-[12.5px] font-medium text-muted-foreground/40 uppercase tracking-widest pt-2.5 border-t border-border">
                                         <Calendar className="h-2.5 w-2.5" />
                                         {new Date(video.createdAt).toLocaleDateString("en-US", {
                                             month: 'short', day: 'numeric', year: 'numeric'
@@ -187,11 +187,11 @@ export function VideoGrid({ batchId, searchQuery, isAdmin = true }: VideoGridPro
                         </div>
                         <div className="p-8 border-t border-border">
                             <div className="flex items-center gap-4 mb-4">
-                                <div className="px-2 py-0.5 rounded-sm bg-foreground text-background text-[9px] font-semibold uppercase tracking-widest">Session_Archive</div>
-                                <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground opacity-60">Entry_ID • {selectedVideo?.id}</div>
+                                <div className="px-2 py-0.5 rounded-sm bg-foreground text-background text-[12.5px] font-semibold uppercase tracking-widest">Session_Archive</div>
+                                <div className="text-[13px] font-semibold uppercase tracking-widest text-muted-foreground opacity-60">Entry_ID • {selectedVideo?.id}</div>
                             </div>
                             <h2 className="text-2xl font-bold tracking-tighter text-foreground mb-4">{selectedVideo?.title}</h2>
-                            <p className="text-[11px] text-muted-foreground font-medium leading-relaxed max-w-4xl">{selectedVideo?.description || "No technical breakdown provided for this session."}</p>
+                            <p className="text-[13.5px] text-muted-foreground font-medium leading-relaxed max-w-4xl">{selectedVideo?.description || "No technical breakdown provided for this session."}</p>
                         </div>
                     </div>
                 </DialogContent>

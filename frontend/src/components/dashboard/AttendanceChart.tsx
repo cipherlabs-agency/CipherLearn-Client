@@ -33,7 +33,7 @@ export function AttendanceChart() {
 
     if (isLoading) {
         return (
-            <div className="col-span-4 rounded-lg border border-border bg-background">
+            <div className="col-span-4 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)]">
                 <div className="p-5 border-b border-border">
                     <div className="flex items-center justify-between">
                         <div>
@@ -61,12 +61,12 @@ export function AttendanceChart() {
 
     if (!hasData) {
         return (
-            <div className="col-span-4 rounded-lg border border-border bg-background">
+            <div className="col-span-4 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)]">
                 <div className="p-5 border-b border-border">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-sm font-medium text-foreground">Attendance Trends</h3>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">Monthly Overview</p>
+                            <h3 className="text-[15px] font-bold text-foreground">Attendance Trends</h3>
+                            <p className="text-[12.5px] text-muted-foreground mt-0.5">Monthly Overview</p>
                         </div>
                         <DurationFilterDropdown value={duration} onChange={setDuration} />
                     </div>
@@ -76,7 +76,7 @@ export function AttendanceChart() {
                         <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center mb-3">
                             <BarChart3 className="h-5 w-5 text-muted-foreground" />
                         </div>
-                        <p className="text-sm font-medium text-foreground">No Attendance Data</p>
+                        <p className="text-[15px] font-bold text-foreground">No Attendance Data</p>
                         <p className="text-xs text-muted-foreground mt-1">Mark attendance to see trends here</p>
                     </div>
                 </div>
@@ -85,12 +85,12 @@ export function AttendanceChart() {
     }
 
     return (
-        <div className="col-span-4 rounded-lg border border-border bg-background">
+        <div className="col-span-4 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)]">
             <div className="p-5 border-b border-border">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="text-sm font-medium text-foreground">Attendance Trends</h3>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">Monthly Overview</p>
+                        <h3 className="text-[15px] font-bold text-foreground">Attendance Trends</h3>
+                        <p className="text-[13.5px] text-muted-foreground mt-0.5">Monthly Overview</p>
                     </div>
                     <DurationFilterDropdown value={duration} onChange={setDuration} />
                 </div>

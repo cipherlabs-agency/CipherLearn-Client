@@ -102,45 +102,45 @@ export function AddLectureDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="sm" className="h-8 gap-1.5">
-                    <Plus className="h-3.5 w-3.5" />
-                    <span>Add Lecture</span>
+                <Button size="sm" className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Schedule a Class
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[520px] p-0 gap-0 overflow-hidden">
                 <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
-                    <DialogTitle className="text-base font-semibold">Create Lecture</DialogTitle>
-                    <DialogDescription className="text-[13px] text-muted-foreground mt-1">
-                        Schedule a new lecture for a batch. Optionally assign a teacher or use auto-assign.
+                    <DialogTitle className="text-[17px] font-bold">Schedule a New Class</DialogTitle>
+                    <DialogDescription className="text-[14px] text-muted-foreground mt-1 leading-relaxed">
+                        Set up your class details below. Pick a date, time, and batch — we&apos;ll take care of the rest.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                     <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
                         <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1.5">
-                                <Label htmlFor="title" className="text-[13px] font-medium">
+                                <Label htmlFor="title" className="text-[14px] font-semibold">
                                     Title <span className="text-destructive">*</span>
                                 </Label>
-                                <Input id="title" value={formData.title} onChange={handleChange} placeholder="Algebra - Quadratic Equations" className="h-9 text-[13px]" required />
+                                <Input id="title" value={formData.title} onChange={handleChange} placeholder="Algebra - Quadratic Equations" className="h-10 text-[14px]" required />
                             </div>
                             <div className="space-y-1.5">
-                                <Label htmlFor="subject" className="text-[13px] font-medium">
+                                <Label htmlFor="subject" className="text-[14px] font-semibold">
                                     Subject <span className="text-destructive">*</span>
                                 </Label>
-                                <Input id="subject" value={formData.subject} onChange={handleChange} placeholder="Mathematics" className="h-9 text-[13px]" required />
+                                <Input id="subject" value={formData.subject} onChange={handleChange} placeholder="Mathematics" className="h-10 text-[14px]" required />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-1.5">
-                                <Label className="text-[13px] font-medium">
+                                <Label className="text-[14px] font-semibold">
                                     Batch <span className="text-destructive">*</span>
                                 </Label>
                                 <Select
                                     value={formData.batchId}
                                     onValueChange={(v) => setFormData((prev) => ({ ...prev, batchId: v }))}
                                 >
-                                    <SelectTrigger className="h-9 text-[13px]">
+                                    <SelectTrigger className="h-10 text-[14px]">
                                         <SelectValue placeholder="Select batch" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -151,12 +151,12 @@ export function AddLectureDialog() {
                                 </Select>
                             </div>
                             <div className="space-y-1.5">
-                                <Label className="text-[13px] font-medium">Teacher</Label>
+                                <Label className="text-[14px] font-semibold">Teacher</Label>
                                 <Select
                                     value={formData.teacherSelection}
                                     onValueChange={(v) => setFormData((prev) => ({ ...prev, teacherSelection: v }))}
                                 >
-                                    <SelectTrigger className="h-9 text-[13px]">
+                                    <SelectTrigger className="h-10 text-[14px]">
                                         <SelectValue placeholder="None (optional)" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -171,32 +171,32 @@ export function AddLectureDialog() {
 
                         <div className="grid grid-cols-3 gap-3">
                             <div className="space-y-1.5">
-                                <Label htmlFor="date" className="text-[13px] font-medium">
+                                <Label htmlFor="date" className="text-[14px] font-semibold">
                                     Date <span className="text-destructive">*</span>
                                 </Label>
-                                <Input id="date" type="date" value={formData.date} onChange={handleChange} className="h-9 text-[13px]" required />
+                                <Input id="date" type="date" value={formData.date} onChange={handleChange} className="h-10 text-[14px]" required />
                             </div>
                             <div className="space-y-1.5">
-                                <Label htmlFor="startTime" className="text-[13px] font-medium">
+                                <Label htmlFor="startTime" className="text-[14px] font-semibold">
                                     Start <span className="text-destructive">*</span>
                                 </Label>
-                                <Input id="startTime" type="time" value={formData.startTime} onChange={handleChange} className="h-9 text-[13px]" required />
+                                <Input id="startTime" type="time" value={formData.startTime} onChange={handleChange} className="h-10 text-[14px]" required />
                             </div>
                             <div className="space-y-1.5">
-                                <Label htmlFor="endTime" className="text-[13px] font-medium">
+                                <Label htmlFor="endTime" className="text-[14px] font-semibold">
                                     End <span className="text-destructive">*</span>
                                 </Label>
-                                <Input id="endTime" type="time" value={formData.endTime} onChange={handleChange} className="h-9 text-[13px]" required />
+                                <Input id="endTime" type="time" value={formData.endTime} onChange={handleChange} className="h-10 text-[14px]" required />
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="room" className="text-[13px] font-medium">Room</Label>
-                            <Input id="room" value={formData.room} onChange={handleChange} placeholder="Room no.03" className="h-9 text-[13px]" />
+                            <Label htmlFor="room" className="text-[14px] font-semibold">Room</Label>
+                            <Input id="room" value={formData.room} onChange={handleChange} placeholder="Room no.03" className="h-10 text-[14px]" />
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="description" className="text-[13px] font-medium">Description</Label>
+                            <Label htmlFor="description" className="text-[14px] font-semibold">Description</Label>
                             <textarea
                                 id="description"
                                 value={formData.description}
@@ -206,18 +206,18 @@ export function AddLectureDialog() {
                             />
                         </div>
                     </div>
-                    <DialogFooter className="px-6 py-4 border-t border-border bg-muted/30">
-                        <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)} className="h-8 text-[13px]">
+                    <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20">
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit" size="sm" disabled={isLoading} className="h-8 text-[13px] min-w-[120px]">
+                        <Button type="submit" disabled={isLoading} className="min-w-[140px]">
                             {isLoading ? (
                                 <>
-                                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
-                                    Creating...
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                    Scheduling...
                                 </>
                             ) : (
-                                "Create Lecture"
+                                "Schedule Class"
                             )}
                         </Button>
                     </DialogFooter>

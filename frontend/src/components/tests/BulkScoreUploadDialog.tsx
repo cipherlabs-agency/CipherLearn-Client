@@ -86,13 +86,13 @@ export function BulkScoreUploadDialog({ testId }: BulkScoreUploadDialogProps) {
                                 required
                             />
                             {fileName && (
-                                <p className="text-[11px] text-muted-foreground">Selected: {fileName}</p>
+                                <p className="text-[13.5px] text-muted-foreground">Selected: {fileName}</p>
                             )}
                         </div>
 
                         <div className="bg-muted/30 rounded-md p-3 border border-border/60">
-                            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">CSV Format</p>
-                            <code className="text-[11px] text-foreground/70 block">
+                            <p className="text-[13.5px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">CSV Format</p>
+                            <code className="text-[13.5px] text-foreground/70 block">
                                 studentId,marksObtained,remarks<br />
                                 12,78.5,Good work<br />
                                 13,92.0,Excellent<br />

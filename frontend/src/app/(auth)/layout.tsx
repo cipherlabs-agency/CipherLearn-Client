@@ -1,4 +1,3 @@
-import Link from "next/link"
 import { GraduationCap } from "lucide-react"
 
 export default function AuthLayout({
@@ -8,41 +7,77 @@ export default function AuthLayout({
 }) {
     return (
         <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-            {/* Left: Branding & Illustration */}
-            <div className="hidden md:flex flex-col justify-between bg-zinc-900 p-10 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-zinc-900" />
-                {/* Abstract Background Element */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-20">
-                    <div className="absolute right-[-10%] top-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-500 blur-[100px]" />
-                    <div className="absolute left-[-10%] bottom-[-10%] w-[500px] h-[500px] rounded-full bg-teal-500 blur-[100px]" />
+            {/* Left: Branding Panel — warm, welcoming, educator-focused */}
+            <div className="hidden md:flex flex-col justify-between p-10 text-white relative overflow-hidden"
+                style={{ background: "linear-gradient(135deg, #0c4a44 0%, #0f766e 50%, #134e4a 100%)" }}
+            >
+                {/* Warm background orbs */}
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute right-[-5%] top-[-5%] w-[400px] h-[400px] rounded-full opacity-20"
+                        style={{ background: "radial-gradient(circle, #f59e0b, transparent)" }}
+                    />
+                    <div className="absolute left-[-10%] bottom-[-10%] w-[450px] h-[450px] rounded-full opacity-15"
+                        style={{ background: "radial-gradient(circle, #fbbf24, transparent)" }}
+                    />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-5"
+                        style={{ background: "radial-gradient(circle, #ffffff, transparent)" }}
+                    />
                 </div>
 
-                <div className="relative z-10 flex items-center gap-2 font-bold text-2xl">
-                    <div className="bg-indigo-600 p-2 rounded-lg">
+                {/* Logo */}
+                <div className="relative z-10 flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center"
+                        style={{ background: "rgba(255,255,255,0.15)" }}
+                    >
                         <GraduationCap className="h-6 w-6 text-white" />
                     </div>
-                    CipherLearn
+                    <div>
+                        <span className="font-bold text-xl leading-none">CipherLearn</span>
+                        <p className="text-[11px] text-white/60 leading-none mt-0.5 font-medium">Teaching Platform</p>
+                    </div>
                 </div>
 
-                <div className="relative z-10 space-y-4 max-w-lg">
-                    <blockquote className="space-y-2">
-                        <p className="text-xl font-medium leading-relaxed font-[family-name:var(--font-heading)]">
-                            "CipherLearn has completely transformed how I manage my tuition classes. The attendance tracking and automatic fee reminders saved me hours every week."
+                {/* Testimonial */}
+                <div className="relative z-10 space-y-6 max-w-md">
+                    {/* Feature highlights */}
+                    <div className="space-y-3">
+                        {[
+                            { icon: "📋", text: "One-click attendance tracking" },
+                            { icon: "💰", text: "Automated fee reminders" },
+                            { icon: "📊", text: "Real-time student progress" },
+                        ].map((item) => (
+                            <div key={item.text} className="flex items-center gap-3">
+                                <span className="text-lg">{item.icon}</span>
+                                <span className="text-[14px] text-white/80 font-medium">{item.text}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="border-l-2 border-white/30 pl-4">
+                        <p className="text-[15px] font-medium leading-relaxed text-white/90">
+                            &ldquo;CipherLearn has completely transformed how I manage my classes. It&rsquo;s so easy to use — I was up and running in minutes!&rdquo;
                         </p>
-                        <footer className="tex-sm text-zinc-400">
-                            — Sarah Williams, Math Tutor
+                        <footer className="text-[13px] text-white/60 mt-2 font-medium">
+                            — Sarah Williams, Mathematics Teacher
                         </footer>
-                    </blockquote>
+                    </div>
                 </div>
 
-                <div className="relative z-10 text-sm text-zinc-400">
-                    © 2024 CipherLearn Inc. All rights reserved.
+                <div className="relative z-10 text-[12px] text-white/40">
+                    &copy; 2025 CipherLearn. All rights reserved.
                 </div>
             </div>
 
             {/* Right: Form Area */}
             <div className="flex items-center justify-center p-8 bg-background">
                 <div className="w-full max-w-md space-y-8">
+                    {/* Mobile logo */}
+                    <div className="flex items-center gap-2 md:hidden">
+                        <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                            <GraduationCap className="h-4.5 w-4.5 text-primary-foreground" />
+                        </div>
+                        <span className="font-bold text-lg text-foreground">CipherLearn</span>
+                    </div>
                     {children}
                 </div>
             </div>

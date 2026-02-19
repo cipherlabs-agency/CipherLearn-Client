@@ -117,8 +117,8 @@ export const TestTable: FC = () => {
         return (
             <Card className="text-center py-20 bg-destructive/5 border-dashed border-destructive/30 m-6 flex flex-col items-center">
                 <h3 className="text-sm font-semibold tracking-tight text-destructive uppercase">Connection Error</h3>
-                <p className="text-[11px] text-muted-foreground mt-2 max-w-[220px] mx-auto font-medium leading-relaxed">Failed to load test data.</p>
-                <Button variant="outline" className="mt-8 h-8 px-4 text-[10px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all" onClick={() => window.location.reload()}>
+                <p className="text-[13.5px] text-muted-foreground mt-2 max-w-[220px] mx-auto font-medium leading-relaxed">Failed to load test data.</p>
+                <Button variant="outline" className="mt-8 h-8 px-4 text-[13px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all" onClick={() => window.location.reload()}>
                     Retry
                 </Button>
             </Card>
@@ -155,7 +155,7 @@ export const TestTable: FC = () => {
             {tests.length === 0 ? (
                 <Card className="text-center py-24 border-dashed border-border/60 bg-muted/5 m-6 flex flex-col items-center">
                     <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">No Tests</h3>
-                    <p className="text-[11px] text-muted-foreground mt-2 max-w-[260px] mx-auto font-medium leading-relaxed">No tests have been created yet.</p>
+                    <p className="text-[13.5px] text-muted-foreground mt-2 max-w-[260px] mx-auto font-medium leading-relaxed">No tests have been created yet.</p>
                     <div className="mt-10">
                         <AddTestDialog />
                     </div>
@@ -164,14 +164,14 @@ export const TestTable: FC = () => {
                 <Table>
                     <TableHeader className="bg-muted/5">
                         <TableRow className="hover:bg-transparent border-border/60">
-                            <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Title</TableHead>
-                            <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Type</TableHead>
-                            <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Batch</TableHead>
-                            <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Date</TableHead>
-                            <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Marks</TableHead>
-                            <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
-                            <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Scores</TableHead>
-                            <TableHead className="text-right text-[10px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Actions</TableHead>
+                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Title</TableHead>
+                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Type</TableHead>
+                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Batch</TableHead>
+                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Date</TableHead>
+                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Marks</TableHead>
+                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
+                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Scores</TableHead>
+                            <TableHead className="text-right text-[13px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -182,32 +182,32 @@ export const TestTable: FC = () => {
                                     <TableCell className="py-4 pl-8">
                                         <div className="flex flex-col">
                                             <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{test.title}</span>
-                                            <span className="text-[10px] text-muted-foreground mt-1">{test.subject}</span>
+                                            <span className="text-[13px] text-muted-foreground mt-1">{test.subject}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded border border-border bg-muted/50 uppercase tracking-tighter">
+                                        <span className="text-[13px] font-semibold px-1.5 py-0.5 rounded border border-border bg-muted/50 uppercase tracking-tighter">
                                             {TYPE_LABELS[test.testType]}
                                         </span>
                                     </TableCell>
                                     <TableCell>
-                                        <span className="text-[11px] font-medium text-foreground/80">{test.batch.name}</span>
+                                        <span className="text-[13.5px] font-medium text-foreground/80">{test.batch.name}</span>
                                     </TableCell>
                                     <TableCell>
-                                        <span className="text-[11px] font-medium tabular-nums text-foreground/80">
+                                        <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">
                                             {new Date(test.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                                         </span>
                                     </TableCell>
                                     <TableCell>
-                                        <span className="text-[11px] font-medium tabular-nums text-foreground/80">{test.totalMarks}</span>
+                                        <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">{test.totalMarks}</span>
                                     </TableCell>
                                     <TableCell>
-                                        <div className={`text-[10px] font-semibold px-2 py-0.5 rounded border w-fit uppercase tracking-tighter ${statusStyle.className}`}>
+                                        <div className={`text-[13px] font-semibold px-2 py-0.5 rounded border w-fit uppercase tracking-tighter ${statusStyle.className}`}>
                                             {statusStyle.label}
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <span className="text-[11px] font-medium tabular-nums text-foreground/80">
+                                        <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">
                                             {test._count?.scores ?? 0}
                                         </span>
                                     </TableCell>

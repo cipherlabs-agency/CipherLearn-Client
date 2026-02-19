@@ -61,13 +61,13 @@ export const BatchList: FC = () => {
                     <Loader2 className="h-6 w-6 text-destructive" />
                 </div>
                 <h3 className="font-semibold text-destructive mb-1 uppercase text-sm tracking-tight">Access Denied</h3>
-                <p className="text-[11px] text-muted-foreground max-w-[250px] mb-6 font-medium leading-relaxed">
+                <p className="text-[13.5px] text-muted-foreground max-w-[250px] mb-6 font-medium leading-relaxed">
                     The connection to the batch database has been interrupted. Verify your credentials.
                 </p>
                 <Button 
                     variant="outline" 
                     size="sm"
-                    className="h-8 text-[10px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all"
+                    className="h-8 text-[13px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all"
                     onClick={() => window.location.reload()}
                 >
                     Reset Connection
@@ -83,7 +83,7 @@ export const BatchList: FC = () => {
                     <Calendar className="h-8 w-8 text-foreground/40" />
                 </div>
                 <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80 mb-2">No Clusters Found</h3>
-                <p className="text-[11px] text-muted-foreground max-w-[300px] text-center mb-10 font-medium leading-relaxed">
+                <p className="text-[13.5px] text-muted-foreground max-w-[300px] text-center mb-10 font-medium leading-relaxed">
                     Initialize your first training cluster to start managing student deployments and schedules.
                 </p>
                 <div className="transform scale-105">
@@ -106,13 +106,13 @@ export const BatchList: FC = () => {
                                 <h3 className="font-semibold text-base tracking-tight leading-none text-foreground">
                                     {batch.name}
                                 </h3>
-                                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.1em] opacity-50">
+                                <p className="text-[13px] font-semibold text-muted-foreground uppercase tracking-[0.1em] opacity-50">
                                     Node • {batch.id.toString().padStart(4, '0')}
                                 </p>
                             </div>
                             <Badge 
                                 variant="outline" 
-                                className={`text-[9px] px-2 py-0 h-5 font-semibold tracking-widest border-0 ${
+                                className={`text-[12.5px] px-2 py-0 h-5 font-semibold tracking-widest border-0 ${
                                     batch.isDeleted 
                                     ? 'bg-rose-500/10 text-rose-500' 
                                     : 'bg-emerald-500/10 text-emerald-500'
@@ -123,7 +123,7 @@ export const BatchList: FC = () => {
                         </div>
                         
                         <div className="grid gap-3 pt-6 border-t border-border/40 flex-1">
-                            <div className="flex items-center justify-between text-[11px]">
+                            <div className="flex items-center justify-between text-[13.5px]">
                                 <div className="flex items-center text-muted-foreground font-semibold uppercase tracking-wider opacity-60">
                                     <Users className="h-3 w-3 mr-2" />
                                     <span>Deployment</span>
@@ -132,14 +132,14 @@ export const BatchList: FC = () => {
                                     {typeof batch.totalStudents === 'object' ? batch.totalStudents?.enrolled ?? 0 : 0} <span className="text-muted-foreground/40 font-medium">/</span> {typeof batch.totalStudents === 'object' ? batch.totalStudents?.capacity ?? 0 : batch.totalStudents ?? 0}
                                 </span>
                             </div>
-                            <div className="flex items-center justify-between text-[11px]">
+                            <div className="flex items-center justify-between text-[13.5px]">
                                 <div className="flex items-center text-muted-foreground font-semibold uppercase tracking-wider opacity-60">
                                     <Clock className="h-3 w-3 mr-2" />
                                     <span>Sync Time</span>
                                 </div>
                                 <span className="font-bold tabular-nums text-foreground/80">{batch.timings.time || '--:--'}</span>
                             </div>
-                            <div className="flex items-center justify-between text-[11px]">
+                            <div className="flex items-center justify-between text-[13.5px]">
                                 <div className="flex items-center text-muted-foreground font-semibold uppercase tracking-wider opacity-60">
                                     <Calendar className="h-3 w-3 mr-2" />
                                     <span>Frequency</span>
@@ -153,7 +153,7 @@ export const BatchList: FC = () => {
                         <div className="flex items-center gap-2 mt-6 pt-4 border-t border-border/40">
                             <Button 
                                 variant="secondary" 
-                                className="flex-1 h-8 text-[10px] font-semibold uppercase tracking-widest hover:bg-foreground hover:text-background transition-all"
+                                className="flex-1 h-8 text-[13px] font-semibold uppercase tracking-widest hover:bg-foreground hover:text-background transition-all"
                             >
                                 Interface
                             </Button>

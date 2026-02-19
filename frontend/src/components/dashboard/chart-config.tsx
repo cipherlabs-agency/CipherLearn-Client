@@ -29,10 +29,10 @@ export function getDurationParams(filter: DurationFilter): { days: number; month
 // ==================== CHART STYLES (Vercel-inspired) ====================
 
 export const CHART_COLORS = {
-    primary: "hsl(var(--foreground))",
+    primary: "hsl(var(--primary))",          // Teal
     secondary: "hsl(var(--muted-foreground))",
-    success: "hsl(142, 71%, 45%)",
-    warning: "hsl(38, 92%, 50%)",
+    success: "hsl(142, 71%, 45%)",            // Green
+    warning: "hsl(38, 92%, 50%)",             // Amber
     border: "hsl(var(--border))",
     background: "hsl(var(--background))",
     muted: "hsl(var(--muted))",
@@ -87,7 +87,7 @@ export function ChartTooltip({
     return (
         <div className="rounded-lg border border-border/50 bg-background/95 backdrop-blur-sm px-3 py-2 shadow-xl">
             {formattedLabel && (
-                <p className="text-[11px] font-medium text-foreground mb-1.5">
+                <p className="text-[13.5px] font-medium text-foreground mb-1.5">
                     {formattedLabel}
                 </p>
             )}
@@ -98,7 +98,7 @@ export function ChartTooltip({
                         : entry.value.toLocaleString()
 
                     return (
-                        <div key={index} className="flex items-center gap-2 text-[11px]">
+                        <div key={index} className="flex items-center gap-2 text-[13.5px]">
                             <span
                                 className="h-2 w-2 rounded-full shrink-0"
                                 style={{ backgroundColor: entry.color }}
@@ -125,12 +125,12 @@ interface DurationFilterProps {
 
 export function DurationFilterSelect({ value, onChange, className = "" }: DurationFilterProps) {
     return (
-        <div className={`inline-flex items-center rounded-md border border-border bg-muted/30 p-0.5 ${className}`}>
+        <div className={`inline-flex items-center rounded-lg border border-border bg-secondary/60 p-0.5 ${className}`}>
             {DURATION_OPTIONS.map((option) => (
                 <button
                     key={option.value}
                     onClick={() => onChange(option.value)}
-                    className={`px-2.5 py-1 text-[11px] font-medium rounded transition-all ${
+                    className={`px-2.5 py-1 text-[13.5px] font-semibold rounded-md transition-all ${
                         value === option.value
                             ? "bg-background text-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground"
@@ -149,7 +149,7 @@ export function DurationFilterDropdown({ value, onChange, className = "" }: Dura
         <select
             value={value}
             onChange={(e) => onChange(e.target.value as DurationFilter)}
-            className={`h-7 px-2 text-[11px] font-medium rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring ${className}`}
+            className={`h-7 px-2 text-[13.5px] font-medium rounded-md border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring ${className}`}
         >
             {DURATION_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>

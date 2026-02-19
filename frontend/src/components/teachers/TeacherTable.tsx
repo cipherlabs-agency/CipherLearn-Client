@@ -65,8 +65,8 @@ export const TeacherTable: FC = () => {
         return (
             <Card className="text-center py-20 bg-destructive/5 border-dashed border-destructive/30 m-6 flex flex-col items-center">
                 <h3 className="text-sm font-semibold tracking-tight text-destructive uppercase">Connection Error</h3>
-                <p className="text-[11px] text-muted-foreground mt-2 max-w-[220px] mx-auto font-medium leading-relaxed">Failed to load teacher data. Verify your authorization.</p>
-                <Button variant="outline" className="mt-8 h-8 px-4 text-[10px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all" onClick={() => window.location.reload()}>
+                <p className="text-[13.5px] text-muted-foreground mt-2 max-w-[220px] mx-auto font-medium leading-relaxed">Failed to load teacher data. Verify your authorization.</p>
+                <Button variant="outline" className="mt-8 h-8 px-4 text-[13px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all" onClick={() => window.location.reload()}>
                     Retry
                 </Button>
             </Card>
@@ -77,7 +77,7 @@ export const TeacherTable: FC = () => {
         return (
             <Card className="text-center py-24 border-dashed border-border/60 bg-muted/5 m-6 flex flex-col items-center">
                 <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">No Teachers</h3>
-                <p className="text-[11px] text-muted-foreground mt-2 max-w-[260px] mx-auto font-medium leading-relaxed">No teachers have been added yet. Add a teacher to get started.</p>
+                <p className="text-[13.5px] text-muted-foreground mt-2 max-w-[260px] mx-auto font-medium leading-relaxed">No teachers have been added yet. Add a teacher to get started.</p>
                 <div className="mt-10">
                     <AddTeacherDialog />
                 </div>
@@ -89,11 +89,11 @@ export const TeacherTable: FC = () => {
         <Table>
             <TableHeader className="bg-muted/5">
                 <TableRow className="hover:bg-transparent border-border/60">
-                    <TableHead className="w-[280px] text-[10px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Name</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Email</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Added</TableHead>
-                    <TableHead className="text-right text-[10px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Actions</TableHead>
+                    <TableHead className="w-[280px] text-[13px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Name</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Email</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Added</TableHead>
+                    <TableHead className="text-right text-[13px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -101,25 +101,25 @@ export const TeacherTable: FC = () => {
                     <TableRow key={teacher.id} className="group border-border/40 hover:bg-muted/10 transition-colors">
                         <TableCell className="py-4 pl-8">
                             <div className="flex items-center gap-4">
-                                <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-background font-bold text-[10px] border border-foreground/10 transition-transform duration-300 group-hover:scale-105">
+                                <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-background font-bold text-[13px] border border-foreground/10 transition-transform duration-300 group-hover:scale-105">
                                     {teacher.name.substring(0, 1).toUpperCase()}
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{teacher.name}</span>
-                                    <span className="text-[9px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-40">ID • {teacher.id}</span>
+                                    <span className="text-[12.5px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-40">ID • {teacher.id}</span>
                                 </div>
                             </div>
                         </TableCell>
                         <TableCell>
-                            <span className="text-[11px] font-medium tracking-tight text-foreground/80">{teacher.email}</span>
+                            <span className="text-[13.5px] font-medium tracking-tight text-foreground/80">{teacher.email}</span>
                         </TableCell>
                         <TableCell>
                             {teacher.isPasswordSet ? (
-                                <div className="text-[10px] font-semibold px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 w-fit uppercase tracking-tighter text-emerald-600 dark:text-emerald-400">
+                                <div className="text-[13px] font-semibold px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 w-fit uppercase tracking-tighter text-emerald-600 dark:text-emerald-400">
                                     Active
                                 </div>
                             ) : (
-                                <div className="text-[10px] font-semibold px-2 py-0.5 rounded border border-amber-500/30 bg-amber-500/10 w-fit uppercase tracking-tighter text-amber-600 dark:text-amber-400">
+                                <div className="text-[13px] font-semibold px-2 py-0.5 rounded border border-amber-500/30 bg-amber-500/10 w-fit uppercase tracking-tighter text-amber-600 dark:text-amber-400">
                                     Pending Setup
                                 </div>
                             )}

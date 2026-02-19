@@ -88,7 +88,7 @@ export function NotesList({ batchId, isAdmin = true }: NotesListProps) {
         return (
             <Card className="text-center py-24 border-dashed border-border/60 bg-muted/5 m-8 flex flex-col items-center">
                 <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">Library Null</h3>
-                <p className="text-[11px] text-muted-foreground mt-2 max-w-[260px] mx-auto font-medium leading-relaxed">No study materials or technical documentation have been deployed to this sector yet.</p>
+                <p className="text-[13.5px] text-muted-foreground mt-2 max-w-[260px] mx-auto font-medium leading-relaxed">No study materials or technical documentation have been deployed to this sector yet.</p>
                 {isAdmin && (
                     <div className="mt-10">
                          <AddNoteDialog />
@@ -102,11 +102,11 @@ export function NotesList({ batchId, isAdmin = true }: NotesListProps) {
         <Table>
             <TableHeader className="bg-muted/5">
                 <TableRow className="hover:bg-transparent border-border/60">
-                    <TableHead className="w-[350px] text-[10px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Resource</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Node Group</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Deployed</TableHead>
-                    <TableHead className="text-right text-[10px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Access</TableHead>
+                    <TableHead className="w-[350px] text-[13px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Resource</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Node Group</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Deployed</TableHead>
+                    <TableHead className="text-right text-[13px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Access</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -119,19 +119,19 @@ export function NotesList({ batchId, isAdmin = true }: NotesListProps) {
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{note.title}</span>
-                                    <span className="text-[9px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-60">MDX • {note.category || "General"}</span>
+                                    <span className="text-[12.5px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-60">MDX • {note.category || "General"}</span>
                                 </div>
                             </div>
                         </TableCell>
                         <TableCell>
-                            <div className="text-[10px] font-semibold px-2 py-0.5 rounded border border-border bg-muted/30 w-fit uppercase tracking-tighter text-muted-foreground">
+                            <div className="text-[13px] font-semibold px-2 py-0.5 rounded border border-border bg-muted/30 w-fit uppercase tracking-tighter text-muted-foreground">
                                 {getBatchName(note.batchId)}
                             </div>
                         </TableCell>
                         <TableCell>
                             <div className="flex items-center gap-1.5 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
                                 <div className="h-1 w-1 rounded-full bg-emerald-500" />
-                                <span className="text-[10px] font-semibold uppercase tracking-widest">Available</span>
+                                <span className="text-[13px] font-semibold uppercase tracking-widest">Available</span>
                             </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground font-medium text-xs lowercase tracking-tighter tabular-nums">

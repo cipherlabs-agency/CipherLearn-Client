@@ -3,267 +3,348 @@
 
 @layer base {
   :root {
-    /* ===== VERCEL EXACT COLORS (Light) ===== */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
- 
+    /* ===== CIPHERLEARN — Warm Teacher Theme (Light) ===== */
+
+    /* Backgrounds */
+    --background: 40 33% 97%;          /* #FAF8F5 — warm cream */
+    --foreground: 20 14% 10%;          /* #1C1917 — warm near-black */
+
+    --card: 0 0% 100%;                 /* #FFFFFF — crisp white cards */
+    --card-foreground: 20 14% 10%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
- 
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
- 
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
- 
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
- 
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
- 
-    --border: 0 0% 91%;        /* #eaeaea */
-    --border-hover: 0 0% 0%;   /* black border on hover */
-    --input: 0 0% 91%;
-    --ring: 0 0% 0%;
- 
-    --radius: 0.5rem;
-    
-    --font-geist-sans: "Geist Sans", sans-serif;
-    --font-geist-mono: "Geist Mono", monospace;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --popover-foreground: 20 14% 10%;
 
-    /* Chart colors - visible in light mode */
-    --chart-primary: 221 83% 53%;     /* Blue #3b82f6 */
-    --chart-success: 142 71% 45%;     /* Green #22c55e */
-    --chart-warning: 38 92% 50%;      /* Amber #f59e0b */
-    --chart-line: 0 0% 20%;           /* Dark line for light mode */
+    /* Primary — Deep Teal (knowledge, trust, education) */
+    --primary: 171 77% 24%;            /* #0F766E */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary — Warm Gray */
+    --secondary: 35 20% 91%;           /* #EDE7DC */
+    --secondary-foreground: 20 14% 10%;
+
+    /* Muted */
+    --muted: 35 15% 93%;               /* #EEE9E2 */
+    --muted-foreground: 30 6% 46%;     /* #78716C — warm mid-gray */
+
+    /* Accent — Warm Amber (energy, enthusiasm) */
+    --accent: 38 92% 50%;              /* #F59E0B */
+    --accent-foreground: 20 14% 10%;
+
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders & Inputs */
+    --border: 35 18% 86%;              /* #E5DBCF — warm beige */
+    --border-hover: 171 77% 24%;       /* teal on hover */
+    --input: 35 18% 86%;
+    --ring: 171 77% 24%;               /* teal focus ring */
+
+    --radius: 0.625rem;                /* 10px — slightly rounder, friendlier */
+
+    /* Sidebar */
+    --sidebar: 40 33% 95%;             /* #F4F0E9 — warm cream sidebar */
+    --sidebar-foreground: 20 14% 10%;
+    --sidebar-border: 35 18% 88%;
+
+    /* Charts */
+    --chart-primary: 171 77% 24%;      /* teal */
+    --chart-success: 142 71% 45%;      /* green */
+    --chart-warning: 38 92% 50%;       /* amber */
+    --chart-line: 20 14% 25%;
+    --chart-4: 262 83% 58%;
+    --chart-5: 339 90% 51%;
   }
- 
-  .dark {
-    /* ===== VERCEL EXACT COLORS (Dark) ===== */
-    --background: 0 0% 0%;     /* Pure black */
-    --foreground: 0 0% 100%;   /* Pure white */
- 
-    --card: 0 0% 3%;           /* rgb(10,10,10) - darker than before */
-    --card-foreground: 0 0% 100%;
- 
-    --popover: 0 0% 3%;
-    --popover-foreground: 0 0% 100%;
- 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
- 
-    --secondary: 0 0% 10%;     /* Dark gray for secondary */
-    --secondary-foreground: 0 0% 98%;
- 
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 63.9%;
- 
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
- 
-    --border: 0 0% 14%;        /* #222 - subtle dark border */
-    --border-hover: 0 0% 100%; /* white border on hover */
-    --input: 0 0% 14%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
 
-    /* Chart colors - visible in dark mode */
-    --chart-primary: 217 91% 60%;     /* Brighter blue #3b82f6 */
-    --chart-success: 142 76% 50%;     /* Brighter green #22c55e */
-    --chart-warning: 38 92% 55%;      /* Brighter amber #f59e0b */
-    --chart-line: 0 0% 85%;           /* Light line for dark mode */
+  .dark {
+    /* ===== CIPHERLEARN — Warm Teacher Theme (Dark) ===== */
+
+    --background: 20 14% 8%;           /* #141210 — warm dark */
+    --foreground: 40 20% 93%;          /* #EDE8E1 — warm off-white */
+
+    --card: 20 12% 11%;                /* #1D1916 — slightly lighter */
+    --card-foreground: 40 20% 93%;
+
+    --popover: 20 12% 11%;
+    --popover-foreground: 40 20% 93%;
+
+    --primary: 167 64% 43%;            /* #24B0A0 — lighter teal for dark */
+    --primary-foreground: 20 14% 8%;
+
+    --secondary: 20 10% 18%;           /* #2E2825 — warm dark gray */
+    --secondary-foreground: 40 20% 90%;
+
+    --muted: 20 10% 15%;
+    --muted-foreground: 30 8% 58%;     /* warm mid-gray for dark */
+
+    --accent: 38 92% 55%;
+    --accent-foreground: 20 14% 8%;
+
+    --destructive: 0 62.8% 40%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 20 10% 20%;              /* #362F2C — warm dark border */
+    --border-hover: 167 64% 43%;
+    --input: 20 10% 20%;
+    --ring: 167 64% 43%;
+
+    --sidebar: 20 14% 9%;
+    --sidebar-foreground: 40 20% 93%;
+    --sidebar-border: 20 10% 18%;
+
+    --chart-primary: 167 64% 43%;
+    --chart-success: 142 76% 50%;
+    --chart-warning: 38 92% 55%;
+    --chart-line: 40 20% 80%;
+    --chart-4: 262 83% 65%;
+    --chart-5: 339 90% 60%;
   }
 }
 
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-  
+
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
-  
+
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
-  
+
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
-  
+
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
-  
+
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
-  
+
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
-  
+
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
-  
+
   --color-border: hsl(var(--border));
   --color-border-hover: hsl(var(--border-hover));
   --color-border-active: hsl(var(--ring));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  --font-sans: var(--font-plus-jakarta), var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), "Courier New", monospace;
 }
+
 @layer base {
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: -0.01em;
+    font-family: var(--font-plus-jakarta, var(--font-geist-sans)), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    /* 16px — teachers read at arm's length. Comfortable, never squinting. */
+    font-size: 16px;
+    line-height: 1.7;
+    letter-spacing: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
-  /* Vercel Typography - Exact Specs */
+
+  /* Clear, confident hierarchy — teachers scan at a glance */
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-  }
-  
-  h1 { 
-    font-size: 36px;
     font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: hsl(var(--foreground));
   }
-  h2 { 
-    font-size: 30px;
-    font-weight: 600;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
-  h3 { 
-    font-size: 24px;
-    font-weight: 600;
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
   }
-  h4 { 
-    font-size: 20px;
-    font-weight: 600;
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
-  h5 { 
+  h4 {
     font-size: 16px;
     font-weight: 600;
+    letter-spacing: -0.01em;
   }
-  h6 { 
+  h5 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+  h6 {
     font-size: 14px;
     font-weight: 600;
+    letter-spacing: 0;
   }
-  
-  /* Body text variations */
+
   p {
-    font-size: 14px;
-    line-height: 1.6;
-    letter-spacing: -0.01em;
+    font-size: 15px;
+    line-height: 1.7;
+    letter-spacing: 0;
   }
-  
-  /* Small text */
+
+  /* Minimum 13px everywhere — no squinting, ever */
   small {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
   }
-  
-  /* Code */
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
   code {
-    font-family: var(--font-geist-mono), 'Courier New', monospace;
-    font-size: 13px;
-    letter-spacing: -0.01em;
+    font-family: var(--font-geist-mono), "Courier New", monospace;
+    font-size: 13.5px;
   }
 }
 
 @layer utilities {
-  /* VERCEL CARD - 1px border, NO shadow */
+  /* Warm card — soft shadow, rounded, friendly */
+  .card-warm {
+    @apply rounded-xl border border-border bg-card;
+    box-shadow: 0 1px 3px rgba(28, 25, 23, 0.06), 0 4px 12px rgba(28, 25, 23, 0.04);
+  }
+
+  /* Elevated card */
+  .card-elevated {
+    @apply rounded-xl border border-border bg-card;
+    box-shadow: 0 2px 8px rgba(28, 25, 23, 0.08), 0 8px 24px rgba(28, 25, 23, 0.06);
+  }
+
+  /* Legacy alias */
   .card-vercel {
-    @apply rounded-lg border border-border bg-card;
+    @apply rounded-xl border border-border bg-card;
+    box-shadow: 0 1px 3px rgba(28, 25, 23, 0.06), 0 4px 12px rgba(28, 25, 23, 0.04);
   }
-  
-  /* VERCEL GRID LAYOUT */
-  .grid-vercel {
-    @apply border border-border;
+
+  /* Teacher stat card — teal accent */
+  .stat-card {
+    @apply rounded-xl border border-border bg-card p-5;
+    box-shadow: 0 1px 3px rgba(28, 25, 23, 0.06), 0 4px 12px rgba(28, 25, 23, 0.04);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
-  
-  /* VERCEL BUTTON - exact heights */
-  .btn-vercel {
-    @apply h-10 px-4 rounded-lg font-medium text-sm;
+  .stat-card:hover {
+    box-shadow: 0 4px 16px rgba(15, 118, 110, 0.12), 0 8px 24px rgba(28, 25, 23, 0.06);
+    transform: translateY(-1px);
   }
-  
-  .btn-vercel-lg {
-    @apply h-12 px-6 rounded-lg font-medium text-sm;
-  }
-  
-  /* VERCEL INPUT - matches button height */
-  .input-vercel {
-    @apply h-10 px-3 rounded-lg border border-border bg-background;
-  }
-  
-  /* Skeleton with subtle pulse */
-  .skeleton-vercel {
-    @apply animate-pulse rounded-md bg-muted;
-  }
-  
-  /* Status badges - keep colorful */
+
+  /* Status badges */
   .badge-success {
-    @apply inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium;
-    background-color: rgba(48, 164, 108, 0.1);
-    color: #30a46c;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    background-color: rgba(22, 101, 52, 0.1);
+    color: #166534;
   }
-  
+
   .badge-warning {
-    @apply inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium;
-    background-color: rgba(245, 159, 11, 0.1);
-    color: #f59f0b;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    background-color: rgba(245, 158, 11, 0.12);
+    color: #92400E;
   }
-  
+
   .badge-error {
-    @apply inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium;
-    background-color: rgba(229, 72, 77, 0.1);
-    color: #e5484d;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    background-color: rgba(220, 38, 38, 0.1);
+    color: #DC2626;
   }
-  
+
   .badge-info {
-    @apply inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium;
-    background-color: rgba(0, 145, 255, 0.1);
-    color: #0091ff;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    background-color: rgba(15, 118, 110, 0.1);
+    color: #0F766E;
+  }
+
+  .badge-neutral {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    background-color: rgba(120, 113, 108, 0.1);
+    color: #57534E;
+  }
+
+  /* Skeleton */
+  .skeleton-warm {
+    @apply animate-pulse rounded-lg bg-muted;
+  }
+
+  /* Legacy alias */
+  .skeleton-vercel {
+    @apply animate-pulse rounded-lg bg-muted;
+  }
+
+  /* Focus rings — teal for teacher theme */
+  .focus-warm {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1;
+  }
+
+  /* Section header utility */
+  .section-header {
+    @apply flex items-center justify-between mb-5;
+  }
+
+  .section-title {
+    @apply text-lg font-semibold text-foreground tracking-tight;
+  }
+
+  .section-description {
+    @apply text-sm text-muted-foreground mt-0.5;
+  }
+
+  /* Quick nav highlight */
+  .nav-active {
+    @apply bg-primary text-primary-foreground font-semibold;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150;
+    @apply text-muted-foreground hover:text-foreground hover:bg-secondary;
   }
 }
 
-/* Animations */
+/* ===== Animations ===== */
 @keyframes accordion-up {
-  from { height: var(--radix-accordion-content-height) }
-  to { height: 0 }
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
 }
 
 @keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
+  100% { transform: translateX(100%); }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -272,18 +353,42 @@
   to { transform: translateX(0); }
 }
 
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out;
+  animation: fade-in 0.3s ease-out both;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out both;
 }
 
 .animate-slide-in {
-  animation: slide-in 0.3s ease-out;
+  animation: slide-in 0.25s ease-out;
 }
 
-/* Scrollbar - minimal Vercel style */
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out both;
+}
+
+/* Staggered children animations */
+.animate-children > * {
+  animation: fade-in-up 0.4s ease-out both;
+}
+.animate-children > *:nth-child(1) { animation-delay: 0ms; }
+.animate-children > *:nth-child(2) { animation-delay: 60ms; }
+.animate-children > *:nth-child(3) { animation-delay: 120ms; }
+.animate-children > *:nth-child(4) { animation-delay: 180ms; }
+.animate-children > *:nth-child(5) { animation-delay: 240ms; }
+.animate-children > *:nth-child(6) { animation-delay: 300ms; }
+
+/* ===== Scrollbar — warm minimal style ===== */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -291,14 +396,15 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 4px;
+  background: hsl(var(--border));
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-muted-foreground);
+  background: hsl(var(--muted-foreground) / 0.4);
 }
-/* Geist Spinner */
+
+/* ===== Spinner (kept for loading states) ===== */
 .geist-spinner {
   width: 16px;
   height: 16px;

@@ -74,8 +74,8 @@ export const StudentTable: FC = () => {
         return (
             <Card className="text-center py-20 bg-destructive/5 border-dashed border-destructive/30 m-6 flex flex-col items-center">
                 <h3 className="text-sm font-semibold tracking-tight text-destructive uppercase">Registry Fault</h3>
-                <p className="text-[11px] text-muted-foreground mt-2 max-w-[220px] mx-auto font-medium leading-relaxed">Secure data link to the student registry has been compromised. Verify your authorization.</p>
-                <Button variant="outline" className="mt-8 h-8 px-4 text-[10px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all" onClick={() => window.location.reload()}>
+                <p className="text-[13.5px] text-muted-foreground mt-2 max-w-[220px] mx-auto font-medium leading-relaxed">Secure data link to the student registry has been compromised. Verify your authorization.</p>
+                <Button variant="outline" className="mt-8 h-8 px-4 text-[13px] font-semibold uppercase tracking-widest border-destructive/20 hover:bg-destructive hover:text-white transition-all" onClick={() => window.location.reload()}>
                     Reset Connection
                 </Button>
             </Card>
@@ -86,7 +86,7 @@ export const StudentTable: FC = () => {
         return (
             <Card className="text-center py-24 border-dashed border-border/60 bg-muted/5 m-6 flex flex-col items-center">
                 <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">Roster Empty</h3>
-                <p className="text-[11px] text-muted-foreground mt-2 max-w-[260px] mx-auto font-medium leading-relaxed">No students are currently registered in the database. Initialize enrollment to populate the registry.</p>
+                <p className="text-[13.5px] text-muted-foreground mt-2 max-w-[260px] mx-auto font-medium leading-relaxed">No students are currently registered in the database. Initialize enrollment to populate the registry.</p>
                 <div className="mt-10 flex gap-4 justify-center items-center">
                      <AddStudentDialog />
                      <div className="h-6 w-px bg-border/60" />
@@ -100,11 +100,11 @@ export const StudentTable: FC = () => {
         <Table>
             <TableHeader className="bg-muted/5">
                 <TableRow className="hover:bg-transparent border-border/60">
-                    <TableHead className="w-[300px] text-[10px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Identity</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Metadata</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Program</TableHead>
-                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Enrollment</TableHead>
-                    <TableHead className="text-right text-[10px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Manage</TableHead>
+                    <TableHead className="w-[300px] text-[13px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Identity</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Metadata</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Program</TableHead>
+                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Enrollment</TableHead>
+                    <TableHead className="text-right text-[13px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Manage</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -112,23 +112,23 @@ export const StudentTable: FC = () => {
                     <TableRow key={student.id} className="group border-border/40 hover:bg-muted/10 transition-colors">
                         <TableCell className="py-4 pl-8">
                             <div className="flex items-center gap-4">
-                                <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-background font-bold text-[10px] border border-foreground/10 transition-transform duration-300 group-hover:scale-105">
+                                <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-background font-bold text-[13px] border border-foreground/10 transition-transform duration-300 group-hover:scale-105">
                                     {student.fullname.substring(0, 1).toUpperCase()}
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{student.fullname}</span>
-                                    <span className="text-[9px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-40">UUID • {student.id.toString().substring(0, 8)}</span>
+                                    <span className="text-[12.5px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-40">UUID • {student.id.toString().substring(0, 8)}</span>
                                 </div>
                             </div>
                         </TableCell>
                         <TableCell>
                             <div className="flex flex-col gap-0.5">
-                                <span className="text-[11px] font-medium tracking-tight text-foreground/80">{student.email}</span>
-                                <span className="text-[9px] text-muted-foreground font-semibold uppercase tracking-widest opacity-30">Security Verified</span>
+                                <span className="text-[13.5px] font-medium tracking-tight text-foreground/80">{student.email}</span>
+                                <span className="text-[12.5px] text-muted-foreground font-semibold uppercase tracking-widest opacity-30">Security Verified</span>
                             </div>
                         </TableCell>
                         <TableCell>
-                            <div className="text-[10px] font-semibold px-2 py-0.5 rounded border border-border/60 bg-muted/30 w-fit uppercase tracking-tighter text-muted-foreground">
+                            <div className="text-[13px] font-semibold px-2 py-0.5 rounded border border-border/60 bg-muted/30 w-fit uppercase tracking-tighter text-muted-foreground">
                                 Node {student.batchId}
                             </div>
                         </TableCell>

@@ -113,12 +113,12 @@ export function AnnouncementsList({ priorityFilter, activeFilter, isAdmin }: Ann
 
                             <div className="flex-grow min-w-0">
                                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${priorityColors[announcement.priority]}`}>
+                                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[13px] font-bold uppercase tracking-wider border ${priorityColors[announcement.priority]}`}>
                                         {priorityIcons[announcement.priority]}
                                         {announcement.priority}
                                     </span>
                                     {!announcement.isActive && (
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gray-500/10 text-gray-500 border border-gray-500/20">
+                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[13px] font-bold uppercase tracking-wider bg-gray-500/10 text-gray-500 border border-gray-500/20">
                                             Inactive
                                         </span>
                                     )}

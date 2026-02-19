@@ -126,7 +126,7 @@ export function AddNoteDialog() {
                             >
                                 <FileText className="h-7 w-7 mx-auto mb-2 text-muted-foreground" />
                                 <p className="text-[13px] text-muted-foreground">Click to upload or drag and drop</p>
-                                <p className="text-[11px] text-muted-foreground/70 mt-1">PDF, DOC, DOCX, PPT, PPTX (max 10MB)</p>
+                                <p className="text-[13.5px] text-muted-foreground/70 mt-1">PDF, DOC, DOCX, PPT, PPTX (max 10MB)</p>
                                 <input
                                     ref={fileInputRef}
                                     type="file"

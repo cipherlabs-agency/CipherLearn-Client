@@ -22,12 +22,10 @@ export default function DashboardLayout({
         router.push("/login")
     }, [dispatch, router])
 
-    // Wait for client-side hydration to complete
     useEffect(() => {
         setIsClient(true)
     }, [])
 
-    // Check token on mount and redirect if expired
     useEffect(() => {
         if (isClient) {
             if (!token || isTokenExpired(token)) {
@@ -36,19 +34,16 @@ export default function DashboardLayout({
         }
     }, [isClient, token, handleExpiredToken])
 
-    // Set up automatic redirect when token expires
     useEffect(() => {
         if (!isClient || !token || !tokenExpiry) return
 
         const timeUntilExpiry = tokenExpiry - Date.now()
 
-        // If already expired, redirect immediately
         if (timeUntilExpiry <= 0) {
             handleExpiredToken()
             return
         }
 
-        // Set timeout to redirect when token expires
         const timeoutId = setTimeout(() => {
             handleExpiredToken()
         }, timeUntilExpiry)
@@ -56,7 +51,6 @@ export default function DashboardLayout({
         return () => clearTimeout(timeoutId)
     }, [isClient, token, tokenExpiry, handleExpiredToken])
 
-    // Periodic check every minute for token expiration
     useEffect(() => {
         if (!isClient || !token) return
 
@@ -64,23 +58,24 @@ export default function DashboardLayout({
             if (isTokenExpired(token)) {
                 handleExpiredToken()
             }
-        }, 60000) // Check every minute
+        }, 60000)
 
         return () => clearInterval(intervalId)
     }, [isClient, token, handleExpiredToken])
 
-    // Show nothing until client-side hydration is complete
     if (!isClient || !token || isTokenExpired(token)) {
         return null
     }
 
     return (
-        <div className="flex min-h-screen w-full bg-muted/40">
+        <div className="flex min-h-screen w-full bg-background">
             <Sidebar />
-            <div className="flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out">
+            <div className="flex flex-col flex-1 overflow-hidden min-w-0">
                 <Navbar />
-                <main className="flex-1 overflow-y-auto p-4 md:p-8 pt-6">
-                    {children}
+                <main className="flex-1 overflow-y-auto">
+                    <div className="p-5 md:p-7 max-w-[1600px] mx-auto animate-fade-in">
+                        {children}
+                    </div>
                 </main>
             </div>
         </div>

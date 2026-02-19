@@ -103,7 +103,7 @@ export function EditAnnouncementDialog({ announcement, open, onOpenChange }: Edi
 
                 <form onSubmit={handleSubmit} className="space-y-6 mt-4">
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        <label className="text-[13px] font-black uppercase tracking-widest text-muted-foreground">
                             Title
                         </label>
                         <Input
@@ -115,7 +115,7 @@ export function EditAnnouncementDialog({ announcement, open, onOpenChange }: Edi
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        <label className="text-[13px] font-black uppercase tracking-widest text-muted-foreground">
                             Description
                         </label>
                         <textarea
@@ -129,7 +129,7 @@ export function EditAnnouncementDialog({ announcement, open, onOpenChange }: Edi
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                            <label className="text-[13px] font-black uppercase tracking-widest text-muted-foreground">
                                 Priority
                             </label>
                             <Select value={priority} onValueChange={(val) => setPriority(val as AnnouncementPriority)}>
@@ -146,7 +146,7 @@ export function EditAnnouncementDialog({ announcement, open, onOpenChange }: Edi
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                            <label className="text-[13px] font-black uppercase tracking-widest text-muted-foreground">
                                 Status
                             </label>
                             <Select value={String(isActive)} onValueChange={(val) => setIsActive(val === "true")}>
@@ -162,7 +162,7 @@ export function EditAnnouncementDialog({ announcement, open, onOpenChange }: Edi
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        <label className="text-[13px] font-black uppercase tracking-widest text-muted-foreground">
                             Image (Optional)
                         </label>
                         {imagePreview ? (

@@ -21,7 +21,12 @@
       "Bash(wc:*)",
       "Bash(cat:*)",
       "Bash(npx next info:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx next build:*)",
+      "Bash(xargs sed:*)",
+      "Bash(for f in RevenueChart.tsx AttendanceChart.tsx StudentDistribution.tsx)",
+      "Bash(do sed -i 's|text-sm font-medium text-foreground|text-\\\\[15px\\\\] font-bold text-foreground|g' \"$f\")",
+      "Bash(done)"
     ]
   }
 }

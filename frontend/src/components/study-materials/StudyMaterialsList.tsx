@@ -103,11 +103,11 @@ export function StudyMaterialsList({ batchId, category, isAdmin }: StudyMaterial
                             <div className="flex-grow min-w-0">
                                 <div className="flex flex-wrap items-center gap-2 mb-2">
                                     {material.category && (
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-[13px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
                                             {material.category}
                                         </span>
                                     )}
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground border border-border/40">
+                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-[13px] font-bold uppercase tracking-wider bg-muted text-muted-foreground border border-border/40">
                                         {material.batch.name}
                                     </span>
                                 </div>

@@ -6,13 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Users } from "lucide-react"
 import { ChartTooltip, CHART_COLORS } from "./chart-config"
 
+// Warm, friendly color palette for pie chart slices
 const PIE_COLORS = [
-    "hsl(var(--foreground))",
-    "hsl(var(--foreground) / 0.75)",
-    "hsl(var(--foreground) / 0.55)",
-    "hsl(var(--foreground) / 0.4)",
-    "hsl(var(--foreground) / 0.25)",
-    "hsl(var(--foreground) / 0.15)"
+    "hsl(171, 77%, 24%)",   // Teal — primary
+    "hsl(38, 92%, 50%)",    // Amber
+    "hsl(142, 55%, 40%)",   // Green
+    "hsl(262, 60%, 55%)",   // Violet
+    "hsl(339, 75%, 55%)",   // Rose
+    "hsl(24, 80%, 50%)",    // Orange
 ] as const
 
 interface DistributionDataPoint {
@@ -26,7 +27,7 @@ export function StudentDistribution() {
 
     if (isLoading) {
         return (
-            <div className="col-span-5 rounded-lg border border-border bg-background flex flex-col h-full">
+            <div className="col-span-5 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)] flex flex-col h-full">
                 <div className="p-5 border-b border-border">
                     <Skeleton className="h-4 w-24 mb-1" />
                     <Skeleton className="h-3 w-20" />
@@ -48,16 +49,16 @@ export function StudentDistribution() {
 
     if (!hasData) {
         return (
-            <div className="col-span-5 rounded-lg border border-border bg-background flex flex-col h-full">
+            <div className="col-span-5 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)] flex flex-col h-full">
                 <div className="p-5 border-b border-border">
-                    <h3 className="text-sm font-medium text-foreground">Distribution</h3>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">Batch Allocation</p>
+                    <h3 className="text-[15px] font-bold text-foreground">Distribution</h3>
+                    <p className="text-[13.5px] text-muted-foreground mt-0.5">Batch Allocation</p>
                 </div>
                 <div className="flex-1 flex flex-col items-center justify-center p-5">
                     <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center mb-3">
                         <Users className="h-5 w-5 text-muted-foreground" />
                     </div>
-                    <p className="text-sm font-medium text-foreground">No Students Yet</p>
+                    <p className="text-[15px] font-bold text-foreground">No Students Yet</p>
                     <p className="text-xs text-muted-foreground mt-1 text-center max-w-[180px]">
                         Add students to batches to see distribution
                     </p>
@@ -67,15 +68,15 @@ export function StudentDistribution() {
     }
 
     return (
-        <div className="col-span-5 rounded-lg border border-border bg-background flex flex-col h-full">
+        <div className="col-span-5 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)] flex flex-col h-full">
             <div className="flex items-center justify-between p-5 border-b border-border">
                 <div>
-                    <h3 className="text-sm font-medium text-foreground">Distribution</h3>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">Batch Allocation</p>
+                    <h3 className="text-[15px] font-bold text-foreground">Distribution</h3>
+                    <p className="text-[13.5px] text-muted-foreground mt-0.5">Batch Allocation</p>
                 </div>
                 <div className="text-right">
                     <div className="text-xl font-semibold tracking-tight tabular-nums">{totalStudents}</div>
-                    <div className="text-[10px] text-muted-foreground">Total</div>
+                    <div className="text-[13px] text-muted-foreground">Total</div>
                 </div>
             </div>
 

@@ -10,22 +10,24 @@ export interface InputProps
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
     ({ className, type, icon, suffix, error, ...props }, ref) => {
+        const baseStyles = cn(
+            "flex w-full rounded-lg border bg-background px-3 py-2",
+            "text-[13.5px] placeholder:text-muted-foreground/60",
+            "border-input transition-all duration-150",
+            "hover:border-border-hover",
+            "focus-visible:outline-none focus-visible:border-primary",
+            "focus-visible:ring-2 focus-visible:ring-ring/20",
+            "disabled:cursor-not-allowed disabled:opacity-50",
+            icon && "pl-9",
+            suffix && "pr-9",
+            error && "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20"
+        )
+
         if (!icon && !suffix) {
             return (
                 <input
                     type={type}
-                    className={cn(
-                        "flex h-10 w-full rounded-lg border bg-background px-3 py-2",
-                        "text-sm placeholder:text-muted-foreground",
-                        "border-input transition-colors",
-                        "hover:border-border-hover",
-                        "focus-visible:outline-none focus-visible:border-foreground",
-                        "focus-visible:ring-1 focus-visible:ring-ring",
-                        "disabled:cursor-not-allowed disabled:opacity-50",
-                        icon && "pl-10",
-                        suffix && "pr-10",
-                        error && "border-destructive focus-visible:border-destructive focus-visible:ring-destructive"
-                    )}
+                    className={cn(baseStyles, "h-10", className)}
                     ref={ref}
                     {...props}
                 />
@@ -35,32 +37,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         return (
             <div className={cn("relative w-full", className)}>
                 {icon && (
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-foreground">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors">
                         {icon}
                     </div>
                 )}
                 <input
                     type={type}
-                    className={cn(
-                        "flex h-full w-full rounded-lg border bg-background px-3 py-2",
-                        "text-sm ring-offset-background placeholder:text-muted-foreground/60",
-                        "file:border-0 file:bg-transparent file:text-sm file:font-medium",
-                        "border-input transition-colors duration-150",
-                        "hover:border-border-hover",
-                        "focus-visible:outline-none focus-visible:border-border-active",
-                        "focus-visible:ring-1 focus-visible:ring-ring",
-                        "disabled:cursor-not-allowed disabled:opacity-50",
-                        icon && "pl-10",
-                        suffix && "pr-10",
-                        error && "border-destructive focus-visible:border-destructive focus-visible:ring-destructive"
-                    )}
+                    className={cn(baseStyles, "h-10")}
                     ref={ref}
                     {...props}
                 />
                 {suffix && (
-                   <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60">
-                       {suffix}
-                   </div>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60">
+                        {suffix}
+                    </div>
                 )}
             </div>
         )

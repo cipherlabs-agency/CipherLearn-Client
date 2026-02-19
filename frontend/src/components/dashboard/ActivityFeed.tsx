@@ -36,15 +36,15 @@ export function ActivityFeed() {
         return (
             <Card className="col-span-7 overflow-hidden group border-border/60">
                 <div className="flex flex-col gap-1 p-6 border-b border-border/40">
-                    <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">Activity Feed</h3>
-                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest opacity-60">Recent Operations</p>
+                    <h3 className="text-[15px] font-bold text-foreground tracking-tight">Recent Activity</h3>
+                    <p className="text-[12.5px] text-muted-foreground">Latest updates from your classroom</p>
                 </div>
                 <div className="flex flex-col items-center justify-center py-16 text-center px-8 p-6">
                     <div className="p-4 rounded-md bg-foreground/5 mb-4 border border-border/20">
                         <Info className="h-6 w-6 text-foreground/40" />
                     </div>
                     <h3 className="text-sm font-semibold tracking-tight">No Recent Activity</h3>
-                    <p className="text-[11px] text-muted-foreground max-w-[220px] mx-auto mt-1 leading-relaxed">
+                    <p className="text-[13.5px] text-muted-foreground max-w-[220px] mx-auto mt-1 leading-relaxed">
                         Activities will appear here as students enroll and attendance is marked.
                     </p>
                 </div>
@@ -64,7 +64,7 @@ export function ActivityFeed() {
         <Card className="col-span-7 overflow-hidden border-border/60 shadow-sm">
             <div className="flex flex-col gap-1 p-6 border-b border-border/40">
                 <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">Activity Feed</h3>
-                <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest opacity-60">Recent Operations</p>
+                <p className="text-[13.5px] text-muted-foreground font-medium uppercase tracking-widest opacity-60">Recent Operations</p>
             </div>
             <div className="max-h-[340px] overflow-y-auto">
                 <div className="p-2 space-y-0.5">
@@ -85,10 +85,10 @@ export function ActivityFeed() {
                                 )}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-[11px] font-semibold text-foreground leading-relaxed truncate">
+                                <p className="text-[13.5px] font-semibold text-foreground leading-relaxed truncate">
                                     {activity.message}
                                 </p>
-                                <p className="text-[10px] text-muted-foreground mt-0.5 font-medium opacity-60">
+                                <p className="text-[13px] text-muted-foreground mt-0.5 font-medium opacity-60">
                                     {formatTime(activity.timestamp)}
                                 </p>
                             </div>

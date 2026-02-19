@@ -32,7 +32,7 @@ export function RevenueChart() {
 
     if (isLoading) {
         return (
-            <div className="col-span-8 rounded-lg border border-border bg-background">
+            <div className="col-span-8 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)]">
                 <div className="p-5 border-b border-border">
                     <div className="flex items-center justify-between">
                         <div>
@@ -61,12 +61,12 @@ export function RevenueChart() {
 
     if (!hasData) {
         return (
-            <div className="col-span-8 rounded-lg border border-border bg-background">
+            <div className="col-span-8 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)]">
                 <div className="p-5 border-b border-border">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-sm font-medium text-foreground">Enrollment Trends</h3>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">Monthly Growth Analysis</p>
+                            <h3 className="text-[15px] font-bold text-foreground">Enrollment Trends</h3>
+                            <p className="text-[12.5px] text-muted-foreground mt-0.5">Monthly Growth Analysis</p>
                         </div>
                         <DurationFilterSelect value={duration} onChange={setDuration} />
                     </div>
@@ -76,7 +76,7 @@ export function RevenueChart() {
                         <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center mb-3">
                             <UserPlus className="h-5 w-5 text-muted-foreground" />
                         </div>
-                        <p className="text-sm font-medium text-foreground">No Enrollment Data</p>
+                        <p className="text-[15px] font-bold text-foreground">No Enrollment Data</p>
                         <p className="text-xs text-muted-foreground mt-1">Add students to see enrollment trends</p>
                     </div>
                 </div>
@@ -85,18 +85,18 @@ export function RevenueChart() {
     }
 
     return (
-        <div className="col-span-8 rounded-lg border border-border bg-background">
+        <div className="col-span-8 rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06),0_4px_12px_rgba(28,25,23,0.04)]">
             <div className="flex items-center justify-between p-5 border-b border-border">
                 <div>
-                    <h3 className="text-sm font-medium text-foreground">Enrollment Trends</h3>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">Monthly Growth Analysis</p>
+                    <h3 className="text-[15px] font-bold text-foreground">Enrollment Trends</h3>
+                    <p className="text-[13.5px] text-muted-foreground mt-0.5">Monthly Growth Analysis</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="text-right">
                         <div className="text-xl font-semibold tracking-tight text-foreground tabular-nums">
                             {totalEnrollments.toLocaleString()}
                         </div>
-                        <div className="text-[10px] text-muted-foreground">Total ({durationLabel})</div>
+                        <div className="text-[13px] text-muted-foreground">Total ({durationLabel})</div>
                     </div>
                     <DurationFilterSelect value={duration} onChange={setDuration} />
                 </div>

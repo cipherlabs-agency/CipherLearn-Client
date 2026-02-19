@@ -86,7 +86,7 @@ export default function LoginPage() {
                             <input
                                 type="checkbox"
                                 id="remember"
-                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
                             />
                             <Label htmlFor="remember" className="font-normal text-muted-foreground">Remember me for 30 days</Label>
                         </div>
