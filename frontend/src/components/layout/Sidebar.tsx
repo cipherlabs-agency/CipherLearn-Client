@@ -10,8 +10,7 @@ import {
     FileText,
     Video,
     LogOut,
-    PanelLeftClose,
-    PanelLeftOpen,
+    ChevronRight,
     FileUp,
     Receipt,
     Settings,
@@ -24,6 +23,7 @@ import {
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { siteConfig } from "@/config/siteConfig"
 
 const navGroups = [
     {
@@ -85,63 +85,50 @@ export function Sidebar() {
                 isCollapsed ? "w-[68px]" : "w-[240px]"
             )}
         >
-            {/* Brand Header */}
+            {/* Brand Header — click logo to toggle sidebar */}
             <div className={cn(
                 "flex h-16 items-center border-b border-sidebar-border shrink-0",
-                isCollapsed ? "px-4 justify-center" : "px-4 justify-between"
+                isCollapsed ? "px-4 justify-center" : "px-4"
             )}>
-                {!isCollapsed && (
-                    <div className="flex items-center gap-2.5 min-w-0">
-                        {/* Teacher-friendly logo mark */}
-                        <div className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 bg-primary shadow-sm">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-primary-foreground">
-                                <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z" fill="currentColor"/>
-                                <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" fill="currentColor" opacity="0.7"/>
-                            </svg>
+                {/* Logo — always visible, toggles sidebar */}
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="shrink-0 focus:outline-none group relative"
+                    title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                >
+                    {siteConfig.logoUrl ? (
+                        <img
+                            src={siteConfig.logoUrl}
+                            alt={siteConfig.appName}
+                            className="h-9 w-9 rounded-xl object-cover transition-transform group-hover:scale-105 group-active:scale-95"
+                        />
+                    ) : (
+                        <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-primary shadow-sm text-primary-foreground font-bold text-[15px] transition-transform group-hover:scale-105 group-active:scale-95">
+                            {siteConfig.appName.charAt(0).toUpperCase()}
                         </div>
-                        <div className="min-w-0">
-                            <span className="font-bold text-[14px] text-foreground tracking-tight leading-none">
-                                CipherLearn
-                            </span>
-                            <p className="text-[12px] text-muted-foreground leading-none mt-0.5 font-medium">
-                                Teaching Platform
-                            </p>
-                        </div>
-                    </div>
-                )}
+                    )}
 
-                {isCollapsed && (
-                    <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-primary shadow-sm">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-primary-foreground">
-                            <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z" fill="currentColor"/>
-                            <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" fill="currentColor" opacity="0.7"/>
-                        </svg>
+                    {/* Small expand/collapse chevron */}
+                    <div className={cn(
+                        "absolute -right-1 -bottom-1 h-4 w-4 rounded-full bg-sidebar border border-sidebar-border flex items-center justify-center transition-transform duration-200",
+                        isCollapsed ? "rotate-0" : "rotate-180"
+                    )}>
+                        <ChevronRight className="h-2.5 w-2.5 text-muted-foreground" />
                     </div>
-                )}
+                </button>
 
+                {/* Class name + tagline — only when expanded */}
                 {!isCollapsed && (
-                    <button
-                        onClick={() => setIsCollapsed(true)}
-                        className="h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors shrink-0"
-                        title="Collapse sidebar"
-                    >
-                        <PanelLeftClose className="h-4 w-4" />
-                    </button>
+                    <div className="min-w-0 ml-2.5">
+                        <span className="p-0.5 font-bold text-[12px] text-foreground tracking-tight leading-none block truncate">
+                            {siteConfig.appName}
+                        </span>
+                        <p className="text-[11px] text-muted-foreground leading-none mt-0.5 font-medium truncate">
+                            {siteConfig.appTagline}
+                        </p>
+                    </div>
                 )}
             </div>
-
-            {/* Expand button when collapsed */}
-            {isCollapsed && (
-                <div className="px-3 pt-3">
-                    <button
-                        onClick={() => setIsCollapsed(false)}
-                        className="h-8 w-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors mx-auto"
-                        title="Expand sidebar"
-                    >
-                        <PanelLeftOpen className="h-4 w-4" />
-                    </button>
-                </div>
-            )}
 
             {/* Navigation */}
             <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-5">

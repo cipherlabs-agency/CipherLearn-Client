@@ -1,4 +1,5 @@
 import { GraduationCap } from "lucide-react"
+import { siteConfig } from "@/config/siteConfig"
 
 export default function AuthLayout({
     children,
@@ -7,7 +8,7 @@ export default function AuthLayout({
 }) {
     return (
         <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-            {/* Left: Branding Panel — warm, welcoming, educator-focused */}
+            {/* Left: Branding Panel */}
             <div className="hidden md:flex flex-col justify-between p-10 text-white relative overflow-hidden"
                 style={{ background: "linear-gradient(135deg, #0c4a44 0%, #0f766e 50%, #134e4a 100%)" }}
             >
@@ -24,22 +25,25 @@ export default function AuthLayout({
                     />
                 </div>
 
-                {/* Logo */}
+                {/* Logo + Class Name */}
                 <div className="relative z-10 flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl flex items-center justify-center"
-                        style={{ background: "rgba(255,255,255,0.15)" }}
-                    >
-                        <GraduationCap className="h-6 w-6 text-white" />
-                    </div>
+                    {siteConfig.logoUrl ? (
+                        <img src={siteConfig.logoUrl} alt={siteConfig.appName} className="h-10 w-10 rounded-xl object-cover" />
+                    ) : (
+                        <div className="h-10 w-10 rounded-xl flex items-center justify-center"
+                            style={{ background: "rgba(255,255,255,0.15)" }}
+                        >
+                            <GraduationCap className="h-6 w-6 text-white" />
+                        </div>
+                    )}
                     <div>
-                        <span className="font-bold text-xl leading-none">CipherLearn</span>
-                        <p className="text-[11px] text-white/60 leading-none mt-0.5 font-medium">Teaching Platform</p>
+                        <span className="font-bold text-xl leading-none">{siteConfig.appName}</span>
+                        <p className="text-[11px] text-white/60 leading-none mt-0.5 font-medium">{siteConfig.appTagline}</p>
                     </div>
                 </div>
 
-                {/* Testimonial */}
+                {/* Feature highlights */}
                 <div className="relative z-10 space-y-6 max-w-md">
-                    {/* Feature highlights */}
                     <div className="space-y-3">
                         {[
                             { icon: "📋", text: "One-click attendance tracking" },
@@ -55,16 +59,16 @@ export default function AuthLayout({
 
                     <div className="border-l-2 border-white/30 pl-4">
                         <p className="text-[15px] font-medium leading-relaxed text-white/90">
-                            &ldquo;CipherLearn has completely transformed how I manage my classes. It&rsquo;s so easy to use — I was up and running in minutes!&rdquo;
+                            &ldquo;{siteConfig.appName} has completely transformed how I manage my classes. It&rsquo;s so easy to use — I was up and running in minutes!&rdquo;
                         </p>
                         <footer className="text-[13px] text-white/60 mt-2 font-medium">
-                            — Sarah Williams, Mathematics Teacher
+                            — Happy Teacher
                         </footer>
                     </div>
                 </div>
 
                 <div className="relative z-10 text-[12px] text-white/40">
-                    &copy; 2025 CipherLearn. All rights reserved.
+                    &copy; {new Date().getFullYear()} {siteConfig.appName}. All rights reserved.
                 </div>
             </div>
 
@@ -73,10 +77,14 @@ export default function AuthLayout({
                 <div className="w-full max-w-md space-y-8">
                     {/* Mobile logo */}
                     <div className="flex items-center gap-2 md:hidden">
-                        <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                            <GraduationCap className="h-4.5 w-4.5 text-primary-foreground" />
-                        </div>
-                        <span className="font-bold text-lg text-foreground">CipherLearn</span>
+                        {siteConfig.logoUrl ? (
+                            <img src={siteConfig.logoUrl} alt={siteConfig.appName} className="h-8 w-8 rounded-lg object-cover" />
+                        ) : (
+                            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                                <GraduationCap className="h-4.5 w-4.5 text-primary-foreground" />
+                            </div>
+                        )}
+                        <span className="font-bold text-lg text-foreground">{siteConfig.appName}</span>
                     </div>
                     {children}
                 </div>

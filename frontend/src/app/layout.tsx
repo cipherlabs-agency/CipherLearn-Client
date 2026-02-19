@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/config/siteConfig";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Plus_Jakarta_Sans } from "next/font/google";
@@ -16,8 +17,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "CipherLearn - Smart Tuition Management",
-  description: "Comprehensive management solution for tuition centers and educators.",
+  title: `${siteConfig.appName} - ${siteConfig.appTagline}`,
+  description: siteConfig.appDescription,
 };
 
 export default function RootLayout({
