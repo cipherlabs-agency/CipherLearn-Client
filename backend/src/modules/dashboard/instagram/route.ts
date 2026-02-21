@@ -82,4 +82,16 @@ router.get(
     instagramController.getRuleLogs.bind(instagramController)
 );
 
+// ─── Analytics & Global Logs ──────────────────────────
+router.get(
+    "/analytics",
+    isAdminOrTeacher,
+    instagramController.getAnalytics.bind(instagramController)
+);
+router.get(
+    "/logs",
+    isAdminOrTeacher,
+    instagramController.getAllLogs.bind(instagramController)
+);
+
 export default router;

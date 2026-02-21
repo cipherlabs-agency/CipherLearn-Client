@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Image, Film, LayoutGrid, Heart, MessageCircle, ExternalLink } from "lucide-react"
+import { Image, Film, LayoutGrid, Heart, MessageCircle, RefreshCw } from "lucide-react"
 import { useGetInstagramMediaQuery } from "@/redux/api/instagramApi"
 import type { IgMedia } from "@/redux/api/instagramApi"
 
@@ -10,15 +10,15 @@ interface PostGridProps {
 }
 
 export function PostGrid({ onSelectPost }: PostGridProps) {
-    const { data, isLoading, isError } = useGetInstagramMediaQuery({})
+    const { data, isLoading, isError, refetch, isFetching } = useGetInstagramMediaQuery({})
 
     if (isLoading) {
         return (
-            <div className="grid grid-cols-3 gap-3 md:grid-cols-4">
-                {Array.from({ length: 12 }).map((_, i) => (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {Array.from({ length: 15 }).map((_, i) => (
                     <div
                         key={i}
-                        className="aspect-square animate-pulse rounded-xl bg-[var(--color-warm-100)]"
+                        className="aspect-square animate-pulse rounded-xl bg-muted/60"
                     />
                 ))}
             </div>
@@ -27,81 +27,88 @@ export function PostGrid({ onSelectPost }: PostGridProps) {
 
     if (isError || !data?.data?.length) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-                <LayoutGrid className="mb-3 h-12 w-12 text-[var(--color-warm-300)]" />
-                <h3 className="text-lg font-semibold text-[var(--color-warm-700)]">
+            <div className="card-vercel flex flex-col items-center justify-center py-20 text-center w-full">
+                <LayoutGrid className="mb-4 h-12 w-12 text-muted-foreground opacity-50" />
+                <h3 className="text-lg font-bold text-foreground tracking-tight">
                     No posts found
                 </h3>
-                <p className="mt-1 text-sm text-[var(--color-warm-400)]">
-                    Post some content on Instagram first, then come back to set up automations.
+                <p className="mt-2 text-sm text-muted-vercel max-w-sm">
+                    Post some content on Instagram first, then come back here to set up DM automations.
                 </p>
+                <div className="mt-6">
+                    <button onClick={refetch} className="flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+                        <RefreshCw className="h-4 w-4" /> Refresh Posts
+                    </button>
+                </div>
             </div>
         )
     }
 
     return (
-        <div>
-            <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-[var(--color-warm-900)]">
-                    Your Posts & Reels
-                </h2>
-                <p className="text-sm text-[var(--color-warm-400)]">
-                    Click any post to set up DM automation
-                </p>
+        <div className="relative">
+            <div className="absolute right-0 -top-12 z-10 w-auto">
+                <button 
+                    onClick={refetch} 
+                    disabled={isFetching}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                >
+                    <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? 'animate-spin' : ''}`} /> 
+                    {isFetching ? 'Refreshing...' : 'Refresh'}
+                </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                 {data.data.map((post, i) => (
                     <motion.div
                         key={post.id}
-                        initial={{ opacity: 0, scale: 0.9 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.03 }}
+                        transition={{ delay: i * 0.02, duration: 0.3 }}
                         onClick={() => onSelectPost(post)}
-                        className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-[var(--color-warm-200)] bg-[var(--color-warm-50)]"
+                        className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl bg-muted border border-border shadow-sm transition-all hover:shadow-md hover:ring-2 hover:ring-primary/50"
                     >
                         {/* Thumbnail */}
                         {(post.media_url || post.thumbnail_url) ? (
                             <img
                                 src={post.thumbnail_url || post.media_url}
-                                alt={post.caption?.slice(0, 50) || "Post"}
-                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                alt={post.caption?.slice(0, 50) || "Instagram post"}
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                             />
                         ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
-                                <Image className="h-10 w-10 text-purple-300" />
+                            <div className="flex h-full w-full items-center justify-center bg-primary/5">
+                                <Image className="h-8 w-8 text-primary/40" />
                             </div>
                         )}
 
                         {/* Media type badge */}
-                        <div className="absolute left-2 top-2">
+                        <div className="absolute left-2.5 top-2.5">
                             {post.media_type === "VIDEO" ? (
-                                <div className="rounded-md bg-black/60 px-1.5 py-0.5 text-white backdrop-blur-sm">
+                                <div className="rounded bg-black/70 px-1.5 py-1 text-white backdrop-blur-md shadow-sm">
                                     <Film className="h-3.5 w-3.5" />
                                 </div>
                             ) : post.media_type === "CAROUSEL_ALBUM" ? (
-                                <div className="rounded-md bg-black/60 px-1.5 py-0.5 text-white backdrop-blur-sm">
+                                <div className="rounded bg-black/70 px-1.5 py-1 text-white backdrop-blur-md shadow-sm">
                                     <LayoutGrid className="h-3.5 w-3.5" />
                                 </div>
                             ) : null}
                         </div>
 
-                        {/* Hover overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                            <div className="flex items-center gap-1 text-sm font-semibold text-white">
-                                <Heart className="h-4 w-4" />
-                                {post.like_count ?? 0}
+                        {/* Hover Overlay Stats */}
+                        <div className="absolute inset-0 flex items-center justify-center gap-5 bg-black/60 opacity-0 transition-opacity duration-200 group-hover:opacity-100 backdrop-blur-[2px]">
+                            <div className="flex flex-col items-center gap-1 text-white">
+                                <Heart className="h-6 w-6 fill-white" />
+                                <span className="text-sm font-bold">{post.like_count ?? 0}</span>
                             </div>
-                            <div className="flex items-center gap-1 text-sm font-semibold text-white">
-                                <MessageCircle className="h-4 w-4" />
-                                {post.comments_count ?? 0}
+                            <div className="flex flex-col items-center gap-1 text-white">
+                                <MessageCircle className="h-6 w-6 fill-white" />
+                                <span className="text-sm font-bold">{post.comments_count ?? 0}</span>
                             </div>
                         </div>
 
-                        {/* Caption strip */}
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2 pt-6">
-                            <p className="line-clamp-1 text-xs text-white/90">
-                                {post.caption?.slice(0, 60) || "No caption"}
+                        {/* Caption Strip */}
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 pointer-events-none">
+                            <p className="line-clamp-2 text-[11px] font-medium text-white/90 leading-tight">
+                                {post.caption || "No caption"}
                             </p>
                         </div>
                     </motion.div>

@@ -2,16 +2,21 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Instagram, ArrowLeft, Zap, TrendingUp, MessageCircle } from "lucide-react"
+import { Instagram, Zap, MessageCircle, BarChart3, Clock, CheckCircle2, ShieldCheck } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { ConnectInstagram } from "@/components/instagram/ConnectInstagram"
 import { PostGrid } from "@/components/instagram/PostGrid"
 import { AutomationPanel } from "@/components/instagram/AutomationPanel"
-import { useGetInstagramAccountQuery } from "@/redux/api/instagramApi"
+import { ActivityLog } from "@/components/instagram/ActivityLog"
+import { useGetInstagramAccountQuery, useGetAnalyticsQuery, useDisconnectInstagramMutation } from "@/redux/api/instagramApi"
 import type { IgMedia } from "@/redux/api/instagramApi"
 
 export default function InstagramPage() {
-    const { data: account, isLoading } = useGetInstagramAccountQuery()
+    const { data: account, isLoading: isAccountLoading } = useGetInstagramAccountQuery()
+    const { data: analytics } = useGetAnalyticsQuery(undefined, { skip: !account })
+    const [disconnectInstagram] = useDisconnectInstagramMutation()
+    
     const [selectedPost, setSelectedPost] = useState<IgMedia | null>(null)
     const [connected, setConnected] = useState(false)
 
@@ -20,136 +25,135 @@ export default function InstagramPage() {
         const params = new URLSearchParams(window.location.search)
         if (params.get("connected") === "true") {
             setConnected(true)
-            // Clean the URL
             window.history.replaceState({}, "", "/instagram")
         }
     }, [])
 
     const isConnected = !!account || connected
 
-    if (isLoading) {
+    if (isAccountLoading) {
         return (
-            <div className="flex h-[80vh] items-center justify-center">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                >
-                    <Instagram className="h-8 w-8 text-[var(--color-warm-600)]" />
+            <div className="flex h-[70vh] items-center justify-center">
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+                    <Instagram className="h-8 w-8 text-muted-vercel" />
                 </motion.div>
             </div>
         )
     }
 
+    if (!isConnected) {
+        return <ConnectInstagram />
+    }
+
     return (
-        <div className="space-y-6 p-1">
+        <div className="space-y-8 animate-fade-in p-1">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    {selectedPost && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedPost(null)}
-                            className="gap-1"
-                        >
-                            <ArrowLeft className="h-4 w-4" /> Back
-                        </Button>
-                    )}
-                    <div>
-                        <h1 className="flex items-center gap-2 text-2xl font-bold text-[var(--color-warm-900)]">
-                            <Instagram className="h-7 w-7" />
-                            Instagram Automation
-                            <span className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-0.5 text-xs font-semibold text-white">
-                                BETA
-                            </span>
-                        </h1>
-                        <p className="text-sm text-[var(--color-warm-500)]">
-                            {selectedPost
-                                ? "Set up keyword triggers to auto-DM followers"
-                                : "Turn Instagram comments into leads — automatically"
-                            }
-                        </p>
-                    </div>
-                </div>
+            <div>
+                <h1 className="text-3xl font-black tracking-tighter text-foreground flex items-center gap-3">
+                    <Instagram className="h-8 w-8 text-primary" />
+                    Instagram Automations
+                    <span className="badge-info text-[10px] ml-1">BETA</span>
+                </h1>
+                <p className="mt-2 text-[15px] text-muted-vercel">
+                    Turn Instagram comments into qualified leads automatically.
+                </p>
             </div>
 
-            {/* Stats bar for connected accounts */}
-            {isConnected && account && !selectedPost && (
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="grid grid-cols-3 gap-4"
-                >
-                    {[
-                        {
-                            label: "Active Rules",
-                            value: account.automationRules?.filter(r => r.status === "ACTIVE").length ?? 0,
-                            icon: Zap,
-                            color: "text-emerald-600 bg-emerald-50",
-                        },
-                        {
-                            label: "Posts Monitored",
-                            value: new Set(account.automationRules?.map(r => r.mediaId)).size,
-                            icon: TrendingUp,
-                            color: "text-blue-600 bg-blue-50",
-                        },
-                        {
-                            label: "Total Rules",
-                            value: account.automationRules?.length ?? 0,
-                            icon: MessageCircle,
-                            color: "text-purple-600 bg-purple-50",
-                        },
-                    ].map((stat) => (
-                        <div
-                            key={stat.label}
-                            className="flex items-center gap-3 rounded-xl border border-[var(--color-warm-200)] bg-white p-4"
-                        >
-                            <div className={`rounded-lg p-2 ${stat.color}`}>
-                                <stat.icon className="h-5 w-5" />
-                            </div>
+            {/* KPI Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                    { label: "Total DMs Sent", value: analytics?.totalDmsSent ?? 0, icon: MessageCircle },
+                    { label: "Active Rules", value: analytics?.activeRules ?? 0, icon: Zap },
+                    { label: "Success Rate", value: `${analytics?.successRate ?? 100}%`, icon: CheckCircle2 },
+                    { label: "Posts Monitored", value: analytics?.postsMonitored ?? 0, icon: BarChart3 },
+                ].map((stat, i) => (
+                    <motion.div
+                        key={stat.label}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="stat-card flex flex-col gap-3"
+                    >
+                        <div className="flex items-center justify-between">
+                            <span className="text-[12px] font-bold uppercase tracking-widest text-muted-foreground opacity-80">{stat.label}</span>
+                            <stat.icon className="h-4 w-4 text-muted-vercel" />
+                        </div>
+                        <span className="text-3xl font-black tracking-tighter text-foreground">{stat.value}</span>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* Main Tabs */}
+            <Tabs defaultValue="automations" className="space-y-6">
+                <TabsList className="bg-transparent border-b border-border w-full justify-start h-12 rounded-none p-0">
+                    <TabsTrigger value="automations" className="data-[state=active]:bg-transparent relative h-12 rounded-none px-6 font-semibold">
+                        Automations
+                    </TabsTrigger>
+                    <TabsTrigger value="activity" className="data-[state=active]:bg-transparent relative h-12 rounded-none px-6 font-semibold">
+                        Activity Log
+                    </TabsTrigger>
+                    <TabsTrigger value="settings" className="data-[state=active]:bg-transparent relative h-12 rounded-none px-6 font-semibold">
+                        Settings
+                    </TabsTrigger>
+                </TabsList>
+
+                {/* Automations Tab */}
+                <TabsContent value="automations" className="animate-fade-in outline-none">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-lg font-bold tracking-tight">Select a Post</h2>
+                        <p className="text-sm text-muted-vercel">Choose a post to add trigger rules</p>
+                    </div>
+                    <PostGrid onSelectPost={setSelectedPost} />
+                </TabsContent>
+
+                {/* Activity Log Tab */}
+                <TabsContent value="activity" className="animate-fade-in outline-none">
+                    <ActivityLog />
+                </TabsContent>
+
+                {/* Settings Tab */}
+                <TabsContent value="settings" className="animate-fade-in outline-none">
+                    <div className="card-vercel p-6 max-w-2xl">
+                        <div className="flex items-center gap-4 mb-8 pb-8 border-b border-border/50">
+                            {account?.profilePictureUrl ? (
+                                <img src={account.profilePictureUrl} alt="Profile" className="w-16 h-16 rounded-full border border-border" />
+                            ) : (
+                                <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center border border-border">
+                                    <Instagram className="h-6 w-6 text-muted-foreground" />
+                                </div>
+                            )}
                             <div>
-                                <p className="text-2xl font-bold text-[var(--color-warm-900)]">{stat.value}</p>
-                                <p className="text-xs text-[var(--color-warm-500)]">{stat.label}</p>
+                                <h3 className="text-lg font-bold tracking-tight">@{account?.username}</h3>
+                                <p className="text-sm text-muted-vercel flex items-center gap-1.5 mt-1">
+                                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                                    Connected securely
+                                </p>
                             </div>
                         </div>
-                    ))}
-                </motion.div>
-            )}
 
-            {/* Main content */}
-            <AnimatePresence mode="wait">
-                {!isConnected ? (
-                    <motion.div
-                        key="connect"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                    >
-                        <ConnectInstagram />
-                    </motion.div>
-                ) : selectedPost ? (
-                    <motion.div
-                        key="automation"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                    >
-                        <AutomationPanel
-                            post={selectedPost}
-                            onBack={() => setSelectedPost(null)}
-                        />
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        key="grid"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                    >
-                        <PostGrid onSelectPost={setSelectedPost} />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        <div className="space-y-4">
+                            <h4 className="text-sm font-bold tracking-tight text-destructive">Danger Zone</h4>
+                            <div className="flex items-center justify-between p-4 rounded-lg border border-destructive/20 bg-destructive/5">
+                                <div>
+                                    <p className="font-semibold text-sm">Disconnect Account</p>
+                                    <p className="text-xs text-muted-foreground mt-1">This will pause all active automations</p>
+                                </div>
+                                <Button variant="destructive" size="sm" onClick={() => disconnectInstagram()}>
+                                    Disconnect
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </TabsContent>
+            </Tabs>
+
+            {/* Automation Panel Side Sheet */}
+            {selectedPost && (
+                <AutomationPanel
+                    post={selectedPost}
+                    onClose={() => setSelectedPost(null)}
+                />
+            )}
         </div>
     )
 }

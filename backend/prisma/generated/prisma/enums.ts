@@ -151,3 +151,11 @@ export const DmStatus = {
 } as const
 
 export type DmStatus = (typeof DmStatus)[keyof typeof DmStatus]
+
+
+export const DmType = {
+  TEXT: 'TEXT',
+  TEMPLATE: 'TEMPLATE'
+} as const
+
+export type DmType = (typeof DmType)[keyof typeof DmType]

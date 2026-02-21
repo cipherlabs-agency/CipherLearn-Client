@@ -2545,6 +2545,8 @@ export const AutomationRuleScalarFieldEnum = {
   mediaType: 'mediaType',
   triggerKeyword: 'triggerKeyword',
   dmMessage: 'dmMessage',
+  dmType: 'dmType',
+  dmButtons: 'dmButtons',
   status: 'status',
   dmsSentCount: 'dmsSentCount',
   lastTriggeredAt: 'lastTriggeredAt',
@@ -2879,6 +2881,20 @@ export type EnumScoreStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
  * Reference to a field of type 'ScoreStatus[]'
  */
 export type ListEnumScoreStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScoreStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DmType'
+ */
+export type EnumDmTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DmType'>
+    
+
+
+/**
+ * Reference to a field of type 'DmType[]'
+ */
+export type ListEnumDmTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DmType[]'>
     
 
 

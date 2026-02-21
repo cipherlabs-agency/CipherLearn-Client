@@ -51,6 +51,8 @@ export interface AutomationRule {
     mediaType: string | null
     triggerKeyword: string
     dmMessage: string
+    dmType: 'TEXT' | 'TEMPLATE'
+    dmButtons: Array<{ title: string; url: string }> | null
     status: 'ACTIVE' | 'PAUSED'
     dmsSentCount: number
     lastTriggeredAt: string | null
@@ -68,6 +70,21 @@ export interface AutomationLog {
     dmStatus: 'SENT' | 'FAILED' | 'RATE_LIMITED'
     errorMessage: string | null
     createdAt: string
+    rule?: {
+        triggerKeyword: string
+        mediaId: string
+        mediaUrl: string | null
+    }
+}
+
+export interface AnalyticsData {
+    totalDmsSent: number
+    activeRules: number
+    totalRules: number
+    postsMonitored: number
+    successRate: number
+    dmsByStatus: Record<string, number>
+    recentActivity: AutomationLog[]
 }
 
 // ─── API Endpoints ────────────────────────────
@@ -125,6 +142,8 @@ export const instagramApi = api.injectEndpoints({
                 mediaType?: string
                 triggerKeyword: string
                 dmMessage: string
+                dmType?: 'TEXT' | 'TEMPLATE'
+                dmButtons?: Array<{ title: string; url: string }>
             }
         >({
             query: (body) => ({
@@ -141,6 +160,8 @@ export const instagramApi = api.injectEndpoints({
                 id: number
                 triggerKeyword?: string
                 dmMessage?: string
+                dmType?: 'TEXT' | 'TEMPLATE'
+                dmButtons?: Array<{ title: string; url: string }>
                 status?: 'ACTIVE' | 'PAUSED'
             }
         >({
@@ -178,6 +199,32 @@ export const instagramApi = api.injectEndpoints({
                 pagination: res.pagination ?? { page: 1, total: 0, totalPages: 0 },
             }),
         }),
+
+        // Analytics & Global Logs
+        getAnalytics: builder.query<AnalyticsData, void>({
+            query: () => '/dashboard/instagram/analytics',
+            transformResponse: (res: ApiResponse<AnalyticsData>) => res.data!,
+            providesTags: ['Instagram'],
+        }),
+
+        getAllLogs: builder.query<
+            { logs: AutomationLog[]; pagination: { page: number; total: number; totalPages: number } },
+            { page?: number; limit?: number; status?: string }
+        >({
+            query: ({ page = 1, limit = 30, status }) => ({
+                url: '/dashboard/instagram/logs',
+                params: { page, limit, ...(status ? { status } : {}) },
+            }),
+            transformResponse: (
+                res: ApiResponse<AutomationLog[]> & {
+                    pagination?: { page: number; total: number; totalPages: number }
+                }
+            ) => ({
+                logs: res.data ?? [],
+                pagination: res.pagination ?? { page: 1, total: 0, totalPages: 0 },
+            }),
+            providesTags: ['Instagram'],
+        }),
     }),
 })
 
@@ -191,4 +238,6 @@ export const {
     useUpdateAutomationRuleMutation,
     useDeleteAutomationRuleMutation,
     useGetRuleLogsQuery,
+    useGetAnalyticsQuery,
+    useGetAllLogsQuery,
 } = instagramApi

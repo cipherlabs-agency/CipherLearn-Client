@@ -622,6 +622,8 @@ model AutomationRule {
   mediaType          String?              // IMAGE, VIDEO, CAROUSEL_ALBUM
   triggerKeyword     String               // e.g. "LINK", "INFO", "PRICE"
   dmMessage          String               // The DM text to send
+  dmType             DmType               @default(TEXT) // TEXT or TEMPLATE
+  dmButtons          Json?                // For TEMPLATE type: [{ title, url }]
   status             AutomationRuleStatus @default(ACTIVE)
   dmsSentCount       Int                  @default(0)
   lastTriggeredAt    DateTime?
@@ -664,4 +666,9 @@ enum DmStatus {
   SENT
   FAILED
   RATE_LIMITED
+}
+
+enum DmType {
+  TEXT
+  TEMPLATE
 }

@@ -143,16 +143,20 @@ export async function refreshLongLivedToken(currentToken: string): Promise<{
 export async function fetchIgProfile(accessToken: string) {
     const res = await axios.get(`${META_GRAPH_BASE}/me`, {
         params: {
-            fields: "id,username,profile_picture_url,followers_count,media_count",
+            fields: "id,user_id,username,profile_picture_url,followers_count,media_count",
             access_token: accessToken,
         },
     });
-    return res.data as {
-        id: string;
-        username: string;
-        profile_picture_url?: string;
-        followers_count?: number;
-        media_count?: number;
+    const data = res.data;
+
+    // Webhooks send the "canonical" IG User ID which is `user_id` in v22+.
+    // `id` is now an app-scoped ID. We must use `user_id` to match webhooks.
+    return {
+        id: data.user_id || data.id,
+        username: data.username,
+        profile_picture_url: data.profile_picture_url,
+        followers_count: data.followers_count,
+        media_count: data.media_count,
     };
 }
 
@@ -233,3 +237,91 @@ export async function sendPrivateReply(
         throw new Error(errorMsg);
     }
 }
+
+/**
+ * Send a DM with a Generic Template (text + link buttons).
+ *
+ * Instagram supports up to 3 buttons per generic template element.
+ * Each button can be a URL button that opens an in-app browser.
+ *
+ * POST /{ig-user-id}/messages
+ */
+export async function sendGenericTemplate(
+    igUserId: string,
+    recipientId: string, // Changed from commentId to recipientId
+    title: string,
+    buttons: Array<{ title: string; url: string }>,
+    accessToken: string
+): Promise<{ recipientId: string; messageId: string }> {
+    try {
+        const res = await axios.post(
+            `${META_GRAPH_BASE}/${igUserId}/messages`,
+            {
+                recipient: { id: recipientId }, // Changed from comment_id
+                message: {
+                    attachment: {
+                        type: "template",
+                        payload: {
+                            template_type: "generic",
+                            elements: [
+                                {
+                                    title,
+                                    buttons: buttons.slice(0, 3).map((b) => ({
+                                        type: "web_url",
+                                        url: b.url,
+                                        title: b.title,
+                                    })),
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+            {
+                params: { access_token: accessToken },
+                headers: { "Content-Type": "application/json" },
+            }
+        );
+        return {
+            recipientId: res.data.recipient_id,
+            messageId: res.data.message_id,
+        };
+    } catch (err: any) {
+        const errorMsg =
+            err.response?.data?.error?.message || err.message || "Unknown error";
+        logger.error(`Instagram template DM send failed: ${errorMsg}`);
+        throw new Error(errorMsg);
+    }
+}
+
+/**
+ * Unified DM sender — dispatches to text or template based on rule config.
+ * 
+ * Note: Instagram Graph API silently drops `template` attachments when sending
+ * a Private Reply via `comment_id`. Thus, for Rich Templates, we MUST:
+ * 1. Send a standard text Private Reply via `comment_id`.
+ * 2. Immediately send the actual Template with buttons to the user's ID.
+ */
+export async function sendDm(
+    igUserId: string,
+    commentId: string,
+    commenterId: string,
+    dmMessage: string,
+    dmType: "TEXT" | "TEMPLATE",
+    dmButtons: Array<{ title: string; url: string }> | null,
+    accessToken: string
+): Promise<{ recipientId: string; messageId: string }> {
+    if (dmType === "TEMPLATE" && dmButtons && dmButtons.length > 0) {
+        // Step 1: Send the required Private Reply (Text Only)
+        // We use a small receipt/intro text because we have to send *something* via comment_id 
+        // to open the standard 24h messaging window if it isn't already open.
+        await sendPrivateReply(igUserId, commentId, "Here is what you requested 👇", accessToken);
+
+        // Step 2: Send the actual rich template with buttons to their standard ID
+        return sendGenericTemplate(igUserId, commenterId, dmMessage, dmButtons, accessToken);
+    }
+
+    // Standard Text DM
+    return sendPrivateReply(igUserId, commentId, dmMessage, accessToken);
+}
+

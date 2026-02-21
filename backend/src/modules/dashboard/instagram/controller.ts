@@ -156,7 +156,7 @@ export class InstagramController {
                 res.status(401).json({ success: false, message: "Unauthorized" });
                 return;
             }
-            const { mediaId, mediaUrl, mediaCaption, mediaType, triggerKeyword, dmMessage } =
+            const { mediaId, mediaUrl, mediaCaption, mediaType, triggerKeyword, dmMessage, dmType, dmButtons } =
                 req.body;
 
             if (!mediaId || !triggerKeyword || !dmMessage) {
@@ -174,6 +174,8 @@ export class InstagramController {
                 mediaType,
                 triggerKeyword,
                 dmMessage,
+                dmType,
+                dmButtons,
             });
 
             res.status(201).json({
@@ -199,12 +201,14 @@ export class InstagramController {
                 return;
             }
             const ruleId = parseInt(req.params.id, 10);
-            const { triggerKeyword, dmMessage, status } = req.body;
+            const { triggerKeyword, dmMessage, status, dmType, dmButtons } = req.body;
 
             const rule = await instagramService.updateRule(userId, ruleId, {
                 triggerKeyword,
                 dmMessage,
                 status,
+                dmType,
+                dmButtons,
             });
 
             res.json({
@@ -259,6 +263,52 @@ export class InstagramController {
                 page,
                 limit
             );
+            res.json({
+                success: true,
+                data: result.logs,
+                pagination: result.pagination,
+            });
+        } catch (error) {
+            const message =
+                error instanceof Error ? error.message : "Failed to fetch logs";
+            res.status(500).json({ success: false, message });
+        }
+    }
+
+    /**
+     * GET /analytics — dashboard stats
+     */
+    async getAnalytics(req: Request, res: Response): Promise<void> {
+        try {
+            const userId = req.user?.id;
+            if (!userId) {
+                res.status(401).json({ success: false, message: "Unauthorized" });
+                return;
+            }
+            const analytics = await instagramService.getAnalytics(userId);
+            res.json({ success: true, data: analytics });
+        } catch (error) {
+            const message =
+                error instanceof Error ? error.message : "Failed to fetch analytics";
+            res.status(500).json({ success: false, message });
+        }
+    }
+
+    /**
+     * GET /logs — global activity log across all rules
+     */
+    async getAllLogs(req: Request, res: Response): Promise<void> {
+        try {
+            const userId = req.user?.id;
+            if (!userId) {
+                res.status(401).json({ success: false, message: "Unauthorized" });
+                return;
+            }
+            const page = parseInt(req.query.page as string, 10) || 1;
+            const limit = parseInt(req.query.limit as string, 10) || 30;
+            const status = req.query.status as string | undefined;
+
+            const result = await instagramService.getAllLogs(userId, page, limit, status);
             res.json({
                 success: true,
                 data: result.logs,

@@ -470,6 +470,8 @@ export const AutomationRuleScalarFieldEnum = {
   mediaType: 'mediaType',
   triggerKeyword: 'triggerKeyword',
   dmMessage: 'dmMessage',
+  dmType: 'dmType',
+  dmButtons: 'dmButtons',
   status: 'status',
   dmsSentCount: 'dmsSentCount',
   lastTriggeredAt: 'lastTriggeredAt',

@@ -5,7 +5,7 @@ import {
     exchangeCodeForToken,
     fetchIgProfile,
     fetchIgMedia,
-    sendPrivateReply,
+    sendDm,
     refreshLongLivedToken,
 } from "./instagram.utils";
 
@@ -18,11 +18,15 @@ export interface CreateRuleInput {
     mediaType?: string;
     triggerKeyword: string;
     dmMessage: string;
+    dmType?: "TEXT" | "TEMPLATE";
+    dmButtons?: Array<{ title: string; url: string }>;
 }
 
 export interface UpdateRuleInput {
     triggerKeyword?: string;
     dmMessage?: string;
+    dmType?: "TEXT" | "TEMPLATE";
+    dmButtons?: Array<{ title: string; url: string }>;
     status?: "ACTIVE" | "PAUSED";
 }
 
@@ -207,6 +211,8 @@ export class InstagramService {
                 mediaType: input.mediaType || null,
                 triggerKeyword: keyword,
                 dmMessage: input.dmMessage,
+                dmType: input.dmType || "TEXT",
+                dmButtons: input.dmButtons || undefined,
             },
         });
     }
@@ -230,6 +236,8 @@ export class InstagramService {
                     ? input.triggerKeyword.trim().toUpperCase()
                     : undefined,
                 dmMessage: input.dmMessage,
+                dmType: input.dmType,
+                dmButtons: input.dmButtons !== undefined ? input.dmButtons : undefined,
                 status: input.status,
             },
         });
@@ -325,11 +333,15 @@ export class InstagramService {
         for (const rule of rules) {
             if (upperComment.includes(rule.triggerKeyword)) {
                 try {
-                    // Send the DM
-                    await sendPrivateReply(
+                    // Send the DM (text or template)
+                    const buttons = rule.dmButtons as Array<{ title: string; url: string }> | null;
+                    await sendDm(
                         igUserId,
                         commentId,
+                        commenterId,
                         rule.dmMessage,
+                        rule.dmType as "TEXT" | "TEMPLATE",
+                        buttons,
                         account.accessToken
                     );
 
@@ -377,6 +389,86 @@ export class InstagramService {
                 }
             }
         }
+    }
+
+    // ─── Analytics ───────────────────────────────
+
+    async getAnalytics(userId: number) {
+        const account = await prisma.instagramAccount.findUnique({
+            where: { userId },
+        });
+        if (!account) throw new Error("Instagram account not connected");
+
+        const [totalRules, activeRules, totalDmsSent, recentLogs, dmsByStatus] = await Promise.all([
+            prisma.automationRule.count({ where: { instagramAccountId: account.id } }),
+            prisma.automationRule.count({ where: { instagramAccountId: account.id, status: "ACTIVE" } }),
+            prisma.automationRule.aggregate({
+                where: { instagramAccountId: account.id },
+                _sum: { dmsSentCount: true },
+            }),
+            prisma.automationLog.findMany({
+                where: { rule: { instagramAccountId: account.id } },
+                orderBy: { createdAt: "desc" },
+                take: 50,
+                include: { rule: { select: { triggerKeyword: true, mediaId: true } } },
+            }),
+            prisma.automationLog.groupBy({
+                by: ["dmStatus"],
+                where: { rule: { instagramAccountId: account.id } },
+                _count: { id: true },
+            }),
+        ]);
+
+        const postsMonitored = await prisma.automationRule.findMany({
+            where: { instagramAccountId: account.id },
+            select: { mediaId: true },
+            distinct: ["mediaId"],
+        });
+
+        const statusMap: Record<string, number> = {};
+        dmsByStatus.forEach((s) => {
+            statusMap[s.dmStatus] = s._count.id;
+        });
+
+        const totalLogs = (statusMap.SENT || 0) + (statusMap.FAILED || 0) + (statusMap.RATE_LIMITED || 0);
+        const successRate = totalLogs > 0 ? Math.round(((statusMap.SENT || 0) / totalLogs) * 100) : 100;
+
+        return {
+            totalDmsSent: totalDmsSent._sum.dmsSentCount || 0,
+            activeRules,
+            totalRules,
+            postsMonitored: postsMonitored.length,
+            successRate,
+            dmsByStatus: statusMap,
+            recentActivity: recentLogs,
+        };
+    }
+
+    async getAllLogs(userId: number, page = 1, limit = 30, status?: string) {
+        const account = await prisma.instagramAccount.findUnique({
+            where: { userId },
+        });
+        if (!account) throw new Error("Instagram account not connected");
+
+        const where: any = { rule: { instagramAccountId: account.id } };
+        if (status) where.dmStatus = status;
+
+        const skip = (page - 1) * limit;
+        const [logs, total] = await Promise.all([
+            prisma.automationLog.findMany({
+                where,
+                orderBy: { createdAt: "desc" },
+                skip,
+                take: limit,
+                include: { rule: { select: { triggerKeyword: true, mediaId: true, mediaUrl: true } } },
+            }),
+            prisma.automationLog.count({ where }),
+        ]);
+
+        return {
+            logs,
+            pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+        };
     }
 }
 
