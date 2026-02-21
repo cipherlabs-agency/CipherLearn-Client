@@ -22,6 +22,8 @@ This document defines how CipherLearn transforms from a single-class deployment 
 12. [Migration Strategy for Existing Data](#12-migration-strategy-for-existing-data)
 13. [Security Considerations](#13-security-considerations)
 14. [Implementation Phases](#14-implementation-phases)
+15. [Permissions & Plan Management](#15-permissions--plan-management)
+16. [Environment Configuration from Admin Portal](#16-environment-configuration-from-admin-portal)
 
 ---
 
@@ -300,6 +302,80 @@ This is everything an admin configures when creating or editing a tenant through
 | SUSPENDED | Read-only banner | Blocked with message | Retained | Resume/Delete |
 | EXPIRED | Blocked with renewal page | Blocked with message | Retained 30 days | Renew/Delete |
 | CANCELLED | Blocked | Blocked | Retained 30 days then purged | Reactivate |
+
+### 3.5 Granular Permissions Matrix
+
+Beyond simple on/off feature flags, each tenant has a **role × feature** permission matrix. There are three roles within any tenant:
+
+| Role | Who | Capabilities |
+|------|-----|-------------|
+| `ADMIN` | Institute owner / principal | Full CRUD on all features for their tenant |
+| `TEACHER` | Teaching staff | View + limited create (lectures, notes, attendance) — configurable per tenant |
+| `STUDENT` | Enrolled students | App-only (mobile API) — submit assignments, view notes/videos, mark QR attendance |
+
+**Configurable teacher permissions (stored in `TenantConfig.teacherPermissions`):**
+
+| Permission Key | Default | What it controls |
+|---------------|---------|-----------------|
+| `canManageLectures` | `true` | Create / edit / delete own lectures |
+| `canUploadNotes` | `true` | Upload notes to their batch |
+| `canUploadVideos` | `false` | Link YouTube videos (admin-only by default) |
+| `canManageAssignments` | `true` | Create assignment slots, review submissions |
+| `canViewFees` | `false` | See fee data (sensitive — off by default) |
+| `canManageStudyMaterials` | `false` | Upload study materials |
+| `canSendAnnouncements` | `true` | Publish announcements to their batch |
+| `canViewAnalytics` | `false` | View dashboard analytics |
+| `canExportData` | `false` | Export student lists, attendance, etc. |
+
+These are stored as a JSON object in `tenants.teacherPermissions` and enforced by both:
+1. **Backend**: `isAdminOrTeacher` middleware reads the tenant's `teacherPermissions` before allowing an action
+2. **Frontend**: Sidebar items and action buttons conditionally rendered based on the user's resolved permissions
+
+**Permission resolution on the frontend:**
+
+```typescript
+// Resolved at login time, stored in Redux auth slice
+interface UserPermissions {
+  canManageLectures: boolean
+  canUploadNotes: boolean
+  canUploadVideos: boolean
+  canManageAssignments: boolean
+  canViewFees: boolean
+  canManageStudyMaterials: boolean
+  canSendAnnouncements: boolean
+  canViewAnalytics: boolean
+  canExportData: boolean
+}
+// For ADMIN role: all permissions = true (regardless of teacherPermissions config)
+// For TEACHER role: permissions = tenant.teacherPermissions
+// For STUDENT role: permissions = all false (app-only)
+```
+
+### 3.6 Plan Enforcement Rules
+
+Quota enforcement happens at the **service layer** before any write operation:
+
+| Quota | Checked Before | Hard Limit Behavior |
+|-------|---------------|---------------------|
+| `maxStudents` | Creating a student | 403: "Student limit reached. Upgrade your plan." |
+| `maxBatches` | Creating a batch | 403: "Batch limit reached. Upgrade your plan." |
+| `maxTeachers` | Creating a teacher/user | 403: "Teacher limit reached. Upgrade your plan." |
+| `maxStorageMB` | Any file upload | 403: "Storage limit reached. Upgrade your plan." |
+| Feature flag | Any feature-gated action | 403: "This feature is not available on your plan." |
+
+**Plan upgrade path logic:**
+
+```
+FREE → STARTER → PRO → ENTERPRISE
+  ↓        ↓       ↓        ↓
+Upgrade anytime. Downgrade requires quota cleanup first.
+If current usage > new plan limits → block downgrade with clear message.
+```
+
+**Usage warning thresholds** (shown in dashboard + email alerts):
+- 80% of any quota → yellow warning banner
+- 95% of any quota → red warning banner + email to admin
+- 100% → block operation + "Upgrade" CTA
 
 ---
 
@@ -580,6 +656,55 @@ portal.cipherlearn.com/
 | Auth | Separate SuperAdmin JWT (different secret) | Isolated from tenant auth |
 | API | Same Express backend, `/api/portal/*` routes | No separate backend needed |
 | Hosting | Vercel (free for internal tool) | Low traffic |
+
+### 6.5 Environment Management UI (in Admin Portal)
+
+The Admin Portal provides a **Config Editor** UI for managing all runtime configuration that would otherwise require env file changes and redeployments. Two levels:
+
+**Global Settings** (`/settings/environment`):
+- Default SMTP server (host, port, user, password, from-name)
+- Cloudinary credentials (shared across all tenants)
+- Default storage quotas per plan tier
+- System-wide maintenance mode toggle
+- Rate limit defaults per plan
+- JWT expiry settings
+- Support contact email / Slack webhook
+
+**Per-Tenant Config** (`/tenants/[id]/environment`):
+- Custom SMTP override (if tenant wants their own email domain)
+- Custom Cloudinary folder prefix override
+- Webhook URL (for external integrations — e.g., payment gateways)
+- Timezone override (for attendance / scheduling date logic)
+- Locale override (date formats, currency symbol)
+- Custom CSS variables override (beyond primaryColor/accentColor — e.g., border-radius, font)
+- API rate limit overrides (e.g., for Enterprise tenants)
+
+All config values are stored in `tenant_config` table (key-value store with encryption for secrets) and served via `GET /api/portal/tenants/:id/config` (authenticated). Secrets (SMTP passwords, API keys) are AES-encrypted at rest and never returned in plaintext after saving — replaced with `••••••••` placeholder.
+
+### 6.6 Plan & Permissions Management UI (in Admin Portal)
+
+The Admin Portal's **Permissions tab** on each tenant allows:
+
+**Plan Management:**
+- Change plan tier (FREE / STARTER / PRO / ENTERPRISE) with immediate effect
+- Override individual quotas beyond plan defaults (e.g., give a STARTER tenant 500 students instead of 200)
+- Set subscription start/end dates manually
+- Apply discount codes or manual billing notes
+
+**Feature Flag Overrides:**
+- Toggle any feature on/off independently of the plan tier
+- Example: Give a FREE tenant access to Assignments as a trial
+- All overrides logged to `AdminAuditLog`
+
+**Teacher Permissions Editor:**
+- Visual matrix (permission × role) for configuring what teachers can do within that tenant
+- Toggle switches for each `teacherPermissions` key
+- "Reset to plan defaults" button
+
+**Quota Dashboard:**
+- Live read-out of tenant's current usage vs. limits
+- `students: 47 / 50`, `storage: 380MB / 500MB`
+- Visual progress bars with color coding (green → yellow → red)
 
 ---
 
@@ -949,6 +1074,357 @@ Delete request → Soft delete (set deletedAt) → 30-day grace period
 - [ ] Plan upgrade/downgrade flow
 - [ ] End-to-end testing with 3+ test tenants
 - [ ] Security audit (cross-tenant access testing)
+
+---
+
+## 15. Permissions & Plan Management
+
+### 15.1 Database Schema for Permissions
+
+```prisma
+// Per-tenant teacher permission config stored as JSON
+// Field added to Tenant model:
+//   teacherPermissions Json @default("{...}")
+
+// Default teacherPermissions JSON:
+{
+  "canManageLectures": true,
+  "canUploadNotes": true,
+  "canUploadVideos": false,
+  "canManageAssignments": true,
+  "canViewFees": false,
+  "canManageStudyMaterials": false,
+  "canSendAnnouncements": true,
+  "canViewAnalytics": false,
+  "canExportData": false
+}
+
+// Quota override table — allows per-tenant limits beyond plan defaults
+model TenantQuotaOverride {
+  id          Int       @id @default(autoincrement())
+  tenantId    Int       @unique
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+
+  maxStudents         Int?   // null = use plan default
+  maxBatches          Int?
+  maxTeachers         Int?
+  maxStorageMB        Int?
+
+  // Individual feature overrides (null = use plan default)
+  featureAssignments      Boolean?
+  featureFees             Boolean?
+  featureStudyMaterials   Boolean?
+  featureAnnouncements    Boolean?
+  featureVideos           Boolean?
+  featureQRAttendance     Boolean?
+
+  overrideReason  String?   // Audit note — why the override was granted
+  overriddenBy    Int       // SuperAdmin ID
+  overriddenAt    DateTime  @default(now())
+  expiresAt       DateTime? // Optional expiry for trial overrides
+
+  @@map("tenant_quota_overrides")
+}
+```
+
+### 15.2 Permission Resolution Order
+
+When checking if a user can perform an action, the backend resolves in this order:
+
+```
+1. Is the tenant ACTIVE / TRIAL?          → if not: 403 Subscription error
+2. Is the feature enabled for this tenant? → Check TenantQuotaOverride first,
+                                             then fall back to plan defaults
+3. Is the user's role allowed?            → ADMIN: always yes
+                                             TEACHER: check teacherPermissions JSON
+                                             STUDENT: always no for dashboard APIs
+4. Is the quota limit reached?            → Check current count vs. override or plan limit
+```
+
+### 15.3 Plan Change Rules
+
+```typescript
+// backend/src/modules/portal/tenant/service.ts
+
+async changePlan(tenantId: number, newPlan: TenantPlan, superAdminId: number) {
+  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId } })
+  const newLimits = PLAN_DEFAULTS[newPlan]
+
+  // Check downgrade safety
+  if (newPlan is lower than current plan) {
+    const currentUsage = await getUsageCounts(tenantId)
+    if (currentUsage.students > newLimits.maxStudents)  → throw PlanDowngradeError
+    if (currentUsage.batches  > newLimits.maxBatches)   → throw PlanDowngradeError
+    if (currentUsage.teachers > newLimits.maxTeachers)  → throw PlanDowngradeError
+    if (currentUsage.storageMB > newLimits.maxStorageMB) → throw PlanDowngradeError
+  }
+
+  // Apply change
+  await prisma.tenant.update({ where: { id: tenantId }, data: {
+    plan: newPlan,
+    maxStudents: newLimits.maxStudents,
+    maxBatches: newLimits.maxBatches,
+    maxTeachers: newLimits.maxTeachers,
+    maxStorageMB: newLimits.maxStorageMB,
+    featureAssignments: newLimits.featureAssignments,
+    // ... etc
+  }})
+
+  // Log to audit
+  await logAudit(superAdminId, 'tenant.changePlan', tenantId, {
+    from: tenant.plan, to: newPlan
+  })
+}
+```
+
+### 15.4 Plan Defaults Constants
+
+```typescript
+// backend/src/constants/plans.ts
+export const PLAN_DEFAULTS = {
+  FREE: {
+    maxStudents: 50, maxBatches: 3, maxTeachers: 2, maxStorageMB: 500,
+    featureQRAttendance: true,  featureAssignments: false,
+    featureFees: false,         featureStudyMaterials: false,
+    featureAnnouncements: true, featureVideos: false,
+  },
+  STARTER: {
+    maxStudents: 200, maxBatches: 10, maxTeachers: 5, maxStorageMB: 2048,
+    featureQRAttendance: true,  featureAssignments: true,
+    featureFees: true,          featureStudyMaterials: true,
+    featureAnnouncements: true, featureVideos: true,
+  },
+  PRO: {
+    maxStudents: 1000, maxBatches: 50, maxTeachers: 20, maxStorageMB: 10240,
+    // all features: true
+  },
+  ENTERPRISE: {
+    maxStudents: 999999, maxBatches: 999999, maxTeachers: 999999, maxStorageMB: 999999,
+    // all features: true, all quotas effectively unlimited
+  },
+}
+```
+
+### 15.5 Frontend: Permission-Aware Sidebar
+
+```typescript
+// frontend/src/hooks/usePermissions.ts
+export function usePermissions() {
+  const { user, tenantConfig } = useAppSelector(state => state.auth)
+
+  if (user.role === 'ADMIN') return ALL_PERMISSIONS_TRUE
+
+  // TEACHER: resolve from tenant's teacherPermissions
+  return tenantConfig.teacherPermissions ?? DEFAULT_TEACHER_PERMISSIONS
+}
+
+// In Sidebar.tsx — feature gating
+const permissions = usePermissions()
+const { features } = useTenantConfig()
+
+const navGroups = [
+  {
+    label: "Classroom",
+    items: [
+      { href: "/batches",    label: "Classes",    icon: BookOpen,       show: true },
+      { href: "/students",   label: "Students",   icon: Users,          show: true },
+      { href: "/teachers",   label: "Teachers",   icon: GraduationCap,  show: user.role === 'ADMIN' },
+      { href: "/attendance", label: "Attendance", icon: ClipboardList,  show: true },
+      { href: "/fees",       label: "Fees",       icon: Receipt,        show: features.fees && permissions.canViewFees },
+    ]
+  },
+  // ...
+]
+```
+
+---
+
+## 16. Environment Configuration from Admin Portal
+
+### 16.1 Why Portal-Managed Config
+
+Traditional approach: change `.env` file → redeploy. With multi-tenancy and 100+ tenants, this is impractical. Solution: store all runtime-configurable settings in the database, managed via Admin Portal UI.
+
+**Two categories of config:**
+
+| Category | Where Stored | Who Manages | Examples |
+|----------|-------------|-------------|---------|
+| **Global Platform Config** | `platform_config` table (key-value) | SuperAdmin OWNER only | SMTP defaults, Cloudinary creds, rate limits |
+| **Tenant Config** | `tenant_config` table (tenantId + key-value) | SuperAdmin ADMIN/SUPPORT | Per-tenant SMTP, timezone, locale, webhooks |
+
+### 16.2 Database Schema
+
+```prisma
+// Global platform configuration (singleton-ish, key-value)
+model PlatformConfig {
+  id          Int       @id @default(autoincrement())
+  key         String    @unique  // e.g., "smtp.host", "cloudinary.apiKey"
+  value       String             // Stored as string; secrets AES-encrypted
+  isSecret    Boolean   @default(false)   // Encrypted at rest, masked in UI
+  category    String             // "smtp" | "cloudinary" | "auth" | "ratelimit" | "system"
+  description String?            // Human-readable description for UI tooltip
+  updatedBy   Int?               // SuperAdmin ID who last changed this
+  updatedAt   DateTime  @updatedAt
+
+  @@map("platform_config")
+}
+
+// Per-tenant runtime configuration
+model TenantConfig {
+  id          Int       @id @default(autoincrement())
+  tenantId    Int
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  key         String    // e.g., "smtp.host", "timezone", "locale"
+  value       String    // AES-encrypted if isSecret
+  isSecret    Boolean   @default(false)
+  category    String    // "smtp" | "integrations" | "locale" | "appearance" | "api"
+  description String?
+  updatedBy   Int?      // SuperAdmin ID
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([tenantId, key])
+  @@index([tenantId])
+  @@map("tenant_config")
+}
+```
+
+### 16.3 Config Keys Reference
+
+**Global Platform Config (PlatformConfig table):**
+
+```
+# Email / SMTP
+smtp.host             string   "smtp.gmail.com"
+smtp.port             number   "587"
+smtp.user             string   "noreply@cipherlearn.com"
+smtp.password         secret   "•••"   (AES-encrypted)
+smtp.fromName         string   "CipherLearn"
+smtp.fromEmail        string   "noreply@cipherlearn.com"
+
+# Cloudinary (shared)
+cloudinary.cloudName  string   "your-cloud"
+cloudinary.apiKey     secret   "•••"
+cloudinary.apiSecret  secret   "•••"
+
+# Auth settings
+auth.jwtExpiresIn     string   "7d"
+auth.maxLoginAttempts number   "5"
+auth.lockoutMinutes   number   "30"
+
+# Rate limiting
+ratelimit.windowMs    number   "900000"   (15 minutes)
+ratelimit.maxFree     number   "100"      (requests per window for FREE plan)
+ratelimit.maxStarter  number   "300"
+ratelimit.maxPro      number   "1000"
+
+# System
+system.maintenanceMode  boolean "false"
+system.maintenanceMsg   string  "We'll be back shortly."
+system.supportEmail     string  "support@cipherlearn.com"
+system.slackWebhook     secret  "•••"   (alert webhook)
+```
+
+**Per-Tenant Config (TenantConfig table):**
+
+```
+# Email override (if tenant uses their own SMTP)
+smtp.host             string
+smtp.port             number
+smtp.user             string
+smtp.password         secret
+smtp.fromName         string   "Shree Academy"
+smtp.fromEmail        string   "no-reply@shreeacademy.in"
+
+# Locale
+timezone              string   "Asia/Kolkata"
+locale                string   "en-IN"
+currency              string   "INR"
+currencySymbol        string   "₹"
+dateFormat            string   "DD/MM/YYYY"
+
+# Integrations
+webhook.url           secret   "https://api.client.com/webhook"
+webhook.secret        secret   "•••"
+
+# Appearance overrides
+appearance.borderRadius  string  "0.5rem"
+appearance.fontFamily    string  "Inter"   (override Plus Jakarta Sans)
+
+# API rate limits (Enterprise overrides)
+ratelimit.override    number   "5000"   (custom requests per window)
+```
+
+### 16.4 Config Service (Backend)
+
+```typescript
+// backend/src/modules/portal/config/service.ts
+
+class ConfigService {
+  // Get resolved config for a tenant (tenant override > platform default)
+  async getResolvedConfig(tenantId: number, key: string): Promise<string | null> {
+    // 1. Check tenant-specific override
+    const tenantCfg = await prisma.tenantConfig.findUnique({
+      where: { tenantId_key: { tenantId, key } }
+    })
+    if (tenantCfg) return this.decrypt(tenantCfg.value, tenantCfg.isSecret)
+
+    // 2. Fall back to platform default
+    const platformCfg = await prisma.platformConfig.findUnique({ where: { key } })
+    if (platformCfg) return this.decrypt(platformCfg.value, platformCfg.isSecret)
+
+    // 3. Fall back to process.env (hard-coded defaults)
+    return process.env[key.replace('.', '_').toUpperCase()] ?? null
+  }
+
+  async upsertPlatformConfig(key: string, value: string, isSecret: boolean, superAdminId: number) {
+    const encrypted = isSecret ? this.encrypt(value) : value
+    await prisma.platformConfig.upsert({
+      where: { key },
+      create: { key, value: encrypted, isSecret, updatedBy: superAdminId },
+      update: { value: encrypted, updatedBy: superAdminId }
+    })
+  }
+
+  async upsertTenantConfig(tenantId: number, key: string, value: string, isSecret: boolean, superAdminId: number) {
+    const encrypted = isSecret ? this.encrypt(value) : value
+    await prisma.tenantConfig.upsert({
+      where: { tenantId_key: { tenantId, key } },
+      create: { tenantId, key, value: encrypted, isSecret, updatedBy: superAdminId },
+      update: { value: encrypted, updatedBy: superAdminId }
+    })
+  }
+
+  private encrypt(value: string): string  { /* AES-256-GCM */ }
+  private decrypt(value: string, isSecret: boolean): string { /* AES-256-GCM */ }
+}
+```
+
+### 16.5 Portal UI — Config Editor
+
+**Global Config page** (`/settings/environment`):
+- Cards grouped by category (SMTP, Cloudinary, Auth, Rate Limits, System)
+- Each field: label, current value (masked if secret), edit button
+- Edit opens inline form — type value, save → encrypted in DB
+- "Test SMTP" button → sends test email to superadmin's email
+- "Test Cloudinary" button → validates credentials
+- Changes logged to `AdminAuditLog`
+
+**Tenant Config tab** (`/tenants/[id]/environment`):
+- Same card layout but shows "Using platform default" vs "Custom override"
+- Toggle: "Override platform default" → reveals editable field
+- "Clear override" → reverts to platform default
+- Visual diff: what's overridden vs. inherited
+
+### 16.6 Encryption Details
+
+```
+Algorithm: AES-256-GCM
+Key source: ENCRYPTION_KEY env var (32 bytes, only on server — never tenant-configurable)
+IV: Random 12 bytes, prepended to ciphertext
+Storage: base64(iv + ':' + ciphertext + ':' + authTag)
+Masking in API responses: secrets returned as null, UI shows "••••••••"
+Audit: changes logged with key name + who changed it, but NOT the value
+```
 
 ---
 
