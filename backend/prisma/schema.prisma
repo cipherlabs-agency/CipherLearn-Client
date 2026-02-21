@@ -586,3 +586,82 @@ enum ScoreStatus {
   FAIL
   ABSENT
 }
+
+// ============================================
+// Instagram Automation System
+// ============================================
+
+model InstagramAccount {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @unique
+  igUserId          String   @unique // Instagram-scoped user ID
+  username          String
+  profilePictureUrl String?
+  accessToken       String   // Long-lived access token (encrypted at app level)
+  tokenExpiresAt    DateTime?
+  followersCount    Int?
+  mediaCount        Int?
+
+  // Relations
+  automationRules AutomationRule[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("instagram_accounts")
+}
+
+model AutomationRule {
+  id                 Int                  @id @default(autoincrement())
+  instagramAccountId Int
+  instagramAccount   InstagramAccount     @relation(fields: [instagramAccountId], references: [id], onDelete: Cascade)
+  mediaId            String               // Instagram media ID (post/reel)
+  mediaUrl           String?              // Thumbnail URL for display
+  mediaCaption       String?              // Cached caption
+  mediaType          String?              // IMAGE, VIDEO, CAROUSEL_ALBUM
+  triggerKeyword     String               // e.g. "LINK", "INFO", "PRICE"
+  dmMessage          String               // The DM text to send
+  status             AutomationRuleStatus @default(ACTIVE)
+  dmsSentCount       Int                  @default(0)
+  lastTriggeredAt    DateTime?
+
+  // Relations
+  logs AutomationLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([instagramAccountId])
+  @@index([mediaId])
+  @@index([instagramAccountId, mediaId, triggerKeyword])
+  @@map("automation_rules")
+}
+
+model AutomationLog {
+  id               Int            @id @default(autoincrement())
+  ruleId           Int
+  rule             AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  commenterId      String         // IG user ID of commenter
+  commenterUsername String?
+  commentText      String         // Original comment text
+  dmStatus         DmStatus       @default(SENT)
+  errorMessage     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([ruleId])
+  @@index([commenterId])
+  @@map("automation_logs")
+}
+
+enum AutomationRuleStatus {
+  ACTIVE
+  PAUSED
+}
+
+enum DmStatus {
+  SENT
+  FAILED
+  RATE_LIMITED
+}

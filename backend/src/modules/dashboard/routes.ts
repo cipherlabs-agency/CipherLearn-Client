@@ -12,6 +12,7 @@ import feesRoutes from "./fees/route";
 import teachersRoutes from "./teachers/route";
 import lecturesRoutes from "./lectures/route";
 import testsRoutes from "./tests/route";
+import instagramRoutes from "./instagram/route";
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.use("/assignments", assignmentsRoutes);
 router.use("/attendance", attendanceRoutes);
 router.use("/batches", batchesRoutes);
 router.use("/fees", feesRoutes);
+router.use("/instagram", instagramRoutes);
 router.use("/lectures", lecturesRoutes);
 router.use("/notes", notesRoutes);
 router.use("/student-enrollment", studentEnrollmentRoutes);
@@ -30,3 +32,4 @@ router.use("/tests", testsRoutes);
 router.use("/youtube-videos", youtubeVideoRoutes);
 
 export default router;
+

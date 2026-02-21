@@ -70,7 +70,10 @@ export const ModelName = {
   LoginAttempt: 'LoginAttempt',
   Lecture: 'Lecture',
   Test: 'Test',
-  TestScore: 'TestScore'
+  TestScore: 'TestScore',
+  InstagramAccount: 'InstagramAccount',
+  AutomationRule: 'AutomationRule',
+  AutomationLog: 'AutomationLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -439,6 +442,56 @@ export const TestScoreScalarFieldEnum = {
 } as const
 
 export type TestScoreScalarFieldEnum = (typeof TestScoreScalarFieldEnum)[keyof typeof TestScoreScalarFieldEnum]
+
+
+export const InstagramAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  igUserId: 'igUserId',
+  username: 'username',
+  profilePictureUrl: 'profilePictureUrl',
+  accessToken: 'accessToken',
+  tokenExpiresAt: 'tokenExpiresAt',
+  followersCount: 'followersCount',
+  mediaCount: 'mediaCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InstagramAccountScalarFieldEnum = (typeof InstagramAccountScalarFieldEnum)[keyof typeof InstagramAccountScalarFieldEnum]
+
+
+export const AutomationRuleScalarFieldEnum = {
+  id: 'id',
+  instagramAccountId: 'instagramAccountId',
+  mediaId: 'mediaId',
+  mediaUrl: 'mediaUrl',
+  mediaCaption: 'mediaCaption',
+  mediaType: 'mediaType',
+  triggerKeyword: 'triggerKeyword',
+  dmMessage: 'dmMessage',
+  status: 'status',
+  dmsSentCount: 'dmsSentCount',
+  lastTriggeredAt: 'lastTriggeredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AutomationRuleScalarFieldEnum = (typeof AutomationRuleScalarFieldEnum)[keyof typeof AutomationRuleScalarFieldEnum]
+
+
+export const AutomationLogScalarFieldEnum = {
+  id: 'id',
+  ruleId: 'ruleId',
+  commenterId: 'commenterId',
+  commenterUsername: 'commenterUsername',
+  commentText: 'commentText',
+  dmStatus: 'dmStatus',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt'
+} as const
+
+export type AutomationLogScalarFieldEnum = (typeof AutomationLogScalarFieldEnum)[keyof typeof AutomationLogScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -19,6 +19,8 @@ import {
     Calendar,
     ClipboardCheck,
     FolderOpen,
+    Instagram,
+
 } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -59,6 +61,13 @@ const navGroups = [
             { href: "/announcements", label: "Announcements", icon: Megaphone },
         ]
     },
+    {
+        label: "Growth",
+        items: [
+            { href: "/instagram", label: "Instagram", icon: Instagram },
+        ]
+    },
+
     {
         label: "Account",
         items: [

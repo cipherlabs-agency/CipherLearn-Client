@@ -403,7 +403,10 @@ export const ModelName = {
   LoginAttempt: 'LoginAttempt',
   Lecture: 'Lecture',
   Test: 'Test',
-  TestScore: 'TestScore'
+  TestScore: 'TestScore',
+  InstagramAccount: 'InstagramAccount',
+  AutomationRule: 'AutomationRule',
+  AutomationLog: 'AutomationLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -419,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "loginAttempt" | "lecture" | "test" | "testScore"
+    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "loginAttempt" | "lecture" | "test" | "testScore" | "instagramAccount" | "automationRule" | "automationLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1903,6 +1906,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    InstagramAccount: {
+      payload: Prisma.$InstagramAccountPayload<ExtArgs>
+      fields: Prisma.InstagramAccountFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InstagramAccountFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InstagramAccountFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>
+        }
+        findFirst: {
+          args: Prisma.InstagramAccountFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InstagramAccountFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>
+        }
+        findMany: {
+          args: Prisma.InstagramAccountFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>[]
+        }
+        create: {
+          args: Prisma.InstagramAccountCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>
+        }
+        createMany: {
+          args: Prisma.InstagramAccountCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InstagramAccountCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>[]
+        }
+        delete: {
+          args: Prisma.InstagramAccountDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>
+        }
+        update: {
+          args: Prisma.InstagramAccountUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>
+        }
+        deleteMany: {
+          args: Prisma.InstagramAccountDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InstagramAccountUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InstagramAccountUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>[]
+        }
+        upsert: {
+          args: Prisma.InstagramAccountUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InstagramAccountPayload>
+        }
+        aggregate: {
+          args: Prisma.InstagramAccountAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInstagramAccount>
+        }
+        groupBy: {
+          args: Prisma.InstagramAccountGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InstagramAccountGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InstagramAccountCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InstagramAccountCountAggregateOutputType> | number
+        }
+      }
+    }
+    AutomationRule: {
+      payload: Prisma.$AutomationRulePayload<ExtArgs>
+      fields: Prisma.AutomationRuleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AutomationRuleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AutomationRuleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+        }
+        findFirst: {
+          args: Prisma.AutomationRuleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AutomationRuleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+        }
+        findMany: {
+          args: Prisma.AutomationRuleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>[]
+        }
+        create: {
+          args: Prisma.AutomationRuleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+        }
+        createMany: {
+          args: Prisma.AutomationRuleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AutomationRuleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>[]
+        }
+        delete: {
+          args: Prisma.AutomationRuleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+        }
+        update: {
+          args: Prisma.AutomationRuleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+        }
+        deleteMany: {
+          args: Prisma.AutomationRuleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AutomationRuleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AutomationRuleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>[]
+        }
+        upsert: {
+          args: Prisma.AutomationRuleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+        }
+        aggregate: {
+          args: Prisma.AutomationRuleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAutomationRule>
+        }
+        groupBy: {
+          args: Prisma.AutomationRuleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AutomationRuleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AutomationRuleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AutomationRuleCountAggregateOutputType> | number
+        }
+      }
+    }
+    AutomationLog: {
+      payload: Prisma.$AutomationLogPayload<ExtArgs>
+      fields: Prisma.AutomationLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AutomationLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AutomationLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>
+        }
+        findFirst: {
+          args: Prisma.AutomationLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AutomationLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>
+        }
+        findMany: {
+          args: Prisma.AutomationLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>[]
+        }
+        create: {
+          args: Prisma.AutomationLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>
+        }
+        createMany: {
+          args: Prisma.AutomationLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AutomationLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>[]
+        }
+        delete: {
+          args: Prisma.AutomationLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>
+        }
+        update: {
+          args: Prisma.AutomationLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.AutomationLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AutomationLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AutomationLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.AutomationLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AutomationLogPayload>
+        }
+        aggregate: {
+          args: Prisma.AutomationLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAutomationLog>
+        }
+        groupBy: {
+          args: Prisma.AutomationLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AutomationLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AutomationLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AutomationLogCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2294,6 +2519,56 @@ export const TestScoreScalarFieldEnum = {
 export type TestScoreScalarFieldEnum = (typeof TestScoreScalarFieldEnum)[keyof typeof TestScoreScalarFieldEnum]
 
 
+export const InstagramAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  igUserId: 'igUserId',
+  username: 'username',
+  profilePictureUrl: 'profilePictureUrl',
+  accessToken: 'accessToken',
+  tokenExpiresAt: 'tokenExpiresAt',
+  followersCount: 'followersCount',
+  mediaCount: 'mediaCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InstagramAccountScalarFieldEnum = (typeof InstagramAccountScalarFieldEnum)[keyof typeof InstagramAccountScalarFieldEnum]
+
+
+export const AutomationRuleScalarFieldEnum = {
+  id: 'id',
+  instagramAccountId: 'instagramAccountId',
+  mediaId: 'mediaId',
+  mediaUrl: 'mediaUrl',
+  mediaCaption: 'mediaCaption',
+  mediaType: 'mediaType',
+  triggerKeyword: 'triggerKeyword',
+  dmMessage: 'dmMessage',
+  status: 'status',
+  dmsSentCount: 'dmsSentCount',
+  lastTriggeredAt: 'lastTriggeredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AutomationRuleScalarFieldEnum = (typeof AutomationRuleScalarFieldEnum)[keyof typeof AutomationRuleScalarFieldEnum]
+
+
+export const AutomationLogScalarFieldEnum = {
+  id: 'id',
+  ruleId: 'ruleId',
+  commenterId: 'commenterId',
+  commenterUsername: 'commenterUsername',
+  commentText: 'commentText',
+  dmStatus: 'dmStatus',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt'
+} as const
+
+export type AutomationLogScalarFieldEnum = (typeof AutomationLogScalarFieldEnum)[keyof typeof AutomationLogScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2606,6 +2881,34 @@ export type EnumScoreStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
 export type ListEnumScoreStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScoreStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'AutomationRuleStatus'
+ */
+export type EnumAutomationRuleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AutomationRuleStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'AutomationRuleStatus[]'
+ */
+export type ListEnumAutomationRuleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AutomationRuleStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DmStatus'
+ */
+export type EnumDmStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DmStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'DmStatus[]'
+ */
+export type ListEnumDmStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DmStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2721,6 +3024,9 @@ export type GlobalOmitConfig = {
   lecture?: Prisma.LectureOmit
   test?: Prisma.TestOmit
   testScore?: Prisma.TestScoreOmit
+  instagramAccount?: Prisma.InstagramAccountOmit
+  automationRule?: Prisma.AutomationRuleOmit
+  automationLog?: Prisma.AutomationLogOmit
 }
 
 /* Types for Logging */
