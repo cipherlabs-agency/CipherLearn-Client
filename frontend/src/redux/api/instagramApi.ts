@@ -55,6 +55,8 @@ export interface AutomationRule {
     dmButtons: Array<{ title: string; url: string }> | null
     status: 'ACTIVE' | 'PAUSED'
     dmsSentCount: number
+    isFollowGated: boolean
+    unfollowedMessage: string | null
     lastTriggeredAt: string | null
     createdAt: string
     updatedAt: string
@@ -144,6 +146,8 @@ export const instagramApi = api.injectEndpoints({
                 dmMessage: string
                 dmType?: 'TEXT' | 'TEMPLATE'
                 dmButtons?: Array<{ title: string; url: string }>
+                isFollowGated?: boolean
+                unfollowedMessage?: string
             }
         >({
             query: (body) => ({

@@ -40,6 +40,10 @@ export function AutomationPanel({ post, onClose }: AutomationPanelProps) {
     const [dmType, setDmType] = useState<"TEXT" | "TEMPLATE">("TEXT")
     const [buttons, setButtons] = useState<Array<{ title: string; url: string }>>([])
     
+    // Follow Gate State
+    const [isFollowGated, setIsFollowGated] = useState(false)
+    const [unfollowedMessage, setUnfollowedMessage] = useState("")
+
     const [expandedLog, setExpandedLog] = useState<number | null>(null)
 
     const handleAddButton = () => {
@@ -77,12 +81,16 @@ export function AutomationPanel({ post, onClose }: AutomationPanelProps) {
                 dmMessage,
                 dmType: validButtons.length > 0 ? "TEMPLATE" : "TEXT",
                 dmButtons: validButtons.length > 0 ? validButtons : undefined,
+                isFollowGated,
+                unfollowedMessage: isFollowGated ? unfollowedMessage : undefined,
             }).unwrap()
             
             setKeyword("")
             setDmMessage("")
             setButtons([])
             setDmType("TEXT")
+            setIsFollowGated(false)
+            setUnfollowedMessage("")
             setShowForm(false)
         } catch (err: any) {
             alert(err?.data?.message || "Failed to create rule")
@@ -237,6 +245,40 @@ export function AutomationPanel({ post, onClose }: AutomationPanelProps) {
                                             </div>
                                         </div>
 
+                                        {/* Require Follow Toggle */}
+                                        <div className="pt-4 border-t border-primary/10">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <label className="text-[13px] font-bold text-foreground flex items-center gap-2">
+                                                    Require Follow
+                                                    {isFollowGated && (
+                                                        <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded uppercase tracking-widest">Active</span>
+                                                    )}
+                                                </label>
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                  <input type="checkbox" className="sr-only peer" checked={isFollowGated} onChange={(e) => setIsFollowGated(e.target.checked)} />
+                                                  <div className="w-9 h-5 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary border border-border"></div>
+                                                </label>
+                                            </div>
+                                            {isFollowGated && (
+                                                <div className="mt-3 bg-muted/50 p-3 rounded-lg border border-border">
+                                                    <label className="mb-1.5 block text-[11px] font-bold tracking-wider uppercase text-muted-foreground">
+                                                        Unfollowed Message
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={unfollowedMessage}
+                                                        onChange={(e) => setUnfollowedMessage(e.target.value)}
+                                                        placeholder='e.g. Please follow us first to get the link!'
+                                                        className="w-full rounded-md border border-border bg-background px-2.5 py-1.5 text-xs focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary font-medium"
+                                                    />
+                                                    <p className="mt-1.5 text-[10px] font-medium text-muted-foreground leading-relaxed">
+                                                        If the user doesn't follow you, they will receive this message with a <span className="text-primary font-bold">"Yes, I followed! ✅"</span> button. 
+                                                        They must click this before getting the actual link.
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+
                                         {/* Instagram Bubble Preview */}
                                         {dmMessage && (
                                             <div className="pt-2">
@@ -355,13 +397,18 @@ function RuleCard({
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="rounded bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary tracking-widest uppercase">
                             {rule.triggerKeyword}
                         </span>
                         {rule.dmType === "TEMPLATE" && (
-                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-muted px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-muted border border-border px-1.5 py-0.5 rounded">
                                 Rich DM
+                            </span>
+                        )}
+                        {rule.isFollowGated && (
+                            <span className="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 uppercase tracking-widest px-1.5 py-0.5 rounded">
+                                Follow Gated
                             </span>
                         )}
                     </div>

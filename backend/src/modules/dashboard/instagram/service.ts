@@ -20,6 +20,8 @@ export interface CreateRuleInput {
     dmMessage: string;
     dmType?: "TEXT" | "TEMPLATE";
     dmButtons?: Array<{ title: string; url: string }>;
+    isFollowGated?: boolean;
+    unfollowedMessage?: string;
 }
 
 export interface UpdateRuleInput {
@@ -28,6 +30,8 @@ export interface UpdateRuleInput {
     dmType?: "TEXT" | "TEMPLATE";
     dmButtons?: Array<{ title: string; url: string }>;
     status?: "ACTIVE" | "PAUSED";
+    isFollowGated?: boolean;
+    unfollowedMessage?: string;
 }
 
 // ─── Service ──────────────────────────────────
@@ -213,6 +217,8 @@ export class InstagramService {
                 dmMessage: input.dmMessage,
                 dmType: input.dmType || "TEXT",
                 dmButtons: input.dmButtons || undefined,
+                isFollowGated: input.isFollowGated || false,
+                unfollowedMessage: input.unfollowedMessage || null,
             },
         });
     }
@@ -239,6 +245,8 @@ export class InstagramService {
                 dmType: input.dmType,
                 dmButtons: input.dmButtons !== undefined ? input.dmButtons : undefined,
                 status: input.status,
+                isFollowGated: input.isFollowGated !== undefined ? input.isFollowGated : undefined,
+                unfollowedMessage: input.unfollowedMessage !== undefined ? input.unfollowedMessage : undefined,
             },
         });
     }

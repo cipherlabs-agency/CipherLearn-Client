@@ -626,6 +626,8 @@ model AutomationRule {
   dmButtons          Json?                // For TEMPLATE type: [{ title, url }]
   status             AutomationRuleStatus @default(ACTIVE)
   dmsSentCount       Int                  @default(0)
+  isFollowGated      Boolean              @default(false)
+  unfollowedMessage  String?              // The DM text to send if they don't follow
   lastTriggeredAt    DateTime?
 
   // Relations

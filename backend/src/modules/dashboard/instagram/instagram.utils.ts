@@ -233,7 +233,38 @@ export async function sendPrivateReply(
     } catch (err: any) {
         const errorMsg =
             err.response?.data?.error?.message || err.message || "Unknown error";
-        logger.error(`Instagram DM send failed: ${errorMsg}`);
+        throw new Error(errorMsg);
+    }
+}
+
+/**
+ * Send a standard text DM directly to a user's ID (requires open 24h window).
+ */
+export async function sendDirectTextDm(
+    igUserId: string,
+    recipientId: string,
+    messageText: string,
+    accessToken: string
+): Promise<{ recipientId: string; messageId: string }> {
+    try {
+        const res = await axios.post(
+            `${META_GRAPH_BASE}/${igUserId}/messages`,
+            {
+                recipient: { id: recipientId },
+                message: { text: messageText },
+            },
+            {
+                params: { access_token: accessToken },
+                headers: { "Content-Type": "application/json" },
+            }
+        );
+        return {
+            recipientId: res.data.recipient_id,
+            messageId: res.data.message_id,
+        };
+    } catch (err: any) {
+        const errorMsg =
+            err.response?.data?.error?.message || err.message || "Unknown error";
         throw new Error(errorMsg);
     }
 }
@@ -289,7 +320,6 @@ export async function sendGenericTemplate(
     } catch (err: any) {
         const errorMsg =
             err.response?.data?.error?.message || err.message || "Unknown error";
-        logger.error(`Instagram template DM send failed: ${errorMsg}`);
         throw new Error(errorMsg);
     }
 }
@@ -312,16 +342,85 @@ export async function sendDm(
     accessToken: string
 ): Promise<{ recipientId: string; messageId: string }> {
     if (dmType === "TEMPLATE" && dmButtons && dmButtons.length > 0) {
-        // Step 1: Send the required Private Reply (Text Only)
-        // We use a small receipt/intro text because we have to send *something* via comment_id 
-        // to open the standard 24h messaging window if it isn't already open.
-        await sendPrivateReply(igUserId, commentId, "Here is what you requested 👇", accessToken);
+        try {
+            // Attempt to send the rich template directly to their ID.
+            // This will only succeed if the 24h messaging window is already open.
+            return await sendGenericTemplate(igUserId, commenterId, dmMessage, dmButtons, accessToken);
+        } catch (err: any) {
+            logger.warn(`Template DM failed for ${commenterId}. Falling back to text-only Private Reply.`);
 
-        // Step 2: Send the actual rich template with buttons to their standard ID
-        return sendGenericTemplate(igUserId, commenterId, dmMessage, dmButtons, accessToken);
+            // Build the fallback string appending button URLs
+            let fallbackText = dmMessage + "\n\n";
+            dmButtons.forEach(btn => {
+                fallbackText += `🔗 ${btn.title}: ${btn.url}\n`;
+            });
+
+            // Fast fallback: send ONE standard text reply via their comment_id.
+            // This consumes our 1 allowed reply for this comment.
+            return sendPrivateReply(igUserId, commentId, fallbackText.trim(), accessToken);
+        }
     }
 
-    // Standard Text DM
+    // Standard Text DM via comment_id
     return sendPrivateReply(igUserId, commentId, dmMessage, accessToken);
+}
+
+/**
+ * Sends a "Gate" DM to a user who hasn't followed yet.
+ * This sends a Template message with a Postback Button.
+ * When the user clicks the button, Meta sends a `messaging_postbacks` webhook to our server.
+ */
+export async function sendFollowGateDM(
+    igUserId: string,
+    commentId: string,
+    commenterId: string,
+    unfollowedMessage: string,
+    ruleId: number,
+    accessToken: string
+): Promise<{ recipientId: string; messageId: string }> {
+    try {
+        // Attempt to send the postback template directly to their ID.
+        // This will only succeed if the user already has an open 24h messaging window.
+        const res = await axios.post(
+            `${META_GRAPH_BASE}/${igUserId}/messages`,
+            {
+                recipient: { id: commenterId },
+                message: {
+                    attachment: {
+                        type: "template",
+                        payload: {
+                            template_type: "generic",
+                            elements: [
+                                {
+                                    title: unfollowedMessage || "Please follow our page to get the link!",
+                                    buttons: [
+                                        {
+                                            type: "postback",
+                                            title: "Yes, I followed! ✅",
+                                            payload: `VERIFY_FOLLOW_${ruleId}`
+                                        }
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+            {
+                params: { access_token: accessToken },
+                headers: { "Content-Type": "application/json" },
+            }
+        );
+        return {
+            recipientId: res.data.recipient_id,
+            messageId: res.data.message_id,
+        };
+    } catch (err: any) {
+        // FALLBACK: If they don't have an open window, it throws "outside allowed window".
+        // We fallback to ONE standard Private Reply via comment_id.
+        // We cannot use postback buttons in plain text, so we ask them to reply with the keyword to open the window.
+        const fallbackText = `${unfollowedMessage || "Please follow our page to get the link!"}\n\nOnce you follow us, reply to this message with the exact same keyword you just commented to get your link!`;
+        return sendPrivateReply(igUserId, commentId, fallbackText, accessToken);
+    }
 }
 

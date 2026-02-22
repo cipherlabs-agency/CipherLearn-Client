@@ -2549,6 +2549,8 @@ export const AutomationRuleScalarFieldEnum = {
   dmButtons: 'dmButtons',
   status: 'status',
   dmsSentCount: 'dmsSentCount',
+  isFollowGated: 'isFollowGated',
+  unfollowedMessage: 'unfollowedMessage',
   lastTriggeredAt: 'lastTriggeredAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

@@ -367,6 +367,7 @@ export class InstagramController {
                 const igUserId = entry.id;
                 logger.info(`[WEBHOOK] Entry for IG user: ${igUserId}, changes: ${JSON.stringify(entry.changes?.length || 0)}`);
 
+                // 1. Process Comments
                 for (const change of entry.changes || []) {
                     logger.info(`[WEBHOOK] Change field: ${change.field}, value: ${JSON.stringify(change.value)}`);
 
@@ -380,6 +381,31 @@ export class InstagramController {
                             commentText: value.text || "",
                             commenterId: value.from?.id,
                             commenterUsername: value.from?.username,
+                        });
+                    }
+                }
+
+                // 2. Process Messages & Postbacks
+                for (const msg of entry.messaging || []) {
+                    // Ignore our own echo messages
+                    if (msg.message?.is_echo) continue;
+
+                    // If it's a postback (button click)
+                    if (msg.postback && msg.postback.payload) {
+                        logger.info(`[WEBHOOK] Received postback: ${msg.postback.payload} from ${msg.sender?.id}`);
+                        await automationEngine.processPostbackWebhook({
+                            igUserId,
+                            senderId: msg.sender?.id,
+                            payload: msg.postback.payload
+                        });
+                    }
+                    // If it's a standard text message (e.g. they replied to our Private Reply with the keyword)
+                    else if (msg.message && msg.message.text) {
+                        logger.info(`[WEBHOOK] Received DM: "${msg.message.text}" from ${msg.sender?.id}`);
+                        await automationEngine.processMessageWebhook({
+                            igUserId,
+                            senderId: msg.sender?.id,
+                            messageText: msg.message.text
                         });
                     }
                 }
