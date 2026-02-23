@@ -134,3 +134,28 @@ export const ScoreStatus = {
 } as const
 
 export type ScoreStatus = (typeof ScoreStatus)[keyof typeof ScoreStatus]
+
+
+export const AutomationRuleStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED'
+} as const
+
+export type AutomationRuleStatus = (typeof AutomationRuleStatus)[keyof typeof AutomationRuleStatus]
+
+
+export const DmStatus = {
+  SENT: 'SENT',
+  FAILED: 'FAILED',
+  RATE_LIMITED: 'RATE_LIMITED'
+} as const
+
+export type DmStatus = (typeof DmStatus)[keyof typeof DmStatus]
+
+
+export const DmType = {
+  TEXT: 'TEXT',
+  TEMPLATE: 'TEMPLATE'
+} as const
+
+export type DmType = (typeof DmType)[keyof typeof DmType]

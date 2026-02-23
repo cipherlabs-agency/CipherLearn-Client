@@ -34,7 +34,7 @@ export interface ApiErrorResponse {
 }
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || '',
     prepareHeaders: (headers, { getState }) => {
         const token = (getState() as RootState)?.auth?.token;
         if (token) {
@@ -68,6 +68,6 @@ export const api = createApi({
     refetchOnReconnect: true,
     // Cache unused data for 5 minutes to improve performance
     keepUnusedDataFor: 300,
-    tagTypes: ['Auth', 'Students', 'Batches', 'Announcements', 'Attendance', 'Fees', 'Notes', 'Videos', 'Dashboard', 'Analytics', 'Assignments', 'Submissions', 'StudyMaterials', 'Teachers', 'Lectures', 'Tests', 'TestScores'],
+    tagTypes: ['Auth', 'Students', 'Batches', 'Announcements', 'Attendance', 'Fees', 'Notes', 'Videos', 'Dashboard', 'Analytics', 'Assignments', 'Submissions', 'StudyMaterials', 'Teachers', 'Lectures', 'Tests', 'TestScores', 'Instagram'],
     endpoints: () => ({}),
 });

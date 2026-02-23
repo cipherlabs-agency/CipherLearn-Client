@@ -117,3 +117,18 @@ export type Test = Prisma.TestModel
  * 
  */
 export type TestScore = Prisma.TestScoreModel
+/**
+ * Model InstagramAccount
+ * 
+ */
+export type InstagramAccount = Prisma.InstagramAccountModel
+/**
+ * Model AutomationRule
+ * 
+ */
+export type AutomationRule = Prisma.AutomationRuleModel
+/**
+ * Model AutomationLog
+ * 
+ */
+export type AutomationLog = Prisma.AutomationLogModel

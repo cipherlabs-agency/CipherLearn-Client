@@ -7,7 +7,7 @@ export const config = {
     PORT: process.env.APP_PORT || 3000,
     HOST: process.env.APP_HOST || "localhost",
     ENV: process.env.NODE_ENV || "development",
-    CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
+    CLIENT_URL: process.env.CLIENT_URL || "",
     SALT: Number(process.env.SALT),
     ADMIN_EMAILS: process.env.ADMIN_EMAILS,
   },
@@ -54,5 +54,11 @@ export const config = {
   },
   OTP: {
     EXPIRY_MINUTES: Number(process.env.OTP_EXPIRY_MINUTES) || 10,
+  },
+  INSTAGRAM: {
+    APP_ID: process.env.INSTAGRAM_APP_ID || "",
+    APP_SECRET: process.env.INSTAGRAM_APP_SECRET || "",
+    WEBHOOK_VERIFY_TOKEN: process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || "cipherlearn_ig_webhook_2026",
+    REDIRECT_URI: process.env.INSTAGRAM_REDIRECT_URI || "",
   },
 } as const;
