@@ -2,7 +2,11 @@ import type { Request, Response } from "express";
 import { assignmentsService } from "./service";
 import logger from "../../../utils/logger";
 import { UserRoles } from "../../../../prisma/generated/prisma/enums";
+import CloudinaryService from "../../../config/cloudinairy.config";
+import { validateMagicNumber } from "../../../config/multer.config";
 import type { CreateSubmissionInput, ReviewSubmissionInput, SubmissionFile } from "./types";
+
+const cloudinaryService = new CloudinaryService();
 
 class AssignmentsController {
   // ==================== STUDENT ENDPOINTS ====================
@@ -31,9 +35,19 @@ class AssignmentsController {
           });
         }
 
+        const statusFilter = req.query.status as "pending" | "completed" | undefined;
+        const validStatuses = ["pending", "completed"];
+        if (statusFilter && !validStatuses.includes(statusFilter)) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid status filter. Use: pending, completed",
+          });
+        }
+
         const assignments = await assignmentsService.getStudentAssignments(
           student.id,
-          student.batchId
+          student.batchId,
+          statusFilter
         );
 
         return res.status(200).json({
@@ -165,26 +179,53 @@ class AssignmentsController {
         });
       }
 
-      // Process uploaded files
+      // Validate and upload files to Cloudinary
       const files = req.files as Express.Multer.File[] | undefined;
-      const submissionFiles: SubmissionFile[] =
-        files?.map((file) => ({
-          url: `/uploads/submissions/${file.filename}`,
-          originalFilename: file.originalname,
-          size: file.size,
-          mimeType: file.mimetype,
-        })) || [];
 
-      if (submissionFiles.length === 0) {
+      if (!files || files.length === 0) {
         return res.status(400).json({
           success: false,
           message: "At least one file is required",
         });
       }
 
+      // Validate magic numbers (file signature check) for security
+      for (const file of files) {
+        const isValid = validateMagicNumber(file.buffer, file.mimetype);
+        if (!isValid) {
+          return res.status(400).json({
+            success: false,
+            message: `File "${file.originalname}" failed security validation. Content does not match declared type.`,
+          });
+        }
+      }
+
+      // Upload all files to Cloudinary (submissions folder)
+      let uploadedFiles: SubmissionFile[];
+      try {
+        const results = await cloudinaryService.uploadDocuments(files, "submissions");
+        uploadedFiles = results.map((r) => ({
+          url: r.url,
+          publicId: r.public_id,
+          originalFilename: r.original_filename,
+          size: r.bytes,
+          mimeType: files.find((f) => f.originalname === r.original_filename)?.mimetype ?? r.format,
+        }));
+      } catch (uploadError) {
+        logger.error("AssignmentsController.submitAssignment Cloudinary error:", uploadError);
+        return res.status(502).json({
+          success: false,
+          message: "File upload failed. Please try again.",
+        });
+      }
+
+      // Optional text note from student
+      const note = typeof req.body.note === "string" ? req.body.note.slice(0, 1000) : undefined;
+
       const data: CreateSubmissionInput = {
         slotId,
-        files: submissionFiles,
+        files: uploadedFiles,
+        note,
       };
 
       const submission = await assignmentsService.submitAssignment(

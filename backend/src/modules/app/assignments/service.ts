@@ -18,10 +18,13 @@ class AssignmentsService {
 
   /**
    * Get assignments for a student (with submission status)
+   * status: "pending" = not submitted or overdue (Pending tab)
+   *         "completed" = submitted (Completed tab)
    */
   async getStudentAssignments(
     studentId: number,
-    batchId: number | null
+    batchId: number | null,
+    statusFilter?: "pending" | "completed"
   ): Promise<UpcomingAssignment[]> {
     if (!batchId) return [];
 
@@ -40,7 +43,7 @@ class AssignmentsService {
       orderBy: { dueDate: "asc" },
     });
 
-    return assignments.map((a) => {
+    const mapped: UpcomingAssignment[] = assignments.map((a) => {
       const dueDate = a.dueDate ? new Date(a.dueDate) : null;
       const isOverdue = dueDate ? dueDate < now : false;
       const daysRemaining = dueDate
@@ -63,6 +66,7 @@ class AssignmentsService {
           ? {
               id: submission.id,
               files: (submission.files as unknown as SubmissionFile[]) || [],
+              note: submission.note ?? null,
               status: submission.status,
               feedback: submission.feedback,
               submittedAt: submission.submittedAt.toISOString(),
@@ -72,6 +76,16 @@ class AssignmentsService {
           : null,
       };
     });
+
+    // Apply status tab filter
+    if (statusFilter === "completed") {
+      return mapped.filter((a) => a.hasSubmitted);
+    }
+    if (statusFilter === "pending") {
+      return mapped.filter((a) => !a.hasSubmitted);
+    }
+
+    return mapped;
   }
 
   /**
@@ -123,6 +137,7 @@ class AssignmentsService {
         ? {
             id: submission.id,
             files: (submission.files as unknown as SubmissionFile[]) || [],
+            note: submission.note ?? null,
             status: submission.status,
             feedback: submission.feedback,
             submittedAt: submission.submittedAt.toISOString(),
@@ -135,47 +150,44 @@ class AssignmentsService {
 
   /**
    * Submit assignment (student)
+   * Allows re-submission if previous was REJECTED.
    */
   async submitAssignment(
     studentId: number,
     data: CreateSubmissionInput
   ): Promise<StudentSubmissionDetails> {
-    // Check if already submitted
     const existing = await prisma.studentSubmission.findUnique({
-      where: {
-        slotId_studentId: {
-          slotId: data.slotId,
-          studentId,
-        },
-      },
+      where: { slotId_studentId: { slotId: data.slotId, studentId } },
     });
 
     if (existing) {
-      // If rejected, allow re-submission
-      if (existing.status === SubmissionStatus.REJECTED) {
-        const updated = await prisma.studentSubmission.update({
-          where: { id: existing.id },
-          data: {
-            files: data.files as unknown as object[],
-            status: SubmissionStatus.PENDING,
-            feedback: null,
-            reviewedBy: null,
-            reviewedAt: null,
-            submittedAt: new Date(),
-          },
-        });
-
-        return {
-          id: updated.id,
-          files: data.files,
-          status: updated.status,
-          feedback: null,
-          submittedAt: updated.submittedAt.toISOString(),
-          reviewedAt: null,
-          reviewedBy: null,
-        };
+      if (existing.status !== SubmissionStatus.REJECTED) {
+        throw new Error("You have already submitted this assignment");
       }
-      throw new Error("You have already submitted this assignment");
+      // Re-submit after rejection
+      const updated = await prisma.studentSubmission.update({
+        where: { id: existing.id },
+        data: {
+          files: data.files as unknown as object[],
+          note: data.note ?? null,
+          status: SubmissionStatus.PENDING,
+          feedback: null,
+          reviewedBy: null,
+          reviewedAt: null,
+          submittedAt: new Date(),
+        },
+      });
+
+      return {
+        id: updated.id,
+        files: data.files,
+        note: data.note ?? null,
+        status: updated.status,
+        feedback: null,
+        submittedAt: updated.submittedAt.toISOString(),
+        reviewedAt: null,
+        reviewedBy: null,
+      };
     }
 
     const submission = await prisma.studentSubmission.create({
@@ -183,6 +195,7 @@ class AssignmentsService {
         slotId: data.slotId,
         studentId,
         files: data.files as unknown as object[],
+        note: data.note ?? null,
         status: SubmissionStatus.PENDING,
       },
     });
@@ -190,6 +203,7 @@ class AssignmentsService {
     return {
       id: submission.id,
       files: data.files,
+      note: data.note ?? null,
       status: submission.status,
       feedback: null,
       submittedAt: submission.submittedAt.toISOString(),
@@ -216,6 +230,7 @@ class AssignmentsService {
     return {
       id: submission.id,
       files: (submission.files as unknown as SubmissionFile[]) || [],
+      note: submission.note ?? null,
       status: submission.status,
       feedback: submission.feedback,
       submittedAt: submission.submittedAt.toISOString(),
@@ -338,6 +353,7 @@ class AssignmentsService {
     const mapped: SubmissionWithStudent[] = submissions.map((sub) => ({
       id: sub.id,
       files: (sub.files as unknown as SubmissionFile[]) || [],
+      note: sub.note ?? null,
       status: sub.status,
       feedback: sub.feedback,
       submittedAt: sub.submittedAt.toISOString(),
@@ -377,6 +393,7 @@ class AssignmentsService {
     return {
       id: submission.id,
       files: (submission.files as unknown as SubmissionFile[]) || [],
+      note: submission.note ?? null,
       status: submission.status,
       feedback: submission.feedback,
       submittedAt: submission.submittedAt.toISOString(),
@@ -412,6 +429,7 @@ class AssignmentsService {
     return {
       id: submission.id,
       files: (submission.files as unknown as SubmissionFile[]) || [],
+      note: submission.note ?? null,
       status: submission.status,
       feedback: submission.feedback,
       submittedAt: submission.submittedAt.toISOString(),

@@ -118,6 +118,11 @@ export type PasswordResetToken = Prisma.PasswordResetTokenModel
  */
 export type TokenBlacklist = Prisma.TokenBlacklistModel
 /**
+ * Model NotificationPreference
+ * 
+ */
+export type NotificationPreference = Prisma.NotificationPreferenceModel
+/**
  * Model LoginAttempt
  * 
  */

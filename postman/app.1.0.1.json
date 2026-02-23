@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "cipherlearn-app-api-v1.0.1",
-		"name": "CipherLearn App API v1.0.1",
-		"version": "1.0.1",
-		"description": "Complete API collection for CipherLearn Mobile App (Student/Teacher).\n\nIncludes all App API endpoints matching the mobile UI designs:\n- App Auth (enrollment check, login, password setup, token refresh)\n- Profile & Dashboard\n- Daily Timetable (lectures/schedule)\n- Tests & Exams (upcoming, complete, results, performance)\n- Attendance\n- Assignments (submit, review)\n- Announcements\n- Resources (videos, notes, study materials)\n- Fees (receipts, summary)\n\n**Setup:**\n1. Import this collection into Postman\n2. Create environment with baseUrl = http://localhost:5000/api\n3. Run 'App Login' first to auto-set appToken\n4. Use student credentials for student-only routes\n\n**Base URL:** http://localhost:5000/api",
+		"_postman_id": "cipherlearn-app-api-v1.0.2",
+		"name": "CipherLearn App API v1.0.2",
+		"version": "1.0.2",
+		"description": "Complete API collection for CipherLearn Mobile App (Student/Teacher).\n\nIncludes all App API endpoints:\n- App Auth (enrollment check, login, password setup, token refresh)\n- Profile & Dashboard\n- Daily Timetable (lectures/schedule)\n- Tests & Exams (upcoming, complete, results, performance)\n- Attendance\n- Assignments (submit with Cloudinary upload, 25MB/file, note field, status filter)\n- Announcements (category filter, search, pagination, detail with attachments & metadata)\n- Notifications (preference management with quiet hours)\n- Resources (videos, notes, study materials)\n- Fees (receipts, summary)\n\n**Security Headers applied on all requests:**\n- Authorization: Bearer <appToken>\n- Content-Type: application/json (or multipart/form-data for uploads)\n\n**Rate Limits:**\n- Auth endpoints: 5 req/15min (login), 3 req/hr (password reset)\n- File uploads: 10 uploads/5min per IP\n- General reads: 120 req/min per IP\n- Token refresh: 10 req/min per IP\n\n**Caching:**\n- Announcement list: 3 min (category/search/page scoped)\n- Announcement detail: 5 min per id\n- Notification preferences: 10 min per student\n- Fee structures: 60 min per batch\n- Attendance: 2 min\n\n**Setup:**\n1. Import this collection into Postman\n2. Create environment with baseUrl = http://localhost:5000/api\n3. Run 'App Login' first to auto-set appToken\n4. Use student credentials for student-only routes\n\n**Base URL:** http://localhost:5000/api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -16,7 +16,7 @@
 	"item": [
 		{
 			"name": "App Auth",
-			"description": "Student/Teacher mobile app authentication",
+			"description": "Student/Teacher mobile app authentication.\n\nRate limits:\n- Login: 5 attempts per 15 min per IP\n- Password reset: 3 requests per hour per IP\n- Enrollment check: 10 per minute per IP\n- Token refresh: 10 per minute per IP",
 			"item": [
 				{
 					"name": "Check Enrollment",
@@ -25,7 +25,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\"\n}"},
 						"url": {"raw": "{{baseUrl}}/app/auth/check-enrollment", "host": ["{{baseUrl}}"], "path": ["app", "auth", "check-enrollment"]},
-						"description": "Check if a student is enrolled in the system before allowing password setup."
+						"description": "Check if a student is enrolled before allowing password setup.\n\nRate limit: 10 req/min per IP"
 					},
 					"response": []
 				},
@@ -72,7 +72,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\",\n    \"password\": \"Student@123\"\n}"},
 						"url": {"raw": "{{baseUrl}}/app/auth/login", "host": ["{{baseUrl}}"], "path": ["app", "auth", "login"]},
-						"description": "Student/Teacher login. Token is auto-saved to appToken env variable."
+						"description": "Student/Teacher login. Token auto-saved to appToken env variable.\n\nRate limit: 5 attempts per 15 min per IP\nSecurity: Account locked after 5 failed attempts"
 					},
 					"response": []
 				},
@@ -82,7 +82,7 @@
 						"method": "POST",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/auth/refresh-token", "host": ["{{baseUrl}}"], "path": ["app", "auth", "refresh-token"]},
-						"description": "Refresh JWT token before expiry."
+						"description": "Refresh JWT token before expiry.\n\nRate limit: 10 req/min per IP"
 					},
 					"response": []
 				},
@@ -93,7 +93,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {"mode": "raw", "raw": "{\n    \"email\": \"student@example.com\"\n}"},
 						"url": {"raw": "{{baseUrl}}/app/auth/forgot-password", "host": ["{{baseUrl}}"], "path": ["app", "auth", "forgot-password"]},
-						"description": "Request password reset OTP via email."
+						"description": "Request password reset OTP via email.\n\nRate limit: 3 req/hr per IP"
 					},
 					"response": []
 				},
@@ -135,7 +135,7 @@
 						"method": "POST",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/auth/logout", "host": ["{{baseUrl}}"], "path": ["app", "auth", "logout"]},
-						"description": "Logout and blacklist the current token."
+						"description": "Logout and blacklist the current token. Token is invalidated immediately."
 					},
 					"response": []
 				}
@@ -151,7 +151,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/profile", "host": ["{{baseUrl}}"], "path": ["app", "profile"]},
-						"description": "Get full student profile with batch details."
+						"description": "Get full student profile with batch details.\n\nCache: 5 min"
 					},
 					"response": []
 				}
@@ -167,7 +167,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/dashboard", "host": ["{{baseUrl}}"], "path": ["app", "dashboard"]},
-						"description": "Get dashboard overview data. Different content for students vs teachers."
+						"description": "Get dashboard overview. Different content for students vs teachers."
 					},
 					"response": []
 				},
@@ -195,7 +195,7 @@
 		},
 		{
 			"name": "Lectures (Timetable)",
-			"description": "Daily timetable / lecture schedule matching the Timetable UI",
+			"description": "Daily timetable / lecture schedule",
 			"item": [
 				{
 					"name": "Get My Schedule (Today)",
@@ -203,7 +203,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/lectures/my-schedule", "host": ["{{baseUrl}}"], "path": ["app", "lectures", "my-schedule"]},
-						"description": "Get today's schedule. Returns: date, totalClasses, lectures (title, teacher, startTime, endTime, room, status: FINISHED/ONGOING/UPCOMING), nextClass with countdown."
+						"description": "Today's schedule. Returns: date, totalClasses, lectures (title, teacher, startTime, endTime, room, status: FINISHED/ONGOING/UPCOMING), nextClass with countdown."
 					},
 					"response": []
 				},
@@ -216,9 +216,9 @@
 							"raw": "{{baseUrl}}/app/lectures/my-schedule?date=2026-02-15",
 							"host": ["{{baseUrl}}"],
 							"path": ["app", "lectures", "my-schedule"],
-							"query": [{"key": "date", "value": "2026-02-15"}]
+							"query": [{"key": "date", "value": "2026-02-15", "description": "YYYY-MM-DD format"}]
 						},
-						"description": "Get schedule for a specific date. Used when selecting a day on the date picker."
+						"description": "Schedule for a specific date."
 					},
 					"response": []
 				},
@@ -228,7 +228,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/lectures/1", "host": ["{{baseUrl}}"], "path": ["app", "lectures", "1"]},
-						"description": "Get single lecture details including description, notes, and status."
+						"description": "Single lecture detail: description, notes, status."
 					},
 					"response": []
 				},
@@ -239,7 +239,7 @@
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}, {"key": "Content-Type", "value": "application/json"}],
 						"body": {"mode": "raw", "raw": "{\n    \"notes\": \"Covered chapters 3-4. Students need to review quadratic formula.\"\n}"},
 						"url": {"raw": "{{baseUrl}}/app/lectures/1/notes", "host": ["{{baseUrl}}"], "path": ["app", "lectures", "1", "notes"]},
-						"description": "Teacher adds post-lecture notes after completing a class."
+						"description": "Teacher adds post-lecture notes."
 					},
 					"response": []
 				},
@@ -257,7 +257,7 @@
 		},
 		{
 			"name": "Tests & Exams",
-			"description": "Tests, scores, and performance analytics matching the Tests & Exams UI",
+			"description": "Tests, scores, and performance analytics",
 			"item": [
 				{
 					"name": "Get All Tests",
@@ -265,7 +265,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/tests", "host": ["{{baseUrl}}"], "path": ["app", "tests"]},
-						"description": "Get all tests for the student. Returns: title, subject, testType (MIDTERM/UNIT_TEST/QUIZ etc), date, time, syllabus, daysUntil countdown."
+						"description": "All tests for the student. Returns: title, subject, testType, date, time, syllabus, daysUntil."
 					},
 					"response": []
 				},
@@ -274,12 +274,7 @@
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
-						"url": {
-							"raw": "{{baseUrl}}/app/tests?status=upcoming",
-							"host": ["{{baseUrl}}"],
-							"path": ["app", "tests"],
-							"query": [{"key": "status", "value": "upcoming"}]
-						},
+						"url": {"raw": "{{baseUrl}}/app/tests?status=upcoming", "host": ["{{baseUrl}}"], "path": ["app", "tests"], "query": [{"key": "status", "value": "upcoming"}]},
 						"description": "Filter: upcoming tests only (SCHEDULED/ONGOING)."
 					},
 					"response": []
@@ -289,12 +284,7 @@
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
-						"url": {
-							"raw": "{{baseUrl}}/app/tests?status=complete",
-							"host": ["{{baseUrl}}"],
-							"path": ["app", "tests"],
-							"query": [{"key": "status", "value": "complete"}]
-						},
+						"url": {"raw": "{{baseUrl}}/app/tests?status=complete", "host": ["{{baseUrl}}"], "path": ["app", "tests"], "query": [{"key": "status", "value": "complete"}]},
 						"description": "Filter: completed tests (COMPLETED/PUBLISHED)."
 					},
 					"response": []
@@ -304,12 +294,7 @@
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
-						"url": {
-							"raw": "{{baseUrl}}/app/tests?status=results",
-							"host": ["{{baseUrl}}"],
-							"path": ["app", "tests"],
-							"query": [{"key": "status", "value": "results"}]
-						},
+						"url": {"raw": "{{baseUrl}}/app/tests?status=results", "host": ["{{baseUrl}}"], "path": ["app", "tests"], "query": [{"key": "status", "value": "results"}]},
 						"description": "Filter: published results with 'VIEW SCORE' button."
 					},
 					"response": []
@@ -320,7 +305,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/tests/1", "host": ["{{baseUrl}}"], "path": ["app", "tests", "1"]},
-						"description": "Get test details: type, subject, date, time, duration, totalMarks, hall, syllabus, instructions, daysUntil. If PUBLISHED: includes myScore (marksObtained, percentage, grade, status, remarks, checkedBy)."
+						"description": "Test details: type, subject, date, time, duration, totalMarks, hall, syllabus, instructions, daysUntil. If PUBLISHED: includes myScore (marksObtained, percentage, grade, status, remarks, checkedBy)."
 					},
 					"response": []
 				},
@@ -366,7 +351,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/attendance", "host": ["{{baseUrl}}"], "path": ["app", "attendance"]},
-						"description": "Get student's attendance performance: totalClasses, present, absent, late, attendancePercentage, statusLabel, monthlyBreakdown, recentAttendance with subject/reason/time."
+						"description": "Student attendance performance: totalClasses, present, absent, late, attendancePercentage, statusLabel, monthlyBreakdown, recentAttendance.\n\nCache: 2 min"
 					},
 					"response": []
 				},
@@ -380,12 +365,12 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["app", "attendance", "history"],
 							"query": [
-								{"key": "month", "value": "2", "description": "Filter by month (1-12). Optional."},
-								{"key": "year", "value": "2026", "description": "Filter by year. Optional."},
-								{"key": "status", "value": "PRESENT", "description": "Filter by status: PRESENT, ABSENT, LATE. Optional."}
+								{"key": "month", "value": "2", "description": "Month (1-12). Optional."},
+								{"key": "year", "value": "2026", "description": "Year. Optional."},
+								{"key": "status", "value": "PRESENT", "description": "PRESENT | ABSENT | LATE. Optional."}
 							]
 						},
-						"description": "Get filtered attendance history. All query params are optional."
+						"description": "Filtered attendance history. All params optional."
 					},
 					"response": []
 				},
@@ -403,7 +388,7 @@
 								{"key": "year", "value": "2026", "description": "Year. Required."}
 							]
 						},
-						"description": "Get per-day attendance calendar for a month. Returns array of {date, status, subject} for calendar view."
+						"description": "Per-day attendance for a month. Returns array of {date, status, subject}.\n\nCache: 2 min"
 					},
 					"response": []
 				}
@@ -411,7 +396,7 @@
 		},
 		{
 			"name": "Assignments",
-			"description": "Assignment slots, submissions, and reviews",
+			"description": "Assignment slots, submissions with Cloudinary file upload, and teacher reviews.\n\n**Changes in v1.0.2:**\n- Submit: 25MB per file (was 10MB), Cloudinary storage (no local disk)\n- Submit: optional `note` field (text note from student)\n- List: `?status=pending|completed` for Pending/Completed tabs\n- Submission response now includes `note`, `publicId` in files",
 			"item": [
 				{
 					"name": "Get My Stats",
@@ -419,17 +404,67 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/assignments/stats", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "stats"]},
-						"description": "Get student's assignment statistics."
+						"description": "Student assignment statistics: total, pending, accepted, rejected counts."
 					},
 					"response": []
 				},
 				{
-					"name": "Get All Assignments",
+					"name": "Get All Assignments (Student — All)",
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/assignments", "host": ["{{baseUrl}}"], "path": ["app", "assignments"]},
-						"description": "Get all assignment slots. Students see their batch assignments, teachers see all."
+						"description": "All assignments for the student's batch with submission status.\n\nResponse includes: id, title, subject, dueDate, isOverdue, daysRemaining, hasSubmitted, submissionStatus, submission (if exists, includes note field)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assignments — Pending Tab",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/assignments?status=pending",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "assignments"],
+							"query": [{"key": "status", "value": "pending", "description": "Only assignments not yet submitted (Pending tab)"}]
+						},
+						"description": "Student Pending tab: assignments not yet submitted.\n\nStatus badges: Overdue (red), Pending (yellow)\nDeadline display: 'Overdue' | 'Due Tomorrow, 11:59 PM' | 'Due Mar 05 (7 days)'"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assignments — Completed Tab",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/assignments?status=completed",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "assignments"],
+							"query": [{"key": "status", "value": "completed", "description": "Only submitted assignments (Completed tab)"}]
+						},
+						"description": "Student Completed tab: submitted assignments.\n\nStatus badge: Completed (green)\nShows submission timestamp"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Assignments (Teacher — with stats)",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/assignments?batchId=1&page=1&limit=20&includeExpired=true",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "assignments"],
+							"query": [
+								{"key": "batchId", "value": "1", "description": "Filter by batch. Optional."},
+								{"key": "page", "value": "1"},
+								{"key": "limit", "value": "20"},
+								{"key": "includeExpired", "value": "true", "description": "Include past due assignments"}
+							]
+						},
+						"description": "Teacher/Admin view: all assignments with submission stats (total, pending, accepted, rejected)."
 					},
 					"response": []
 				},
@@ -439,7 +474,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/assignments/1", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "1"]},
-						"description": "Get single assignment slot details."
+						"description": "Assignment detail: subject badge, title, dueDate, teacher (createdBy), instructions, attached files (Cloudinary URLs + video links).\n\nFor students: includes their submission with files, note, status, feedback."
 					},
 					"response": []
 				},
@@ -451,12 +486,12 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": [
-								{"key": "content", "value": "My completed assignment work", "type": "text"},
-								{"key": "attachments", "type": "file", "src": ""}
+								{"key": "files", "type": "file", "src": "", "description": "Upload 1-5 files. Max 25MB each. PDF, Word, Excel, PPT, images, ZIP accepted."},
+								{"key": "note", "value": "Please find my completed worksheet attached. I used the quadratic formula method.", "type": "text", "description": "Optional text note (max 1000 chars)"}
 							]
 						},
 						"url": {"raw": "{{baseUrl}}/app/assignments/1/submit", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "1", "submit"]},
-						"description": "Student submits assignment with optional file attachments (max 5 files)."
+						"description": "Student submits assignment.\n\n**Upload specs (v1.0.2):**\n- Storage: Cloudinary (submissions/ folder)\n- Max per file: 25 MB\n- Max files: 5\n- Types: PDF, Word, Excel, PPT, images (JPEG/PNG/GIF/WebP), ZIP, TXT\n- Security: MIME type validation + magic number (file signature) check\n\n**Rate limit:** 10 uploads per 5 min per IP\n\nRe-submission allowed if previous status is REJECTED."
 					},
 					"response": []
 				},
@@ -466,7 +501,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/assignments/1/my-submission", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "1", "my-submission"]},
-						"description": "Get student's own submission for an assignment slot."
+						"description": "Student's own submission for an assignment slot.\n\nResponse includes: files (url, publicId, originalFilename, size, mimeType), note, status, feedback, submittedAt, reviewedAt, reviewedBy."
 					},
 					"response": []
 				},
@@ -475,8 +510,17 @@
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
-						"url": {"raw": "{{baseUrl}}/app/assignments/1/submissions", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "1", "submissions"]},
-						"description": "Teacher/Admin: get all submissions for an assignment slot."
+						"url": {
+							"raw": "{{baseUrl}}/app/assignments/1/submissions?status=PENDING&page=1&limit=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "assignments", "1", "submissions"],
+							"query": [
+								{"key": "status", "value": "PENDING", "description": "Filter: PENDING | ACCEPTED | REJECTED. Optional."},
+								{"key": "page", "value": "1"},
+								{"key": "limit", "value": "20"}
+							]
+						},
+						"description": "Teacher/Admin: all submissions for an assignment slot with student details."
 					},
 					"response": []
 				},
@@ -486,7 +530,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/assignments/submissions/1", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "submissions", "1"]},
-						"description": "Get detailed submission with attachments."
+						"description": "Teacher/Admin: single submission with files, note, student info."
 					},
 					"response": []
 				},
@@ -495,9 +539,9 @@
 					"request": {
 						"method": "PUT",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}, {"key": "Content-Type", "value": "application/json"}],
-						"body": {"mode": "raw", "raw": "{\n    \"marks\": 85,\n    \"feedback\": \"Good work! Well structured approach.\",\n    \"status\": \"REVIEWED\"\n}"},
+						"body": {"mode": "raw", "raw": "{\n    \"status\": \"ACCEPTED\",\n    \"feedback\": \"Excellent work! Well structured and clear steps shown.\"\n}"},
 						"url": {"raw": "{{baseUrl}}/app/assignments/submissions/1/review", "host": ["{{baseUrl}}"], "path": ["app", "assignments", "submissions", "1", "review"]},
-						"description": "Teacher reviews and grades a student submission."
+						"description": "Teacher reviews and grades a student submission.\n\nstatus: ACCEPTED | REJECTED\nfeedback: optional (required if REJECTED is good practice)"
 					},
 					"response": []
 				}
@@ -505,15 +549,159 @@
 		},
 		{
 			"name": "Announcements",
-			"description": "View announcements",
+			"description": "School announcements with category filtering, search, and rich detail view.\n\n**Changes in v1.0.2 (complete rewrite):**\n- New: category filter (EXAM, HOLIDAY, LECTURE, GENERAL, EVENT)\n- New: search by title/description\n- New: pagination\n- New: detail endpoint with full body, Important Dates metadata, downloadable attachments, department\n- Cache: list 3 min, detail 5 min\n- Rate limit: 120 req/min",
 			"item": [
 				{
-					"name": "Get Announcements",
+					"name": "Get Announcements (All)",
 					"request": {
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
-						"url": {"raw": "{{baseUrl}}/app/announcements", "host": ["{{baseUrl}}"], "path": ["app", "announcements"]},
-						"description": "Get all active announcements for the app user."
+						"url": {"raw": "{{baseUrl}}/app/announcements?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["app", "announcements"], "query": [{"key": "page", "value": "1"}, {"key": "limit", "value": "10"}]},
+						"description": "Paginated list of active announcements, sorted by priority then date.\n\nResponse: { announcements: [...], pagination: { page, limit, total, totalPages } }\n\nEach item: id, title, description (preview), category, priority, department, date, hasAttachments, createdAt\n\nCache: 3 min (category/search/page scoped)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Announcements — Exams Tab",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/announcements?category=EXAM&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "announcements"],
+							"query": [
+								{"key": "category", "value": "EXAM", "description": "EXAM | HOLIDAY | LECTURE | GENERAL | EVENT"},
+								{"key": "page", "value": "1"},
+								{"key": "limit", "value": "10"}
+							]
+						},
+						"description": "Filter to EXAM category (Exams tab in UI)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Announcements — Holiday Tab",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/announcements?category=HOLIDAY&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "announcements"],
+							"query": [
+								{"key": "category", "value": "HOLIDAY"},
+								{"key": "page", "value": "1"},
+								{"key": "limit", "value": "10"}
+							]
+						},
+						"description": "Filter to HOLIDAY category."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Announcements — General Tab",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/announcements?category=GENERAL&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "announcements"],
+							"query": [
+								{"key": "category", "value": "GENERAL"},
+								{"key": "page", "value": "1"},
+								{"key": "limit", "value": "10"}
+							]
+						},
+						"description": "Filter to GENERAL category."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Announcements",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {
+							"raw": "{{baseUrl}}/app/announcements?search=winter+exam&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["app", "announcements"],
+							"query": [
+								{"key": "search", "value": "winter exam", "description": "Search in title and description (max 100 chars)"},
+								{"key": "page", "value": "1"},
+								{"key": "limit", "value": "10"}
+							]
+						},
+						"description": "Full-text search across title and description. Case-insensitive.\n\nCan combine with category: ?category=EXAM&search=winter"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Announcement Detail",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/announcements/1", "host": ["{{baseUrl}}"], "path": ["app", "announcements", "1"]},
+						"description": "Full announcement detail:\n- title, description (preview), body (full rich text)\n- category, priority, department (e.g., 'Admin Office')\n- date, imageUrl\n- hasAttachments\n- attachments: [{ url, filename, size, mimeType }] — downloadable files\n- metadata: { 'Start Date': 'June 1st, 2026', 'End Date': 'July 14th, 2026', 'Institute Reopens': 'July 15th, 2026' } — Important Dates section\n\nCache: 5 min per id"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"description": "Student notification preferences (student-only).\n\n**New in v1.0.2**\n\nCategories:\n- Academic Alerts: classStartingSoon, timetableChanges\n- Exams & Results: newTestScheduled, resultPublished\n- Materials & Updates: newStudyMaterial, classResourceUploaded\n- Administrative: schoolAnnouncements, doubtResponses\n- Quiet Hours: enabled, from (HH:MM), to (HH:MM)\n\nReturns defaults if no preferences saved yet (no 404).\nCache: 10 min per student.\nRate limit: 120 req/min.",
+			"item": [
+				{
+					"name": "Get Notification Preferences",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
+						"url": {"raw": "{{baseUrl}}/app/notifications/preferences", "host": ["{{baseUrl}}"], "path": ["app", "notifications", "preferences"]},
+						"description": "Get student's notification preferences.\n\nReturns defaults on first call (no 404 — safe to call without setup):\n{\n  academicAlerts: { classStartingSoon: true, timetableChanges: true },\n  examsResults: { newTestScheduled: true, resultPublished: true },\n  materialsUpdates: { newStudyMaterial: true, classResourceUploaded: false },\n  administrative: { schoolAnnouncements: true, doubtResponses: true },\n  quietHours: { enabled: false, from: '22:00', to: '07:00' }\n}\n\nCache: 10 min"
+					},
+					"response": []
+				},
+				{
+					"name": "Save Notification Preferences (Full)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}, {"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"academicAlerts\": {\n        \"classStartingSoon\": true,\n        \"timetableChanges\": true\n    },\n    \"examsResults\": {\n        \"newTestScheduled\": true,\n        \"resultPublished\": true\n    },\n    \"materialsUpdates\": {\n        \"newStudyMaterial\": true,\n        \"classResourceUploaded\": false\n    },\n    \"administrative\": {\n        \"schoolAnnouncements\": true,\n        \"doubtResponses\": true\n    },\n    \"quietHours\": {\n        \"enabled\": false,\n        \"from\": \"22:00\",\n        \"to\": \"07:00\"\n    }\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/app/notifications/preferences", "host": ["{{baseUrl}}"], "path": ["app", "notifications", "preferences"]},
+						"description": "Save all notification preferences (full update).\n\nReturns complete updated preferences object.\nUpsert — safe to call even if no preferences exist yet."
+					},
+					"response": []
+				},
+				{
+					"name": "Save Notification Preferences (Partial — toggle one)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}, {"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"materialsUpdates\": {\n        \"classResourceUploaded\": true\n    }\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/app/notifications/preferences", "host": ["{{baseUrl}}"], "path": ["app", "notifications", "preferences"]},
+						"description": "Partial update — only send the categories/fields you want to change. Other preferences remain unchanged.\n\nUse case: user toggles a single switch in the UI."
+					},
+					"response": []
+				},
+				{
+					"name": "Enable Quiet Hours (Focus Mode)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}, {"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quietHours\": {\n        \"enabled\": true,\n        \"from\": \"22:00\",\n        \"to\": \"07:00\"\n    }\n}"
+						},
+						"url": {"raw": "{{baseUrl}}/app/notifications/preferences", "host": ["{{baseUrl}}"], "path": ["app", "notifications", "preferences"]},
+						"description": "Enable quiet hours with time range.\n\nfrom/to: HH:MM format (24-hour). Validated on server.\nWhen enabled: notifications are muted between 'from' and 'to' times."
 					},
 					"response": []
 				}
@@ -537,7 +725,7 @@
 								{"key": "category", "value": "", "description": "Filter by category. Optional."}
 							]
 						},
-						"description": "Get YouTube videos for the student's batch. Supports ?search= and ?category= filters."
+						"description": "YouTube videos for the student's batch.\n\nCache: 10 min (per batch)"
 					},
 					"response": []
 				},
@@ -555,7 +743,7 @@
 								{"key": "category", "value": "", "description": "Filter by category. Optional."}
 							]
 						},
-						"description": "Get notes for the student's batch. Supports ?search= and ?category= filters."
+						"description": "Notes/PDFs for the student's batch.\n\nCache: 10 min (per batch)"
 					},
 					"response": []
 				},
@@ -573,7 +761,7 @@
 								{"key": "category", "value": "", "description": "Filter by category. Optional."}
 							]
 						},
-						"description": "Get study materials with typed file arrays for the student's batch. Supports ?search= and ?category= filters."
+						"description": "Study materials with typed file arrays for the student's batch.\n\nCache: 10 min (per batch)"
 					},
 					"response": []
 				}
@@ -589,7 +777,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/fees/receipts", "host": ["{{baseUrl}}"], "path": ["app", "fees", "receipts"]},
-						"description": "Get all fee receipts for the authenticated student."
+						"description": "All fee receipts for the authenticated student."
 					},
 					"response": []
 				},
@@ -599,7 +787,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/fees/summary", "host": ["{{baseUrl}}"], "path": ["app", "fees", "summary"]},
-						"description": "Get fees summary: total due, total paid, balance, payment history."
+						"description": "Fees summary: total due, total paid, balance, payment history."
 					},
 					"response": []
 				},
@@ -609,7 +797,7 @@
 						"method": "GET",
 						"header": [{"key": "Authorization", "value": "Bearer {{appToken}}"}],
 						"url": {"raw": "{{baseUrl}}/app/fees/structures", "host": ["{{baseUrl}}"], "path": ["app", "fees", "structures"]},
-						"description": "Get active fee structures for the student's batch: name, amount, frequency, dueDay, lateFee, gracePeriod, description."
+						"description": "Active fee structures for the student's batch: name, amount, frequency, dueDay, lateFee, gracePeriod, description.\n\nCache: 60 min"
 					},
 					"response": []
 				}

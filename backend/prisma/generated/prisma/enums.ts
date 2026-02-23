@@ -19,6 +19,17 @@ export const AnnouncementPriority = {
 export type AnnouncementPriority = (typeof AnnouncementPriority)[keyof typeof AnnouncementPriority]
 
 
+export const AnnouncementCategory = {
+  GENERAL: 'GENERAL',
+  EXAM: 'EXAM',
+  HOLIDAY: 'HOLIDAY',
+  LECTURE: 'LECTURE',
+  EVENT: 'EVENT'
+} as const
+
+export type AnnouncementCategory = (typeof AnnouncementCategory)[keyof typeof AnnouncementCategory]
+
+
 export const SubmissionStatus = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',

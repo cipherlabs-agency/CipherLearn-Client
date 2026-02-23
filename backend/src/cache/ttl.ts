@@ -19,10 +19,16 @@ export const APP_VIDEOS = 600;
 export const APP_NOTES = 600;
 export const APP_MATERIALS = 600;
 
+// App announcements
+export const APP_ANNOUNCEMENT_LIST = 180;   // 3 min — list changes when new ones added
+export const APP_ANNOUNCEMENT_DETAIL = 300; // 5 min — detail is stable
+
 // App misc
-export const APP_ANNOUNCEMENTS = 300;
 export const APP_FEE_STRUCTURES = 3600;
 export const APP_PROFILE = 300;
+
+// App notifications
+export const APP_NOTIF_PREFS = 600; // 10 min — preferences rarely change
 
 // App attendance
 export const APP_ATTENDANCE_PERF = 120;

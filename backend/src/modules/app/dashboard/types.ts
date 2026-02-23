@@ -1,7 +1,7 @@
 import type { StudentProfile } from "../profile/types";
 import type { AttendancePerformance } from "../attendance/types";
 import type { UpcomingAssignment } from "../assignments/types";
-import type { AppAnnouncement } from "../announcements/types";
+import type { AppAnnouncementListItem } from "../announcements/types";
 import type { AppFeesSummary } from "../fees/types";
 
 export interface TodayLecture {
@@ -26,7 +26,7 @@ export interface DashboardData {
   todayLectures: TodayLecture[];
   attendance: AttendancePerformance;
   upcomingAssignments: UpcomingAssignment[];
-  announcements: AppAnnouncement[];
+  announcements: AppAnnouncementListItem[];
   quickAccess: QuickAccessCounts;
   feesSummary: AppFeesSummary;
 }

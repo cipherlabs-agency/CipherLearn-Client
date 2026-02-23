@@ -400,6 +400,7 @@ export const ModelName = {
   FeeReceipt: 'FeeReceipt',
   PasswordResetToken: 'PasswordResetToken',
   TokenBlacklist: 'TokenBlacklist',
+  NotificationPreference: 'NotificationPreference',
   LoginAttempt: 'LoginAttempt',
   Lecture: 'Lecture',
   Test: 'Test',
@@ -422,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "loginAttempt" | "lecture" | "test" | "testScore" | "instagramAccount" | "automationRule" | "automationLog"
+    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "notificationPreference" | "loginAttempt" | "lecture" | "test" | "testScore" | "instagramAccount" | "automationRule" | "automationLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1610,6 +1611,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NotificationPreference: {
+      payload: Prisma.$NotificationPreferencePayload<ExtArgs>
+      fields: Prisma.NotificationPreferenceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NotificationPreferenceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NotificationPreferenceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        findFirst: {
+          args: Prisma.NotificationPreferenceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NotificationPreferenceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        findMany: {
+          args: Prisma.NotificationPreferenceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+        }
+        create: {
+          args: Prisma.NotificationPreferenceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        createMany: {
+          args: Prisma.NotificationPreferenceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NotificationPreferenceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+        }
+        delete: {
+          args: Prisma.NotificationPreferenceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        update: {
+          args: Prisma.NotificationPreferenceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        deleteMany: {
+          args: Prisma.NotificationPreferenceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NotificationPreferenceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NotificationPreferenceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+        }
+        upsert: {
+          args: Prisma.NotificationPreferenceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        aggregate: {
+          args: Prisma.NotificationPreferenceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotificationPreference>
+        }
+        groupBy: {
+          args: Prisma.NotificationPreferenceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationPreferenceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NotificationPreferenceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationPreferenceCountAggregateOutputType> | number
+        }
+      }
+    }
     LoginAttempt: {
       payload: Prisma.$LoginAttemptPayload<ExtArgs>
       fields: Prisma.LoginAttemptFieldRefs
@@ -2323,6 +2398,7 @@ export const StudentSubmissionScalarFieldEnum = {
   slotId: 'slotId',
   studentId: 'studentId',
   files: 'files',
+  note: 'note',
   status: 'status',
   feedback: 'feedback',
   reviewedBy: 'reviewedBy',
@@ -2338,9 +2414,14 @@ export const AnnouncementScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
+  body: 'body',
   imageUrl: 'imageUrl',
   date: 'date',
+  category: 'category',
   priority: 'priority',
+  department: 'department',
+  attachments: 'attachments',
+  metadata: 'metadata',
   isActive: 'isActive',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
@@ -2438,6 +2519,27 @@ export const TokenBlacklistScalarFieldEnum = {
 } as const
 
 export type TokenBlacklistScalarFieldEnum = (typeof TokenBlacklistScalarFieldEnum)[keyof typeof TokenBlacklistScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  classStartingSoon: 'classStartingSoon',
+  timetableChanges: 'timetableChanges',
+  newTestScheduled: 'newTestScheduled',
+  resultPublished: 'resultPublished',
+  newStudyMaterial: 'newStudyMaterial',
+  classResourceUploaded: 'classResourceUploaded',
+  schoolAnnouncements: 'schoolAnnouncements',
+  doubtResponses: 'doubtResponses',
+  quietHoursEnabled: 'quietHoursEnabled',
+  quietHoursFrom: 'quietHoursFrom',
+  quietHoursTo: 'quietHoursTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
 
 
 export const LoginAttemptScalarFieldEnum = {
@@ -2761,6 +2863,20 @@ export type ListEnumSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'AnnouncementCategory'
+ */
+export type EnumAnnouncementCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementCategory'>
+    
+
+
+/**
+ * Reference to a field of type 'AnnouncementCategory[]'
+ */
+export type ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementCategory[]'>
+    
+
+
+/**
  * Reference to a field of type 'AnnouncementPriority'
  */
 export type EnumAnnouncementPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementPriority'>
@@ -3038,6 +3154,7 @@ export type GlobalOmitConfig = {
   feeReceipt?: Prisma.FeeReceiptOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   tokenBlacklist?: Prisma.TokenBlacklistOmit
+  notificationPreference?: Prisma.NotificationPreferenceOmit
   loginAttempt?: Prisma.LoginAttemptOmit
   lecture?: Prisma.LectureOmit
   test?: Prisma.TestOmit

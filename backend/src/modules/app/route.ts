@@ -5,6 +5,7 @@ import dashboardRoutes from "./dashboard/route";
 import attendanceRoutes from "./attendance/route";
 import assignmentsRoutes from "./assignments/route";
 import announcementsRoutes from "./announcements/route";
+import notificationsRoutes from "./notifications/route";
 import resourcesRoutes from "./resources/route";
 import feesRoutes from "./fees/route";
 import appLecturesRoutes from "./lectures/route";
@@ -37,6 +38,9 @@ router.use("/assignments", assignmentsRoutes);
 
 // Announcements - all app users can view
 router.use("/announcements", isAppUser, announcementsRoutes);
+
+// Notifications preferences - student only
+router.use("/notifications", isStudent, notificationsRoutes);
 
 // Resources - all app users can view study materials
 router.use("/resources", isAppUser, resourcesRoutes);

@@ -82,8 +82,13 @@ export const AppKeys = {
   materials: (batchId: number, limit?: number) =>
     buildKey("app", "resources", "materials", sanitizeId(batchId), limit != null ? sanitizeId(limit) : "all"),
 
-  announcements: (limit: number) =>
-    buildKey("app", "announcements", sanitizeId(limit)),
+  // Announcement list: scoped by category + page + limit
+  announcementList: (category: string, search: string, page: number, limit: number) =>
+    buildKey("app", "ann", "list", sanitizeString(category), sanitizeString(search), sanitizeId(page), sanitizeId(limit)),
+
+  // Announcement detail: per id
+  announcementDetail: (id: number) =>
+    buildKey("app", "ann", "detail", sanitizeId(id)),
 
   feeStructures: (batchId: number) =>
     buildKey("app", "fees", "structures", sanitizeId(batchId)),
@@ -104,6 +109,10 @@ export const AppKeys = {
       sanitizeId(month),
       sanitizeId(year)
     ),
+
+  // Notification preferences: per student
+  notifPrefs: (studentId: number) =>
+    buildKey("app", "notif", "prefs", sanitizeId(studentId)),
 };
 
 // ========================
@@ -115,8 +124,9 @@ export const InvalidationPatterns = {
   dashBatches: "dash:batches:",
   dashStudents: "dash:students:",
   appResources: "app:resources:",
-  appAnnouncements: "app:announcements:",
+  appAnnouncements: "app:ann:",
   appFees: "app:fees:",
   appProfile: "app:profile:",
   appAttendance: "app:attendance:",
+  appNotifPrefs: "app:notif:",
 };

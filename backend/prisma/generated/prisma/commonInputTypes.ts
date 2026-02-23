@@ -402,11 +402,28 @@ export type EnumSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumSubmissionStatusFilter<$PrismaModel>
 }
 
+export type EnumAnnouncementCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.AnnouncementCategory | Prisma.EnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.AnnouncementCategory[] | Prisma.ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AnnouncementCategory[] | Prisma.ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAnnouncementCategoryFilter<$PrismaModel> | $Enums.AnnouncementCategory
+}
+
 export type EnumAnnouncementPriorityFilter<$PrismaModel = never> = {
   equals?: $Enums.AnnouncementPriority | Prisma.EnumAnnouncementPriorityFieldRefInput<$PrismaModel>
   in?: $Enums.AnnouncementPriority[] | Prisma.ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
   notIn?: $Enums.AnnouncementPriority[] | Prisma.ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumAnnouncementPriorityFilter<$PrismaModel> | $Enums.AnnouncementPriority
+}
+
+export type EnumAnnouncementCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AnnouncementCategory | Prisma.EnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.AnnouncementCategory[] | Prisma.ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AnnouncementCategory[] | Prisma.ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAnnouncementCategoryWithAggregatesFilter<$PrismaModel> | $Enums.AnnouncementCategory
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAnnouncementCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAnnouncementCategoryFilter<$PrismaModel>
 }
 
 export type EnumAnnouncementPriorityWithAggregatesFilter<$PrismaModel = never> = {
@@ -990,11 +1007,28 @@ export type NestedEnumSubmissionStatusWithAggregatesFilter<$PrismaModel = never>
   _max?: Prisma.NestedEnumSubmissionStatusFilter<$PrismaModel>
 }
 
+export type NestedEnumAnnouncementCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.AnnouncementCategory | Prisma.EnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.AnnouncementCategory[] | Prisma.ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AnnouncementCategory[] | Prisma.ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAnnouncementCategoryFilter<$PrismaModel> | $Enums.AnnouncementCategory
+}
+
 export type NestedEnumAnnouncementPriorityFilter<$PrismaModel = never> = {
   equals?: $Enums.AnnouncementPriority | Prisma.EnumAnnouncementPriorityFieldRefInput<$PrismaModel>
   in?: $Enums.AnnouncementPriority[] | Prisma.ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
   notIn?: $Enums.AnnouncementPriority[] | Prisma.ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumAnnouncementPriorityFilter<$PrismaModel> | $Enums.AnnouncementPriority
+}
+
+export type NestedEnumAnnouncementCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AnnouncementCategory | Prisma.EnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.AnnouncementCategory[] | Prisma.ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AnnouncementCategory[] | Prisma.ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAnnouncementCategoryWithAggregatesFilter<$PrismaModel> | $Enums.AnnouncementCategory
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAnnouncementCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAnnouncementCategoryFilter<$PrismaModel>
 }
 
 export type NestedEnumAnnouncementPriorityWithAggregatesFilter<$PrismaModel = never> = {

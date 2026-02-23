@@ -112,7 +112,7 @@ class DashboardService {
       todayLectures,
       attendance,
       upcomingAssignments,
-      announcements,
+      announcementsResult,
       quickAccess,
       feesSummary,
     ] = await Promise.all([
@@ -120,7 +120,7 @@ class DashboardService {
       this.getTodayLectures(batchId),
       attendanceService.getAttendancePerformance(studentId, batchId),
       assignmentsService.getStudentAssignments(studentId, batchId),
-      announcementsService.getAnnouncements(5),
+      announcementsService.getAnnouncements({ limit: 5 }),
       this.getQuickAccessCounts(studentId, batchId),
       feesService.getFeesSummary(studentId),
     ]);
@@ -130,7 +130,7 @@ class DashboardService {
       todayLectures,
       attendance,
       upcomingAssignments,
-      announcements,
+      announcements: announcementsResult.announcements,
       quickAccess,
       feesSummary,
     };

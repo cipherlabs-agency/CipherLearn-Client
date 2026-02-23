@@ -26,6 +26,7 @@ export interface AssignmentDetails extends UpcomingAssignment {
 export interface StudentSubmissionDetails {
   id: number;
   files: SubmissionFile[];
+  note: string | null;
   status: SubmissionStatus;
   feedback: string | null;
   submittedAt: string;
@@ -35,14 +36,16 @@ export interface StudentSubmissionDetails {
 
 export interface SubmissionFile {
   url: string;
+  publicId: string;         // Cloudinary public_id for deletion
   originalFilename: string;
-  size: number;
+  size: number;             // bytes
   mimeType: string;
 }
 
 export interface CreateSubmissionInput {
   slotId: number;
   files: SubmissionFile[];
+  note?: string;            // Optional text note from student
 }
 
 export interface ReviewSubmissionInput {
@@ -75,6 +78,7 @@ export interface AssignmentSlotWithStats {
 export interface SubmissionWithStudent {
   id: number;
   files: SubmissionFile[];
+  note: string | null;
   status: SubmissionStatus;
   feedback: string | null;
   submittedAt: string;
@@ -97,6 +101,8 @@ export interface GetAssignmentsQuery {
   page?: number;
   limit?: number;
   includeExpired?: boolean;
+  /** For student list: "pending" | "completed" tabs */
+  status?: "pending" | "completed";
 }
 
 export interface GetSubmissionsQuery {

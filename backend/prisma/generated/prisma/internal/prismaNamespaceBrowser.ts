@@ -67,6 +67,7 @@ export const ModelName = {
   FeeReceipt: 'FeeReceipt',
   PasswordResetToken: 'PasswordResetToken',
   TokenBlacklist: 'TokenBlacklist',
+  NotificationPreference: 'NotificationPreference',
   LoginAttempt: 'LoginAttempt',
   Lecture: 'Lecture',
   Test: 'Test',
@@ -248,6 +249,7 @@ export const StudentSubmissionScalarFieldEnum = {
   slotId: 'slotId',
   studentId: 'studentId',
   files: 'files',
+  note: 'note',
   status: 'status',
   feedback: 'feedback',
   reviewedBy: 'reviewedBy',
@@ -263,9 +265,14 @@ export const AnnouncementScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
+  body: 'body',
   imageUrl: 'imageUrl',
   date: 'date',
+  category: 'category',
   priority: 'priority',
+  department: 'department',
+  attachments: 'attachments',
+  metadata: 'metadata',
   isActive: 'isActive',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
@@ -363,6 +370,27 @@ export const TokenBlacklistScalarFieldEnum = {
 } as const
 
 export type TokenBlacklistScalarFieldEnum = (typeof TokenBlacklistScalarFieldEnum)[keyof typeof TokenBlacklistScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  classStartingSoon: 'classStartingSoon',
+  timetableChanges: 'timetableChanges',
+  newTestScheduled: 'newTestScheduled',
+  resultPublished: 'resultPublished',
+  newStudyMaterial: 'newStudyMaterial',
+  classResourceUploaded: 'classResourceUploaded',
+  schoolAnnouncements: 'schoolAnnouncements',
+  doubtResponses: 'doubtResponses',
+  quietHoursEnabled: 'quietHoursEnabled',
+  quietHoursFrom: 'quietHoursFrom',
+  quietHoursTo: 'quietHoursTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
 
 
 export const LoginAttemptScalarFieldEnum = {

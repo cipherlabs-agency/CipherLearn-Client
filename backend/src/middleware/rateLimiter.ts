@@ -121,3 +121,51 @@ export const tokenRefreshRateLimiter = rateLimit({
     });
   },
 });
+
+/**
+ * Rate limiter for general app read endpoints (announcements, notifications, etc.)
+ * 120 requests per minute per IP
+ */
+export const appReadRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 120,
+  message: {
+    success: false,
+    message: "Too many requests. Please slow down.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) => {
+    return req.ip || req.socket.remoteAddress || "unknown";
+  },
+  handler: (_req: Request, res: Response) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many requests. Please slow down.",
+    });
+  },
+});
+
+/**
+ * Rate limiter for file upload endpoints (assignment submissions)
+ * 10 uploads per 5 minutes per IP — prevents upload abuse
+ */
+export const fileUploadRateLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 10,
+  message: {
+    success: false,
+    message: "Too many file upload attempts. Please wait before trying again.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) => {
+    return req.ip || req.socket.remoteAddress || "unknown";
+  },
+  handler: (_req: Request, res: Response) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many file upload attempts. Please wait before trying again.",
+    });
+  },
+});

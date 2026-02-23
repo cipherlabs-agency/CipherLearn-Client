@@ -53,12 +53,13 @@ model Student {
   isDeleted  Boolean? @default(false)
   deletedBy  String?
 
-  updatedAt   DateTime?           @updatedAt
-  createdAt   DateTime?           @default(now())
-  attendances Attendance[]
-  submissions StudentSubmission[]
-  feeReceipts FeeReceipt[]
-  testScores  TestScore[]
+  updatedAt               DateTime?              @updatedAt
+  createdAt               DateTime?              @default(now())
+  attendances             Attendance[]
+  submissions             StudentSubmission[]
+  feeReceipts             FeeReceipt[]
+  testScores              TestScore[]
+  notificationPreference  NotificationPreference?
 
   @@index([batchId])
   @@index([userId])
@@ -214,7 +215,8 @@ model StudentSubmission {
   slot        AssignmentSlot   @relation(fields: [slotId], references: [id])
   studentId   Int
   student     Student          @relation(fields: [studentId], references: [id])
-  files       Json             // Array of file URLs
+  files       Json             // Array of { url, publicId, originalFilename, size, mimeType }
+  note        String?          // Optional text note from student with submission
   status      SubmissionStatus @default(PENDING)
   feedback    String?
   reviewedBy  String?
@@ -229,17 +231,24 @@ model StudentSubmission {
 }
 
 model Announcement {
-  id          Int       @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
   title       String
-  description String
+  description String               // Short preview text
+  body        String?              // Full rich-text content shown in detail view
   imageUrl    String?
   date        DateTime?
+  category    AnnouncementCategory @default(GENERAL)
   priority    AnnouncementPriority @default(NORMAL)
-  isActive    Boolean   @default(true)
+  department  String?              // e.g., "Admin Office", "Mathematics Dept"
+  attachments Json?                // Array of { url, filename, size, mimeType }
+  metadata    Json?                // Structured key-value e.g., { "Start Date": "June 1st, 2026" }
+  isActive    Boolean              @default(true)
   createdBy   String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 
+  @@index([category, isActive])
+  @@index([isActive, createdAt])
   @@map("announcements")
 }
 
@@ -265,6 +274,14 @@ enum AnnouncementPriority {
   NORMAL
   HIGH
   URGENT
+}
+
+enum AnnouncementCategory {
+  GENERAL
+  EXAM
+  HOLIDAY
+  LECTURE
+  EVENT
 }
 
 enum SubmissionStatus {
@@ -426,6 +443,38 @@ model TokenBlacklist {
 
   @@index([token])
   @@map("token_blacklist")
+}
+
+model NotificationPreference {
+  id        Int     @id @default(autoincrement())
+  studentId Int     @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  // Academic Alerts
+  classStartingSoon    Boolean @default(true)
+  timetableChanges     Boolean @default(true)
+
+  // Exams & Results
+  newTestScheduled     Boolean @default(true)
+  resultPublished      Boolean @default(true)
+
+  // Materials & Updates
+  newStudyMaterial     Boolean @default(true)
+  classResourceUploaded Boolean @default(false)
+
+  // Administrative
+  schoolAnnouncements  Boolean @default(true)
+  doubtResponses       Boolean @default(true)
+
+  // Quiet Hours
+  quietHoursEnabled    Boolean @default(false)
+  quietHoursFrom       String  @default("22:00") // HH:MM format
+  quietHoursTo         String  @default("07:00") // HH:MM format
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notification_preferences")
 }
 
 model LoginAttempt {
