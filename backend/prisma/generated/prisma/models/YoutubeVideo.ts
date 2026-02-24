@@ -28,16 +28,19 @@ export type AggregateYoutubeVideo = {
 
 export type YoutubeVideoAvgAggregateOutputType = {
   id: number | null
+  tenantId: number | null
   batchId: number | null
 }
 
 export type YoutubeVideoSumAggregateOutputType = {
   id: number | null
+  tenantId: number | null
   batchId: number | null
 }
 
 export type YoutubeVideoMinAggregateOutputType = {
   id: number | null
+  tenantId: number | null
   title: string | null
   description: string | null
   url: string | null
@@ -52,6 +55,7 @@ export type YoutubeVideoMinAggregateOutputType = {
 
 export type YoutubeVideoMaxAggregateOutputType = {
   id: number | null
+  tenantId: number | null
   title: string | null
   description: string | null
   url: string | null
@@ -66,6 +70,7 @@ export type YoutubeVideoMaxAggregateOutputType = {
 
 export type YoutubeVideoCountAggregateOutputType = {
   id: number
+  tenantId: number
   title: number
   description: number
   url: number
@@ -82,16 +87,19 @@ export type YoutubeVideoCountAggregateOutputType = {
 
 export type YoutubeVideoAvgAggregateInputType = {
   id?: true
+  tenantId?: true
   batchId?: true
 }
 
 export type YoutubeVideoSumAggregateInputType = {
   id?: true
+  tenantId?: true
   batchId?: true
 }
 
 export type YoutubeVideoMinAggregateInputType = {
   id?: true
+  tenantId?: true
   title?: true
   description?: true
   url?: true
@@ -106,6 +114,7 @@ export type YoutubeVideoMinAggregateInputType = {
 
 export type YoutubeVideoMaxAggregateInputType = {
   id?: true
+  tenantId?: true
   title?: true
   description?: true
   url?: true
@@ -120,6 +129,7 @@ export type YoutubeVideoMaxAggregateInputType = {
 
 export type YoutubeVideoCountAggregateInputType = {
   id?: true
+  tenantId?: true
   title?: true
   description?: true
   url?: true
@@ -221,6 +231,7 @@ export type YoutubeVideoGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type YoutubeVideoGroupByOutputType = {
   id: number
+  tenantId: number | null
   title: string
   description: string | null
   url: string
@@ -258,6 +269,7 @@ export type YoutubeVideoWhereInput = {
   OR?: Prisma.YoutubeVideoWhereInput[]
   NOT?: Prisma.YoutubeVideoWhereInput | Prisma.YoutubeVideoWhereInput[]
   id?: Prisma.IntFilter<"YoutubeVideo"> | number
+  tenantId?: Prisma.IntNullableFilter<"YoutubeVideo"> | number | null
   title?: Prisma.StringFilter<"YoutubeVideo"> | string
   description?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   url?: Prisma.StringFilter<"YoutubeVideo"> | string
@@ -268,10 +280,12 @@ export type YoutubeVideoWhereInput = {
   deletedBy?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }
 
 export type YoutubeVideoOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   url?: Prisma.SortOrder
@@ -282,6 +296,7 @@ export type YoutubeVideoOrderByWithRelationInput = {
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  tenant?: Prisma.TenantOrderByWithRelationInput
 }
 
 export type YoutubeVideoWhereUniqueInput = Prisma.AtLeast<{
@@ -290,6 +305,7 @@ export type YoutubeVideoWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.YoutubeVideoWhereInput | Prisma.YoutubeVideoWhereInput[]
   OR?: Prisma.YoutubeVideoWhereInput[]
   NOT?: Prisma.YoutubeVideoWhereInput | Prisma.YoutubeVideoWhereInput[]
+  tenantId?: Prisma.IntNullableFilter<"YoutubeVideo"> | number | null
   title?: Prisma.StringFilter<"YoutubeVideo"> | string
   description?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   visibility?: Prisma.EnumYoutubeVideoVisibilityNullableFilter<"YoutubeVideo"> | $Enums.YoutubeVideoVisibility | null
@@ -299,10 +315,12 @@ export type YoutubeVideoWhereUniqueInput = Prisma.AtLeast<{
   deletedBy?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }, "id" | "url">
 
 export type YoutubeVideoOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   url?: Prisma.SortOrder
@@ -325,6 +343,7 @@ export type YoutubeVideoScalarWhereWithAggregatesInput = {
   OR?: Prisma.YoutubeVideoScalarWhereWithAggregatesInput[]
   NOT?: Prisma.YoutubeVideoScalarWhereWithAggregatesInput | Prisma.YoutubeVideoScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"YoutubeVideo"> | number
+  tenantId?: Prisma.IntNullableWithAggregatesFilter<"YoutubeVideo"> | number | null
   title?: Prisma.StringWithAggregatesFilter<"YoutubeVideo"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"YoutubeVideo"> | string | null
   url?: Prisma.StringWithAggregatesFilter<"YoutubeVideo"> | string
@@ -348,10 +367,12 @@ export type YoutubeVideoCreateInput = {
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  tenant?: Prisma.TenantCreateNestedOneWithoutYoutubeVideosInput
 }
 
 export type YoutubeVideoUncheckedCreateInput = {
   id?: number
+  tenantId?: number | null
   title: string
   description?: string | null
   url: string
@@ -375,10 +396,12 @@ export type YoutubeVideoUpdateInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tenant?: Prisma.TenantUpdateOneWithoutYoutubeVideosNestedInput
 }
 
 export type YoutubeVideoUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  tenantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.StringFieldUpdateOperationsInput | string
@@ -393,6 +416,7 @@ export type YoutubeVideoUncheckedUpdateInput = {
 
 export type YoutubeVideoCreateManyInput = {
   id?: number
+  tenantId?: number | null
   title: string
   description?: string | null
   url: string
@@ -420,6 +444,7 @@ export type YoutubeVideoUpdateManyMutationInput = {
 
 export type YoutubeVideoUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  tenantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.StringFieldUpdateOperationsInput | string
@@ -432,8 +457,19 @@ export type YoutubeVideoUncheckedUpdateManyInput = {
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+export type YoutubeVideoListRelationFilter = {
+  every?: Prisma.YoutubeVideoWhereInput
+  some?: Prisma.YoutubeVideoWhereInput
+  none?: Prisma.YoutubeVideoWhereInput
+}
+
+export type YoutubeVideoOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type YoutubeVideoCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   url?: Prisma.SortOrder
@@ -448,11 +484,13 @@ export type YoutubeVideoCountOrderByAggregateInput = {
 
 export type YoutubeVideoAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
 }
 
 export type YoutubeVideoMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   url?: Prisma.SortOrder
@@ -467,6 +505,7 @@ export type YoutubeVideoMaxOrderByAggregateInput = {
 
 export type YoutubeVideoMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   url?: Prisma.SortOrder
@@ -481,17 +520,187 @@ export type YoutubeVideoMinOrderByAggregateInput = {
 
 export type YoutubeVideoSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
+}
+
+export type YoutubeVideoCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.YoutubeVideoCreateWithoutTenantInput, Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput> | Prisma.YoutubeVideoCreateWithoutTenantInput[] | Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.YoutubeVideoCreateOrConnectWithoutTenantInput | Prisma.YoutubeVideoCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.YoutubeVideoCreateManyTenantInputEnvelope
+  connect?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+}
+
+export type YoutubeVideoUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.YoutubeVideoCreateWithoutTenantInput, Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput> | Prisma.YoutubeVideoCreateWithoutTenantInput[] | Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.YoutubeVideoCreateOrConnectWithoutTenantInput | Prisma.YoutubeVideoCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.YoutubeVideoCreateManyTenantInputEnvelope
+  connect?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+}
+
+export type YoutubeVideoUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.YoutubeVideoCreateWithoutTenantInput, Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput> | Prisma.YoutubeVideoCreateWithoutTenantInput[] | Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.YoutubeVideoCreateOrConnectWithoutTenantInput | Prisma.YoutubeVideoCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.YoutubeVideoUpsertWithWhereUniqueWithoutTenantInput | Prisma.YoutubeVideoUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.YoutubeVideoCreateManyTenantInputEnvelope
+  set?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+  disconnect?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+  delete?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+  connect?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+  update?: Prisma.YoutubeVideoUpdateWithWhereUniqueWithoutTenantInput | Prisma.YoutubeVideoUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.YoutubeVideoUpdateManyWithWhereWithoutTenantInput | Prisma.YoutubeVideoUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.YoutubeVideoScalarWhereInput | Prisma.YoutubeVideoScalarWhereInput[]
+}
+
+export type YoutubeVideoUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.YoutubeVideoCreateWithoutTenantInput, Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput> | Prisma.YoutubeVideoCreateWithoutTenantInput[] | Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.YoutubeVideoCreateOrConnectWithoutTenantInput | Prisma.YoutubeVideoCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.YoutubeVideoUpsertWithWhereUniqueWithoutTenantInput | Prisma.YoutubeVideoUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.YoutubeVideoCreateManyTenantInputEnvelope
+  set?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+  disconnect?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+  delete?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+  connect?: Prisma.YoutubeVideoWhereUniqueInput | Prisma.YoutubeVideoWhereUniqueInput[]
+  update?: Prisma.YoutubeVideoUpdateWithWhereUniqueWithoutTenantInput | Prisma.YoutubeVideoUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.YoutubeVideoUpdateManyWithWhereWithoutTenantInput | Prisma.YoutubeVideoUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.YoutubeVideoScalarWhereInput | Prisma.YoutubeVideoScalarWhereInput[]
 }
 
 export type NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput = {
   set?: $Enums.YoutubeVideoVisibility | null
 }
 
+export type YoutubeVideoCreateWithoutTenantInput = {
+  title: string
+  description?: string | null
+  url: string
+  visibility?: $Enums.YoutubeVideoVisibility | null
+  category?: string | null
+  batchId: number
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+}
+
+export type YoutubeVideoUncheckedCreateWithoutTenantInput = {
+  id?: number
+  title: string
+  description?: string | null
+  url: string
+  visibility?: $Enums.YoutubeVideoVisibility | null
+  category?: string | null
+  batchId: number
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+}
+
+export type YoutubeVideoCreateOrConnectWithoutTenantInput = {
+  where: Prisma.YoutubeVideoWhereUniqueInput
+  create: Prisma.XOR<Prisma.YoutubeVideoCreateWithoutTenantInput, Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput>
+}
+
+export type YoutubeVideoCreateManyTenantInputEnvelope = {
+  data: Prisma.YoutubeVideoCreateManyTenantInput | Prisma.YoutubeVideoCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type YoutubeVideoUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.YoutubeVideoWhereUniqueInput
+  update: Prisma.XOR<Prisma.YoutubeVideoUpdateWithoutTenantInput, Prisma.YoutubeVideoUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.YoutubeVideoCreateWithoutTenantInput, Prisma.YoutubeVideoUncheckedCreateWithoutTenantInput>
+}
+
+export type YoutubeVideoUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.YoutubeVideoWhereUniqueInput
+  data: Prisma.XOR<Prisma.YoutubeVideoUpdateWithoutTenantInput, Prisma.YoutubeVideoUncheckedUpdateWithoutTenantInput>
+}
+
+export type YoutubeVideoUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.YoutubeVideoScalarWhereInput
+  data: Prisma.XOR<Prisma.YoutubeVideoUpdateManyMutationInput, Prisma.YoutubeVideoUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type YoutubeVideoScalarWhereInput = {
+  AND?: Prisma.YoutubeVideoScalarWhereInput | Prisma.YoutubeVideoScalarWhereInput[]
+  OR?: Prisma.YoutubeVideoScalarWhereInput[]
+  NOT?: Prisma.YoutubeVideoScalarWhereInput | Prisma.YoutubeVideoScalarWhereInput[]
+  id?: Prisma.IntFilter<"YoutubeVideo"> | number
+  tenantId?: Prisma.IntNullableFilter<"YoutubeVideo"> | number | null
+  title?: Prisma.StringFilter<"YoutubeVideo"> | string
+  description?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
+  url?: Prisma.StringFilter<"YoutubeVideo"> | string
+  visibility?: Prisma.EnumYoutubeVideoVisibilityNullableFilter<"YoutubeVideo"> | $Enums.YoutubeVideoVisibility | null
+  category?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
+  batchId?: Prisma.IntFilter<"YoutubeVideo"> | number
+  isDeleted?: Prisma.BoolNullableFilter<"YoutubeVideo"> | boolean | null
+  deletedBy?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
+  updatedAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  createdAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+}
+
+export type YoutubeVideoCreateManyTenantInput = {
+  id?: number
+  title: string
+  description?: string | null
+  url: string
+  visibility?: $Enums.YoutubeVideoVisibility | null
+  category?: string | null
+  batchId: number
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+}
+
+export type YoutubeVideoUpdateWithoutTenantInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  batchId?: Prisma.IntFieldUpdateOperationsInput | number
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type YoutubeVideoUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  batchId?: Prisma.IntFieldUpdateOperationsInput | number
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type YoutubeVideoUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  batchId?: Prisma.IntFieldUpdateOperationsInput | number
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 
 
 export type YoutubeVideoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   title?: boolean
   description?: boolean
   url?: boolean
@@ -502,10 +711,12 @@ export type YoutubeVideoSelect<ExtArgs extends runtime.Types.Extensions.Internal
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  tenant?: boolean | Prisma.YoutubeVideo$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["youtubeVideo"]>
 
 export type YoutubeVideoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   title?: boolean
   description?: boolean
   url?: boolean
@@ -516,10 +727,12 @@ export type YoutubeVideoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  tenant?: boolean | Prisma.YoutubeVideo$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["youtubeVideo"]>
 
 export type YoutubeVideoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   title?: boolean
   description?: boolean
   url?: boolean
@@ -530,10 +743,12 @@ export type YoutubeVideoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  tenant?: boolean | Prisma.YoutubeVideo$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["youtubeVideo"]>
 
 export type YoutubeVideoSelectScalar = {
   id?: boolean
+  tenantId?: boolean
   title?: boolean
   description?: boolean
   url?: boolean
@@ -546,13 +761,25 @@ export type YoutubeVideoSelectScalar = {
   createdAt?: boolean
 }
 
-export type YoutubeVideoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "url" | "visibility" | "category" | "batchId" | "isDeleted" | "deletedBy" | "updatedAt" | "createdAt", ExtArgs["result"]["youtubeVideo"]>
+export type YoutubeVideoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "title" | "description" | "url" | "visibility" | "category" | "batchId" | "isDeleted" | "deletedBy" | "updatedAt" | "createdAt", ExtArgs["result"]["youtubeVideo"]>
+export type YoutubeVideoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.YoutubeVideo$tenantArgs<ExtArgs>
+}
+export type YoutubeVideoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.YoutubeVideo$tenantArgs<ExtArgs>
+}
+export type YoutubeVideoIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.YoutubeVideo$tenantArgs<ExtArgs>
+}
 
 export type $YoutubeVideoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "YoutubeVideo"
-  objects: {}
+  objects: {
+    tenant: Prisma.$TenantPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    tenantId: number | null
     title: string
     description: string | null
     url: string
@@ -957,6 +1184,7 @@ readonly fields: YoutubeVideoFieldRefs;
  */
 export interface Prisma__YoutubeVideoClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tenant<T extends Prisma.YoutubeVideo$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.YoutubeVideo$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -987,6 +1215,7 @@ export interface Prisma__YoutubeVideoClient<T, Null = never, ExtArgs extends run
  */
 export interface YoutubeVideoFieldRefs {
   readonly id: Prisma.FieldRef<"YoutubeVideo", 'Int'>
+  readonly tenantId: Prisma.FieldRef<"YoutubeVideo", 'Int'>
   readonly title: Prisma.FieldRef<"YoutubeVideo", 'String'>
   readonly description: Prisma.FieldRef<"YoutubeVideo", 'String'>
   readonly url: Prisma.FieldRef<"YoutubeVideo", 'String'>
@@ -1014,6 +1243,10 @@ export type YoutubeVideoFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
+  /**
    * Filter, which YoutubeVideo to fetch.
    */
   where: Prisma.YoutubeVideoWhereUniqueInput
@@ -1032,6 +1265,10 @@ export type YoutubeVideoFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
+  /**
    * Filter, which YoutubeVideo to fetch.
    */
   where: Prisma.YoutubeVideoWhereUniqueInput
@@ -1049,6 +1286,10 @@ export type YoutubeVideoFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the YoutubeVideo
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
   /**
    * Filter, which YoutubeVideo to fetch.
    */
@@ -1098,6 +1339,10 @@ export type YoutubeVideoFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
+  /**
    * Filter, which YoutubeVideo to fetch.
    */
   where?: Prisma.YoutubeVideoWhereInput
@@ -1146,6 +1391,10 @@ export type YoutubeVideoFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
+  /**
    * Filter, which YoutubeVideos to fetch.
    */
   where?: Prisma.YoutubeVideoWhereInput
@@ -1189,6 +1438,10 @@ export type YoutubeVideoCreateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
+  /**
    * The data needed to create a YoutubeVideo.
    */
   data: Prisma.XOR<Prisma.YoutubeVideoCreateInput, Prisma.YoutubeVideoUncheckedCreateInput>
@@ -1222,6 +1475,10 @@ export type YoutubeVideoCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.YoutubeVideoCreateManyInput | Prisma.YoutubeVideoCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1236,6 +1493,10 @@ export type YoutubeVideoUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the YoutubeVideo
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
   /**
    * The data needed to update a YoutubeVideo.
    */
@@ -1288,6 +1549,10 @@ export type YoutubeVideoUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many YoutubeVideos to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1302,6 +1567,10 @@ export type YoutubeVideoUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the YoutubeVideo
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
   /**
    * The filter to search for the YoutubeVideo to update in case it exists.
    */
@@ -1329,6 +1598,10 @@ export type YoutubeVideoDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
+  /**
    * Filter which YoutubeVideo to delete.
    */
   where: Prisma.YoutubeVideoWhereUniqueInput
@@ -1349,6 +1622,25 @@ export type YoutubeVideoDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * YoutubeVideo.tenant
+ */
+export type YoutubeVideo$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tenant
+   */
+  select?: Prisma.TenantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tenant
+   */
+  omit?: Prisma.TenantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantInclude<ExtArgs> | null
+  where?: Prisma.TenantWhereInput
+}
+
+/**
  * YoutubeVideo without action
  */
 export type YoutubeVideoDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1360,4 +1652,8 @@ export type YoutubeVideoDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the YoutubeVideo
    */
   omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
 }

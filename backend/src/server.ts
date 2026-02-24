@@ -10,14 +10,40 @@ const app = express();
 // Security headers
 app.use(helmet());
 
-// CORS configuration
-const corsOptions = {
-  origin: config.APP.CLIENT_URL,
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-app.use(cors());
+// CORS — allow main client, portal, and subdomains
+const allowedOrigins = [
+  config.APP.CLIENT_URL,
+  config.TENANT.ADMIN_PORTAL_URL,
+  "http://localhost:3000",
+  "http://localhost:3001",
+].filter(Boolean) as string[];
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      // Allow requests without origin (mobile apps, Postman, server-to-server)
+      if (!origin) return cb(null, true);
+
+      // Allow exact matches
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+
+      // Allow any *.cipherlearn.com subdomain
+      if (/^https?:\/\/[^.]+\.cipherlearn\.com(:\d+)?$/.test(origin)) {
+        return cb(null, true);
+      }
+
+      // Allow localhost on any port (development)
+      if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+        return cb(null, true);
+      }
+
+      cb(new Error(`CORS: origin not allowed — ${origin}`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Tenant-Slug"],
+  })
+);
 
 // Trust proxy for rate limiting (important for production behind load balancer)
 app.set("trust proxy", 1);

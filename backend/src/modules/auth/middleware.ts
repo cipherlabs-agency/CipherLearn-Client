@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "./utils.auth";
 import { prisma } from "../../config/db.config";
+import { tenantStorage } from "../../utils/tenantStorage";
 import { UserRoles } from "../../../prisma/generated/prisma/enums";
 
 /**
@@ -14,8 +15,40 @@ const isTokenBlacklisted = async (token: string): Promise<boolean> => {
 };
 
 /**
+ * Resolve and attach tenant context from JWT payload.
+ * Call this BEFORE checking the DB user so the tenant filter is active.
+ */
+function activateTenantFromToken(decoded: any, req: Request): number | undefined {
+  const tenantId: number | undefined = decoded.tenantId ?? (req as any).tenantId;
+  if (tenantId) {
+    (req as any).tenantId = tenantId;
+  }
+  return tenantId;
+}
+
+/**
+ * Cross-tenant guard: if both user.tenantId and req.tenantId are set,
+ * they must match. Allows null/undefined (migration-period records).
+ */
+function assertSameTenant(
+  userTenantId: number | null | undefined,
+  reqTenantId: number | undefined,
+  res: Response
+): boolean {
+  if (
+    userTenantId !== null &&
+    userTenantId !== undefined &&
+    reqTenantId !== undefined &&
+    userTenantId !== reqTenantId
+  ) {
+    res.status(403).json({ success: false, message: "Access denied" });
+    return false;
+  }
+  return true;
+}
+
+/**
  * Middleware to check if user is Admin or Teacher
- * Used for routes that should be accessible to both roles (e.g., QR code generation)
  */
 export const isAdminOrTeacher = async (
   req: Request,
@@ -41,6 +74,7 @@ export const isAdminOrTeacher = async (
     }
 
     const decoded = verifyToken(token);
+    const tenantId = activateTenantFromToken(decoded, req);
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
@@ -50,6 +84,7 @@ export const isAdminOrTeacher = async (
         email: true,
         password: true,
         role: true,
+        tenantId: true,
         createdAt: true,
       },
     });
@@ -61,6 +96,8 @@ export const isAdminOrTeacher = async (
       });
     }
 
+    if (!assertSameTenant(user.tenantId, tenantId, res)) return;
+
     if (user.role !== UserRoles.ADMIN && user.role !== UserRoles.TEACHER) {
       return res.status(403).json({
         success: false,
@@ -69,6 +106,10 @@ export const isAdminOrTeacher = async (
     }
 
     req.user = user;
+    if (user.tenantId) {
+      (req as any).tenantId = user.tenantId;
+      return tenantStorage.run(user.tenantId, next);
+    }
     next();
   } catch (error) {
     return res
@@ -101,6 +142,7 @@ export const isAdmin = async (
     }
 
     const decoded = verifyToken(token);
+    const tenantId = activateTenantFromToken(decoded, req);
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
@@ -110,6 +152,7 @@ export const isAdmin = async (
         email: true,
         password: true,
         role: true,
+        tenantId: true,
         createdAt: true,
       },
     });
@@ -121,6 +164,8 @@ export const isAdmin = async (
       });
     }
 
+    if (!assertSameTenant(user.tenantId, tenantId, res)) return;
+
     if (user.role !== UserRoles.ADMIN) {
       return res.status(403).json({
         success: false,
@@ -129,6 +174,10 @@ export const isAdmin = async (
     }
 
     req.user = user;
+    if (user.tenantId) {
+      (req as any).tenantId = user.tenantId;
+      return tenantStorage.run(user.tenantId, next);
+    }
     next();
   } catch (error) {
     return res
@@ -161,6 +210,7 @@ export const isAuthenticated = async (
     }
 
     const decoded = verifyToken(token);
+    const tenantId = activateTenantFromToken(decoded, req);
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
@@ -170,6 +220,7 @@ export const isAuthenticated = async (
         email: true,
         password: true,
         role: true,
+        tenantId: true,
         createdAt: true,
       },
     });
@@ -181,7 +232,13 @@ export const isAuthenticated = async (
       });
     }
 
+    if (!assertSameTenant(user.tenantId, tenantId, res)) return;
+
     req.user = user;
+    if (user.tenantId) {
+      (req as any).tenantId = user.tenantId;
+      return tenantStorage.run(user.tenantId, next);
+    }
     next();
   } catch (error) {
     return res
@@ -192,7 +249,6 @@ export const isAuthenticated = async (
 
 /**
  * Middleware to check if user is a Student or Teacher (App user)
- * Used for routes accessible to both roles
  */
 export const isAppUser = async (
   req: Request,
@@ -227,6 +283,7 @@ export const isAppUser = async (
     }
 
     const decoded = verifyToken(token);
+    const tenantId = activateTenantFromToken(decoded, req);
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
@@ -236,6 +293,7 @@ export const isAppUser = async (
         email: true,
         password: true,
         role: true,
+        tenantId: true,
         createdAt: true,
         lockedUntil: true,
       },
@@ -247,6 +305,8 @@ export const isAppUser = async (
         message: "User not found",
       });
     }
+
+    if (!assertSameTenant(user.tenantId, tenantId, res)) return;
 
     // Check if account is locked
     if (user.lockedUntil && user.lockedUntil > new Date()) {
@@ -268,13 +328,11 @@ export const isAppUser = async (
 
     // Load student profile if STUDENT role
     if (user.role === UserRoles.STUDENT) {
-      // First try to find by userId
       let student = await prisma.student.findFirst({
         where: { userId: user.id, isDeleted: false },
         include: { batch: true },
       });
 
-      // Fallback to email lookup for backward compatibility
       if (!student) {
         student = await prisma.student.findFirst({
           where: { email: user.email, isDeleted: false },
@@ -285,6 +343,10 @@ export const isAppUser = async (
       req.student = student ?? undefined;
     }
 
+    if (user.tenantId) {
+      (req as any).tenantId = user.tenantId;
+      return tenantStorage.run(user.tenantId, next);
+    }
     next();
   } catch (error) {
     return res
@@ -295,7 +357,6 @@ export const isAppUser = async (
 
 /**
  * Middleware to check if user is a Teacher (App)
- * Used for teacher-only app routes
  */
 export const isTeacher = async (
   req: Request,
@@ -329,6 +390,7 @@ export const isTeacher = async (
     }
 
     const decoded = verifyToken(token);
+    const tenantId = activateTenantFromToken(decoded, req);
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
@@ -338,6 +400,7 @@ export const isTeacher = async (
         email: true,
         password: true,
         role: true,
+        tenantId: true,
         createdAt: true,
         lockedUntil: true,
       },
@@ -349,6 +412,8 @@ export const isTeacher = async (
         message: "User not found",
       });
     }
+
+    if (!assertSameTenant(user.tenantId, tenantId, res)) return;
 
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       return res.status(403).json({
@@ -365,6 +430,10 @@ export const isTeacher = async (
     }
 
     req.user = user;
+    if (user.tenantId) {
+      (req as any).tenantId = user.tenantId;
+      return tenantStorage.run(user.tenantId, next);
+    }
     next();
   } catch (error) {
     return res
@@ -375,7 +444,6 @@ export const isTeacher = async (
 
 /**
  * Middleware to check if user is a Student
- * Used for student app routes
  */
 export const isStudent = async (
   req: Request,
@@ -400,7 +468,6 @@ export const isStudent = async (
       });
     }
 
-    // Check if token is blacklisted (logged out)
     const blacklisted = await isTokenBlacklisted(token);
     if (blacklisted) {
       return res.status(401).json({
@@ -410,6 +477,7 @@ export const isStudent = async (
     }
 
     const decoded = verifyToken(token);
+    const tenantId = activateTenantFromToken(decoded, req);
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
@@ -419,6 +487,7 @@ export const isStudent = async (
         email: true,
         password: true,
         role: true,
+        tenantId: true,
         createdAt: true,
         lockedUntil: true,
       },
@@ -431,7 +500,8 @@ export const isStudent = async (
       });
     }
 
-    // Check if account is locked
+    if (!assertSameTenant(user.tenantId, tenantId, res)) return;
+
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       return res.status(403).json({
         success: false,
@@ -446,13 +516,11 @@ export const isStudent = async (
       });
     }
 
-    // Find the student record linked to this user (prefer userId, fallback to email)
     let student = await prisma.student.findFirst({
       where: { userId: user.id, isDeleted: false },
       include: { batch: true },
     });
 
-    // Fallback to email lookup for backward compatibility
     if (!student) {
       student = await prisma.student.findFirst({
         where: { email: user.email, isDeleted: false },
@@ -469,6 +537,10 @@ export const isStudent = async (
 
     req.user = user;
     req.student = student;
+    if (user.tenantId) {
+      (req as any).tenantId = user.tenantId;
+      return tenantStorage.run(user.tenantId, next);
+    }
     next();
   } catch (error) {
     return res
@@ -476,3 +548,4 @@ export const isStudent = async (
       .json({ success: false, message: `Access denied : ${error}` });
   }
 };
+

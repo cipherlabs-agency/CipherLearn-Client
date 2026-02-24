@@ -51,6 +51,12 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Tenant: 'Tenant',
+  SuperAdmin: 'SuperAdmin',
+  TenantQuotaOverride: 'TenantQuotaOverride',
+  AdminAuditLog: 'AdminAuditLog',
+  PlatformConfig: 'PlatformConfig',
+  TenantConfig: 'TenantConfig',
   User: 'User',
   Student: 'Student',
   Batch: 'Batch',
@@ -65,13 +71,13 @@ export const ModelName = {
   StudyMaterial: 'StudyMaterial',
   FeeStructure: 'FeeStructure',
   FeeReceipt: 'FeeReceipt',
-  PasswordResetToken: 'PasswordResetToken',
-  TokenBlacklist: 'TokenBlacklist',
   NotificationPreference: 'NotificationPreference',
   LoginAttempt: 'LoginAttempt',
   Lecture: 'Lecture',
   Test: 'Test',
   TestScore: 'TestScore',
+  PasswordResetToken: 'PasswordResetToken',
+  TokenBlacklist: 'TokenBlacklist',
   InstagramAccount: 'InstagramAccount',
   AutomationRule: 'AutomationRule',
   AutomationLog: 'AutomationLog'
@@ -93,8 +99,127 @@ export const TransactionIsolationLevel = {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const TenantScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  customDomain: 'customDomain',
+  logo: 'logo',
+  logoInitials: 'logoInitials',
+  primaryColor: 'primaryColor',
+  accentColor: 'accentColor',
+  ownerName: 'ownerName',
+  contactEmail: 'contactEmail',
+  contactPhone: 'contactPhone',
+  address: 'address',
+  website: 'website',
+  plan: 'plan',
+  subscriptionStatus: 'subscriptionStatus',
+  subscriptionStartAt: 'subscriptionStartAt',
+  subscriptionEndsAt: 'subscriptionEndsAt',
+  trialEndsAt: 'trialEndsAt',
+  maxStudents: 'maxStudents',
+  maxBatches: 'maxBatches',
+  maxTeachers: 'maxTeachers',
+  maxStorageMB: 'maxStorageMB',
+  featureQRAttendance: 'featureQRAttendance',
+  featureAssignments: 'featureAssignments',
+  featureFees: 'featureFees',
+  featureStudyMaterials: 'featureStudyMaterials',
+  featureAnnouncements: 'featureAnnouncements',
+  featureVideos: 'featureVideos',
+  teacherPermissions: 'teacherPermissions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  suspendedAt: 'suspendedAt',
+  deletedAt: 'deletedAt',
+  suspendedReason: 'suspendedReason'
+} as const
+
+export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]
+
+
+export const SuperAdminScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SuperAdminScalarFieldEnum = (typeof SuperAdminScalarFieldEnum)[keyof typeof SuperAdminScalarFieldEnum]
+
+
+export const TenantQuotaOverrideScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  maxStudents: 'maxStudents',
+  maxBatches: 'maxBatches',
+  maxTeachers: 'maxTeachers',
+  maxStorageMB: 'maxStorageMB',
+  featureAssignments: 'featureAssignments',
+  featureFees: 'featureFees',
+  featureStudyMaterials: 'featureStudyMaterials',
+  featureAnnouncements: 'featureAnnouncements',
+  featureVideos: 'featureVideos',
+  featureQRAttendance: 'featureQRAttendance',
+  overrideReason: 'overrideReason',
+  overriddenBy: 'overriddenBy',
+  overriddenAt: 'overriddenAt',
+  expiresAt: 'expiresAt'
+} as const
+
+export type TenantQuotaOverrideScalarFieldEnum = (typeof TenantQuotaOverrideScalarFieldEnum)[keyof typeof TenantQuotaOverrideScalarFieldEnum]
+
+
+export const AdminAuditLogScalarFieldEnum = {
+  id: 'id',
+  superAdminId: 'superAdminId',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  metadata: 'metadata',
+  ipAddress: 'ipAddress',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminAuditLogScalarFieldEnum = (typeof AdminAuditLogScalarFieldEnum)[keyof typeof AdminAuditLogScalarFieldEnum]
+
+
+export const PlatformConfigScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  isSecret: 'isSecret',
+  category: 'category',
+  description: 'description',
+  updatedBy: 'updatedBy',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlatformConfigScalarFieldEnum = (typeof PlatformConfigScalarFieldEnum)[keyof typeof PlatformConfigScalarFieldEnum]
+
+
+export const TenantConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  key: 'key',
+  value: 'value',
+  isSecret: 'isSecret',
+  category: 'category',
+  description: 'description',
+  updatedBy: 'updatedBy',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantConfigScalarFieldEnum = (typeof TenantConfigScalarFieldEnum)[keyof typeof TenantConfigScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   email: 'email',
   password: 'password',
@@ -111,6 +236,7 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const StudentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   firstname: 'firstname',
   middlename: 'middlename',
   lastname: 'lastname',
@@ -136,6 +262,7 @@ export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeo
 
 export const BatchScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   totalStudents: 'totalStudents',
   timings: 'timings',
@@ -150,6 +277,7 @@ export type BatchScalarFieldEnum = (typeof BatchScalarFieldEnum)[keyof typeof Ba
 
 export const QRAttendanceTokenScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   batchId: 'batchId',
   token: 'token',
   date: 'date',
@@ -164,6 +292,7 @@ export type QRAttendanceTokenScalarFieldEnum = (typeof QRAttendanceTokenScalarFi
 
 export const AttendanceSheetScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   batchId: 'batchId',
   month: 'month',
   year: 'year',
@@ -176,6 +305,7 @@ export type AttendanceSheetScalarFieldEnum = (typeof AttendanceSheetScalarFieldE
 
 export const AttendanceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   studentId: 'studentId',
   batchId: 'batchId',
   date: 'date',
@@ -196,6 +326,7 @@ export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof
 
 export const YoutubeVideoScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   description: 'description',
   url: 'url',
@@ -213,6 +344,7 @@ export type YoutubeVideoScalarFieldEnum = (typeof YoutubeVideoScalarFieldEnum)[k
 
 export const NoteScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   content: 'content',
   batchId: 'batchId',
@@ -229,6 +361,7 @@ export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof Note
 
 export const AssignmentSlotScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   subject: 'subject',
   description: 'description',
@@ -253,6 +386,7 @@ export type AssignmentSlotScalarFieldEnum = (typeof AssignmentSlotScalarFieldEnu
 
 export const StudentSubmissionScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   slotId: 'slotId',
   studentId: 'studentId',
   files: 'files',
@@ -270,6 +404,7 @@ export type StudentSubmissionScalarFieldEnum = (typeof StudentSubmissionScalarFi
 
 export const AnnouncementScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   description: 'description',
   body: 'body',
@@ -291,6 +426,7 @@ export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[k
 
 export const StudyMaterialScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   description: 'description',
   files: 'files',
@@ -315,6 +451,7 @@ export type StudyMaterialScalarFieldEnum = (typeof StudyMaterialScalarFieldEnum)
 
 export const FeeStructureScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   batchId: 'batchId',
   name: 'name',
   amount: 'amount',
@@ -333,6 +470,7 @@ export type FeeStructureScalarFieldEnum = (typeof FeeStructureScalarFieldEnum)[k
 
 export const FeeReceiptScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   receiptNumber: 'receiptNumber',
   studentId: 'studentId',
   batchId: 'batchId',
@@ -363,32 +501,9 @@ export const FeeReceiptScalarFieldEnum = {
 export type FeeReceiptScalarFieldEnum = (typeof FeeReceiptScalarFieldEnum)[keyof typeof FeeReceiptScalarFieldEnum]
 
 
-export const PasswordResetTokenScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  token: 'token',
-  expiresAt: 'expiresAt',
-  usedAt: 'usedAt',
-  createdAt: 'createdAt'
-} as const
-
-export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
-
-
-export const TokenBlacklistScalarFieldEnum = {
-  id: 'id',
-  token: 'token',
-  userId: 'userId',
-  expiresAt: 'expiresAt',
-  reason: 'reason',
-  createdAt: 'createdAt'
-} as const
-
-export type TokenBlacklistScalarFieldEnum = (typeof TokenBlacklistScalarFieldEnum)[keyof typeof TokenBlacklistScalarFieldEnum]
-
-
 export const NotificationPreferenceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   studentId: 'studentId',
   classStartingSoon: 'classStartingSoon',
   timetableChanges: 'timetableChanges',
@@ -410,6 +525,7 @@ export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferen
 
 export const LoginAttemptScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   email: 'email',
   ipAddress: 'ipAddress',
   success: 'success',
@@ -422,6 +538,7 @@ export type LoginAttemptScalarFieldEnum = (typeof LoginAttemptScalarFieldEnum)[k
 
 export const LectureScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   subject: 'subject',
   description: 'description',
@@ -447,6 +564,7 @@ export type LectureScalarFieldEnum = (typeof LectureScalarFieldEnum)[keyof typeo
 
 export const TestScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   subject: 'subject',
   description: 'description',
@@ -475,6 +593,7 @@ export type TestScalarFieldEnum = (typeof TestScalarFieldEnum)[keyof typeof Test
 
 export const TestScoreScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   testId: 'testId',
   studentId: 'studentId',
   marksObtained: 'marksObtained',
@@ -488,6 +607,30 @@ export const TestScoreScalarFieldEnum = {
 } as const
 
 export type TestScoreScalarFieldEnum = (typeof TestScoreScalarFieldEnum)[keyof typeof TestScoreScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
+
+
+export const TokenBlacklistScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type TokenBlacklistScalarFieldEnum = (typeof TokenBlacklistScalarFieldEnum)[keyof typeof TokenBlacklistScalarFieldEnum]
 
 
 export const InstagramAccountScalarFieldEnum = {
@@ -552,19 +695,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull'
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: 'DbNull',
   JsonNull: 'JsonNull'
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: 'JsonNull'
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -575,14 +718,6 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
 export const JsonNullValueFilter = {
   DbNull: 'DbNull',
   JsonNull: 'JsonNull',
@@ -590,4 +725,12 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

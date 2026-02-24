@@ -61,4 +61,7 @@ export const config = {
     WEBHOOK_VERIFY_TOKEN: process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || "cipherlearn_ig_webhook_2026",
     REDIRECT_URI: process.env.INSTAGRAM_REDIRECT_URI || "",
   },
+  TENANT: {
+    DEFAULT_SLUG: process.env.DEFAULT_TENANT_SLUG || "default",
+  },
 } as const;

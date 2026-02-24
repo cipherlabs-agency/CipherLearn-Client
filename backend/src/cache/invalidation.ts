@@ -8,18 +8,17 @@ export function invalidateAfterAttendanceMutation(
   batchId?: number,
   studentIds?: number[]
 ): void {
-  // Dashboard analytics (trends, stats)
-  cacheService.delByPrefix(InvalidationPatterns.dashAnalytics);
+  cacheService.delByPrefix(InvalidationPatterns.dashAnalytics());
 
-  // App attendance for specific students
   if (studentIds && studentIds.length > 0) {
     for (const sid of studentIds) {
-      cacheService.delByPrefix(`app:attendance:perf:${sid}`);
-      cacheService.delByPrefix(`app:attendance:calendar:${sid}`);
+      cacheService.delByPrefix(AppKeys.attendancePerf(sid, 0).replace(":0:", ":"));
+      // Clear all attendance calendar entries for this student
+      const prefix = AppKeys.attendancePerf(sid, 0).split(":perf:")[0] + ":calendar:" + sid;
+      cacheService.delByPrefix(prefix);
     }
   } else {
-    // If no specific students, clear all app attendance
-    cacheService.delByPrefix(InvalidationPatterns.appAttendance);
+    cacheService.delByPrefix(InvalidationPatterns.appAttendance());
   }
 }
 
@@ -27,9 +26,9 @@ export function invalidateAfterAttendanceMutation(
  * Invalidate caches affected by batch mutations.
  */
 export function invalidateAfterBatchMutation(batchId?: number): void {
-  cacheService.delByPrefix(InvalidationPatterns.dashBatches);
-  cacheService.delByPrefix(InvalidationPatterns.dashAnalytics);
-  cacheService.delByPrefix(InvalidationPatterns.dashStudents);
+  cacheService.delByPrefix(InvalidationPatterns.dashBatches());
+  cacheService.delByPrefix(InvalidationPatterns.dashAnalytics());
+  cacheService.delByPrefix(InvalidationPatterns.dashStudents());
 }
 
 /**
@@ -39,13 +38,13 @@ export function invalidateAfterStudentMutation(
   studentId?: number,
   batchId?: number
 ): void {
-  cacheService.delByPrefix(InvalidationPatterns.dashStudents);
-  cacheService.delByPrefix(InvalidationPatterns.dashAnalytics);
+  cacheService.delByPrefix(InvalidationPatterns.dashStudents());
+  cacheService.delByPrefix(InvalidationPatterns.dashAnalytics());
 
   if (studentId != null) {
     cacheService.del(AppKeys.profile(studentId));
   } else {
-    cacheService.delByPrefix(InvalidationPatterns.appProfile);
+    cacheService.delByPrefix(InvalidationPatterns.appProfile());
   }
 }
 
@@ -53,14 +52,14 @@ export function invalidateAfterStudentMutation(
  * Invalidate caches affected by announcement mutations.
  */
 export function invalidateAfterAnnouncementMutation(): void {
-  cacheService.delByPrefix(InvalidationPatterns.appAnnouncements);
+  cacheService.delByPrefix(InvalidationPatterns.appAnnouncements());
 }
 
 /**
  * Invalidate caches affected by resource mutations (videos, notes, materials).
  */
 export function invalidateAfterResourceMutation(): void {
-  cacheService.delByPrefix(InvalidationPatterns.appResources);
+  cacheService.delByPrefix(InvalidationPatterns.appResources());
 }
 
 /**
@@ -70,6 +69,6 @@ export function invalidateAfterFeesMutation(batchId?: number): void {
   if (batchId != null) {
     cacheService.del(AppKeys.feeStructures(batchId));
   } else {
-    cacheService.delByPrefix(InvalidationPatterns.appFees);
+    cacheService.delByPrefix(InvalidationPatterns.appFees());
   }
 }

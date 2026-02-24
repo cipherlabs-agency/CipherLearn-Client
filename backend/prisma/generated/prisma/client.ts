@@ -27,8 +27,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Tenants
+ * const tenants = await prisma.tenant.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -37,6 +37,36 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
+/**
+ * Model Tenant
+ * 
+ */
+export type Tenant = Prisma.TenantModel
+/**
+ * Model SuperAdmin
+ * 
+ */
+export type SuperAdmin = Prisma.SuperAdminModel
+/**
+ * Model TenantQuotaOverride
+ * 
+ */
+export type TenantQuotaOverride = Prisma.TenantQuotaOverrideModel
+/**
+ * Model AdminAuditLog
+ * 
+ */
+export type AdminAuditLog = Prisma.AdminAuditLogModel
+/**
+ * Model PlatformConfig
+ * 
+ */
+export type PlatformConfig = Prisma.PlatformConfigModel
+/**
+ * Model TenantConfig
+ * 
+ */
+export type TenantConfig = Prisma.TenantConfigModel
 /**
  * Model User
  * 
@@ -108,16 +138,6 @@ export type FeeStructure = Prisma.FeeStructureModel
  */
 export type FeeReceipt = Prisma.FeeReceiptModel
 /**
- * Model PasswordResetToken
- * 
- */
-export type PasswordResetToken = Prisma.PasswordResetTokenModel
-/**
- * Model TokenBlacklist
- * 
- */
-export type TokenBlacklist = Prisma.TokenBlacklistModel
-/**
  * Model NotificationPreference
  * 
  */
@@ -142,6 +162,16 @@ export type Test = Prisma.TestModel
  * 
  */
 export type TestScore = Prisma.TestScoreModel
+/**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
+ * Model TokenBlacklist
+ * 
+ */
+export type TokenBlacklist = Prisma.TokenBlacklistModel
 /**
  * Model InstagramAccount
  * 

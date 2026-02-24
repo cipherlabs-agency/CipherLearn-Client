@@ -2,7 +2,14 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { config } from "../../config/env.config";
 import bcryptjs from "bcryptjs";
 
-export const generateLoginToken = (user: { id: number; email: string }) => {
+interface LoginTokenPayload {
+  id: number;
+  email: string;
+  tenantId?: number;
+  role?: string;
+}
+
+export const generateLoginToken = (user: LoginTokenPayload) => {
   return jwt.sign(user, config.JWT.SECRET as jwt.Secret, {
     expiresIn: config.JWT.EXPIRES_IN as jwt.SignOptions["expiresIn"],
   });

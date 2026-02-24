@@ -1,6 +1,11 @@
 /**
- * Cache key generators with built-in input sanitization.
+ * Cache key generators with built-in input sanitization and tenant scoping.
+ *
+ * All keys are automatically prefixed with `t:{tenantId}:` using
+ * AsyncLocalStorage so no service code needs to change.
  */
+
+import { tenantStorage } from "../utils/tenantStorage";
 
 /**
  * Reject non-finite, negative, or non-integer values to prevent key injection.
@@ -20,6 +25,15 @@ function sanitizeString(value: string): string {
 }
 
 /**
+ * Returns `t:{tenantId}` prefix. Falls back to `t:0` for requests without
+ * tenant context (dev mode, migration scripts, etc.).
+ */
+function tenantPrefix(): string {
+  const tenantId = tenantStorage.getStore();
+  return tenantId !== undefined ? `t:${tenantId}` : "t:0";
+}
+
+/**
  * Join parts with `:`, cap total key length at 256 chars.
  */
 function buildKey(...parts: (string | number)[]): string {
@@ -31,13 +45,21 @@ function buildKey(...parts: (string | number)[]): string {
 // ========================
 
 export const DashboardKeys = {
-  analyticsStats: () => buildKey("dash", "analytics", "stats"),
+  analyticsStats: () =>
+    buildKey(tenantPrefix(), "dash", "analytics", "stats"),
 
   enrollmentTrends: (months: number) =>
-    buildKey("dash", "analytics", "enrollment-trends", sanitizeId(months)),
+    buildKey(
+      tenantPrefix(),
+      "dash",
+      "analytics",
+      "enrollment-trends",
+      sanitizeId(months)
+    ),
 
   attendanceTrends: (days: number, batchId?: number) =>
     buildKey(
+      tenantPrefix(),
       "dash",
       "analytics",
       "attendance-trends",
@@ -47,6 +69,7 @@ export const DashboardKeys = {
 
   monthlyAttendanceTrends: (months: number, batchId?: number) =>
     buildKey(
+      tenantPrefix(),
       "dash",
       "analytics",
       "monthly-att-trends",
@@ -54,18 +77,31 @@ export const DashboardKeys = {
       batchId != null ? sanitizeId(batchId) : "all"
     ),
 
-  batchDistribution: () => buildKey("dash", "analytics", "batch-dist"),
+  batchDistribution: () =>
+    buildKey(tenantPrefix(), "dash", "analytics", "batch-dist"),
 
   recentActivities: (limit: number) =>
-    buildKey("dash", "analytics", "recent", sanitizeId(limit)),
+    buildKey(
+      tenantPrefix(),
+      "dash",
+      "analytics",
+      "recent",
+      sanitizeId(limit)
+    ),
 
-  batchList: () => buildKey("dash", "batches", "list"),
+  batchList: () => buildKey(tenantPrefix(), "dash", "batches", "list"),
 
   batchDetail: (id: number) =>
-    buildKey("dash", "batches", "detail", sanitizeId(id)),
+    buildKey(tenantPrefix(), "dash", "batches", "detail", sanitizeId(id)),
 
   studentList: (batchId?: number) =>
-    buildKey("dash", "students", "list", batchId != null ? sanitizeId(batchId) : "all"),
+    buildKey(
+      tenantPrefix(),
+      "dash",
+      "students",
+      "list",
+      batchId != null ? sanitizeId(batchId) : "all"
+    ),
 };
 
 // ========================
@@ -74,33 +110,79 @@ export const DashboardKeys = {
 
 export const AppKeys = {
   videos: (batchId: number, limit?: number) =>
-    buildKey("app", "resources", "videos", sanitizeId(batchId), limit != null ? sanitizeId(limit) : "all"),
+    buildKey(
+      tenantPrefix(),
+      "app",
+      "resources",
+      "videos",
+      sanitizeId(batchId),
+      limit != null ? sanitizeId(limit) : "all"
+    ),
 
   notes: (batchId: number, limit?: number) =>
-    buildKey("app", "resources", "notes", sanitizeId(batchId), limit != null ? sanitizeId(limit) : "all"),
+    buildKey(
+      tenantPrefix(),
+      "app",
+      "resources",
+      "notes",
+      sanitizeId(batchId),
+      limit != null ? sanitizeId(limit) : "all"
+    ),
 
   materials: (batchId: number, limit?: number) =>
-    buildKey("app", "resources", "materials", sanitizeId(batchId), limit != null ? sanitizeId(limit) : "all"),
+    buildKey(
+      tenantPrefix(),
+      "app",
+      "resources",
+      "materials",
+      sanitizeId(batchId),
+      limit != null ? sanitizeId(limit) : "all"
+    ),
 
-  // Announcement list: scoped by category + page + limit
-  announcementList: (category: string, search: string, page: number, limit: number) =>
-    buildKey("app", "ann", "list", sanitizeString(category), sanitizeString(search), sanitizeId(page), sanitizeId(limit)),
+  announcementList: (
+    category: string,
+    search: string,
+    page: number,
+    limit: number
+  ) =>
+    buildKey(
+      tenantPrefix(),
+      "app",
+      "ann",
+      "list",
+      sanitizeString(category),
+      sanitizeString(search),
+      sanitizeId(page),
+      sanitizeId(limit)
+    ),
 
-  // Announcement detail: per id
   announcementDetail: (id: number) =>
-    buildKey("app", "ann", "detail", sanitizeId(id)),
+    buildKey(tenantPrefix(), "app", "ann", "detail", sanitizeId(id)),
 
   feeStructures: (batchId: number) =>
-    buildKey("app", "fees", "structures", sanitizeId(batchId)),
+    buildKey(tenantPrefix(), "app", "fees", "structures", sanitizeId(batchId)),
 
   profile: (studentId: number) =>
-    buildKey("app", "profile", sanitizeId(studentId)),
+    buildKey(tenantPrefix(), "app", "profile", sanitizeId(studentId)),
 
   attendancePerf: (studentId: number, batchId: number) =>
-    buildKey("app", "attendance", "perf", sanitizeId(studentId), sanitizeId(batchId)),
-
-  attendanceCalendar: (studentId: number, batchId: number, month: number, year: number) =>
     buildKey(
+      tenantPrefix(),
+      "app",
+      "attendance",
+      "perf",
+      sanitizeId(studentId),
+      sanitizeId(batchId)
+    ),
+
+  attendanceCalendar: (
+    studentId: number,
+    batchId: number,
+    month: number,
+    year: number
+  ) =>
+    buildKey(
+      tenantPrefix(),
       "app",
       "attendance",
       "calendar",
@@ -110,23 +192,23 @@ export const AppKeys = {
       sanitizeId(year)
     ),
 
-  // Notification preferences: per student
   notifPrefs: (studentId: number) =>
-    buildKey("app", "notif", "prefs", sanitizeId(studentId)),
+    buildKey(tenantPrefix(), "app", "notif", "prefs", sanitizeId(studentId)),
 };
 
 // ========================
 // Invalidation prefixes
+// (functions so they pick up the current tenant from AsyncLocalStorage)
 // ========================
 
 export const InvalidationPatterns = {
-  dashAnalytics: "dash:analytics:",
-  dashBatches: "dash:batches:",
-  dashStudents: "dash:students:",
-  appResources: "app:resources:",
-  appAnnouncements: "app:ann:",
-  appFees: "app:fees:",
-  appProfile: "app:profile:",
-  appAttendance: "app:attendance:",
-  appNotifPrefs: "app:notif:",
+  dashAnalytics: () => buildKey(tenantPrefix(), "dash", "analytics") + ":",
+  dashBatches: () => buildKey(tenantPrefix(), "dash", "batches") + ":",
+  dashStudents: () => buildKey(tenantPrefix(), "dash", "students") + ":",
+  appResources: () => buildKey(tenantPrefix(), "app", "resources") + ":",
+  appAnnouncements: () => buildKey(tenantPrefix(), "app", "ann") + ":",
+  appFees: () => buildKey(tenantPrefix(), "app", "fees") + ":",
+  appProfile: () => buildKey(tenantPrefix(), "app", "profile") + ":",
+  appAttendance: () => buildKey(tenantPrefix(), "app", "attendance") + ":",
+  appNotifPrefs: () => buildKey(tenantPrefix(), "app", "notif") + ":",
 };
