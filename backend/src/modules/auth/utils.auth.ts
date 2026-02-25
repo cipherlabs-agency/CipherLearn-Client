@@ -5,8 +5,6 @@ import bcryptjs from "bcryptjs";
 interface LoginTokenPayload {
   id: number;
   email: string;
-  tenantId?: number;
-  role?: string;
 }
 
 export const generateLoginToken = (user: LoginTokenPayload) => {

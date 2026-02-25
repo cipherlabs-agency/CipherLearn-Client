@@ -43,10 +43,6 @@
 
     --radius: 0.625rem;                /* 10px — slightly rounder, friendlier */
 
-    /* Tenant branding — injected at runtime by TenantConfigProvider */
-    --tenant-primary: #0F766E;
-    --tenant-accent: #F59E0B;
-
     /* Sidebar */
     --sidebar: 40 33% 95%;             /* #F4F0E9 — warm cream sidebar */
     --sidebar-foreground: 20 14% 10%;

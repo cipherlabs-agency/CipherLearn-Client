@@ -24,20 +24,17 @@ import {
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { useTenantConfig } from "@/context/TenantConfig"
-import { usePermissions } from "@/hooks/usePermissions"
 import { useSelector } from "react-redux"
 import { RootState } from "@/redux/store"
+import { siteConfig } from "@/config/siteConfig"
 
 export function Sidebar() {
     const pathname = usePathname()
     const router = useRouter()
     const [isCollapsed, setIsCollapsed] = useState(false)
-    const config = useTenantConfig()
-    const permissions = usePermissions()
     const role = useSelector((state: RootState) => state.auth.user?.role)
     const isAdmin = role === "ADMIN"
-    const { features } = config
+    const { features } = siteConfig
 
     const navGroups = [
         {
@@ -53,13 +50,13 @@ export function Sidebar() {
                 { href: "/students", label: "Students", icon: Users, show: true },
                 { href: "/teachers", label: "Teachers", icon: GraduationCap, show: isAdmin },
                 { href: "/attendance", label: "Attendance", icon: ClipboardList, show: features.qrAttendance || isAdmin },
-                { href: "/fees", label: "Fees", icon: Receipt, show: features.fees && (isAdmin || permissions.canViewFees) },
+                { href: "/fees", label: "Fees", icon: Receipt, show: features.fees || isAdmin },
             ]
         },
         {
             label: "Schedule",
             items: [
-                { href: "/lectures", label: "Lectures", icon: Calendar, show: permissions.canManageLectures || isAdmin },
+                { href: "/lectures", label: "Lectures", icon: Calendar, show: true },
                 { href: "/tests", label: "Tests", icon: ClipboardCheck, show: true },
             ]
         },
@@ -67,10 +64,10 @@ export function Sidebar() {
             label: "Resources",
             items: [
                 { href: "/resources", label: "Resource Hub", icon: FolderOpen, show: features.studyMaterials || isAdmin },
-                { href: "/assignments", label: "Assignments", icon: FileUp, show: features.assignments && (permissions.canManageAssignments || isAdmin) },
-                { href: "/notes", label: "Notes", icon: FileText, show: permissions.canUploadNotes || isAdmin },
-                { href: "/videos", label: "Videos", icon: Video, show: features.videos && (permissions.canUploadVideos || isAdmin) },
-                { href: "/announcements", label: "Announcements", icon: Megaphone, show: features.announcements && (permissions.canSendAnnouncements || isAdmin) },
+                { href: "/assignments", label: "Assignments", icon: FileUp, show: features.assignments || isAdmin },
+                { href: "/notes", label: "Notes", icon: FileText, show: true },
+                { href: "/videos", label: "Videos", icon: Video, show: features.videos || isAdmin },
+                { href: "/announcements", label: "Announcements", icon: Megaphone, show: features.announcements || isAdmin },
             ]
         },
         {
@@ -111,15 +108,15 @@ export function Sidebar() {
                     className="shrink-0 focus:outline-none group relative"
                     title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                 >
-                    {config.logo ? (
+                    {siteConfig.logoUrl ? (
                         <img
-                            src={config.logo}
-                            alt={config.name}
+                            src={siteConfig.logoUrl}
+                            alt={siteConfig.appName}
                             className="h-9 w-9 rounded-xl object-cover transition-transform group-hover:scale-105 group-active:scale-95"
                         />
                     ) : (
                         <div className="h-9 w-9 rounded-xl flex items-center justify-center bg-primary shadow-sm text-primary-foreground font-bold text-[15px] transition-transform group-hover:scale-105 group-active:scale-95">
-                            {config.logoInitials}
+                            {siteConfig.logoInitials}
                         </div>
                     )}
 
@@ -136,10 +133,10 @@ export function Sidebar() {
                 {!isCollapsed && (
                     <div className="min-w-0 ml-2.5">
                         <span className="p-0.5 font-bold text-[12px] text-foreground tracking-tight leading-none block truncate">
-                            {config.name}
+                            {siteConfig.appName}
                         </span>
                         <p className="text-[11px] text-muted-foreground leading-none mt-0.5 font-medium truncate">
-                            Teaching Platform
+                            {siteConfig.appTagline}
                         </p>
                     </div>
                 )}

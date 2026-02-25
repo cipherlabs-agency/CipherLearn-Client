@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client"
   output   = "./generated/prisma"
@@ -10,143 +13,10 @@ datasource db {
   provider = "postgresql"
 }
 
-// ============================================
-// Multi-Tenant Models
-// ============================================
-
-model Tenant {
-  id                    Int                @id @default(autoincrement())
-  name                  String
-  slug                  String             @unique
-  customDomain          String?            @unique
-  logo                  String?
-  logoInitials          String?            @default("CL")
-  primaryColor          String             @default("#0F766E")
-  accentColor           String             @default("#F59E0B")
-  ownerName             String?
-  contactEmail          String
-  contactPhone          String?
-  address               String?
-  website               String?
-  plan                  TenantPlan         @default(FREE)
-  subscriptionStatus    SubscriptionStatus @default(TRIAL)
-  subscriptionStartAt   DateTime?
-  subscriptionEndsAt    DateTime?
-  trialEndsAt           DateTime?
-  maxStudents           Int                @default(50)
-  maxBatches            Int                @default(3)
-  maxTeachers           Int                @default(2)
-  maxStorageMB          Int                @default(500)
-  featureQRAttendance   Boolean            @default(true)
-  featureAssignments    Boolean            @default(false)
-  featureFees           Boolean            @default(false)
-  featureStudyMaterials Boolean            @default(false)
-  featureAnnouncements  Boolean            @default(true)
-  featureVideos         Boolean            @default(false)
-  teacherPermissions    Json               @default("{\"canManageLectures\":true,\"canUploadNotes\":true,\"canUploadVideos\":false,\"canManageAssignments\":true,\"canViewFees\":false,\"canManageStudyMaterials\":false,\"canSendAnnouncements\":true,\"canViewAnalytics\":false,\"canExportData\":false}")
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
-  suspendedAt           DateTime?
-  deletedAt             DateTime?
-  suspendedReason       String?
-
-  // Back-references
-  users               User[]
-  students            Student[]
-  batches             Batch[]
-  attendances         Attendance[]
-  attendanceSheets    AttendanceSheet[]
-  qrAttendanceTokens  QRAttendanceToken[]
-  youtubeVideos       YoutubeVideo[]
-  notes               Note[]
-  assignmentSlots     AssignmentSlot[]
-  studentSubmissions  StudentSubmission[]
-  announcements       Announcement[]
-  studyMaterials      StudyMaterial[]
-  feeStructures       FeeStructure[]
-  feeReceipts         FeeReceipt[]
-  loginAttempts       LoginAttempt[]
-  lectures            Lecture[]
-  tests               Test[]
-  testScores          TestScore[]
-  notifPreferences    NotificationPreference[]
-  quotaOverride       TenantQuotaOverride?
-  configs             TenantConfig[]
-
-  @@index([slug])
-  @@index([customDomain])
-  @@index([subscriptionStatus])
-  @@map("tenants")
-}
-
-model TenantQuotaOverride {
-  id                    Int       @id @default(autoincrement())
-  tenantId              Int       @unique
-  tenant                Tenant    @relation(fields: [tenantId], references: [id])
-  maxStudents           Int?
-  maxBatches            Int?
-  maxTeachers           Int?
-  maxStorageMB          Int?
-  featureAssignments    Boolean?
-  featureFees           Boolean?
-  featureStudyMaterials Boolean?
-  featureAnnouncements  Boolean?
-  featureVideos         Boolean?
-  featureQRAttendance   Boolean?
-  overrideReason        String?
-  overriddenBy          Int
-  overriddenAt          DateTime  @default(now())
-  expiresAt             DateTime?
-
-  @@map("tenant_quota_overrides")
-}
-
-model TenantConfig {
-  id          Int      @id @default(autoincrement())
-  tenantId    Int
-  tenant      Tenant   @relation(fields: [tenantId], references: [id])
-  key         String
-  value       String
-  isSecret    Boolean  @default(false)
-  category    String
-  description String?
-  updatedBy   Int?
-  updatedAt   DateTime @updatedAt
-
-  @@unique([tenantId, key])
-  @@index([tenantId])
-  @@map("tenant_config")
-}
-
-// ============================================
-// New Enums
-// ============================================
-
-enum TenantPlan {
-  FREE
-  STARTER
-  PRO
-  ENTERPRISE
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  TRIAL
-  SUSPENDED
-  CANCELLED
-  EXPIRED
-}
-
-// ============================================
-// Existing Models — updated with tenantId
-// ============================================
-
 model User {
   id                  Int       @id @default(autoincrement())
-  tenantId            Int?
-  tenant              Tenant?   @relation(fields: [tenantId], references: [id])
   name                String
-  email               String
+  email               String    @unique
   password            String?
   role                UserRoles @default(STUDENT)
   isPasswordSet       Boolean   @default(false)
@@ -162,20 +32,16 @@ model User {
   teacherMaterials     StudyMaterial[]      @relation("TeacherMaterials")
   teacherTests         Test[]               @relation("TeacherTests")
 
-  @@unique([tenantId, email])
-  @@index([tenantId])
   @@map("users")
 }
 
 model Student {
   id         Int      @id @default(autoincrement())
-  tenantId   Int?
-  tenant     Tenant?  @relation(fields: [tenantId], references: [id])
   firstname  String
   middlename String
   lastname   String
   fullname   String
-  email      String
+  email      String   @unique
   dob        String
   batchId    Int?
   batch      Batch?   @relation(fields: [batchId], references: [id])
@@ -198,17 +64,13 @@ model Student {
   testScores              TestScore[]
   notificationPreference  NotificationPreference?
 
-  @@unique([tenantId, email])
   @@index([batchId])
   @@index([userId])
-  @@index([tenantId])
   @@map("students")
 }
 
 model Batch {
   id            Int      @id @default(autoincrement())
-  tenantId      Int?
-  tenant        Tenant?  @relation(fields: [tenantId], references: [id])
   name          String
   totalStudents Json?
   timings       Json?
@@ -229,14 +91,11 @@ model Batch {
   createdAt   DateTime?    @default(now())
   attendances Attendance[]
 
-  @@index([tenantId])
   @@map("batches")
 }
 
 model QRAttendanceToken {
   id        Int      @id @default(autoincrement())
-  tenantId  Int?
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
   batchId   Int
   batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
   token     String
@@ -247,17 +106,14 @@ model QRAttendanceToken {
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 
-  @@unique([tenantId, batchId, date])
+  @@unique([batchId, date])
   @@index([batchId, date])
   @@index([token])
-  @@index([tenantId])
   @@map("qr_attendance_tokens")
 }
 
 model AttendanceSheet {
   id         Int          @id @default(autoincrement())
-  tenantId   Int?
-  tenant     Tenant?      @relation(fields: [tenantId], references: [id])
   batchId    Int
   batch      Batch        @relation(fields: [batchId], references: [id])
   month      String
@@ -267,16 +123,13 @@ model AttendanceSheet {
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 
-  @@unique([tenantId, batchId, year, month])
+  @@unique([batchId, year, month])
   @@index([batchId, year, month])
-  @@index([tenantId])
   @@map("attendance_sheets")
 }
 
 model Attendance {
   id         Int              @id @default(autoincrement())
-  tenantId   Int?
-  tenant     Tenant?          @relation(fields: [tenantId], references: [id])
   studentId  Int
   student    Student          @relation(fields: [studentId], references: [id])
   batchId    Int
@@ -298,19 +151,16 @@ model Attendance {
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 
-  @@unique([tenantId, studentId, date, batchId])
+  @@unique([studentId, date, batchId])
   @@index([studentId, date])
   @@index([batchId, date])
   @@index([attendanceSheetId])
   @@index([lectureId])
-  @@index([tenantId])
   @@map("attendances")
 }
 
 model YoutubeVideo {
   id          Int                     @id @default(autoincrement())
-  tenantId    Int?
-  tenant      Tenant?                 @relation(fields: [tenantId], references: [id])
   title       String
   description String?
   url         String                  @unique
@@ -323,14 +173,11 @@ model YoutubeVideo {
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 
-  @@index([tenantId])
   @@map("youtube_videos")
 }
 
 model Note {
   id        Int      @id @default(autoincrement())
-  tenantId  Int?
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
   title     String
   content   String[]
   batchId   Int
@@ -342,14 +189,11 @@ model Note {
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 
-  @@index([tenantId])
   @@map("notes")
 }
 
 model AssignmentSlot {
   id          Int              @id @default(autoincrement())
-  tenantId    Int?
-  tenant      Tenant?          @relation(fields: [tenantId], references: [id])
   title       String
   subject     String
   description String?
@@ -379,14 +223,11 @@ model AssignmentSlot {
   @@index([teacherId])
   @@index([groupId])
   @@index([assignmentStatus, isDeleted])
-  @@index([tenantId])
   @@map("assignment_slots")
 }
 
 model StudentSubmission {
   id          Int              @id @default(autoincrement())
-  tenantId    Int?
-  tenant      Tenant?          @relation(fields: [tenantId], references: [id])
   slotId      Int
   slot        AssignmentSlot   @relation(fields: [slotId], references: [id])
   studentId   Int
@@ -400,17 +241,14 @@ model StudentSubmission {
   submittedAt DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
-  @@unique([tenantId, slotId, studentId])
+  @@unique([slotId, studentId])
   @@index([slotId])
   @@index([studentId])
-  @@index([tenantId])
   @@map("student_submissions")
 }
 
 model Announcement {
   id          Int                  @id @default(autoincrement())
-  tenantId    Int?
-  tenant      Tenant?              @relation(fields: [tenantId], references: [id])
   title       String
   description String               // Short preview text
   body        String?              // Full rich-text content shown in detail view
@@ -428,14 +266,11 @@ model Announcement {
 
   @@index([category, isActive])
   @@index([isActive, createdAt])
-  @@index([tenantId])
   @@map("announcements")
 }
 
 model StudyMaterial {
   id          Int               @id @default(autoincrement())
-  tenantId    Int?
-  tenant      Tenant?           @relation(fields: [tenantId], references: [id])
   title       String
   description String?
   files       Json              // Array of { url, publicId, originalFilename, size, mimeType }
@@ -467,301 +302,8 @@ model StudyMaterial {
   @@index([teacherId])
   @@index([materialStatus, isDeleted])
   @@index([materialType])
-  @@index([tenantId])
   @@map("study_materials")
 }
-
-model FeeStructure {
-  id          Int          @id @default(autoincrement())
-  tenantId    Int?
-  tenant      Tenant?      @relation(fields: [tenantId], references: [id])
-  batchId     Int
-  batch       Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  name        String       // e.g., "Monthly Tuition Fee", "Lab Fee"
-  amount      Float
-  frequency   FeeFrequency @default(MONTHLY)
-  dueDay      Int          @default(5) // Day of month when fee is due
-  lateFee     Float        @default(0)
-  gracePeriod Int          @default(5) // Days after late fee applies
-  isActive    Boolean      @default(true)
-  description String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  receipts FeeReceipt[]
-
-  @@unique([tenantId, batchId, name])
-  @@index([batchId])
-  @@index([tenantId])
-  @@map("fee_structures")
-}
-
-model FeeReceipt {
-  id              Int           @id @default(autoincrement())
-  tenantId        Int?
-  tenant          Tenant?       @relation(fields: [tenantId], references: [id])
-  receiptNumber   String        @unique // Format: RCP-{tenantSlug}-YYYY-NNNNN
-  studentId       Int
-  student         Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  batchId         Int
-  batch           Batch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  feeStructureId  Int?
-  feeStructure    FeeStructure? @relation(fields: [feeStructureId], references: [id], onDelete: SetNull)
-
-  // Amount Details
-  totalAmount     Float
-  paidAmount      Float         @default(0)
-  discountAmount  Float         @default(0)
-  lateFeeAmount   Float         @default(0)
-  remainingAmount Float         @default(0)
-
-  // Payment Details
-  paymentMode     PaymentMode?
-  transactionId   String?
-  chequeNumber    String?
-  bankName        String?
-  paymentNotes    String?
-
-  // Period
-  academicMonth   Int
-  academicYear    Int
-
-  // Status
-  status          PaymentStatus @default(PENDING)
-
-  // Dates
-  dueDate         DateTime
-  paymentDate     DateTime?
-
-  // Audit
-  generatedBy     String
-  generatedById   Int?
-  modifiedBy      String?
-  modifiedById    Int?
-
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  @@index([studentId])
-  @@index([batchId])
-  @@index([status])
-  @@index([academicMonth, academicYear])
-  @@index([dueDate])
-  @@index([tenantId])
-  @@map("fee_receipts")
-}
-
-model NotificationPreference {
-  id        Int     @id @default(autoincrement())
-  tenantId  Int?
-  tenant    Tenant? @relation(fields: [tenantId], references: [id])
-  studentId Int     @unique
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  // Academic Alerts
-  classStartingSoon    Boolean @default(true)
-  timetableChanges     Boolean @default(true)
-
-  // Exams & Results
-  newTestScheduled     Boolean @default(true)
-  resultPublished      Boolean @default(true)
-
-  // Materials & Updates
-  newStudyMaterial     Boolean @default(true)
-  classResourceUploaded Boolean @default(false)
-
-  // Administrative
-  schoolAnnouncements  Boolean @default(true)
-  doubtResponses       Boolean @default(true)
-
-  // Quiet Hours
-  quietHoursEnabled    Boolean @default(false)
-  quietHoursFrom       String  @default("22:00")
-  quietHoursTo         String  @default("07:00")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([tenantId])
-  @@map("notification_preferences")
-}
-
-model LoginAttempt {
-  id        Int      @id @default(autoincrement())
-  tenantId  Int?
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
-  email     String?
-  ipAddress String
-  success   Boolean
-  userAgent String?
-  createdAt DateTime @default(now())
-
-  @@index([email, createdAt])
-  @@index([ipAddress, createdAt])
-  @@index([tenantId])
-  @@map("login_attempts")
-}
-
-model Lecture {
-  id            Int           @id @default(autoincrement())
-  tenantId      Int?
-  tenant        Tenant?       @relation(fields: [tenantId], references: [id])
-  title         String
-  subject       String
-  description   String?
-  room          String?
-  batchId       Int
-  batch         Batch         @relation(fields: [batchId], references: [id])
-  teacherId     Int?
-  teacher       User?         @relation("TeacherLectures", fields: [teacherId], references: [id])
-  assignedBy    String?
-
-  // Schedule
-  date          DateTime
-  startTime     String
-  endTime       String
-  duration      Int
-
-  // Status
-  status        LectureStatus @default(SCHEDULED)
-  notes         String?
-
-  // Recurrence
-  recurrenceId  String?
-
-  // Audit
-  createdBy     Int
-  isDeleted     Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-
-  attendances   Attendance[]
-
-  @@index([batchId])
-  @@index([teacherId])
-  @@index([date])
-  @@index([batchId, date])
-  @@index([tenantId])
-  @@map("lectures")
-}
-
-model Test {
-  id            Int        @id @default(autoincrement())
-  tenantId      Int?
-  tenant        Tenant?    @relation(fields: [tenantId], references: [id])
-  title         String
-  subject       String
-  description   String?
-  testType      TestType   @default(UNIT_TEST)
-  batchId       Int
-  batch         Batch      @relation(fields: [batchId], references: [id])
-
-  // Scoring
-  totalMarks    Float
-  passingMarks  Float?
-
-  // Schedule
-  date          DateTime
-  time          String?
-  duration      Int?
-  hall          String?
-
-  // Content
-  syllabus      String?
-  instructions  String?
-
-  // Status
-  status        TestStatus @default(DRAFT)
-  publishedAt   DateTime?
-  scoresLocked  Boolean    @default(false)
-
-  // Teacher
-  teacherId     Int?
-  teacher       User?      @relation("TeacherTests", fields: [teacherId], references: [id], onDelete: SetNull)
-
-  // Relations
-  scores        TestScore[]
-
-  // Audit
-  createdBy     Int
-  isDeleted     Boolean    @default(false)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  @@index([batchId])
-  @@index([teacherId])
-  @@index([batchId, date])
-  @@index([status, isDeleted])
-  @@index([tenantId])
-  @@map("tests")
-}
-
-model TestScore {
-  id            Int         @id @default(autoincrement())
-  tenantId      Int?
-  tenant        Tenant?     @relation(fields: [tenantId], references: [id])
-  testId        Int
-  test          Test        @relation(fields: [testId], references: [id], onDelete: Cascade)
-  studentId     Int
-  student       Student     @relation(fields: [studentId], references: [id])
-
-  // Score
-  marksObtained Float
-  percentage    Float
-  grade         String?
-  status        ScoreStatus @default(PASS)
-
-  // Feedback
-  remarks       String?
-
-  // Who uploaded
-  uploadedBy    Int
-
-  // Audit
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@unique([testId, studentId])
-  @@index([testId])
-  @@index([studentId])
-  @@index([tenantId])
-  @@map("test_scores")
-}
-
-// ============================================
-// Auth Models (global — not tenant-scoped in $extends)
-// ============================================
-
-model PasswordResetToken {
-  id        Int       @id @default(autoincrement())
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  token     String    @unique
-  expiresAt DateTime
-  usedAt    DateTime?
-  createdAt DateTime  @default(now())
-
-  @@index([token])
-  @@index([userId])
-  @@map("password_reset_tokens")
-}
-
-model TokenBlacklist {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  userId    Int
-  expiresAt DateTime
-  reason    String?
-  createdAt DateTime @default(now())
-
-  @@index([token])
-  @@map("token_blacklist")
-}
-
-// ============================================
-// Enums (existing)
-// ============================================
 
 enum AnnouncementPriority {
   LOW
@@ -833,7 +375,7 @@ enum YoutubeVideoVisibility {
 }
 
 // ============================================
-// Fee Management Enums
+// Fee Management Enums & Models
 // ============================================
 
 enum PaymentStatus {
@@ -859,9 +401,199 @@ enum FeeFrequency {
   ONE_TIME
 }
 
+model FeeStructure {
+  id          Int          @id @default(autoincrement())
+  batchId     Int
+  batch       Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  name        String       // e.g., "Monthly Tuition Fee", "Lab Fee"
+  amount      Float
+  frequency   FeeFrequency @default(MONTHLY)
+  dueDay      Int          @default(5) // Day of month when fee is due
+  lateFee     Float        @default(0)
+  gracePeriod Int          @default(5) // Days after due date before late fee applies
+  isActive    Boolean      @default(true)
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  receipts FeeReceipt[]
+
+  @@unique([batchId, name])
+  @@index([batchId])
+  @@map("fee_structures")
+}
+
+model FeeReceipt {
+  id              Int           @id @default(autoincrement())
+  receiptNumber   String        @unique // Format: RCP-YYYY-NNNNN
+  studentId       Int
+  student         Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  batchId         Int
+  batch           Batch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  feeStructureId  Int?
+  feeStructure    FeeStructure? @relation(fields: [feeStructureId], references: [id], onDelete: SetNull)
+
+  // Amount Details
+  totalAmount     Float
+  paidAmount      Float         @default(0)
+  discountAmount  Float         @default(0)
+  lateFeeAmount   Float         @default(0)
+  remainingAmount Float         @default(0) // Computed: totalAmount - paidAmount - discountAmount + lateFeeAmount
+
+  // Payment Details
+  paymentMode     PaymentMode?
+  transactionId   String?       // For digital payments
+  chequeNumber    String?
+  bankName        String?
+  paymentNotes    String?
+
+  // Period
+  academicMonth   Int           // 1-12
+  academicYear    Int           // e.g., 2024
+
+  // Status
+  status          PaymentStatus @default(PENDING)
+
+  // Dates
+  dueDate         DateTime
+  paymentDate     DateTime?
+
+  // Audit
+  generatedBy     String        // Admin who generated
+  generatedById   Int?
+  modifiedBy      String?
+  modifiedById    Int?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([studentId])
+  @@index([batchId])
+  @@index([status])
+  @@index([academicMonth, academicYear])
+  @@index([dueDate])
+  @@map("fee_receipts")
+}
+
 // ============================================
-// Lectures Enums
+// Student Authentication Models
 // ============================================
+
+model PasswordResetToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([token])
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+model TokenBlacklist {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  expiresAt DateTime
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@map("token_blacklist")
+}
+
+model NotificationPreference {
+  id        Int     @id @default(autoincrement())
+  studentId Int     @unique
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  // Academic Alerts
+  classStartingSoon    Boolean @default(true)
+  timetableChanges     Boolean @default(true)
+
+  // Exams & Results
+  newTestScheduled     Boolean @default(true)
+  resultPublished      Boolean @default(true)
+
+  // Materials & Updates
+  newStudyMaterial     Boolean @default(true)
+  classResourceUploaded Boolean @default(false)
+
+  // Administrative
+  schoolAnnouncements  Boolean @default(true)
+  doubtResponses       Boolean @default(true)
+
+  // Quiet Hours
+  quietHoursEnabled    Boolean @default(false)
+  quietHoursFrom       String  @default("22:00") // HH:MM format
+  quietHoursTo         String  @default("07:00") // HH:MM format
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notification_preferences")
+}
+
+model LoginAttempt {
+  id        Int      @id @default(autoincrement())
+  email     String?
+  ipAddress String
+  success   Boolean
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("login_attempts")
+}
+
+// ============================================
+// Lectures System
+// ============================================
+
+model Lecture {
+  id            Int           @id @default(autoincrement())
+  title         String
+  subject       String
+  description   String?
+  room          String?
+  batchId       Int
+  batch         Batch         @relation(fields: [batchId], references: [id])
+  teacherId     Int?
+  teacher       User?         @relation("TeacherLectures", fields: [teacherId], references: [id])
+  assignedBy    String?
+
+  // Schedule
+  date          DateTime
+  startTime     String
+  endTime       String
+  duration      Int
+
+  // Status
+  status        LectureStatus @default(SCHEDULED)
+  notes         String?
+
+  // Recurrence
+  recurrenceId  String?
+
+  // Audit
+  createdBy     Int
+  isDeleted     Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  attendances   Attendance[]
+
+  @@index([batchId])
+  @@index([teacherId])
+  @@index([date])
+  @@index([batchId, date])
+  @@map("lectures")
+}
 
 enum LectureStatus {
   SCHEDULED
@@ -871,8 +603,85 @@ enum LectureStatus {
 }
 
 // ============================================
-// Tests & Scores Enums
+// Tests & Scores System
 // ============================================
+
+model Test {
+  id            Int        @id @default(autoincrement())
+  title         String
+  subject       String
+  description   String?
+  testType      TestType   @default(UNIT_TEST)
+  batchId       Int
+  batch         Batch      @relation(fields: [batchId], references: [id])
+
+  // Scoring
+  totalMarks    Float
+  passingMarks  Float?
+
+  // Schedule
+  date          DateTime
+  time          String?
+  duration      Int?
+  hall          String?
+
+  // Content
+  syllabus      String?
+  instructions  String?
+
+  // Status
+  status        TestStatus @default(DRAFT)
+  publishedAt   DateTime?
+  scoresLocked  Boolean    @default(false) // Locked after results are published
+
+  // Teacher
+  teacherId     Int?
+  teacher       User?      @relation("TeacherTests", fields: [teacherId], references: [id], onDelete: SetNull)
+
+  // Relations
+  scores        TestScore[]
+
+  // Audit
+  createdBy     Int
+  isDeleted     Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([batchId])
+  @@index([teacherId])
+  @@index([batchId, date])
+  @@index([status, isDeleted])
+  @@map("tests")
+}
+
+model TestScore {
+  id            Int         @id @default(autoincrement())
+  testId        Int
+  test          Test        @relation(fields: [testId], references: [id], onDelete: Cascade)
+  studentId     Int
+  student       Student     @relation(fields: [studentId], references: [id])
+
+  // Score
+  marksObtained Float
+  percentage    Float
+  grade         String?
+  status        ScoreStatus @default(PASS)
+
+  // Feedback
+  remarks       String?
+
+  // Who uploaded
+  uploadedBy    Int
+
+  // Audit
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([testId, studentId])
+  @@index([testId])
+  @@index([studentId])
+  @@map("test_scores")
+}
 
 enum TestType {
   UNIT_TEST
@@ -897,20 +706,21 @@ enum ScoreStatus {
 }
 
 // ============================================
-// Instagram Automation System (not tenant-scoped)
+// Instagram Automation System
 // ============================================
 
 model InstagramAccount {
   id                Int      @id @default(autoincrement())
   userId            Int      @unique
-  igUserId          String   @unique
+  igUserId          String   @unique // Instagram-scoped user ID
   username          String
   profilePictureUrl String?
-  accessToken       String
+  accessToken       String   // Long-lived access token (encrypted at app level)
   tokenExpiresAt    DateTime?
   followersCount    Int?
   mediaCount        Int?
 
+  // Relations
   automationRules AutomationRule[]
 
   createdAt DateTime @default(now())
@@ -924,20 +734,23 @@ model AutomationRule {
   id                 Int                  @id @default(autoincrement())
   instagramAccountId Int
   instagramAccount   InstagramAccount     @relation(fields: [instagramAccountId], references: [id], onDelete: Cascade)
-  mediaId            String
-  mediaUrl           String?
-  mediaCaption       String?
-  mediaType          String?
-  triggerKeyword     String
-  dmMessage          String
-  dmType             DmType               @default(TEXT)
-  dmButtons          Json?
+  mediaId            String               // Instagram media ID (post/reel)
+  mediaUrl           String?              // Thumbnail URL for display
+  mediaCaption       String?              // Cached caption
+  mediaType          String?              // IMAGE, VIDEO, CAROUSEL_ALBUM
+  triggerKeyword     String               // e.g. "LINK", "INFO", "PRICE"
+  dmMessage          String               // The DM text to send
+  dmType             DmType               @default(TEXT) // TEXT or TEMPLATE
+  dmButtons          Json?                // For TEMPLATE type: [{ title, url }]
+  autoReplyComment   Boolean              @default(false) // Whether to auto-reply to the triggering comment
+  autoReplyText      String?              // Auto-reply comment text (used when autoReplyComment is true)
   status             AutomationRuleStatus @default(ACTIVE)
   dmsSentCount       Int                  @default(0)
   isFollowGated      Boolean              @default(false)
-  unfollowedMessage  String?
+  unfollowedMessage  String?              // The DM text to send if they don't follow
   lastTriggeredAt    DateTime?
 
+  // Relations
   logs AutomationLog[]
 
   createdAt DateTime @default(now())
@@ -953,9 +766,9 @@ model AutomationLog {
   id               Int            @id @default(autoincrement())
   ruleId           Int
   rule             AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
-  commenterId      String
+  commenterId      String         // IG user ID of commenter
   commenterUsername String?
-  commentText      String
+  commentText      String         // Original comment text
   dmStatus         DmStatus       @default(SENT)
   errorMessage     String?
 
@@ -980,4 +793,29 @@ enum DmStatus {
 enum DmType {
   TEXT
   TEMPLATE
+}
+
+// ============================================
+// Per-Deployment Application Settings
+// ============================================
+
+// Single-row table — always id = 1
+// Runtime-configurable by the class admin (no redeployment required)
+model AppSettings {
+  id Int @id @default(1)
+
+  // Class profile (can be edited by admin at runtime)
+  className    String @default("My Coaching Class")
+  classEmail   String @default("")
+  classPhone   String @default("")
+  classAddress String @default("")
+  classWebsite String @default("")
+
+  // Teacher permissions matrix (what teachers are allowed to do)
+  // Defaults: safe conservative set (no fee access, no export, no analytics)
+  teacherPermissions Json @default("{\"canManageLectures\":true,\"canUploadNotes\":true,\"canUploadVideos\":false,\"canManageAssignments\":true,\"canViewFees\":false,\"canManageStudyMaterials\":false,\"canSendAnnouncements\":true,\"canViewAnalytics\":false,\"canExportData\":false}")
+
+  updatedAt DateTime @updatedAt
+
+  @@map("app_settings")
 }

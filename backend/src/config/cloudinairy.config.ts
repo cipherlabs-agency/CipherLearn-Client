@@ -1,6 +1,5 @@
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { config } from "./env.config";
-import { tenantStorage } from "../utils/tenantStorage";
 
 export interface CloudinaryUploadResult {
   url: string;
@@ -13,23 +12,11 @@ export interface CloudinaryUploadResult {
 }
 
 /**
- * Resolves the tenant-scoped Cloudinary folder.
- * If a tenant is active in context: `tenants/{tenantId}/{subfolder}`
- * Otherwise falls back to the subfolder as-is (legacy / migration).
- */
-function resolveTenantFolder(subfolder: string): string {
-  const tenantId = tenantStorage.getStore();
-  if (tenantId !== undefined) {
-    return `tenants/${tenantId}/${subfolder}`;
-  }
-  return subfolder;
-}
-
-/**
  * CloudinaryService
  * - configures Cloudinary using env
- * - uploadDocument(file, folder) => uploads to tenants/{tenantId}/{folder}
- * - uploadDocuments(files, folder) => batch upload
+ * - uploadSingle(file, folder, resourceType) => { url, public_id, metadata }
+ * - uploadMultiple(files, folder, resourceType) => [{ url, public_id, metadata }]
+ * - uploadDocument(file, folder) => specialized for documents/images (auto resource type)
  */
 export default class CloudinaryService {
   constructor() {
@@ -48,11 +35,10 @@ export default class CloudinaryService {
     file: Express.Multer.File,
     folder = "products"
   ): Promise<{ url: string; public_id: string }> {
-    const resolvedFolder = resolveTenantFolder(folder);
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: resolvedFolder,
+          folder,
           public_id: `${Date.now()}-${file.originalname}`,
           resource_type: "image",
         },
@@ -78,25 +64,25 @@ export default class CloudinaryService {
   }
 
   /**
-   * Upload a document/image with auto resource type detection and full metadata.
-   * Folder is automatically tenant-scoped.
+   * Upload a document/image with auto resource type detection and full metadata
+   * Supports: images (JPG, PNG, GIF, WEBP), documents (PDF, DOC, DOCX, PPT, PPTX), text files (TXT, MD)
    */
   uploadDocument(
     file: Express.Multer.File,
     folder = "notes"
   ): Promise<CloudinaryUploadResult> {
-    const resolvedFolder = resolveTenantFolder(folder);
     return new Promise((resolve, reject) => {
       try {
+        // Generate unique filename with timestamp
         const timestamp = Date.now();
         const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
         const publicId = `${timestamp}-${sanitizedName}`;
 
         const stream = cloudinary.uploader.upload_stream(
           {
-            folder: resolvedFolder,
+            folder,
             public_id: publicId,
-            resource_type: "auto",
+            resource_type: "auto", // Auto-detect: image, raw, or video
             use_filename: true,
             unique_filename: true,
             overwrite: false,
@@ -113,6 +99,7 @@ export default class CloudinaryService {
               return reject(new Error("Cloudinary: no result returned"));
             }
 
+            // Return comprehensive metadata
             resolve({
               url: result.secure_url,
               public_id: result.public_id,
@@ -134,8 +121,7 @@ export default class CloudinaryService {
   }
 
   /**
-   * Upload multiple documents/images with full metadata.
-   * All files go to the same tenant-scoped folder.
+   * Upload multiple documents/images with full metadata
    */
   uploadDocuments(
     files: Express.Multer.File[],

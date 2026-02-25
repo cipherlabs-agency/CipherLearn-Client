@@ -1,610 +1,592 @@
 # CipherLearn Admin Portal — Implementation Brief
 
 > **This document is the authoritative brief for building the CipherLearn Admin Portal.**
-> The Admin Portal lives in a **separate repository** (`portal/` — standalone Next.js app).
-> The main CipherLearn backend and frontend have already been updated for multi-tenancy.
-> Your job is to build ONLY the portal frontend that talks to the existing `/api/portal/*` endpoints.
-
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  client/ repo  (already built)                              │
-│                                                             │
-│  backend/  ← Express server (single deployment)            │
-│    /api/dashboard/*  ← tenant admin/teacher dashboard API  │
-│    /api/app/*        ← student/teacher mobile app API      │
-│    /api/auth/*       ← tenant user authentication          │
-│    /api/portal/*     ← SuperAdmin portal API  ← YOU CALL   │
-│    /api/tenant/config ← public tenant config               │
-│                                                             │
-│  frontend/  ← Next.js (coaching class dashboard)           │
-│                                                             │
-│  Prisma schema + PostgreSQL  (single shared DB)            │
-│    All models live here: Tenant, SuperAdmin, User, etc.     │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│  portal/ repo  (THIS REPO — what you are building)         │
-│                                                             │
-│  Next.js frontend ONLY — no backend, no DB, no Prisma      │
-│  Deployed at portal.cipherlearn.com                        │
-│  Calls https://api.cipherlearn.com/api/portal/*            │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Why are `Tenant`, `SuperAdmin`, `AdminAuditLog` etc. in the client repo?**
-- There is only ONE PostgreSQL database shared by everything
-- The `Tenant` model is used by the client app on EVERY API request (tenantContext middleware reads it)
-- The Portal API backend (`/api/portal/*`) runs on the SAME Express server — not a separate service
-- The portal frontend (this repo) makes HTTP calls to those endpoints; it has no direct DB access
+> The Admin Portal is a **completely separate product** in its own repository (`portal/`).
+> It has its OWN backend (Express), its OWN frontend (Next.js), and its OWN PostgreSQL database.
+> It does NOT share a database or codebase with coaching class deployments.
 
 ---
 
-## 1. What Is Already Done (main `client/` repo)
-
-### 1.1 Backend — Already Implemented
-
-The following backend changes are **complete** in the main repo. Do NOT reimplement them.
-
-**Prisma Schema** — `backend/prisma/schema.prisma`:
-- New models: `Tenant`, `SuperAdmin`, `TenantQuotaOverride`, `AdminAuditLog`, `PlatformConfig`, `TenantConfig`
-- New enums: `TenantPlan` (FREE/STARTER/PRO/ENTERPRISE), `SubscriptionStatus` (ACTIVE/TRIAL/SUSPENDED/CANCELLED/EXPIRED), `SuperAdminRole` (OWNER/ADMIN/SUPPORT)
-- `tenantId Int?` added to all existing models (User, Student, Batch, Attendance, etc.)
-
-**Backend Utilities**:
-- `backend/src/utils/tenantStorage.ts` — `AsyncLocalStorage<number>` for tenant context
-- `backend/src/utils/encryption.ts` — `encrypt(value)` / `decrypt(value)` AES-256-GCM
-- `backend/src/utils/quota.ts` — `checkStudentQuota`, `checkBatchQuota`, `checkTeacherQuota`, `checkFeatureEnabled`
-- `backend/src/constants/plans.ts` — `PLAN_DEFAULTS` map with maxStudents/maxBatches/etc per plan
-
-**Auth**:
-- `generateSuperAdminToken({ id, email, role })` — portal JWT signed with `SUPER_ADMIN_JWT_SECRET`
-- `verifySuperAdminToken(token)` — validates portal JWT
-- `isSuperAdmin` middleware — validates portal JWT, attaches `req.superAdmin`
-- `isSuperOwner` middleware — additionally checks `role === 'OWNER'`
-
-**Portal API Routes** — all mounted at `/api/portal/`:
+## 1. Architecture Overview
 
 ```
-POST   /api/portal/auth/login           Body: { email, password } → { token, superAdmin }
-POST   /api/portal/auth/logout
-GET    /api/portal/auth/me
+┌──────────────────────────────────────────────────────────────┐
+│  Coaching Class A — client/ repo (deployed instance #1)      │
+│                                                              │
+│  frontend/ ── backend/ ── PostgreSQL DB A                    │
+│  (Next.js)    (Express)   (isolated, no shared data)         │
+│                                                              │
+│  API surface:                                                │
+│    /api/auth/*           ← admin/teacher login               │
+│    /api/dashboard/*      ← admin/teacher dashboard           │
+│    /api/app/*            ← student/teacher mobile app        │
+└──────────────────────────────────────────────────────────────┘
 
-GET    /api/portal/tenants              Query: page, limit, search, plan, status
-POST   /api/portal/tenants              Create tenant + first admin user
-GET    /api/portal/tenants/slug-check   Query: slug → { available: boolean }
-GET    /api/portal/tenants/:id          Full tenant detail + studentCount, batchCount, teacherCount
-PATCH  /api/portal/tenants/:id          Update basic info
-PATCH  /api/portal/tenants/:id/branding
-PATCH  /api/portal/tenants/:id/subscription  (plan change, dates, quotaOverride)
-PATCH  /api/portal/tenants/:id/permissions   Body: { teacherPermissions: {...} }
-POST   /api/portal/tenants/:id/suspend  Body: { reason }
-POST   /api/portal/tenants/:id/resume
-POST   /api/portal/tenants/:id/cancel
-DELETE /api/portal/tenants/:id          Soft delete
-DELETE /api/portal/tenants/:id/purge    Hard delete ALL data (OWNER only)
-GET    /api/portal/tenants/:id/usage    { maxStudents, studentCount, maxBatches, batchCount, ... }
-GET    /api/portal/tenants/:id/users    Admin + Teacher users for this tenant
-POST   /api/portal/tenants/:id/users/reset-password  Body: { userId } → { tempPassword }
-GET    /api/portal/tenants/:id/config   Tenant config overrides (secrets masked as null)
-PUT    /api/portal/tenants/:id/config/:key   Upsert tenant config
-DELETE /api/portal/tenants/:id/config/:key   Remove override
+┌──────────────────────────────────────────────────────────────┐
+│  Coaching Class B — client/ repo (deployed instance #2)      │
+│                                                              │
+│  frontend/ ── backend/ ── PostgreSQL DB B                    │
+│  (same codebase, different env vars, different DB)           │
+└──────────────────────────────────────────────────────────────┘
 
-GET    /api/portal/config/platform      All platform config (secrets masked)
-PUT    /api/portal/config/platform/:key  (OWNER only)
-DELETE /api/portal/config/platform/:key  (OWNER only)
-POST   /api/portal/config/test-smtp
-
-GET    /api/portal/analytics/overview   { totalTenants, activeTenants, trialTenants, suspendedTenants, newThisMonth, totalStudents }
-GET    /api/portal/analytics/growth     Query: months=12 → [{ month, plan, count }]
-GET    /api/portal/analytics/plans      [{ plan, count }]
-GET    /api/portal/analytics/expiring   Query: days=14 → expiring tenants
-
-GET    /api/portal/audit                Query: page, limit, superAdminId, action, tenantId, from, to
-
-GET    /api/portal/admins               (OWNER only)
-POST   /api/portal/admins               (OWNER only) Body: { name, email, password, role }
-PATCH  /api/portal/admins/:id/role      (OWNER only)
-DELETE /api/portal/admins/:id           (OWNER only)
+┌──────────────────────────────────────────────────────────────┐
+│  CipherLearn Admin Portal — portal/ repo  ← YOU BUILD THIS  │
+│                                                              │
+│  portal-frontend/ (Next.js)  — deployed at portal.cipherlearn.com
+│  portal-backend/ (Express)   — deployed at api.portal.cipherlearn.com
+│  Portal PostgreSQL DB        — tracks all coaching class deployments
+│                                                              │
+│  The portal DOES NOT connect to any coaching class DB.       │
+│  It manages deployments at the infrastructure level.         │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-**Public Tenant Config** (no auth):
-```
-GET    /api/tenant/config?slug={slug}
-→ { id, name, slug, logo, logoInitials, primaryColor, accentColor, contactEmail, subscriptionStatus, features: { qrAttendance, assignments, fees, studyMaterials, announcements, videos } }
+**Why separate repos and DBs?**
+- Coaching class data (students, fees, attendance) never lives in the portal DB
+- The portal tracks deployment metadata only: which classes exist, their plan, status, branding
+- A portal outage never affects running coaching class deployments
+- Security: portal admins cannot query coaching class data directly
+
+---
+
+## 2. What the Portal Manages
+
+The portal is CipherLearn's internal **Control Plane**. It lets the CipherLearn team:
+
+| Action | Description |
+|--------|-------------|
+| **Provision** | Create a new coaching class deployment (configure env vars, seed first admin user) |
+| **Configure** | Update branding (name, logo, colors), feature flags for a deployment |
+| **Monitor** | View student/batch/teacher counts (queried from each deployment's API) |
+| **Suspend** | Block login access to a deployment whose subscription has lapsed |
+| **Resume** | Re-enable a suspended deployment |
+| **Cancel / Delete** | Soft-delete (30-day grace) or hard-delete a deployment's records |
+| **Billing** | Track subscription plan, trial/expiry dates, record payments manually |
+| **Payment tracking** | Record payments received from coaching class owners, view payment history |
+| **SuperAdmin management** | Invite, assign roles (OWNER/ADMIN/SUPPORT), revoke access |
+
+---
+
+## 3. Portal Database Schema
+
+The portal has its own DB with these key models:
+
+```prisma
+// portal/prisma/schema.prisma
+
+model Deployment {
+  id                  Int                @id @default(autoincrement())
+  name                String             // "Shree Academy"
+  slug                String             @unique // "shree-academy"
+  contactEmail        String
+  contactPhone        String?
+  ownerName           String?
+  address             String?
+  website             String?
+
+  // Branding (set as env vars on the actual deployment)
+  logo                String?
+  logoInitials        String             @default("CL")
+  primaryColor        String             @default("#0F766E")
+  accentColor         String             @default("#F59E0B")
+
+  // Infrastructure
+  frontendUrl         String?            // e.g. https://shree-academy.vercel.app
+  backendUrl          String?            // e.g. https://shree-academy-api.onrender.com
+
+  // Subscription
+  plan                DeploymentPlan     @default(FREE)
+  subscriptionStatus  SubscriptionStatus @default(TRIAL)
+  trialEndsAt         DateTime?
+  subscriptionEndsAt  DateTime?
+
+  // Feature flags (portal sets these as env vars on the deployment)
+  featureQRAttendance   Boolean @default(true)
+  featureAssignments    Boolean @default(false)
+  featureFees           Boolean @default(false)
+  featureStudyMaterials Boolean @default(false)
+  featureAnnouncements  Boolean @default(true)
+  featureVideos         Boolean @default(false)
+
+  // Quota limits (plan-based defaults, overridable)
+  maxStudents   Int @default(50)
+  maxBatches    Int @default(3)
+  maxTeachers   Int @default(2)
+
+  // Lifecycle
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  suspendedAt     DateTime?
+  cancelledAt     DateTime?
+  deletedAt       DateTime?
+  suspendedReason String?
+
+  auditLogs AuditLog[]
+  payments  Payment[]
+  @@map("deployments")
+}
+
+model SuperAdmin {
+  id        Int            @id @default(autoincrement())
+  name      String
+  email     String         @unique
+  password  String         // bcrypt hashed
+  role      SuperAdminRole @default(SUPPORT)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  auditLogs AuditLog[]
+  payments  Payment[]      // payments recorded by this admin
+  @@map("super_admins")
+}
+
+model AuditLog {
+  id             Int         @id @default(autoincrement())
+  superAdminId   Int
+  superAdmin     SuperAdmin  @relation(fields: [superAdminId], references: [id])
+  deploymentId   Int?
+  deployment     Deployment? @relation(fields: [deploymentId], references: [id])
+  action         String      // "DEPLOYMENT_CREATED", "PLAN_CHANGED", "SUSPENDED", "PAYMENT_RECORDED" etc.
+  metadata       Json?       // before/after values, notes
+  ipAddress      String?
+  createdAt      DateTime    @default(now())
+  @@index([superAdminId])
+  @@index([deploymentId])
+  @@map("audit_logs")
+}
+
+// ─── Payment Tracking ───────────────────────────────────────
+
+model Payment {
+  id             Int            @id @default(autoincrement())
+  deploymentId   Int
+  deployment     Deployment     @relation(fields: [deploymentId], references: [id])
+  recordedById   Int
+  recordedBy     SuperAdmin     @relation(fields: [recordedById], references: [id])
+
+  amount         Float          // Amount in INR (or currency below)
+  currency       String         @default("INR")
+  plan           DeploymentPlan // Plan this payment is for
+  paymentMethod  PaymentMethod  @default(UPI)
+  referenceId    String?        // UTR number, cheque number, transaction ID etc.
+  notes          String?        // Any extra notes
+  paymentDate    DateTime       // When the payment was received
+  periodStart    DateTime?      // Subscription period covered — start
+  periodEnd      DateTime?      // Subscription period covered — end
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([deploymentId])
+  @@index([recordedById])
+  @@index([paymentDate])
+  @@map("payments")
+}
+
+enum DeploymentPlan    { FREE STARTER PRO ENTERPRISE }
+enum SubscriptionStatus { ACTIVE TRIAL SUSPENDED CANCELLED EXPIRED }
+enum SuperAdminRole    { OWNER ADMIN SUPPORT }
+enum PaymentMethod     { UPI BANK_TRANSFER CHEQUE CASH CARD OTHER }
 ```
 
-### 1.2 Auth Token Format
+**What the portal does NOT store:**
+- Students, batches, attendance, class-level fees, notes, assignments — those live in each class's own DB
+- Teacher permissions — configured by the class admin in their own Settings page
 
-Portal JWT payload (signed with `SUPER_ADMIN_JWT_SECRET`, NOT `JWT_SECRET`):
+---
+
+## 4. Portal Backend API
+
+**Base URL:** `https://api.portal.cipherlearn.com/api`
+
+All endpoints (except login) require `Authorization: Bearer <portalToken>` — JWT signed with the portal's own `PORTAL_JWT_SECRET`.
+
+### 4.1 SuperAdmin Auth
+
+```
+POST   /auth/login           Body: { email, password } → { token, superAdmin }
+POST   /auth/logout
+GET    /auth/me
+```
+
+### 4.2 Deployments
+
+```
+GET    /deployments              Query: page, limit, search, plan, status
+POST   /deployments              Create deployment record
+GET    /deployments/:id          Full detail + latest usage stats
+PATCH  /deployments/:id          Update contact/branding
+PATCH  /deployments/:id/plan     Change plan + recalc quota defaults
+PATCH  /deployments/:id/features Update feature flags
+POST   /deployments/:id/suspend  Body: { reason }
+POST   /deployments/:id/resume
+POST   /deployments/:id/cancel
+DELETE /deployments/:id          Soft delete (sets deletedAt)
+DELETE /deployments/:id/purge    Hard delete all records (OWNER only)
+GET    /deployments/:id/usage    Fetch live counts from deployment's own API
+```
+
+**Usage stats (`GET /deployments/:id/usage`):**
+The portal calls each coaching class backend:
+```
+GET https://{deployment.backendUrl}/api/dashboard/analytics/summary
+Authorization: Bearer <deployment-service-token>
+```
+Returns: `{ studentCount, batchCount, teacherCount }`.
+
+### 4.3 Payment Tracking
+
+```
+GET    /payments                     Query: page, limit, deploymentId, plan, method, from, to
+POST   /payments                     Record a new payment (ADMIN/OWNER only)
+GET    /payments/:id                 Payment detail
+PATCH  /payments/:id                 Edit a payment (OWNER only — corrections)
+DELETE /payments/:id                 Delete a payment (OWNER only)
+
+GET    /deployments/:id/payments     All payments for a specific deployment
+```
+
+**POST /payments body:**
 ```json
-{ "id": 1, "email": "owner@cipherlearn.com", "role": "OWNER", "type": "superadmin" }
+{
+  "deploymentId": 3,
+  "amount": 2999,
+  "currency": "INR",
+  "plan": "STARTER",
+  "paymentMethod": "UPI",
+  "referenceId": "UTR123456789",
+  "notes": "Paid via PhonePe",
+  "paymentDate": "2026-02-25",
+  "periodStart": "2026-03-01",
+  "periodEnd": "2026-03-31"
+}
 ```
 
-Store as `portalToken` in `localStorage` — SEPARATE from tenant `token`.
+On payment creation:
+- Automatically extend `deployment.subscriptionEndsAt` to `periodEnd` if it's later
+- Log to AuditLog with `action: "PAYMENT_RECORDED"`
 
-All portal API requests: `Authorization: Bearer <portalToken>`
+### 4.4 Analytics
+
+```
+GET    /analytics/overview   { totalDeployments, active, trial, suspended, newThisMonth, mrrThisMonth }
+GET    /analytics/growth     Query: months=12 → monthly deployment growth
+GET    /analytics/plans      [{ plan, count }] for DonutChart
+GET    /analytics/expiring   Query: days=14 → deployments expiring soon
+GET    /analytics/revenue    Query: months=12 → monthly revenue totals (sum of payments)
+```
+
+**MRR calculation** (`mrrThisMonth`): sum of all `Payment.amount` where `paymentDate` is in the current month.
+
+### 4.5 Audit Log
+
+```
+GET    /audit                Query: page, limit, superAdminId, action, deploymentId, from, to
+```
+
+### 4.6 SuperAdmin Management (OWNER only)
+
+```
+GET    /admins
+POST   /admins               Body: { name, email, password, role }
+PATCH  /admins/:id/role
+DELETE /admins/:id
+```
 
 ---
 
-## 2. What You Need to Build
+## 5. Portal Frontend
 
-A **standalone Next.js app** (separate repo, separate Vercel deployment) at `portal.cipherlearn.com`.
+**Framework:** Next.js 16 (App Router), TypeScript, Tailwind CSS v4, RTK Query, Radix UI primitives.
+**Deployed at:** `portal.cipherlearn.com`
 
-### 2.1 Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript (strict) |
-| Styling | Tailwind CSS v4 |
-| Font | Plus Jakarta Sans (same as main frontend) |
-| State / API | Redux Toolkit + RTK Query |
-| Forms | react-hook-form + zod |
-| UI | Radix UI primitives (same shadcn pattern) |
-| Charts | Recharts |
-| Icons | lucide-react |
-| Toasts | sonner |
-| Auth | Portal JWT (separate from tenant JWT) |
-
-**Do NOT use:** next-auth, MUI, Chakra, Ant Design, external state management.
-
-### 2.2 Project Structure
+### 5.1 Project Structure
 
 ```
 portal/
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx               ← Root (font, providers, theme)
-│   │   ├── globals.css              ← Same design tokens as main frontend
+│   │   ├── layout.tsx
+│   │   ├── globals.css              ← Copy design tokens from client/frontend
 │   │   ├── (auth)/
-│   │   │   ├── layout.tsx           ← Centered card, no sidebar
 │   │   │   └── login/page.tsx
 │   │   └── (portal)/
-│   │       ├── layout.tsx           ← Sidebar + TopBar layout
+│   │       ├── layout.tsx           ← Sidebar + TopBar
 │   │       ├── dashboard/page.tsx
-│   │       ├── tenants/
-│   │       │   ├── page.tsx
-│   │       │   ├── new/page.tsx
+│   │       ├── deployments/
+│   │       │   ├── page.tsx         ← List view
+│   │       │   ├── new/page.tsx     ← Create wizard
 │   │       │   └── [id]/
-│   │       │       ├── page.tsx        ← Overview tab
+│   │       │       ├── page.tsx     ← Overview tab
 │   │       │       ├── branding/page.tsx
 │   │       │       ├── subscription/page.tsx
-│   │       │       ├── permissions/page.tsx
-│   │       │       ├── environment/page.tsx
-│   │       │       ├── users/page.tsx
+│   │       │       ├── features/page.tsx
+│   │       │       ├── payments/page.tsx   ← Payment history + record payment
 │   │       │       └── danger/page.tsx
+│   │       ├── payments/page.tsx    ← All payments across all deployments
 │   │       ├── audit-log/page.tsx
 │   │       └── settings/
 │   │           ├── page.tsx
-│   │           ├── environment/page.tsx
 │   │           └── admins/page.tsx
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── Sidebar.tsx
-│   │   │   └── TopBar.tsx
-│   │   ├── tenants/
-│   │   │   ├── TenantCard.tsx
-│   │   │   ├── TenantStatusBadge.tsx
-│   │   │   ├── CreateTenantForm.tsx    ← 4-step wizard
-│   │   │   ├── PlanSelector.tsx
-│   │   │   ├── QuotaUsageBar.tsx
-│   │   │   ├── PermissionsMatrix.tsx
-│   │   │   └── FeatureFlagToggles.tsx
-│   │   ├── config/
-│   │   │   ├── ConfigCard.tsx
-│   │   │   ├── ConfigField.tsx
-│   │   │   └── ConfigCategorySection.tsx
-│   │   ├── dashboard/
-│   │   │   ├── MetricCard.tsx
-│   │   │   ├── TenantGrowthChart.tsx
-│   │   │   └── PlanDistributionChart.tsx
-│   │   └── ui/                         ← shadcn/radix primitives
 │   ├── redux/
 │   │   ├── store.ts
-│   │   ├── hooks.ts
-│   │   ├── api/portalApi.ts            ← RTK Query base (auto-injects portal token)
+│   │   ├── api/portalApi.ts
 │   │   └── slices/
-│   │       ├── auth/authSlice.ts       ← SuperAdmin auth state
-│   │       ├── tenants/tenantsApi.ts
-│   │       ├── config/configApi.ts
-│   │       ├── audit/auditApi.ts
-│   │       └── analytics/analyticsApi.ts
-│   ├── middleware.ts                   ← Route protection
-│   └── types/index.ts
+│   │       ├── auth/authSlice.ts
+│   │       ├── deployments/deploymentsApi.ts
+│   │       ├── payments/paymentsApi.ts     ← NEW
+│   │       ├── analytics/analyticsApi.ts
+│   │       └── audit/auditApi.ts
+│   └── middleware.ts
 └── package.json
 ```
 
----
-
-## 3. Authentication Flow
-
-### 3.1 Login (`POST /api/portal/auth/login`)
+### 5.2 Auth Flow
 
 ```typescript
-// Request
-{ email: string, password: string }
-
-// Response
+// POST /auth/login response
 {
   success: true,
   data: {
-    token: string,          // Portal JWT
-    superAdmin: {
-      id: number,
-      name: string,
-      email: string,
-      role: "OWNER" | "ADMIN" | "SUPPORT"
-    }
+    token: string,
+    superAdmin: { id: number, name: string, email: string, role: "OWNER" | "ADMIN" | "SUPPORT" }
   }
 }
 ```
 
-Store `token` as `portalToken` in localStorage. Store `superAdmin` in Redux state.
+Store as `localStorage.getItem("portalToken")` — separate from coaching class `token`.
 
-### 3.2 RTK Query Base Config
+### 5.3 RTK Query Base
 
 ```typescript
 // src/redux/api/portalApi.ts
-const baseUrl = process.env.NEXT_PUBLIC_API_URL; // e.g. http://localhost:5000/api
-
 export const portalApi = createApi({
   reducerPath: "portalApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${baseUrl}/portal`,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token
-                 || localStorage.getItem("portalToken");
+    baseUrl: process.env.NEXT_PUBLIC_PORTAL_API_URL + '/api',
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("portalToken");
       if (token) headers.set("Authorization", `Bearer ${token}`);
       return headers;
     },
   }),
-  tagTypes: ["TENANTS", "TENANT_DETAIL", "TENANT_USAGE", "CONFIG_PLATFORM", "CONFIG_TENANT", "AUDIT_LOG", "ANALYTICS", "SUPER_ADMINS"],
+  tagTypes: ["DEPLOYMENTS", "DEPLOYMENT_DETAIL", "PAYMENTS", "ANALYTICS", "AUDIT_LOG", "SUPER_ADMINS"],
   endpoints: () => ({}),
 });
 ```
 
-### 3.3 Route Protection (middleware.ts)
-
-```typescript
-// Redirect to /login if no portalToken
-// Redirect /login → /dashboard if already authenticated
-```
-
-### 3.4 Role-Based Access
+### 5.4 Role-Based Access
 
 | Action | OWNER | ADMIN | SUPPORT |
 |--------|-------|-------|---------|
-| View tenants | ✓ | ✓ | ✓ |
-| Create/Edit tenant | ✓ | ✓ | ✗ |
-| Suspend/Resume tenant | ✓ | ✓ | ✗ |
-| Delete tenant | ✓ | ✗ | ✗ |
-| Purge tenant | ✓ | ✗ | ✗ |
-| Edit platform config | ✓ | ✗ | ✗ |
-| Edit tenant config | ✓ | ✓ | ✗ |
+| View deployments | ✓ | ✓ | ✓ |
+| Create deployment | ✓ | ✓ | ✗ |
+| Edit branding/features | ✓ | ✓ | ✗ |
+| Suspend / Resume | ✓ | ✓ | ✗ |
+| Delete (soft) | ✓ | ✓ | ✗ |
+| Purge (hard delete) | ✓ | ✗ | ✗ |
+| Record payment | ✓ | ✓ | ✗ |
+| Edit / Delete payment | ✓ | ✗ | ✗ |
+| View payments | ✓ | ✓ | ✓ |
 | View audit log | ✓ | ✓ | ✓ |
 | Manage SuperAdmins | ✓ | ✗ | ✗ |
 
 ---
 
-## 4. Page Specifications
+## 6. Page Specifications
 
-### 4.1 Login Page (`/login`)
+### Dashboard
 
-- Layout: Full-screen centered two-column (left: branding, right: form)
-- Left panel: CipherLearn logo + "Control Plane — Internal Use Only"
-- Right panel: email + password form, submit "Sign in to Portal"
-- On success → redirect to `/dashboard`
-- On error → inline error below form
-
-### 4.2 Dashboard (`/dashboard`)
-
-**KPI Cards (4):**
-1. Total Tenants (+ breakdown: active/trial/suspended)
-2. Total Students (sum across all tenants)
-3. New This Month
-4. MRR placeholder (₹ — manual calculation based on plan distribution)
+**KPI Cards:**
+- Total Deployments (active / trial / suspended breakdown)
+- New This Month
+- Trial Ending (next 14 days)
+- MRR — sum of payments received this month (e.g., ₹14,997)
 
 **Charts:**
-1. Tenant Growth (AreaChart — monthly new tenants × plan, 12 months from `/api/portal/analytics/growth`)
-2. Plan Distribution (DonutChart from `/api/portal/analytics/plans`)
+- Deployment Growth (AreaChart — monthly, 12 months)
+- Plan Distribution (DonutChart — FREE/STARTER/PRO/ENTERPRISE)
+- Revenue (BarChart — monthly totals from `GET /analytics/revenue`)
 
-**Expiring Soon:** Tenants from `/api/portal/analytics/expiring?days=14` — show name, plan, days left, "Renew" button
+**Expiring Soon widget:** deployments from `GET /analytics/expiring?days=14`
 
-**Recent Activity:** Last 10 entries from `/api/portal/audit?limit=10`
+### Deployments List
 
-### 4.3 Tenants List (`/tenants`)
+Table: name + slug, plan badge, status badge, created date, expires date, "View" action.
+Filters: search, plan tabs, status tabs.
 
-**Table columns:**
-- Tenant (logoInitials circle + name + slug)
-- Plan badge
-- Status badge
-- Students (n / maxStudents)
-- Created (relative date)
-- Expires (date or "—")
-- Actions ("View" → `/tenants/[id]`)
+### Create Deployment (`/deployments/new`)
 
-**Filters:** search input, plan tabs (ALL/FREE/STARTER/PRO/ENTERPRISE), status tabs (ALL/ACTIVE/TRIAL/SUSPENDED/EXPIRED/CANCELLED)
+**3-step wizard:**
 
-### 4.4 Create Tenant (`/tenants/new`)
+**Step 1 — Identity:** class name → auto-generates slug, contact email, phone, owner name.
 
-**4-step wizard** (state in component, single API call at end):
+**Step 2 — Plan & Features:** plan cards, feature flag toggles, trial/subscription end dates.
 
-**Step 1 — Identity:**
-- Organization name (required) → auto-generates slug preview
-- Slug (validate uniqueness on blur via `GET /api/portal/tenants/slug-check?slug=x`)
-- Contact email (required)
-- Contact phone (optional)
-- Owner name (optional)
+**Step 3 — Branding:** primary color, accent color, logo URL, logo initials.
 
-Slug rules: 3-50 chars, `a-z0-9-`, no start/end `-`, not in reserved list (`portal`, `api`, `www`, `mail`, `admin`, `app`)
+### Deployment Detail
 
-**Step 2 — Plan & Subscription:**
-- Plan cards (FREE/STARTER/PRO/ENTERPRISE with feature bullets)
-- Trial end date (optional → sets status=TRIAL)
-- Subscription end date (optional)
-- Quota override accordion (maxStudents, maxBatches, maxTeachers, maxStorageMB)
+**Tab: Overview** — Usage bars (Students, Batches, Teachers), subscription info, quick actions.
 
-**Step 3 — Branding (optional):**
-- Primary color (hex input + color swatch)
-- Accent color
-- Logo URL input (or future upload)
-- Logo initials (2-char fallback)
+**Tab: Branding** — Name, contact info, colors, logo.
 
-**Step 4 — First Admin:**
-- Admin name (required)
-- Admin email (required)
-- Auto-generated temp password (shown once, copy button)
-- Send welcome email toggle (UI only — backend sends it)
+**Tab: Subscription** — Plan selector, subscription/trial dates.
 
-**Submit:** `POST /api/portal/tenants` with all fields → redirect to `/tenants/[id]`
+**Tab: Features** — Feature flag toggle grid.
 
-### 4.5 Tenant Detail (`/tenants/[id]`)
+**Tab: Payments** — Payment history for this deployment + "Record Payment" button.
 
-**Header:** tenant name + status badge + quick actions (Suspend/Resume)
+**Tab: Danger Zone** — Suspend / Resume / Cancel / Delete / Purge (with confirmations).
 
-**Tab navigation:** Overview | Branding | Subscription | Permissions | Environment | Users | Danger Zone
+### Payments Page (`/payments`)
 
-#### Tab: Overview
-- 4 usage bars: Students X/max, Batches X/max, Teachers X/max (data from `GET /api/portal/tenants/:id/usage`)
-- Subscription info card (plan, status, dates)
-- Activity counts (lectures, tests — can show basic counts)
+All payments across all deployments.
 
-Usage bar color: green (<80%), amber (80-95%), red (>95%)
+**Table columns:** Date, Deployment name, Plan, Amount, Method, Reference ID, Recorded by, Actions.
 
-#### Tab: Branding
-- Name, contact email/phone, address, website — save via `PATCH /api/portal/tenants/:id`
-- Primary color, accent color, logo, logoInitials, custom domain — save via `PATCH /api/portal/tenants/:id/branding`
+**Filters:** deployment search, plan, payment method, date range.
 
-#### Tab: Subscription
-- Current plan card + "Change Plan" button → opens plan selector modal
-- Plan change modal: 4 plan cards, confirm button
-- Quota override section (accordion): Max Students/Batches/Teachers/Storage, override reason, expiry
-- Feature flag overrides
-- Save via `PATCH /api/portal/tenants/:id/subscription`
+**"Record Payment" button** (ADMIN/OWNER) → opens a modal/drawer:
 
-#### Tab: Permissions
-- Teacher permissions matrix (table of toggles):
-  - canManageLectures, canUploadNotes, canUploadVideos, canManageAssignments
-  - canViewFees, canManageStudyMaterials, canSendAnnouncements, canViewAnalytics, canExportData
-- "Reset to Defaults" button
-- Save via `PATCH /api/portal/tenants/:id/permissions`
+```
+Form fields:
+  Deployment *        (searchable dropdown)
+  Amount (INR) *      (number input)
+  Plan *              (dropdown: STARTER / PRO / ENTERPRISE)
+  Payment Method *    (UPI / Bank Transfer / Cheque / Cash / Card / Other)
+  Reference ID        (UTR, cheque no., transaction ID)
+  Payment Date *      (date picker — defaults to today)
+  Period Start        (date picker — subscription period start)
+  Period End          (date picker — subscription period end)
+  Notes               (textarea)
+```
 
-#### Tab: Environment
-Grouped config sections (SMTP, Locale, Integrations, Appearance):
-- Each field: label + value (masked if secret) + Edit pencil
-- Edit mode: inline input + Save/Cancel
-- Secret fields: show `••••••••` after save
-- "Clear override" button → `DELETE /api/portal/tenants/:id/config/:key`
-- Save via `PUT /api/portal/tenants/:id/config/:key`
+On submit → `POST /payments` → toast "Payment recorded" → invalidate `PAYMENTS` + `DEPLOYMENT_DETAIL` tags.
 
-#### Tab: Users
-- Summary counts: Admins, Teachers, Students
-- Table of admin + teacher users (name, email, role, isPasswordSet)
-- "Reset Password" button → `POST /api/portal/tenants/:id/users/reset-password` → shows temp password in modal
+**Edit payment** (OWNER only): pencil icon → inline edit modal, same fields, `PATCH /payments/:id`.
 
-#### Tab: Danger Zone
-All actions require typing tenant slug or "PERMANENTLY DELETE" in confirmation dialog.
+**Delete payment** (OWNER only): trash icon → confirm dialog → `DELETE /payments/:id`.
 
-| Action | Button | API | Reversible |
-|--------|--------|-----|------------|
-| Suspend | Red button | `POST /api/portal/tenants/:id/suspend` | Yes |
-| Resume | Green button | `POST /api/portal/tenants/:id/resume` | — |
-| Cancel | Amber button | `POST /api/portal/tenants/:id/cancel` | 30 days |
-| Delete | Red button (type slug) | `DELETE /api/portal/tenants/:id` | 30 days |
-| Purge | Red button (OWNER, type "PERMANENTLY DELETE" + 10s countdown) | `DELETE /api/portal/tenants/:id/purge` | **NO** |
+### Deployment Detail — Payments Tab
 
-### 4.6 Audit Log (`/audit-log`)
-
-- Filters: date range, superAdmin dropdown, action type, tenant search
-- Table: timestamp, action badge, performed by, target tenant, IP, expandable JSON details
-- Pagination: 50/page
-
-### 4.7 Settings Hub (`/settings`)
-
-Cards linking to:
-- Environment Config → `/settings/environment`
-- SuperAdmin Management → `/settings/admins`
-
-### 4.8 Platform Config (`/settings/environment`)
-
-Same card layout as tenant Environment tab but:
-- Data from `GET /api/portal/config/platform`
-- Save via `PUT /api/portal/config/platform/:key` (OWNER only)
-- Delete via `DELETE /api/portal/config/platform/:key` (OWNER only)
-
-**Sections:** SMTP, Cloudinary, Auth Settings, Rate Limiting, System
-
-### 4.9 SuperAdmin Management (`/settings/admins`)
-
-- OWNER only (hide from ADMIN/SUPPORT)
-- List: name, email, role, createdAt
-- "Invite" form: name, email, password, role
-- Change role button
-- Revoke access button (cannot target self)
+Same payment list but pre-filtered for this deployment.
+Shows total paid + outstanding (if `subscriptionEndsAt` is in the past).
+"Record Payment" button pre-fills the deployment field.
 
 ---
 
-## 5. Design System
+## 7. Design System
 
-### 5.1 Colors (same as main frontend)
+Copy `globals.css` from `client/frontend` — same warm teal + amber palette, same typography rules.
 
-Copy `globals.css` from the main frontend. Add these portal-specific status colors:
-
+**Portal-specific status badges:**
 ```css
-/* Status badges */
 .status-active    { background: #DCFCE7; color: #16A34A; }
 .status-trial     { background: #DBEAFE; color: #2563EB; }
 .status-suspended { background: #FEF3C7; color: #D97706; }
 .status-expired   { background: #FEE2E2; color: #DC2626; }
 .status-cancelled { background: #F3F4F6; color: #6B7280; }
-
-/* Plan badges */
-.plan-free       { background: #F3F4F6; color: #6B7280; }
-.plan-starter    { background: #DBEAFE; color: #2563EB; }
-.plan-pro        { background: #EDE9FE; color: #7C3AED; }
-.plan-enterprise { background: #CCFBF1; color: #0F766E; }
 ```
 
-### 5.2 Component Conventions
-
-- Cards: `rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(28,25,23,0.06)]`
-- Danger actions: always in a red-bordered "Danger Zone" section
-- Confirmation dialogs: type-to-confirm for destructive actions (never use window.confirm)
-- Secret fields: `••••••••` in read mode, empty input in edit mode
-- Quota bars: `<QuotaUsageBar>` with green/amber/red threshold coloring
-- All forms: react-hook-form + zod validation
-- Loading states: skeleton placeholders
-- Empty states: icon + title + description + CTA button
-
-### 5.3 Typography (same rules as main frontend)
-
-- Body: 16px min, line-height 1.7
-- Small labels: 13px min
-- Page titles: `text-2xl font-bold`
-- Section headers: `text-lg font-semibold`
-- Table headers: `text-xs font-semibold uppercase tracking-wide text-muted-foreground`
+**Payment method badges:**
+```css
+.method-upi      { background: #EDE9FE; color: #7C3AED; }
+.method-bank     { background: #DBEAFE; color: #2563EB; }
+.method-cash     { background: #DCFCE7; color: #16A34A; }
+.method-cheque   { background: #FEF3C7; color: #D97706; }
+```
 
 ---
 
-## 6. Redux State
+## 8. Environment Variables
 
-### 6.1 Auth Slice
-
-```typescript
-interface SuperAdminAuthState {
-  token: string | null;           // Stored as portalToken in localStorage
-  superAdmin: {
-    id: number;
-    name: string;
-    email: string;
-    role: "OWNER" | "ADMIN" | "SUPPORT";
-  } | null;
-  status: "idle" | "authenticated" | "unauthenticated";
-}
-```
-
-### 6.2 Tag Types
-
-```typescript
-tagTypes: [
-  "TENANTS",
-  "TENANT_DETAIL",
-  "TENANT_USAGE",
-  "CONFIG_PLATFORM",
-  "CONFIG_TENANT",
-  "AUDIT_LOG",
-  "ANALYTICS",
-  "SUPER_ADMINS",
-]
-```
-
-Invalidation rules:
-- Any tenant mutation → invalidate `TENANTS`, `TENANT_DETAIL`, `AUDIT_LOG`, `ANALYTICS`
-- Config mutation → invalidate `CONFIG_PLATFORM` or `CONFIG_TENANT`
-- Admin mutation → invalidate `SUPER_ADMINS`, `AUDIT_LOG`
-
----
-
-## 7. Environment Variables (Portal Frontend)
-
+### Portal Backend
 ```bash
-NEXT_PUBLIC_API_URL=http://localhost:5000/api     # Backend base URL
+PORT=4000
+DATABASE_URL=postgresql://...
+PORTAL_JWT_SECRET=...
+PORTAL_JWT_EXPIRES_IN=8h
+CLIENT_URL=https://portal.cipherlearn.com
+DEPLOYMENT_SERVICE_TOKEN=...     # Used to call coaching class APIs for usage stats
+```
+
+### Portal Frontend
+```bash
+NEXT_PUBLIC_PORTAL_API_URL=https://api.portal.cipherlearn.com
 NEXT_PUBLIC_PORTAL_VERSION=1.0.0
 ```
 
 ---
 
-## 8. Implementation Order
+## 9. Implementation Order
 
 ### Phase 1 — Foundation
-1. Project setup (Next.js, Tailwind v4, RTK Query, Radix UI)
-2. Design tokens (`globals.css`) — copy + extend from main frontend
-3. Login page + SuperAdmin auth flow + Redux auth slice
-4. Portal layout (Sidebar + TopBar) with role-aware nav
-5. RTK Query base config (`portalApi.ts`)
-6. Next.js middleware for route protection
+1. Init Next.js (portal frontend) + Express (portal backend)
+2. Copy design tokens from `client/frontend/globals.css`
+3. Portal DB schema (Deployment, SuperAdmin, AuditLog, Payment models)
+4. SuperAdmin auth (login, JWT, `isSuperAdmin` middleware)
+5. Portal frontend login page + RTK Query auth slice
+6. Portal layout (Sidebar + TopBar) + Next.js route protection middleware
 
-### Phase 2 — Tenant Management
-7. RTK Query slice: `tenantsApi.ts`
-8. Tenants list page (table + filters)
-9. Create tenant wizard (4 steps)
-10. Tenant detail page shell (tab navigation)
-11. Overview tab (usage bars + subscription info)
-12. Branding tab
+### Phase 2 — Deployment CRUD
+7. `deploymentsApi.ts` RTK Query slice
+8. Deployments list page (table + filters)
+9. Create deployment wizard (3 steps)
+10. Deployment detail shell (tabs)
+11. Overview tab (usage + subscription info)
+12. Branding + Features tabs
 
-### Phase 3 — Subscription & Permissions
-13. Subscription tab (plan change modal + quota overrides)
-14. Permissions tab (teacher permissions matrix)
-15. Users tab (list + reset password modal)
+### Phase 3 — Payment Tracking
+13. `paymentsApi.ts` RTK Query slice
+14. Global payments page (`/payments`) — table, filters, record payment modal
+15. Deployment detail Payments tab (pre-filtered list + totals)
+16. Record Payment form (all fields, auto-extend subscriptionEndsAt)
+17. Edit / Delete payment (OWNER only)
+18. Dashboard MRR card + Revenue BarChart
 
-### Phase 4 — Config & Operations
-16. RTK Query slice: `configApi.ts`
-17. Environment tab (tenant config with secret masking)
-18. Platform config page (`/settings/environment`)
-19. Danger zone tab (with confirmation dialogs + purge countdown)
+### Phase 4 — Subscription Management
+19. Subscription tab (plan change)
+20. Danger Zone tab (suspend/resume/cancel/delete/purge with confirmations)
 
 ### Phase 5 — Analytics & Audit
-20. RTK Query slices: `analyticsApi.ts`, `auditApi.ts`
-21. Dashboard (KPI cards + charts)
-22. Audit log page
-23. SuperAdmin management page
+21. Dashboard (KPI cards + charts) using analytics endpoints
+22. Expiring deployments widget
+23. Audit log page
+24. SuperAdmin management page
 
 ### Phase 6 — Polish
-24. Expiring tenants widget on dashboard
-25. Slug availability checker
+25. Slug availability checker (real-time)
 26. All empty states and loading skeletons
 27. Mobile responsiveness
 
 ---
 
-## 9. Key Implementation Rules
+## 10. Key Implementation Rules
 
-1. **Portal token storage**: `localStorage.getItem("portalToken")` — NOT `localStorage.getItem("token")` (that's the tenant user token)
-2. **No tenant context**: Portal routes never send `X-Tenant-Slug` header — they are cross-tenant
-3. **Secret fields**: API returns `null` for secret values. Show `••••••••`. On edit, blank input = "no change", non-blank = update.
-4. **Purge confirmation**: Requires (a) typing slug, (b) typing "PERMANENTLY DELETE", (c) 10-second countdown. Cannot undo.
-5. **Role check**: Disable/hide UI elements for actions the current role can't perform. Never rely solely on backend.
-6. **Audit log**: Every mutation automatically creates an audit log entry on the backend. No frontend code needed for this.
-7. **Plan change**: Fetch usage first, warn if downgrading would exceed limits — but don't block submission.
-8. **SMTP test**: `POST /api/portal/config/test-smtp` sends a test email (backend handles it).
-9. **Slug validation**: 3-50 chars, `a-z0-9-` only, not starting/ending with `-`, not reserved.
-10. **No billing**: Subscription dates are manually set by SuperAdmin. No payment integration.
-
----
-
-## 10. What NOT to Do
-
-- Do NOT modify the main `client/` repo (frontend or backend) while building the portal
-- Do NOT use `window.confirm()` — always use proper Dialog/AlertDialog components
-- Do NOT store secrets in localStorage — only the portal JWT token goes there
-- Do NOT skip the confirmation flow for destructive actions
-- Do NOT build a public signup flow — tenant creation is SuperAdmin-only
-- Do NOT hardcode tenant IDs or slugs anywhere in the portal code
-- Do NOT implement payment processing
+1. **Token key**: `localStorage.getItem("portalToken")` — NOT `"token"` (that's the class user token)
+2. **No class DB access**: Portal never queries student/batch/fee tables directly
+3. **Usage stats**: Always fetched from each class's own API (not stored in portal DB)
+4. **Payment recording**: Manual only — no payment gateway integration
+5. **Auto-extend subscription**: When recording a payment with `periodEnd`, update `deployment.subscriptionEndsAt` if `periodEnd` is later
+6. **Currency**: Default INR. Store as `Float` (paise precision not needed for display)
+7. **All destructive actions**: Use proper AlertDialog — never `window.confirm()`
+8. **Audit log**: Every mutation logs to AuditLog automatically on the backend
+9. **Separate JWT secret**: Portal JWT signed with `PORTAL_JWT_SECRET`, NOT the class `JWT_SECRET`
+10. **Terminology**: Use "class" / "coaching class" not "school" or "tenant" in all UI copy
 
 ---
 
-*Last updated: 2026-02-24*
-*This document reflects the current state of the main `client/` repo multi-tenant implementation.*
+## 11. What NOT to Do
+
+- Do NOT add portal API routes to the `client/` backend — they are separate products
+- Do NOT share a database between the portal and any coaching class deployment
+- Do NOT use the class `JWT_SECRET` for portal auth
+- Do NOT query class student/fee data from the portal — only usage counts via API
+- Do NOT implement payment gateway (Razorpay, Stripe etc.) — payments are recorded manually
+- Do NOT call them "tenants" or "schools" in the UI — they are "classes" or "coaching classes"
+- Do NOT hardcode deployment IDs or slugs anywhere in the portal code
+
+---
+
+*Last updated: 2026-02-25*
+*Architecture: Per-deployment isolation — portal is a completely separate product*

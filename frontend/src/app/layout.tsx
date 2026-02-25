@@ -7,7 +7,6 @@ import "./globals.css";
 import { ReduxProvider } from "@/redux/provider";
 import { AuthRehydrate } from "@/components/AuthRehydrate";
 import { ThemeProvider } from "@/components/theme-provider";
-import { TenantConfigProvider } from "@/context/TenantConfig";
 import { Toaster } from "sonner";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -39,11 +38,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TenantConfigProvider>
-              <AuthRehydrate />
-              {children}
-              <Toaster position="top-right" richColors closeButton />
-            </TenantConfigProvider>
+            <AuthRehydrate />
+            {children}
+            <Toaster position="top-right" richColors closeButton />
           </ThemeProvider>
         </ReduxProvider>
       </body>

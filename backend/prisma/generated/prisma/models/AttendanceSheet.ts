@@ -28,19 +28,16 @@ export type AggregateAttendanceSheet = {
 
 export type AttendanceSheetAvgAggregateOutputType = {
   id: number | null
-  tenantId: number | null
   batchId: number | null
 }
 
 export type AttendanceSheetSumAggregateOutputType = {
   id: number | null
-  tenantId: number | null
   batchId: number | null
 }
 
 export type AttendanceSheetMinAggregateOutputType = {
   id: number | null
-  tenantId: number | null
   batchId: number | null
   month: string | null
   year: string | null
@@ -50,7 +47,6 @@ export type AttendanceSheetMinAggregateOutputType = {
 
 export type AttendanceSheetMaxAggregateOutputType = {
   id: number | null
-  tenantId: number | null
   batchId: number | null
   month: string | null
   year: string | null
@@ -60,7 +56,6 @@ export type AttendanceSheetMaxAggregateOutputType = {
 
 export type AttendanceSheetCountAggregateOutputType = {
   id: number
-  tenantId: number
   batchId: number
   month: number
   year: number
@@ -72,19 +67,16 @@ export type AttendanceSheetCountAggregateOutputType = {
 
 export type AttendanceSheetAvgAggregateInputType = {
   id?: true
-  tenantId?: true
   batchId?: true
 }
 
 export type AttendanceSheetSumAggregateInputType = {
   id?: true
-  tenantId?: true
   batchId?: true
 }
 
 export type AttendanceSheetMinAggregateInputType = {
   id?: true
-  tenantId?: true
   batchId?: true
   month?: true
   year?: true
@@ -94,7 +86,6 @@ export type AttendanceSheetMinAggregateInputType = {
 
 export type AttendanceSheetMaxAggregateInputType = {
   id?: true
-  tenantId?: true
   batchId?: true
   month?: true
   year?: true
@@ -104,7 +95,6 @@ export type AttendanceSheetMaxAggregateInputType = {
 
 export type AttendanceSheetCountAggregateInputType = {
   id?: true
-  tenantId?: true
   batchId?: true
   month?: true
   year?: true
@@ -201,7 +191,6 @@ export type AttendanceSheetGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type AttendanceSheetGroupByOutputType = {
   id: number
-  tenantId: number | null
   batchId: number
   month: string
   year: string
@@ -234,50 +223,43 @@ export type AttendanceSheetWhereInput = {
   OR?: Prisma.AttendanceSheetWhereInput[]
   NOT?: Prisma.AttendanceSheetWhereInput | Prisma.AttendanceSheetWhereInput[]
   id?: Prisma.IntFilter<"AttendanceSheet"> | number
-  tenantId?: Prisma.IntNullableFilter<"AttendanceSheet"> | number | null
   batchId?: Prisma.IntFilter<"AttendanceSheet"> | number
   month?: Prisma.StringFilter<"AttendanceSheet"> | string
   year?: Prisma.StringFilter<"AttendanceSheet"> | string
   updatedAt?: Prisma.DateTimeNullableFilter<"AttendanceSheet"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"AttendanceSheet"> | Date | string | null
-  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
   batch?: Prisma.XOR<Prisma.BatchScalarRelationFilter, Prisma.BatchWhereInput>
   attendance?: Prisma.AttendanceListRelationFilter
 }
 
 export type AttendanceSheetOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   batchId?: Prisma.SortOrder
   month?: Prisma.SortOrder
   year?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  tenant?: Prisma.TenantOrderByWithRelationInput
   batch?: Prisma.BatchOrderByWithRelationInput
   attendance?: Prisma.AttendanceOrderByRelationAggregateInput
 }
 
 export type AttendanceSheetWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  tenantId_batchId_year_month?: Prisma.AttendanceSheetTenantIdBatchIdYearMonthCompoundUniqueInput
+  batchId_year_month?: Prisma.AttendanceSheetBatchIdYearMonthCompoundUniqueInput
   AND?: Prisma.AttendanceSheetWhereInput | Prisma.AttendanceSheetWhereInput[]
   OR?: Prisma.AttendanceSheetWhereInput[]
   NOT?: Prisma.AttendanceSheetWhereInput | Prisma.AttendanceSheetWhereInput[]
-  tenantId?: Prisma.IntNullableFilter<"AttendanceSheet"> | number | null
   batchId?: Prisma.IntFilter<"AttendanceSheet"> | number
   month?: Prisma.StringFilter<"AttendanceSheet"> | string
   year?: Prisma.StringFilter<"AttendanceSheet"> | string
   updatedAt?: Prisma.DateTimeNullableFilter<"AttendanceSheet"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"AttendanceSheet"> | Date | string | null
-  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
   batch?: Prisma.XOR<Prisma.BatchScalarRelationFilter, Prisma.BatchWhereInput>
   attendance?: Prisma.AttendanceListRelationFilter
-}, "id" | "tenantId_batchId_year_month">
+}, "id" | "batchId_year_month">
 
 export type AttendanceSheetOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   batchId?: Prisma.SortOrder
   month?: Prisma.SortOrder
   year?: Prisma.SortOrder
@@ -295,7 +277,6 @@ export type AttendanceSheetScalarWhereWithAggregatesInput = {
   OR?: Prisma.AttendanceSheetScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AttendanceSheetScalarWhereWithAggregatesInput | Prisma.AttendanceSheetScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"AttendanceSheet"> | number
-  tenantId?: Prisma.IntNullableWithAggregatesFilter<"AttendanceSheet"> | number | null
   batchId?: Prisma.IntWithAggregatesFilter<"AttendanceSheet"> | number
   month?: Prisma.StringWithAggregatesFilter<"AttendanceSheet"> | string
   year?: Prisma.StringWithAggregatesFilter<"AttendanceSheet"> | string
@@ -308,14 +289,12 @@ export type AttendanceSheetCreateInput = {
   year: string
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  tenant?: Prisma.TenantCreateNestedOneWithoutAttendanceSheetsInput
   batch: Prisma.BatchCreateNestedOneWithoutSheetsInput
   attendance?: Prisma.AttendanceCreateNestedManyWithoutAttendanceSheetInput
 }
 
 export type AttendanceSheetUncheckedCreateInput = {
   id?: number
-  tenantId?: number | null
   batchId: number
   month: string
   year: string
@@ -329,14 +308,12 @@ export type AttendanceSheetUpdateInput = {
   year?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tenant?: Prisma.TenantUpdateOneWithoutAttendanceSheetsNestedInput
   batch?: Prisma.BatchUpdateOneRequiredWithoutSheetsNestedInput
   attendance?: Prisma.AttendanceUpdateManyWithoutAttendanceSheetNestedInput
 }
 
 export type AttendanceSheetUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  tenantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   batchId?: Prisma.IntFieldUpdateOperationsInput | number
   month?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.StringFieldUpdateOperationsInput | string
@@ -347,7 +324,6 @@ export type AttendanceSheetUncheckedUpdateInput = {
 
 export type AttendanceSheetCreateManyInput = {
   id?: number
-  tenantId?: number | null
   batchId: number
   month: string
   year: string
@@ -364,7 +340,6 @@ export type AttendanceSheetUpdateManyMutationInput = {
 
 export type AttendanceSheetUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  tenantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   batchId?: Prisma.IntFieldUpdateOperationsInput | number
   month?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.StringFieldUpdateOperationsInput | string
@@ -382,8 +357,7 @@ export type AttendanceSheetOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type AttendanceSheetTenantIdBatchIdYearMonthCompoundUniqueInput = {
-  tenantId: number
+export type AttendanceSheetBatchIdYearMonthCompoundUniqueInput = {
   batchId: number
   year: string
   month: string
@@ -391,7 +365,6 @@ export type AttendanceSheetTenantIdBatchIdYearMonthCompoundUniqueInput = {
 
 export type AttendanceSheetCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
   month?: Prisma.SortOrder
   year?: Prisma.SortOrder
@@ -401,13 +374,11 @@ export type AttendanceSheetCountOrderByAggregateInput = {
 
 export type AttendanceSheetAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
 }
 
 export type AttendanceSheetMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
   month?: Prisma.SortOrder
   year?: Prisma.SortOrder
@@ -417,7 +388,6 @@ export type AttendanceSheetMaxOrderByAggregateInput = {
 
 export type AttendanceSheetMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
   month?: Prisma.SortOrder
   year?: Prisma.SortOrder
@@ -427,55 +397,12 @@ export type AttendanceSheetMinOrderByAggregateInput = {
 
 export type AttendanceSheetSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
 }
 
 export type AttendanceSheetNullableScalarRelationFilter = {
   is?: Prisma.AttendanceSheetWhereInput | null
   isNot?: Prisma.AttendanceSheetWhereInput | null
-}
-
-export type AttendanceSheetCreateNestedManyWithoutTenantInput = {
-  create?: Prisma.XOR<Prisma.AttendanceSheetCreateWithoutTenantInput, Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput> | Prisma.AttendanceSheetCreateWithoutTenantInput[] | Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput[]
-  connectOrCreate?: Prisma.AttendanceSheetCreateOrConnectWithoutTenantInput | Prisma.AttendanceSheetCreateOrConnectWithoutTenantInput[]
-  createMany?: Prisma.AttendanceSheetCreateManyTenantInputEnvelope
-  connect?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-}
-
-export type AttendanceSheetUncheckedCreateNestedManyWithoutTenantInput = {
-  create?: Prisma.XOR<Prisma.AttendanceSheetCreateWithoutTenantInput, Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput> | Prisma.AttendanceSheetCreateWithoutTenantInput[] | Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput[]
-  connectOrCreate?: Prisma.AttendanceSheetCreateOrConnectWithoutTenantInput | Prisma.AttendanceSheetCreateOrConnectWithoutTenantInput[]
-  createMany?: Prisma.AttendanceSheetCreateManyTenantInputEnvelope
-  connect?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-}
-
-export type AttendanceSheetUpdateManyWithoutTenantNestedInput = {
-  create?: Prisma.XOR<Prisma.AttendanceSheetCreateWithoutTenantInput, Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput> | Prisma.AttendanceSheetCreateWithoutTenantInput[] | Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput[]
-  connectOrCreate?: Prisma.AttendanceSheetCreateOrConnectWithoutTenantInput | Prisma.AttendanceSheetCreateOrConnectWithoutTenantInput[]
-  upsert?: Prisma.AttendanceSheetUpsertWithWhereUniqueWithoutTenantInput | Prisma.AttendanceSheetUpsertWithWhereUniqueWithoutTenantInput[]
-  createMany?: Prisma.AttendanceSheetCreateManyTenantInputEnvelope
-  set?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-  disconnect?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-  delete?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-  connect?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-  update?: Prisma.AttendanceSheetUpdateWithWhereUniqueWithoutTenantInput | Prisma.AttendanceSheetUpdateWithWhereUniqueWithoutTenantInput[]
-  updateMany?: Prisma.AttendanceSheetUpdateManyWithWhereWithoutTenantInput | Prisma.AttendanceSheetUpdateManyWithWhereWithoutTenantInput[]
-  deleteMany?: Prisma.AttendanceSheetScalarWhereInput | Prisma.AttendanceSheetScalarWhereInput[]
-}
-
-export type AttendanceSheetUncheckedUpdateManyWithoutTenantNestedInput = {
-  create?: Prisma.XOR<Prisma.AttendanceSheetCreateWithoutTenantInput, Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput> | Prisma.AttendanceSheetCreateWithoutTenantInput[] | Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput[]
-  connectOrCreate?: Prisma.AttendanceSheetCreateOrConnectWithoutTenantInput | Prisma.AttendanceSheetCreateOrConnectWithoutTenantInput[]
-  upsert?: Prisma.AttendanceSheetUpsertWithWhereUniqueWithoutTenantInput | Prisma.AttendanceSheetUpsertWithWhereUniqueWithoutTenantInput[]
-  createMany?: Prisma.AttendanceSheetCreateManyTenantInputEnvelope
-  set?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-  disconnect?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-  delete?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-  connect?: Prisma.AttendanceSheetWhereUniqueInput | Prisma.AttendanceSheetWhereUniqueInput[]
-  update?: Prisma.AttendanceSheetUpdateWithWhereUniqueWithoutTenantInput | Prisma.AttendanceSheetUpdateWithWhereUniqueWithoutTenantInput[]
-  updateMany?: Prisma.AttendanceSheetUpdateManyWithWhereWithoutTenantInput | Prisma.AttendanceSheetUpdateManyWithWhereWithoutTenantInput[]
-  deleteMany?: Prisma.AttendanceSheetScalarWhereInput | Prisma.AttendanceSheetScalarWhereInput[]
 }
 
 export type AttendanceSheetCreateNestedManyWithoutBatchInput = {
@@ -536,76 +463,16 @@ export type AttendanceSheetUpdateOneWithoutAttendanceNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AttendanceSheetUpdateToOneWithWhereWithoutAttendanceInput, Prisma.AttendanceSheetUpdateWithoutAttendanceInput>, Prisma.AttendanceSheetUncheckedUpdateWithoutAttendanceInput>
 }
 
-export type AttendanceSheetCreateWithoutTenantInput = {
-  month: string
-  year: string
-  updatedAt?: Date | string | null
-  createdAt?: Date | string | null
-  batch: Prisma.BatchCreateNestedOneWithoutSheetsInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutAttendanceSheetInput
-}
-
-export type AttendanceSheetUncheckedCreateWithoutTenantInput = {
-  id?: number
-  batchId: number
-  month: string
-  year: string
-  updatedAt?: Date | string | null
-  createdAt?: Date | string | null
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutAttendanceSheetInput
-}
-
-export type AttendanceSheetCreateOrConnectWithoutTenantInput = {
-  where: Prisma.AttendanceSheetWhereUniqueInput
-  create: Prisma.XOR<Prisma.AttendanceSheetCreateWithoutTenantInput, Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput>
-}
-
-export type AttendanceSheetCreateManyTenantInputEnvelope = {
-  data: Prisma.AttendanceSheetCreateManyTenantInput | Prisma.AttendanceSheetCreateManyTenantInput[]
-  skipDuplicates?: boolean
-}
-
-export type AttendanceSheetUpsertWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.AttendanceSheetWhereUniqueInput
-  update: Prisma.XOR<Prisma.AttendanceSheetUpdateWithoutTenantInput, Prisma.AttendanceSheetUncheckedUpdateWithoutTenantInput>
-  create: Prisma.XOR<Prisma.AttendanceSheetCreateWithoutTenantInput, Prisma.AttendanceSheetUncheckedCreateWithoutTenantInput>
-}
-
-export type AttendanceSheetUpdateWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.AttendanceSheetWhereUniqueInput
-  data: Prisma.XOR<Prisma.AttendanceSheetUpdateWithoutTenantInput, Prisma.AttendanceSheetUncheckedUpdateWithoutTenantInput>
-}
-
-export type AttendanceSheetUpdateManyWithWhereWithoutTenantInput = {
-  where: Prisma.AttendanceSheetScalarWhereInput
-  data: Prisma.XOR<Prisma.AttendanceSheetUpdateManyMutationInput, Prisma.AttendanceSheetUncheckedUpdateManyWithoutTenantInput>
-}
-
-export type AttendanceSheetScalarWhereInput = {
-  AND?: Prisma.AttendanceSheetScalarWhereInput | Prisma.AttendanceSheetScalarWhereInput[]
-  OR?: Prisma.AttendanceSheetScalarWhereInput[]
-  NOT?: Prisma.AttendanceSheetScalarWhereInput | Prisma.AttendanceSheetScalarWhereInput[]
-  id?: Prisma.IntFilter<"AttendanceSheet"> | number
-  tenantId?: Prisma.IntNullableFilter<"AttendanceSheet"> | number | null
-  batchId?: Prisma.IntFilter<"AttendanceSheet"> | number
-  month?: Prisma.StringFilter<"AttendanceSheet"> | string
-  year?: Prisma.StringFilter<"AttendanceSheet"> | string
-  updatedAt?: Prisma.DateTimeNullableFilter<"AttendanceSheet"> | Date | string | null
-  createdAt?: Prisma.DateTimeNullableFilter<"AttendanceSheet"> | Date | string | null
-}
-
 export type AttendanceSheetCreateWithoutBatchInput = {
   month: string
   year: string
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  tenant?: Prisma.TenantCreateNestedOneWithoutAttendanceSheetsInput
   attendance?: Prisma.AttendanceCreateNestedManyWithoutAttendanceSheetInput
 }
 
 export type AttendanceSheetUncheckedCreateWithoutBatchInput = {
   id?: number
-  tenantId?: number | null
   month: string
   year: string
   updatedAt?: Date | string | null
@@ -639,18 +506,28 @@ export type AttendanceSheetUpdateManyWithWhereWithoutBatchInput = {
   data: Prisma.XOR<Prisma.AttendanceSheetUpdateManyMutationInput, Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchInput>
 }
 
+export type AttendanceSheetScalarWhereInput = {
+  AND?: Prisma.AttendanceSheetScalarWhereInput | Prisma.AttendanceSheetScalarWhereInput[]
+  OR?: Prisma.AttendanceSheetScalarWhereInput[]
+  NOT?: Prisma.AttendanceSheetScalarWhereInput | Prisma.AttendanceSheetScalarWhereInput[]
+  id?: Prisma.IntFilter<"AttendanceSheet"> | number
+  batchId?: Prisma.IntFilter<"AttendanceSheet"> | number
+  month?: Prisma.StringFilter<"AttendanceSheet"> | string
+  year?: Prisma.StringFilter<"AttendanceSheet"> | string
+  updatedAt?: Prisma.DateTimeNullableFilter<"AttendanceSheet"> | Date | string | null
+  createdAt?: Prisma.DateTimeNullableFilter<"AttendanceSheet"> | Date | string | null
+}
+
 export type AttendanceSheetCreateWithoutAttendanceInput = {
   month: string
   year: string
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  tenant?: Prisma.TenantCreateNestedOneWithoutAttendanceSheetsInput
   batch: Prisma.BatchCreateNestedOneWithoutSheetsInput
 }
 
 export type AttendanceSheetUncheckedCreateWithoutAttendanceInput = {
   id?: number
-  tenantId?: number | null
   batchId: number
   month: string
   year: string
@@ -679,49 +556,10 @@ export type AttendanceSheetUpdateWithoutAttendanceInput = {
   year?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tenant?: Prisma.TenantUpdateOneWithoutAttendanceSheetsNestedInput
   batch?: Prisma.BatchUpdateOneRequiredWithoutSheetsNestedInput
 }
 
 export type AttendanceSheetUncheckedUpdateWithoutAttendanceInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  tenantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  batchId?: Prisma.IntFieldUpdateOperationsInput | number
-  month?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.StringFieldUpdateOperationsInput | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-}
-
-export type AttendanceSheetCreateManyTenantInput = {
-  id?: number
-  batchId: number
-  month: string
-  year: string
-  updatedAt?: Date | string | null
-  createdAt?: Date | string | null
-}
-
-export type AttendanceSheetUpdateWithoutTenantInput = {
-  month?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.StringFieldUpdateOperationsInput | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  batch?: Prisma.BatchUpdateOneRequiredWithoutSheetsNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutAttendanceSheetNestedInput
-}
-
-export type AttendanceSheetUncheckedUpdateWithoutTenantInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  batchId?: Prisma.IntFieldUpdateOperationsInput | number
-  month?: Prisma.StringFieldUpdateOperationsInput | string
-  year?: Prisma.StringFieldUpdateOperationsInput | string
-  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutAttendanceSheetNestedInput
-}
-
-export type AttendanceSheetUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   batchId?: Prisma.IntFieldUpdateOperationsInput | number
   month?: Prisma.StringFieldUpdateOperationsInput | string
@@ -732,7 +570,6 @@ export type AttendanceSheetUncheckedUpdateManyWithoutTenantInput = {
 
 export type AttendanceSheetCreateManyBatchInput = {
   id?: number
-  tenantId?: number | null
   month: string
   year: string
   updatedAt?: Date | string | null
@@ -744,13 +581,11 @@ export type AttendanceSheetUpdateWithoutBatchInput = {
   year?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tenant?: Prisma.TenantUpdateOneWithoutAttendanceSheetsNestedInput
   attendance?: Prisma.AttendanceUpdateManyWithoutAttendanceSheetNestedInput
 }
 
 export type AttendanceSheetUncheckedUpdateWithoutBatchInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  tenantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   month?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -760,7 +595,6 @@ export type AttendanceSheetUncheckedUpdateWithoutBatchInput = {
 
 export type AttendanceSheetUncheckedUpdateManyWithoutBatchInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  tenantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   month?: Prisma.StringFieldUpdateOperationsInput | string
   year?: Prisma.StringFieldUpdateOperationsInput | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -800,13 +634,11 @@ export type AttendanceSheetCountOutputTypeCountAttendanceArgs<ExtArgs extends ru
 
 export type AttendanceSheetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  tenantId?: boolean
   batchId?: boolean
   month?: boolean
   year?: boolean
   updatedAt?: boolean
   createdAt?: boolean
-  tenant?: boolean | Prisma.AttendanceSheet$tenantArgs<ExtArgs>
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
   attendance?: boolean | Prisma.AttendanceSheet$attendanceArgs<ExtArgs>
   _count?: boolean | Prisma.AttendanceSheetCountOutputTypeDefaultArgs<ExtArgs>
@@ -814,31 +646,26 @@ export type AttendanceSheetSelect<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type AttendanceSheetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  tenantId?: boolean
   batchId?: boolean
   month?: boolean
   year?: boolean
   updatedAt?: boolean
   createdAt?: boolean
-  tenant?: boolean | Prisma.AttendanceSheet$tenantArgs<ExtArgs>
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["attendanceSheet"]>
 
 export type AttendanceSheetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  tenantId?: boolean
   batchId?: boolean
   month?: boolean
   year?: boolean
   updatedAt?: boolean
   createdAt?: boolean
-  tenant?: boolean | Prisma.AttendanceSheet$tenantArgs<ExtArgs>
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["attendanceSheet"]>
 
 export type AttendanceSheetSelectScalar = {
   id?: boolean
-  tenantId?: boolean
   batchId?: boolean
   month?: boolean
   year?: boolean
@@ -846,32 +673,27 @@ export type AttendanceSheetSelectScalar = {
   createdAt?: boolean
 }
 
-export type AttendanceSheetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "batchId" | "month" | "year" | "updatedAt" | "createdAt", ExtArgs["result"]["attendanceSheet"]>
+export type AttendanceSheetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "batchId" | "month" | "year" | "updatedAt" | "createdAt", ExtArgs["result"]["attendanceSheet"]>
 export type AttendanceSheetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  tenant?: boolean | Prisma.AttendanceSheet$tenantArgs<ExtArgs>
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
   attendance?: boolean | Prisma.AttendanceSheet$attendanceArgs<ExtArgs>
   _count?: boolean | Prisma.AttendanceSheetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AttendanceSheetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  tenant?: boolean | Prisma.AttendanceSheet$tenantArgs<ExtArgs>
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
 }
 export type AttendanceSheetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  tenant?: boolean | Prisma.AttendanceSheet$tenantArgs<ExtArgs>
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
 }
 
 export type $AttendanceSheetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AttendanceSheet"
   objects: {
-    tenant: Prisma.$TenantPayload<ExtArgs> | null
     batch: Prisma.$BatchPayload<ExtArgs>
     attendance: Prisma.$AttendancePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    tenantId: number | null
     batchId: number
     month: string
     year: string
@@ -1271,7 +1093,6 @@ readonly fields: AttendanceSheetFieldRefs;
  */
 export interface Prisma__AttendanceSheetClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  tenant<T extends Prisma.AttendanceSheet$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceSheet$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   batch<T extends Prisma.BatchDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BatchDefaultArgs<ExtArgs>>): Prisma.Prisma__BatchClient<runtime.Types.Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   attendance<T extends Prisma.AttendanceSheet$attendanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceSheet$attendanceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1304,7 +1125,6 @@ export interface Prisma__AttendanceSheetClient<T, Null = never, ExtArgs extends 
  */
 export interface AttendanceSheetFieldRefs {
   readonly id: Prisma.FieldRef<"AttendanceSheet", 'Int'>
-  readonly tenantId: Prisma.FieldRef<"AttendanceSheet", 'Int'>
   readonly batchId: Prisma.FieldRef<"AttendanceSheet", 'Int'>
   readonly month: Prisma.FieldRef<"AttendanceSheet", 'String'>
   readonly year: Prisma.FieldRef<"AttendanceSheet", 'String'>
@@ -1703,25 +1523,6 @@ export type AttendanceSheetDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many AttendanceSheets to delete.
    */
   limit?: number
-}
-
-/**
- * AttendanceSheet.tenant
- */
-export type AttendanceSheet$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Tenant
-   */
-  select?: Prisma.TenantSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Tenant
-   */
-  omit?: Prisma.TenantOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TenantInclude<ExtArgs> | null
-  where?: Prisma.TenantWhereInput
 }
 
 /**

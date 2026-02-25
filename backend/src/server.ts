@@ -13,7 +13,6 @@ app.use(helmet());
 // CORS — allow main client, portal, and subdomains
 const allowedOrigins = [
   config.APP.CLIENT_URL,
-  config.TENANT.ADMIN_PORTAL_URL,
   "http://localhost:3000",
   "http://localhost:3001",
 ].filter(Boolean) as string[];

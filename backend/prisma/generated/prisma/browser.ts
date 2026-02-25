@@ -18,36 +18,6 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
- * Model Tenant
- * 
- */
-export type Tenant = Prisma.TenantModel
-/**
- * Model SuperAdmin
- * 
- */
-export type SuperAdmin = Prisma.SuperAdminModel
-/**
- * Model TenantQuotaOverride
- * 
- */
-export type TenantQuotaOverride = Prisma.TenantQuotaOverrideModel
-/**
- * Model AdminAuditLog
- * 
- */
-export type AdminAuditLog = Prisma.AdminAuditLogModel
-/**
- * Model PlatformConfig
- * 
- */
-export type PlatformConfig = Prisma.PlatformConfigModel
-/**
- * Model TenantConfig
- * 
- */
-export type TenantConfig = Prisma.TenantConfigModel
-/**
  * Model User
  * 
  */
@@ -118,6 +88,16 @@ export type FeeStructure = Prisma.FeeStructureModel
  */
 export type FeeReceipt = Prisma.FeeReceiptModel
 /**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
+ * Model TokenBlacklist
+ * 
+ */
+export type TokenBlacklist = Prisma.TokenBlacklistModel
+/**
  * Model NotificationPreference
  * 
  */
@@ -143,16 +123,6 @@ export type Test = Prisma.TestModel
  */
 export type TestScore = Prisma.TestScoreModel
 /**
- * Model PasswordResetToken
- * 
- */
-export type PasswordResetToken = Prisma.PasswordResetTokenModel
-/**
- * Model TokenBlacklist
- * 
- */
-export type TokenBlacklist = Prisma.TokenBlacklistModel
-/**
  * Model InstagramAccount
  * 
  */
@@ -167,3 +137,8 @@ export type AutomationRule = Prisma.AutomationRuleModel
  * 
  */
 export type AutomationLog = Prisma.AutomationLogModel
+/**
+ * Model AppSettings
+ * 
+ */
+export type AppSettings = Prisma.AppSettingsModel

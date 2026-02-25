@@ -9,36 +9,6 @@
 * 🟢 You can import this file directly.
 */
 
-export const TenantPlan = {
-  FREE: 'FREE',
-  STARTER: 'STARTER',
-  PRO: 'PRO',
-  ENTERPRISE: 'ENTERPRISE'
-} as const
-
-export type TenantPlan = (typeof TenantPlan)[keyof typeof TenantPlan]
-
-
-export const SubscriptionStatus = {
-  ACTIVE: 'ACTIVE',
-  TRIAL: 'TRIAL',
-  SUSPENDED: 'SUSPENDED',
-  CANCELLED: 'CANCELLED',
-  EXPIRED: 'EXPIRED'
-} as const
-
-export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
-
-
-export const SuperAdminRole = {
-  OWNER: 'OWNER',
-  ADMIN: 'ADMIN',
-  SUPPORT: 'SUPPORT'
-} as const
-
-export type SuperAdminRole = (typeof SuperAdminRole)[keyof typeof SuperAdminRole]
-
-
 export const AnnouncementPriority = {
   LOW: 'LOW',
   NORMAL: 'NORMAL',

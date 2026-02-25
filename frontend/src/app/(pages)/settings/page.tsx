@@ -1,6 +1,6 @@
 "use client"
 
-import { Settings, RotateCcw } from "lucide-react"
+import { Settings, RotateCcw, School, Shield, CheckCircle2, XCircle } from "lucide-react"
 import { DangerZone } from "@/components/settings/DangerZone"
 import { useAppSelector } from "@/redux/hooks"
 import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
@@ -9,6 +9,185 @@ import { AppSelector } from "@/components/dock/AppSelector"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
+import { toast } from "sonner"
+import { useState, useEffect } from "react"
+import {
+    useGetSettingsQuery,
+    useUpdateSettingsMutation,
+    useResetTeacherPermissionsMutation,
+    type TeacherPermissions,
+} from "@/redux/slices/settings/settingsApi"
+
+const PERMISSION_LABELS: Record<keyof TeacherPermissions, string> = {
+    canManageLectures: "Manage Lectures",
+    canUploadNotes: "Upload Notes",
+    canUploadVideos: "Upload Videos",
+    canManageAssignments: "Manage Assignments",
+    canViewFees: "View Fees",
+    canManageStudyMaterials: "Manage Study Materials",
+    canSendAnnouncements: "Send Announcements",
+    canViewAnalytics: "View Analytics",
+    canExportData: "Export Data",
+}
+
+function SchoolProfileSection() {
+    const { data: settings, isLoading } = useGetSettingsQuery()
+    const [updateSettings, { isLoading: isSaving }] = useUpdateSettingsMutation()
+    const [form, setForm] = useState({
+        className: "",
+        classEmail: "",
+        classPhone: "",
+        classAddress: "",
+        classWebsite: "",
+    })
+
+    useEffect(() => {
+        if (settings) {
+            setForm({
+                className: settings.className,
+                classEmail: settings.classEmail,
+                classPhone: settings.classPhone,
+                classAddress: settings.classAddress,
+                classWebsite: settings.classWebsite,
+            })
+        }
+    }, [settings])
+
+    const handleSave = async () => {
+        try {
+            await updateSettings(form).unwrap()
+            toast.success("School profile updated")
+        } catch {
+            toast.error("Failed to update profile")
+        }
+    }
+
+    if (isLoading) {
+        return (
+            <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="h-9 rounded-md bg-muted animate-pulse" />
+                ))}
+            </div>
+        )
+    }
+
+    return (
+        <div className="rounded-lg border border-border bg-card divide-y divide-border">
+            {[
+                { key: "className", label: "Class Name", placeholder: "My Coaching Class", type: "text" },
+                { key: "classEmail", label: "Contact Email", placeholder: "info@mycoaching.com", type: "email" },
+                { key: "classPhone", label: "Phone", placeholder: "+91 98765 43210", type: "tel" },
+                { key: "classAddress", label: "Address", placeholder: "123 Main Street, City", type: "text" },
+                { key: "classWebsite", label: "Website", placeholder: "https://mycoaching.com", type: "url" },
+            ].map(({ key, label, placeholder, type }) => (
+                <div key={key} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <Label className="w-40 shrink-0 text-sm font-medium text-foreground">{label}</Label>
+                    <Input
+                        type={type}
+                        value={form[key as keyof typeof form]}
+                        onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value }))}
+                        placeholder={placeholder}
+                        className="max-w-sm"
+                    />
+                </div>
+            ))}
+            <div className="px-6 py-4 flex justify-end">
+                <Button onClick={handleSave} disabled={isSaving} size="sm">
+                    {isSaving ? "Saving…" : "Save Profile"}
+                </Button>
+            </div>
+        </div>
+    )
+}
+
+function TeacherPermissionsSection() {
+    const { data: settings, isLoading } = useGetSettingsQuery()
+    const [updateSettings, { isLoading: isSaving }] = useUpdateSettingsMutation()
+    const [resetPermissions, { isLoading: isResetting }] = useResetTeacherPermissionsMutation()
+    const [perms, setPerms] = useState<TeacherPermissions | null>(null)
+
+    useEffect(() => {
+        if (settings) {
+            setPerms(settings.teacherPermissions)
+        }
+    }, [settings])
+
+    const handleToggle = (key: keyof TeacherPermissions) => {
+        setPerms((prev) => prev ? { ...prev, [key]: !prev[key] } : prev)
+    }
+
+    const handleSave = async () => {
+        if (!perms) return
+        try {
+            await updateSettings({ teacherPermissions: perms }).unwrap()
+            toast.success("Teacher permissions saved")
+        } catch {
+            toast.error("Failed to save permissions")
+        }
+    }
+
+    const handleReset = async () => {
+        try {
+            const result = await resetPermissions().unwrap()
+            setPerms(result.teacherPermissions)
+            toast.success("Permissions reset to defaults")
+        } catch {
+            toast.error("Failed to reset permissions")
+        }
+    }
+
+    if (isLoading || !perms) {
+        return (
+            <div className="rounded-lg border border-border bg-card p-6 space-y-3">
+                {[...Array(9)].map((_, i) => (
+                    <div key={i} className="h-8 rounded-md bg-muted animate-pulse" />
+                ))}
+            </div>
+        )
+    }
+
+    return (
+        <div className="rounded-lg border border-border bg-card">
+            <div className="divide-y divide-border">
+                {(Object.keys(PERMISSION_LABELS) as (keyof TeacherPermissions)[]).map((key) => (
+                    <div key={key} className="px-6 py-3.5 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-2.5">
+                            {perms[key]
+                                ? <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                                : <XCircle className="h-4 w-4 text-muted-foreground shrink-0" />
+                            }
+                            <span className="text-sm font-medium text-foreground">
+                                {PERMISSION_LABELS[key]}
+                            </span>
+                        </div>
+                        <Switch
+                            checked={perms[key]}
+                            onCheckedChange={() => handleToggle(key)}
+                        />
+                    </div>
+                ))}
+            </div>
+            <div className="px-6 py-4 border-t border-border flex items-center justify-between gap-3">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleReset}
+                    disabled={isResetting}
+                    className="text-muted-foreground gap-2"
+                >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    Reset to Defaults
+                </Button>
+                <Button onClick={handleSave} disabled={isSaving} size="sm">
+                    {isSaving ? "Saving…" : "Save Permissions"}
+                </Button>
+            </div>
+        </div>
+    )
+}
 
 function DockPreview() {
     const { preferences } = useDockPreferences();
@@ -179,6 +358,38 @@ export default function SettingsPage() {
                 </div>
 
             </section>
+
+            {/* School Profile — Admin Only */}
+            {isAdmin && (
+                <section className="space-y-6">
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <School className="h-5 w-5 text-primary" />
+                            <h2 className="text-xl font-semibold text-foreground">Class Profile</h2>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                            Contact information and details shown to students and parents.
+                        </p>
+                    </div>
+                    <SchoolProfileSection />
+                </section>
+            )}
+
+            {/* Teacher Permissions — Admin Only */}
+            {isAdmin && (
+                <section className="space-y-6">
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <Shield className="h-5 w-5 text-primary" />
+                            <h2 className="text-xl font-semibold text-foreground">Teacher Permissions</h2>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                            Control what actions teachers can perform across the platform.
+                        </p>
+                    </div>
+                    <TeacherPermissionsSection />
+                </section>
+            )}
 
             {/* Dock Configuration Section */}
             <section className="space-y-6">

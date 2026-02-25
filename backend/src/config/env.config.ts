@@ -61,7 +61,20 @@ export const config = {
     WEBHOOK_VERIFY_TOKEN: process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || "cipherlearn_ig_webhook_2026",
     REDIRECT_URI: process.env.INSTAGRAM_REDIRECT_URI || "",
   },
-  TENANT: {
-    DEFAULT_SLUG: process.env.DEFAULT_TENANT_SLUG || "default",
+  // Per-deployment school branding & feature flags
+  // Set these env vars when provisioning each new coaching class deployment
+  SCHOOL: {
+    NAME: process.env.SCHOOL_NAME || "CipherLearn",
+    LOGO_URL: process.env.SCHOOL_LOGO_URL || "",
+    PRIMARY_COLOR: process.env.PRIMARY_COLOR || "#0F766E",
+    ACCENT_COLOR: process.env.ACCENT_COLOR || "#F59E0B",
+  },
+  FEATURES: {
+    QR_ATTENDANCE: process.env.FEATURE_QR_ATTENDANCE !== "false",
+    FEES: process.env.FEATURE_FEES !== "false",
+    ASSIGNMENTS: process.env.FEATURE_ASSIGNMENTS !== "false",
+    STUDY_MATERIALS: process.env.FEATURE_STUDY_MATERIALS !== "false",
+    ANNOUNCEMENTS: process.env.FEATURE_ANNOUNCEMENTS !== "false",
+    VIDEOS: process.env.FEATURE_VIDEOS !== "false",
   },
 } as const;

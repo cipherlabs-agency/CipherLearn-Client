@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { isStudent, isAppUser } from "../auth/middleware";
 import profileRoutes from "./profile/route";
 import dashboardRoutes from "./dashboard/route";
@@ -10,8 +10,47 @@ import resourcesRoutes from "./resources/route";
 import feesRoutes from "./fees/route";
 import appLecturesRoutes from "./lectures/route";
 import appTestsRoutes from "./tests/route";
+import { settingsService } from "../dashboard/settings/service";
+import { config } from "../../config/env.config";
 
 const router = Router();
+
+// Public settings — app uses this to get branding + feature flags + teacher permissions
+// No auth required: needed before login to style the app UI
+router.get("/settings", async (_req: Request, res: Response) => {
+  try {
+    const settings = await settingsService.getSettings();
+    res.json({
+      success: true,
+      data: {
+        class: {
+          name: settings.className,
+          email: settings.classEmail,
+          phone: settings.classPhone,
+          address: settings.classAddress,
+          website: settings.classWebsite,
+        },
+        branding: {
+          primaryColor: config.SCHOOL.PRIMARY_COLOR,
+          accentColor: config.SCHOOL.ACCENT_COLOR,
+          logoUrl: config.SCHOOL.LOGO_URL,
+        },
+        features: {
+          qrAttendance: config.FEATURES.QR_ATTENDANCE,
+          fees: config.FEATURES.FEES,
+          assignments: config.FEATURES.ASSIGNMENTS,
+          studyMaterials: config.FEATURES.STUDY_MATERIALS,
+          announcements: config.FEATURES.ANNOUNCEMENTS,
+          videos: config.FEATURES.VIDEOS,
+        },
+        teacherPermissions: settings.teacherPermissions,
+      },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to fetch settings";
+    res.status(500).json({ success: false, message });
+  }
+});
 
 // ==================== STUDENT-ONLY ROUTES ====================
 // Routes that only students can access

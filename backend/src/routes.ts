@@ -3,21 +3,9 @@ import authRoutes from "./modules/auth/routes.auth";
 import dashboardRoutes from "./modules/dashboard/routes";
 import appRoutes from "./modules/app/route";
 import studentAuthRoutes from "./modules/app/auth/route";
-import tenantConfigRoute from "./modules/tenant-config/route";
 import { generalRateLimiter } from "./middleware/rateLimiter";
-import { tenantContext } from "./middleware/tenantContext";
 
 const router = Router();
-
-// ============================================================
-// Public tenant config endpoint (no auth required)
-// ============================================================
-router.use("/tenant", tenantConfigRoute);
-
-// ============================================================
-// Tenant-scoped routes — all requests below resolve a tenant
-// ============================================================
-router.use(tenantContext);
 
 // Dashboard auth routes (login/signup apply their own limiters per-route)
 router.use("/auth", authRoutes);
