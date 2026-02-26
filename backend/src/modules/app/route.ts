@@ -31,9 +31,9 @@ router.get("/settings", async (_req: Request, res: Response) => {
           website: settings.classWebsite,
         },
         branding: {
-          primaryColor: config.SCHOOL.PRIMARY_COLOR,
-          accentColor: config.SCHOOL.ACCENT_COLOR,
-          logoUrl: config.SCHOOL.LOGO_URL,
+          primaryColor: config.CLASS.PRIMARY_COLOR,
+          accentColor: config.CLASS.ACCENT_COLOR,
+          logoUrl: config.CLASS.LOGO_URL,
         },
         features: {
           qrAttendance: config.FEATURES.QR_ATTENDANCE,

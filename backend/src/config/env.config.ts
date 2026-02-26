@@ -61,11 +61,11 @@ export const config = {
     WEBHOOK_VERIFY_TOKEN: process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || "cipherlearn_ig_webhook_2026",
     REDIRECT_URI: process.env.INSTAGRAM_REDIRECT_URI || "",
   },
-  // Per-deployment school branding & feature flags
+  // Per-deployment class branding & feature flags
   // Set these env vars when provisioning each new coaching class deployment
-  SCHOOL: {
-    NAME: process.env.SCHOOL_NAME || "CipherLearn",
-    LOGO_URL: process.env.SCHOOL_LOGO_URL || "",
+  CLASS: {
+    NAME: process.env.CLASS_NAME || process.env.SCHOOL_NAME || "CipherLearn",
+    LOGO_URL: process.env.CLASS_LOGO_URL || process.env.SCHOOL_LOGO_URL || "",
     PRIMARY_COLOR: process.env.PRIMARY_COLOR || "#0F766E",
     ACCENT_COLOR: process.env.ACCENT_COLOR || "#F59E0B",
   },

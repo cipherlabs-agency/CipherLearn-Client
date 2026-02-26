@@ -49,7 +49,7 @@ Set once when the portal provisions a new deployment. Changing these requires re
 
 | Variable | Purpose | Default |
 |---|---|---|
-| `NEXT_PUBLIC_APP_NAME` | School/institute name | `CipherLearn` |
+| `NEXT_PUBLIC_APP_NAME` | Class/institute name | `CipherLearn` |
 | `NEXT_PUBLIC_APP_TAGLINE` | Short tagline below logo | `Teaching Platform` |
 | `NEXT_PUBLIC_APP_DESCRIPTION` | SEO meta description | `Comprehensive management solution…` |
 | `NEXT_PUBLIC_LOGO_URL` | Logo image URL (blank = initials fallback) | `""` |
@@ -70,8 +70,8 @@ Set once when the portal provisions a new deployment. Changing these requires re
 
 | Variable | Purpose |
 |---|---|
-| `SCHOOL_NAME` | School name (for email templates, API responses) |
-| `SCHOOL_LOGO_URL` | Logo URL used in email branding |
+| `CLASS_NAME` | Class name (for email templates, API responses) |
+| `CLASS_LOGO_URL` | Logo URL used in email branding |
 | `PRIMARY_COLOR` | Brand color for email templates |
 | `ACCENT_COLOR` | Accent color for email templates |
 | `FEATURE_QR_ATTENDANCE` | Feature flag (mirrors frontend) |
@@ -81,7 +81,7 @@ Set once when the portal provisions a new deployment. Changing these requires re
 | `FEATURE_ANNOUNCEMENTS` | Feature flag |
 | `FEATURE_VIDEOS` | Feature flag |
 
-Accessed via `config.SCHOOL.*` and `config.FEATURES.*` from `backend/src/config/env.config.ts`.
+Accessed via `config.CLASS.*` and `config.FEATURES.*` from `backend/src/config/env.config.ts`.
 
 ---
 
@@ -95,7 +95,7 @@ Configurable by the class admin through the Settings UI — no redeployment need
 model AppSettings {
   id Int @id @default(1)   // Single-row table — always id = 1
 
-  // School profile (admin edits via Settings > Class Profile)
+  // Class profile (admin edits via Settings > Class Profile)
   className    String @default("My Coaching Class")
   classEmail   String @default("")
   classPhone   String @default("")
@@ -121,7 +121,7 @@ model AppSettings {
 
 | What | How | Who sets it |
 |---|---|---|
-| School name | `NEXT_PUBLIC_APP_NAME` + `SCHOOL_NAME` | Portal on provisioning |
+| Class name | `NEXT_PUBLIC_APP_NAME` + `CLASS_NAME` | Portal on provisioning |
 | Logo image | `NEXT_PUBLIC_LOGO_URL` | Portal on provisioning |
 | Logo initials | `NEXT_PUBLIC_LOGO_INITIALS` | Portal on provisioning |
 | Primary color | `NEXT_PUBLIC_PRIMARY_COLOR` | Portal on provisioning |
@@ -189,7 +189,7 @@ POST   /api/dashboard/settings/reset-teacher-permissions  — reset to defaults
 ```
 GET    /api/app/settings
 → {
-    school: { name, email, phone, address, website },
+    class: { name, email, phone, address, website },
     branding: { primaryColor, accentColor, logoUrl },   ← from env vars
     features: { qrAttendance, fees, assignments, ... }, ← from env vars
     teacherPermissions: { ... }                         ← from DB
@@ -250,7 +250,7 @@ Tag: `'Settings'` — invalidated on any mutation.
 | File | Role |
 |---|---|
 | `backend/prisma/schema.prisma` | `AppSettings` model (single-row) |
-| `backend/src/config/env.config.ts` | `config.SCHOOL` + `config.FEATURES` (deploy-time) |
+| `backend/src/config/env.config.ts` | `config.CLASS` + `config.FEATURES` (deploy-time) |
 | `backend/src/modules/dashboard/settings/service.ts` | DB CRUD for AppSettings |
 | `backend/src/modules/dashboard/settings/controller.ts` | Request handlers |
 | `backend/src/modules/dashboard/settings/route.ts` | Express routes (GET/PUT + reset) |
@@ -274,13 +274,13 @@ Tag: `'Settings'` — invalidated on any mutation.
 When the CipherLearn Admin Portal creates a new coaching class:
 
 1. **Allocates resources** — provisions a new PostgreSQL DB, sets up backend + frontend environments
-2. **Sets env vars** — fills in `NEXT_PUBLIC_APP_NAME`, `SCHOOL_NAME`, `PRIMARY_COLOR`, feature flags, etc. based on what the class owner chose
+2. **Sets env vars** — fills in `NEXT_PUBLIC_APP_NAME`, `CLASS_NAME`, `PRIMARY_COLOR`, feature flags, etc. based on what the class owner chose
 3. **Deploys** — triggers Vercel/Render deployments with those env vars
 4. **Seeds DB** — creates the first Admin user account in the new DB
 5. **Sends welcome email** — admin gets their credentials
 
 After provisioning, the class admin logs in and can further configure:
-- School contact info (runtime, via Settings > Class Profile)
+- Class contact info (runtime, via Settings > Class Profile)
 - Teacher permissions (runtime, via Settings > Teacher Permissions)
 
 ---
@@ -295,5 +295,5 @@ After provisioning, the class admin logs in and can further configure:
 
 ---
 
-*Last updated: 2026-02-25*
+*Last updated: 2026-02-26*
 *Architecture: Per-deployment isolation (no shared DB, no tenantId)*
