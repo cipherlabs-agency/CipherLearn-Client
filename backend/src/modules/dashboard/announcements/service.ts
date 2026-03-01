@@ -1,6 +1,7 @@
 import { prisma } from "../../../config/db.config";
 import { AnnouncementPriority } from "../../../../prisma/generated/prisma/enums";
 import { invalidateAfterAnnouncementMutation } from "../../../cache/invalidation";
+import { sendToAllActiveStudents } from "../../../utils/pushNotifications";
 
 export interface CreateAnnouncementInput {
   title: string;
@@ -40,6 +41,15 @@ export class AnnouncementService {
       },
     });
     invalidateAfterAnnouncementMutation();
+
+    // Notify all active students (fire-and-forget)
+    sendToAllActiveStudents(
+      "schoolAnnouncements",
+      announcement.title,
+      announcement.description,
+      { type: "announcement", announcementId: announcement.id }
+    ).catch(() => {});
+
     return announcement;
   }
 

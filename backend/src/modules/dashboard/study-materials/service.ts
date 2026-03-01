@@ -1,5 +1,6 @@
 import { prisma } from "../../../config/db.config";
 import { invalidateAfterResourceMutation } from "../../../cache/invalidation";
+import { sendToBatchStudents } from "../../../utils/pushNotifications";
 
 export interface CreateStudyMaterialInput {
   title: string;
@@ -40,6 +41,16 @@ export class StudyMaterialService {
       },
     });
     invalidateAfterResourceMutation();
+
+    // Notify students in the batch about the new material (fire-and-forget)
+    sendToBatchStudents(
+      material.batchId,
+      "newStudyMaterial",
+      "New Study Material",
+      `${material.title} has been added`,
+      { type: "study_material", materialId: material.id }
+    ).catch(() => {});
+
     return material;
   }
 

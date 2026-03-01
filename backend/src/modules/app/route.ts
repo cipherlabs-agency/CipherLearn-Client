@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { isStudent, isAppUser } from "../auth/middleware";
+import { isStudent, isAppUser, isTeacher } from "../auth/middleware";
 import profileRoutes from "./profile/route";
 import dashboardRoutes from "./dashboard/route";
 import attendanceRoutes from "./attendance/route";
@@ -10,8 +10,11 @@ import resourcesRoutes from "./resources/route";
 import feesRoutes from "./fees/route";
 import appLecturesRoutes from "./lectures/route";
 import appTestsRoutes from "./tests/route";
+import doubtsRoutes from "./doubts/route";
+import { profileController } from "./profile/controller";
 import { settingsService } from "../dashboard/settings/service";
 import { config } from "../../config/env.config";
+import { appReadRateLimiter } from "../../middleware/rateLimiter";
 
 const router = Router();
 
@@ -55,8 +58,16 @@ router.get("/settings", async (_req: Request, res: Response) => {
 // ==================== STUDENT-ONLY ROUTES ====================
 // Routes that only students can access
 
-// Profile - student only (their own profile)
-router.use("/profile", isStudent, profileRoutes);
+// My teacher info (for Ask Doubts screen) - student only
+router.get(
+  "/teachers/my-teacher",
+  isStudent,
+  appReadRateLimiter,
+  profileController.getMyTeacher.bind(profileController)
+);
+
+// Profile - student and teacher (each handles own auth within the route)
+router.use("/profile", profileRoutes);
 
 // Fees - student only (their own fees)
 router.use("/fees", isStudent, feesRoutes);
@@ -78,8 +89,8 @@ router.use("/assignments", assignmentsRoutes);
 // Announcements - all app users can view
 router.use("/announcements", isAppUser, announcementsRoutes);
 
-// Notifications preferences - student only
-router.use("/notifications", isStudent, notificationsRoutes);
+// Notifications — preferences (student only, checked per-endpoint) + device token (all app users)
+router.use("/notifications", isAppUser, notificationsRoutes);
 
 // Resources - role-specific auth handled within the route module
 router.use("/resources", resourcesRoutes);
@@ -89,5 +100,8 @@ router.use("/lectures", isAppUser, appLecturesRoutes);
 
 // Tests - student scores and teacher batch views
 router.use("/tests", appTestsRoutes);
+
+// Doubts - student ask, teacher reply
+router.use("/doubts", doubtsRoutes);
 
 export default router;

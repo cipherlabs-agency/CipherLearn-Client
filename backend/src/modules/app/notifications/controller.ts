@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { notificationsService } from "./service";
 import logger from "../../../utils/logger";
-import type { UpdateNotificationPreferencesInput } from "./types";
+import type { UpdateNotificationPreferencesInput, RegisterDeviceInput } from "./types";
 
 class NotificationsController {
   /**
@@ -54,7 +54,6 @@ class NotificationsController {
 
       const body = req.body as UpdateNotificationPreferencesInput;
 
-      // Validate that body is an object and only contains known keys
       const allowedTopKeys = new Set([
         "academicAlerts",
         "examsResults",
@@ -90,6 +89,62 @@ class NotificationsController {
         success: false,
         message,
       });
+    }
+  }
+
+  /**
+   * Register device push token
+   * POST /app/notifications/register-device
+   *
+   * Body: { token: string, platform?: "EXPO" | "IOS" | "ANDROID" }
+   * Works for both students and teachers.
+   */
+  async registerDevice(req: Request, res: Response): Promise<Response> {
+    try {
+      const user = req.user;
+      if (!user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const body = req.body as RegisterDeviceInput;
+      if (!body.token?.trim()) {
+        return res.status(400).json({ success: false, message: "token is required" });
+      }
+
+      await notificationsService.registerDevice(user.id, body);
+
+      return res.status(200).json({ success: true, message: "Device registered for push notifications" });
+    } catch (error) {
+      logger.error("NotificationsController.registerDevice error:", error);
+      const message = error instanceof Error ? error.message : "Failed to register device";
+      return res.status(400).json({ success: false, message });
+    }
+  }
+
+  /**
+   * Deregister device push token (call on logout)
+   * DELETE /app/notifications/register-device
+   *
+   * Body: { token: string }
+   */
+  async deregisterDevice(req: Request, res: Response): Promise<Response> {
+    try {
+      const user = req.user;
+      if (!user) {
+        return res.status(401).json({ success: false, message: "Not authenticated" });
+      }
+
+      const { token } = req.body as { token: string };
+      if (!token?.trim()) {
+        return res.status(400).json({ success: false, message: "token is required" });
+      }
+
+      await notificationsService.deregisterDevice(user.id, token);
+
+      return res.status(200).json({ success: true, message: "Device deregistered" });
+    } catch (error) {
+      logger.error("NotificationsController.deregisterDevice error:", error);
+      return res.status(500).json({ success: false, message: "Failed to deregister device" });
     }
   }
 }

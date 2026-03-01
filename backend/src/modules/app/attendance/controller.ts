@@ -54,6 +54,7 @@ class AttendanceController {
         month: req.query.month ? Number(req.query.month) : undefined,
         year: req.query.year ? Number(req.query.year) : undefined,
         status: req.query.status as AttendanceHistoryQuery["status"],
+        subject: req.query.subject as string | undefined,
       };
 
       const history = await attendanceService.getHistory(

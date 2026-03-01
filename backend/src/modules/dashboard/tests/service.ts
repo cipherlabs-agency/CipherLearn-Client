@@ -1,5 +1,6 @@
 import { prisma } from "../../../config/db.config";
 import { TestStatus, ScoreStatus, TestType } from "../../../../prisma/generated/prisma/enums";
+import { sendToBatchStudents } from "../../../utils/pushNotifications";
 import {
   CreateTestInput,
   UpdateTestInput,
@@ -72,6 +73,16 @@ export default class TestService {
       },
       include: TEST_INCLUDE,
     });
+
+    // Notify students about the new test (fire-and-forget)
+    const testDate = new Date(data.date).toLocaleDateString("en-IN", { dateStyle: "medium" });
+    sendToBatchStudents(
+      data.batchId,
+      "newTestScheduled",
+      "Test Scheduled",
+      `${data.subject} test on ${testDate}`,
+      { type: "test_scheduled", testId: test.id }
+    ).catch(() => {});
 
     return test as unknown as TestResponse;
   }
@@ -181,9 +192,18 @@ export default class TestService {
 
     const updated = await prisma.test.update({
       where: { id },
-      data: { status: TestStatus.PUBLISHED },
+      data: { status: TestStatus.PUBLISHED, scoresLocked: true, publishedAt: new Date() },
       include: TEST_INCLUDE,
     });
+
+    // Notify students that results are published (fire-and-forget)
+    sendToBatchStudents(
+      test.batchId,
+      "resultPublished",
+      "Results Published",
+      `${test.subject} test results are now available`,
+      { type: "result_published", testId: id }
+    ).catch(() => {});
 
     return updated as unknown as TestResponse;
   }

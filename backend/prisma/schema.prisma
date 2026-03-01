@@ -27,10 +27,13 @@ model User {
   createdAt            DateTime?            @default(now())
   passwordResetTokens  PasswordResetToken[]
   student              Student?
+  teacherProfile       TeacherProfile?
   lectures             Lecture[]            @relation("TeacherLectures")
   teacherAssignments   AssignmentSlot[]     @relation("TeacherAssignments")
   teacherMaterials     StudyMaterial[]      @relation("TeacherMaterials")
   teacherTests         Test[]               @relation("TeacherTests")
+  doubtReplies         DoubtReply[]
+  deviceTokens         DeviceToken[]
 
   @@map("users")
 }
@@ -63,6 +66,7 @@ model Student {
   feeReceipts             FeeReceipt[]
   testScores              TestScore[]
   notificationPreference  NotificationPreference?
+  doubts                  Doubt[]
 
   @@index([batchId])
   @@index([userId])
@@ -86,6 +90,7 @@ model Batch {
   feeReceipts        FeeReceipt[]
   lectures           Lecture[]
   tests              Test[]
+  doubts             Doubt[]
 
   updatedAt   DateTime?    @updatedAt
   createdAt   DateTime?    @default(now())
@@ -261,7 +266,9 @@ model Announcement {
   attachments Json?                // Array of { url, filename, size, mimeType }
   metadata    Json?                // Structured key-value e.g., { "Start Date": "June 1st, 2026" }
   isActive    Boolean              @default(true)
+  pinned      Boolean              @default(false)
   createdBy   String
+  createdById Int?                 // userId of creator (null = admin via dashboard)
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
 
@@ -578,6 +585,13 @@ model Lecture {
   status        LectureStatus @default(SCHEDULED)
   notes         String?
 
+  // Online session
+  isOnline      Boolean       @default(false)
+  meetingLink   String?
+
+  // Attachments (slides, PDFs, etc.)
+  attachments   Json?         // Array of { url, publicId, originalFilename, size, mimeType }
+
   // Recurrence
   recurrenceId  String?
 
@@ -794,6 +808,100 @@ enum DmStatus {
 enum DmType {
   TEXT
   TEMPLATE
+}
+
+// ============================================
+// Teacher Profile (extended info for teacher app)
+// ============================================
+
+model TeacherProfile {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  phone            String?
+  gender           String?
+  qualification    String?   // e.g., "Ph.D. in Mathematics"
+  university       String?   // e.g., "University of Oxford, 2012"
+  experience       Int?      // Years of teaching experience
+  workTimingFrom   String?   // e.g., "08:00"
+  workTimingTo     String?   // e.g., "16:00"
+  primarySubjects  String[]  // e.g., ["Algebra", "Calculus"]
+  secondarySubjects String[] // e.g., ["Physics"]
+  bio              String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("teacher_profiles")
+}
+
+// ============================================
+// Doubts System (Student ask, Teacher reply)
+// ============================================
+
+model Doubt {
+  id          Int         @id @default(autoincrement())
+  title       String
+  description String
+  subject     String?
+  studentId   Int
+  student     Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  batchId     Int
+  batch       Batch       @relation(fields: [batchId], references: [id])
+  status      DoubtStatus @default(OPEN)
+  replies     DoubtReply[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([studentId])
+  @@index([batchId])
+  @@index([status])
+  @@map("doubts")
+}
+
+model DoubtReply {
+  id        Int      @id @default(autoincrement())
+  doubtId   Int
+  doubt     Doubt    @relation(fields: [doubtId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([doubtId])
+  @@map("doubt_replies")
+}
+
+enum DoubtStatus {
+  OPEN
+  ANSWERED
+  RESOLVED
+}
+
+// ============================================
+// Push Notification Device Tokens
+// ============================================
+
+model DeviceToken {
+  id        Int            @id @default(autoincrement())
+  userId    Int
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String         @unique  // Expo push token: ExponentPushToken[xxxxxxxx]
+  platform  DevicePlatform @default(EXPO)
+  createdAt DateTime       @default(now())
+  lastUsed  DateTime       @default(now())
+
+  @@index([userId])
+  @@map("device_tokens")
+}
+
+enum DevicePlatform {
+  EXPO
+  IOS
+  ANDROID
 }
 
 // ============================================

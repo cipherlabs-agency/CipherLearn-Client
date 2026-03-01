@@ -156,6 +156,10 @@ class AttendanceService {
       where.status = query.status;
     }
 
+    if (query.subject) {
+      where.subject = { contains: query.subject, mode: "insensitive" };
+    }
+
     if (query.month && query.year) {
       const start = new Date(query.year, query.month - 1, 1);
       const end = new Date(query.year, query.month, 0, 23, 59, 59, 999);

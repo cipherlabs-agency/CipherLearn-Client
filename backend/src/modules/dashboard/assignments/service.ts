@@ -1,5 +1,6 @@
 import { prisma } from "../../../config/db.config";
 import { SubmissionStatus } from "../../../../prisma/generated/prisma/enums";
+import { sendToBatchStudents } from "../../../utils/pushNotifications";
 import {
   CreateAssignmentSlotInput,
   UpdateAssignmentSlotInput,
@@ -28,6 +29,19 @@ export class AssignmentService {
         batch: { select: { id: true, name: true } },
       },
     });
+
+    // Notify students about the new assignment (fire-and-forget)
+    const dueStr = data.dueDate
+      ? ` — due ${new Date(data.dueDate).toLocaleDateString("en-IN", { dateStyle: "medium" })}`
+      : "";
+    sendToBatchStudents(
+      data.batchId,
+      "newStudyMaterial",
+      "New Assignment Posted",
+      `${data.subject}: ${data.title}${dueStr}`,
+      { type: "assignment", assignmentId: slot.id }
+    ).catch(() => {});
+
     return slot;
   }
 

@@ -1,5 +1,5 @@
 import { prisma } from "../../../config/db.config";
-import { LectureStatus, UserRoles } from "../../../../prisma/generated/prisma/enums";
+import { LectureStatus } from "../../../../prisma/generated/prisma/enums";
 import { AppLectureResponse, DailyScheduleResponse } from "./types";
 
 const LECTURE_INCLUDE = {

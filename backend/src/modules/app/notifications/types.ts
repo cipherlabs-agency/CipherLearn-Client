@@ -1,3 +1,10 @@
+// ─── Device token ─────────────────────────────────────────────────────────────
+
+export interface RegisterDeviceInput {
+  token: string;      // Expo push token: ExponentPushToken[xxxxxxxx]
+  platform?: "EXPO" | "IOS" | "ANDROID";
+}
+
 // ─── Notification preference categories ──────────────────────────────────────
 
 export interface AcademicAlerts {

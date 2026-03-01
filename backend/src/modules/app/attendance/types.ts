@@ -46,6 +46,7 @@ export interface AttendanceHistoryQuery {
   month?: number;
   year?: number;
   status?: AttendanceStatus;
+  subject?: string;
 }
 
 // ─── Teacher-side Types ───────────────────────────────────────────────────────

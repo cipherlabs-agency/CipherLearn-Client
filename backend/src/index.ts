@@ -3,6 +3,7 @@ import app from "./server";
 import allRoutes from "./routes";
 import Database from "./config/db.config";
 import { startCleanupScheduler } from "./utils/tokenCleanup";
+import { startNotificationScheduler } from "./utils/notificationScheduler";
 import logger from "./utils/logger";
 
 app.use("/api", allRoutes);
@@ -18,6 +19,10 @@ async function startServer() {
       // Start token cleanup scheduler (runs every hour)
       startCleanupScheduler();
       logger.info("Token cleanup scheduler started");
+
+      // Start notification scheduler (classStartingSoon — runs every 5 min)
+      startNotificationScheduler();
+      logger.info("Notification scheduler started");
     });
   } catch (error) {
     logger.error("Failed to start server:", error);

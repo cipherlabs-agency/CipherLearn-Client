@@ -1,4 +1,5 @@
 import { prisma } from "../../../config/db.config";
+import { sendToAllActiveStudents } from "../../../utils/pushNotifications";
 import { cacheService } from "../../../cache/index";
 import { AppKeys, InvalidationPatterns } from "../../../cache/keys";
 import { APP_ANNOUNCEMENT_LIST, APP_ANNOUNCEMENT_DETAIL } from "../../../cache/ttl";
@@ -166,6 +167,117 @@ class AnnouncementsService {
    */
   invalidateCache(): void {
     cacheService.delByPrefix(InvalidationPatterns.appAnnouncements);
+  }
+
+  /**
+   * Teacher: create an announcement
+   */
+  async createTeacherAnnouncement(
+    teacherId: number,
+    teacherName: string,
+    data: {
+      title: string;
+      description: string;
+      body?: string;
+      category: AnnouncementCategory;
+      department?: string;
+      attachments?: object[];
+      pinned?: boolean;
+    }
+  ) {
+    const announcement = await prisma.announcement.create({
+      data: {
+        title: data.title.trim(),
+        description: data.description.trim(),
+        body: data.body?.trim() ?? null,
+        category: data.category,
+        department: data.department?.trim() ?? null,
+        attachments: data.attachments && data.attachments.length > 0 ? data.attachments : undefined,
+        pinned: data.pinned ?? false,
+        isActive: true,
+        createdBy: teacherName,
+        createdById: teacherId,
+      },
+    });
+    this.invalidateCache();
+
+    // Notify all active students about the new announcement (fire-and-forget)
+    sendToAllActiveStudents(
+      "schoolAnnouncements",
+      announcement.title,
+      announcement.description,
+      { type: "announcement", announcementId: announcement.id }
+    ).catch(() => {});
+
+    return this.toDetail(announcement);
+  }
+
+  /**
+   * Teacher: update their own announcement
+   */
+  async updateTeacherAnnouncement(
+    announcementId: number,
+    teacherId: number,
+    data: {
+      title?: string;
+      description?: string;
+      body?: string;
+      category?: AnnouncementCategory;
+      department?: string;
+      pinned?: boolean;
+    }
+  ) {
+    const existing = await prisma.announcement.findFirst({
+      where: { id: announcementId, createdById: teacherId, isActive: true },
+    });
+    if (!existing) throw new Error("Announcement not found or not authored by you");
+
+    const updated = await prisma.announcement.update({
+      where: { id: announcementId },
+      data: {
+        ...(data.title !== undefined && { title: data.title.trim() }),
+        ...(data.description !== undefined && { description: data.description.trim() }),
+        ...(data.body !== undefined && { body: data.body?.trim() ?? null }),
+        ...(data.category !== undefined && { category: data.category }),
+        ...(data.department !== undefined && { department: data.department?.trim() ?? null }),
+        ...(data.pinned !== undefined && { pinned: data.pinned }),
+      },
+    });
+    this.invalidateCache();
+    return this.toDetail(updated);
+  }
+
+  /**
+   * Teacher: soft-delete (deactivate) their own announcement
+   */
+  async deleteTeacherAnnouncement(announcementId: number, teacherId: number): Promise<void> {
+    const existing = await prisma.announcement.findFirst({
+      where: { id: announcementId, createdById: teacherId, isActive: true },
+    });
+    if (!existing) throw new Error("Announcement not found or not authored by you");
+
+    await prisma.announcement.update({
+      where: { id: announcementId },
+      data: { isActive: false },
+    });
+    this.invalidateCache();
+  }
+
+  /**
+   * Teacher: toggle pin on their own announcement
+   */
+  async togglePinAnnouncement(announcementId: number, teacherId: number) {
+    const existing = await prisma.announcement.findFirst({
+      where: { id: announcementId, createdById: teacherId, isActive: true },
+    });
+    if (!existing) throw new Error("Announcement not found or not authored by you");
+
+    const updated = await prisma.announcement.update({
+      where: { id: announcementId },
+      data: { pinned: !existing.pinned },
+    });
+    this.invalidateCache();
+    return { id: updated.id, pinned: updated.pinned };
   }
 }
 

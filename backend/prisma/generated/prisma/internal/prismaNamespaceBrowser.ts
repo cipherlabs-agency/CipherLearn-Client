@@ -75,6 +75,10 @@ export const ModelName = {
   InstagramAccount: 'InstagramAccount',
   AutomationRule: 'AutomationRule',
   AutomationLog: 'AutomationLog',
+  TeacherProfile: 'TeacherProfile',
+  Doubt: 'Doubt',
+  DoubtReply: 'DoubtReply',
+  DeviceToken: 'DeviceToken',
   AppSettings: 'AppSettings'
 } as const
 
@@ -283,7 +287,9 @@ export const AnnouncementScalarFieldEnum = {
   attachments: 'attachments',
   metadata: 'metadata',
   isActive: 'isActive',
+  pinned: 'pinned',
   createdBy: 'createdBy',
+  createdById: 'createdById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -437,6 +443,9 @@ export const LectureScalarFieldEnum = {
   duration: 'duration',
   status: 'status',
   notes: 'notes',
+  isOnline: 'isOnline',
+  meetingLink: 'meetingLink',
+  attachments: 'attachments',
   recurrenceId: 'recurrenceId',
   createdBy: 'createdBy',
   isDeleted: 'isDeleted',
@@ -546,6 +555,65 @@ export const AutomationLogScalarFieldEnum = {
 } as const
 
 export type AutomationLogScalarFieldEnum = (typeof AutomationLogScalarFieldEnum)[keyof typeof AutomationLogScalarFieldEnum]
+
+
+export const TeacherProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  phone: 'phone',
+  gender: 'gender',
+  qualification: 'qualification',
+  university: 'university',
+  experience: 'experience',
+  workTimingFrom: 'workTimingFrom',
+  workTimingTo: 'workTimingTo',
+  primarySubjects: 'primarySubjects',
+  secondarySubjects: 'secondarySubjects',
+  bio: 'bio',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TeacherProfileScalarFieldEnum = (typeof TeacherProfileScalarFieldEnum)[keyof typeof TeacherProfileScalarFieldEnum]
+
+
+export const DoubtScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  subject: 'subject',
+  studentId: 'studentId',
+  batchId: 'batchId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DoubtScalarFieldEnum = (typeof DoubtScalarFieldEnum)[keyof typeof DoubtScalarFieldEnum]
+
+
+export const DoubtReplyScalarFieldEnum = {
+  id: 'id',
+  doubtId: 'doubtId',
+  userId: 'userId',
+  body: 'body',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DoubtReplyScalarFieldEnum = (typeof DoubtReplyScalarFieldEnum)[keyof typeof DoubtReplyScalarFieldEnum]
+
+
+export const DeviceTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  platform: 'platform',
+  createdAt: 'createdAt',
+  lastUsed: 'lastUsed'
+} as const
+
+export type DeviceTokenScalarFieldEnum = (typeof DeviceTokenScalarFieldEnum)[keyof typeof DeviceTokenScalarFieldEnum]
 
 
 export const AppSettingsScalarFieldEnum = {

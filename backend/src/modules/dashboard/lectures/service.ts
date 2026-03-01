@@ -1,5 +1,6 @@
 import { prisma } from "../../../config/db.config";
 import { UserRoles, LectureStatus } from "../../../../prisma/generated/prisma/enums";
+import { sendToBatchStudents, sendToUser } from "../../../utils/pushNotifications";
 import {
   CreateLectureInput,
   CreateBulkLecturesInput,
@@ -70,6 +71,26 @@ export default class LectureService {
       },
       include: LECTURE_INCLUDE,
     });
+
+    // Notify students in the batch about the new lecture (fire-and-forget)
+    const dateStr = new Date(data.date).toLocaleDateString("en-IN", { dateStyle: "medium" });
+    sendToBatchStudents(
+      data.batchId,
+      "timetableChanges",
+      "New Class Scheduled",
+      `${data.subject} on ${dateStr} at ${data.startTime}`,
+      { type: "lecture_scheduled", lectureId: lecture.id }
+    ).catch(() => {});
+
+    // Notify the assigned teacher
+    if (teacherId) {
+      sendToUser(
+        teacherId,
+        "New Class Assigned",
+        `You have been assigned to teach ${data.subject} on ${dateStr} at ${data.startTime}`,
+        { type: "lecture_assigned", lectureId: lecture.id }
+      ).catch(() => {});
+    }
 
     return lecture as LectureResponse;
   }

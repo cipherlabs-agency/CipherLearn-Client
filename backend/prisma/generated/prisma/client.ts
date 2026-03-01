@@ -158,6 +158,26 @@ export type AutomationRule = Prisma.AutomationRuleModel
  */
 export type AutomationLog = Prisma.AutomationLogModel
 /**
+ * Model TeacherProfile
+ * 
+ */
+export type TeacherProfile = Prisma.TeacherProfileModel
+/**
+ * Model Doubt
+ * 
+ */
+export type Doubt = Prisma.DoubtModel
+/**
+ * Model DoubtReply
+ * 
+ */
+export type DoubtReply = Prisma.DoubtReplyModel
+/**
+ * Model DeviceToken
+ * 
+ */
+export type DeviceToken = Prisma.DeviceTokenModel
+/**
  * Model AppSettings
  * 
  */

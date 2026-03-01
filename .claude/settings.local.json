@@ -32,7 +32,8 @@
       "Bash(cd /c/CipherLabs/CipherLearn/client/backend && npm run prisma:g 2>&1)",
       "Bash(cd:*)",
       "Bash(cd C:/CipherLabs/CipherLearn/client/backend && npm run prisma:m:d -- --name add_app_settings 2>&1)",
-      "Bash(tail:*)"
+      "Bash(tail:*)",
+      "Bash(python3:*)"
     ]
   }
 }

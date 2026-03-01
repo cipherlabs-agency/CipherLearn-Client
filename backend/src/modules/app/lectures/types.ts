@@ -12,6 +12,9 @@ export interface AppLectureResponse {
   duration: number;
   status: LectureStatus;
   notes: string | null;
+  isOnline?: boolean;
+  meetingLink?: string | null;
+  attachments?: unknown;
   teacher: { id: number; name: string } | null;
   batch: { id: number; name: string };
 }

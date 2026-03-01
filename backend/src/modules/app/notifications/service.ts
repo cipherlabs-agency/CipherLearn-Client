@@ -5,6 +5,7 @@ import { APP_NOTIF_PREFS } from "../../../cache/ttl";
 import type {
   NotificationPreferences,
   UpdateNotificationPreferencesInput,
+  RegisterDeviceInput,
 } from "./types";
 
 // ─── Default preferences (matches DB defaults) ───────────────────────────────
@@ -183,6 +184,40 @@ class NotificationsService {
     cacheService.delByPrefix(InvalidationPatterns.appNotifPrefs);
 
     return this.mapToPreferences(updated);
+  }
+
+  // ─── Device token management ─────────────────────────────────────────────────
+
+  /**
+   * Register (upsert) a device token for any authenticated app user.
+   * Updates lastUsed on re-register.
+   */
+  async registerDevice(userId: number, input: RegisterDeviceInput): Promise<void> {
+    const token = input.token.trim();
+    if (!token) throw new Error("Device token is required");
+
+    await prisma.deviceToken.upsert({
+      where: { token },
+      create: {
+        userId,
+        token,
+        platform: input.platform ?? "EXPO",
+        lastUsed: new Date(),
+      },
+      update: {
+        userId,
+        lastUsed: new Date(),
+      },
+    });
+  }
+
+  /**
+   * Remove a device token (call on logout).
+   */
+  async deregisterDevice(userId: number, token: string): Promise<void> {
+    await prisma.deviceToken.deleteMany({
+      where: { userId, token: token.trim() },
+    });
   }
 }
 

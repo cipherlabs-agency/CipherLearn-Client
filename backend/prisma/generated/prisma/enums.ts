@@ -207,3 +207,21 @@ export const DmType = {
 } as const
 
 export type DmType = (typeof DmType)[keyof typeof DmType]
+
+
+export const DoubtStatus = {
+  OPEN: 'OPEN',
+  ANSWERED: 'ANSWERED',
+  RESOLVED: 'RESOLVED'
+} as const
+
+export type DoubtStatus = (typeof DoubtStatus)[keyof typeof DoubtStatus]
+
+
+export const DevicePlatform = {
+  EXPO: 'EXPO',
+  IOS: 'IOS',
+  ANDROID: 'ANDROID'
+} as const
+
+export type DevicePlatform = (typeof DevicePlatform)[keyof typeof DevicePlatform]
