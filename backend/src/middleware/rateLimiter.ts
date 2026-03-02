@@ -9,15 +9,8 @@ import { config } from "../config/env.config";
 export const loginRateLimiter = rateLimit({
   windowMs: config.RATE_LIMIT.LOGIN_WINDOW_MS,
   max: config.RATE_LIMIT.LOGIN_MAX,
-  message: {
-    success: false,
-    message: "Too many login attempts. Please try again after 15 minutes.",
-  },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
@@ -33,15 +26,8 @@ export const loginRateLimiter = rateLimit({
 export const passwordResetRateLimiter = rateLimit({
   windowMs: config.RATE_LIMIT.PASSWORD_RESET_WINDOW_MS,
   max: config.RATE_LIMIT.PASSWORD_RESET_MAX,
-  message: {
-    success: false,
-    message: "Too many password reset requests. Please try again after an hour.",
-  },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
@@ -57,15 +43,8 @@ export const passwordResetRateLimiter = rateLimit({
 export const enrollmentCheckRateLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 10,
-  message: {
-    success: false,
-    message: "Too many requests. Please try again after a minute.",
-  },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
@@ -81,15 +60,8 @@ export const enrollmentCheckRateLimiter = rateLimit({
 export const generalRateLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 100,
-  message: {
-    success: false,
-    message: "Too many requests. Please slow down.",
-  },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
@@ -105,15 +77,8 @@ export const generalRateLimiter = rateLimit({
 export const tokenRefreshRateLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 10,
-  message: {
-    success: false,
-    message: "Too many token refresh requests.",
-  },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       success: false,
@@ -129,15 +94,8 @@ export const tokenRefreshRateLimiter = rateLimit({
 export const appReadRateLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 120,
-  message: {
-    success: false,
-    message: "Too many requests. Please slow down.",
-  },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
   handler: (_req: Request, res: Response) => {
     res.status(429).json({
       success: false,
@@ -153,15 +111,8 @@ export const appReadRateLimiter = rateLimit({
 export const fileUploadRateLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   max: 10,
-  message: {
-    success: false,
-    message: "Too many file upload attempts. Please wait before trying again.",
-  },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
   handler: (_req: Request, res: Response) => {
     res.status(429).json({
       success: false,
