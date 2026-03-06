@@ -24,6 +24,7 @@ export class Database {
   }
 
   private defaultQueryLogger = (e: Prisma.QueryEvent): void => {
+    if (process.env.NODE_ENV === "production") return;
     const params = Array.isArray(e.params) ? e.params : [String(e.params)];
     console.log(`Query: ${e.query}`);
     console.log(`Params: ${params.join(", ")}`);
@@ -52,4 +53,6 @@ export class Database {
 
 export default Database;
 
-export const prisma = new Database().prisma;
+// Singleton — shared by all modules (avoids a second connection pool)
+export const db = new Database();
+export const prisma = db.prisma;

@@ -48,6 +48,9 @@ export const sendPasswordResetEmail = async (
   studentName: string
 ): Promise<boolean> => {
   const expiryMinutes = config.OTP.EXPIRY_MINUTES;
+  const className = config.CLASS.NAME;
+  const primaryColor = config.CLASS.PRIMARY_COLOR;
+  const accentColor = config.CLASS.ACCENT_COLOR;
 
   const html = `
     <!DOCTYPE html>
@@ -58,8 +61,8 @@ export const sendPasswordResetEmail = async (
       <title>Password Reset OTP</title>
     </head>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">CipherLearn</h1>
+      <div style="background: linear-gradient(135deg, ${primaryColor} 0%, ${accentColor} 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">${className}</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Password Reset Request</p>
       </div>
 
@@ -68,9 +71,9 @@ export const sendPasswordResetEmail = async (
 
         <p style="font-size: 16px;">We received a request to reset your password. Use the OTP below to proceed:</p>
 
-        <div style="background: white; border: 2px solid #6366f1; border-radius: 10px; padding: 25px; text-align: center; margin: 25px 0;">
+        <div style="background: white; border: 2px solid ${primaryColor}; border-radius: 10px; padding: 25px; text-align: center; margin: 25px 0;">
           <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 14px;">Your One-Time Password</p>
-          <h2 style="margin: 0; font-size: 36px; letter-spacing: 8px; color: #6366f1; font-family: monospace;">${otp}</h2>
+          <h2 style="margin: 0; font-size: 36px; letter-spacing: 8px; color: ${primaryColor}; font-family: monospace;">${otp}</h2>
         </div>
 
         <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 0 5px 5px 0;">
@@ -87,7 +90,7 @@ export const sendPasswordResetEmail = async (
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
 
         <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">
-          This is an automated message from CipherLearn. Please do not reply to this email.
+          This is an automated message from ${className}. Please do not reply to this email.
         </p>
       </div>
     </body>
@@ -96,7 +99,7 @@ export const sendPasswordResetEmail = async (
 
   return sendEmail({
     to: email,
-    subject: "Password Reset OTP - CipherLearn",
+    subject: `Password Reset OTP - ${className}`,
     html,
   });
 };
@@ -111,7 +114,9 @@ export const sendAccountRegistrationEmail = async (
   role: "STUDENT" | "TEACHER"
 ): Promise<boolean> => {
   const roleLabel = role === "TEACHER" ? "Teacher" : "Student";
-  const roleColor = role === "TEACHER" ? "#0F766E" : "#6366f1";
+  const className = config.CLASS.NAME;
+  const primaryColor = config.CLASS.PRIMARY_COLOR;
+  const accentColor = config.CLASS.ACCENT_COLOR;
 
   const html = `
     <!DOCTYPE html>
@@ -119,11 +124,11 @@ export const sendAccountRegistrationEmail = async (
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Your CipherLearn Account is Ready</title>
+      <title>Your ${className} Account is Ready</title>
     </head>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: linear-gradient(135deg, ${roleColor} 0%, #8b5cf6 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">CipherLearn</h1>
+      <div style="background: linear-gradient(135deg, ${primaryColor} 0%, ${accentColor} 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">${className}</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">${roleLabel} Account Created</p>
       </div>
 
@@ -131,7 +136,7 @@ export const sendAccountRegistrationEmail = async (
         <p style="font-size: 16px;">Hello <strong>${name}</strong>,</p>
 
         <p style="font-size: 16px;">
-          Your <strong>${roleLabel}</strong> account has been created on CipherLearn.
+          Your <strong>${roleLabel}</strong> account has been created on ${className}.
           You're almost ready to get started — you just need to set up your password.
         </p>
 
@@ -140,7 +145,7 @@ export const sendAccountRegistrationEmail = async (
             <strong>Next Steps:</strong>
           </p>
           <ol style="margin: 10px 0 0 0; padding-left: 20px; color: #065f46; font-size: 14px;">
-            <li>Open the CipherLearn app</li>
+            <li>Open the ${className} app</li>
             <li>Enter your registered email: <strong>${email}</strong></li>
             <li>Set up your password when prompted</li>
             <li>Log in and access your ${roleLabel.toLowerCase()} dashboard</li>
@@ -161,7 +166,7 @@ export const sendAccountRegistrationEmail = async (
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
 
         <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">
-          This is an automated message from CipherLearn. Please do not reply to this email.
+          This is an automated message from ${className}. Please do not reply to this email.
         </p>
       </div>
     </body>
@@ -170,20 +175,27 @@ export const sendAccountRegistrationEmail = async (
 
   return sendEmail({
     to: email,
-    subject: `Your CipherLearn ${roleLabel} Account is Ready`,
+    subject: `Your ${className} ${roleLabel} Account is Ready`,
     html,
   });
 };
 
 /**
  * Send password reset email to admin/teacher (dashboard)
- * Includes the raw reset token for use with POST /api/auth/reset-password
+ * Includes a clickable reset link; raw token included as fallback
  */
 export const sendAdminPasswordResetEmail = async (
   email: string,
   name: string,
   resetToken: string
 ): Promise<boolean> => {
+  const className = config.CLASS.NAME;
+  const primaryColor = config.CLASS.PRIMARY_COLOR;
+  const accentColor = config.CLASS.ACCENT_COLOR;
+  const resetUrl = config.APP.CLIENT_URL
+    ? `${config.APP.CLIENT_URL}/reset-password?token=${resetToken}`
+    : null;
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -193,24 +205,41 @@ export const sendAdminPasswordResetEmail = async (
       <title>Admin Password Reset</title>
     </head>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: linear-gradient(135deg, #0F766E 0%, #0d9488 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">CipherLearn</h1>
+      <div style="background: linear-gradient(135deg, ${primaryColor} 0%, ${accentColor} 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">${className}</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Password Reset Request</p>
       </div>
 
       <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e5e7eb; border-top: none;">
         <p style="font-size: 16px;">Hello <strong>${name}</strong>,</p>
 
-        <p style="font-size: 16px;">We received a request to reset your admin account password. Use the token below with the reset password endpoint:</p>
+        <p style="font-size: 16px;">We received a request to reset your admin account password.</p>
 
-        <div style="background: white; border: 2px solid #0F766E; border-radius: 10px; padding: 20px; margin: 25px 0; word-break: break-all;">
-          <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Reset Token</p>
-          <code style="font-size: 13px; color: #0F766E; font-family: monospace;">${resetToken}</code>
+        ${resetUrl ? `
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resetUrl}"
+             style="background: ${primaryColor}; color: white; padding: 14px 32px; border-radius: 8px;
+                    text-decoration: none; font-size: 16px; font-weight: 600; display: inline-block;">
+            Reset My Password
+          </a>
         </div>
+
+        <p style="font-size: 14px; color: #6b7280; text-align: center;">
+          Button not working? Copy and paste this link into your browser:
+          <br><a href="${resetUrl}" style="color: ${primaryColor}; word-break: break-all;">${resetUrl}</a>
+        </p>
+        ` : `
+        <p style="font-size: 14px; color: #6b7280;">Use the token below with the reset password endpoint:</p>
+
+        <div style="background: white; border: 2px solid ${primaryColor}; border-radius: 10px; padding: 20px; margin: 25px 0; word-break: break-all;">
+          <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Reset Token</p>
+          <code style="font-size: 13px; color: ${primaryColor}; font-family: monospace;">${resetToken}</code>
+        </div>
+        `}
 
         <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 0 5px 5px 0;">
           <p style="margin: 0; color: #92400e; font-size: 14px;">
-            <strong>Important:</strong> This token expires in 1 hour. Do not share it with anyone.
+            <strong>Important:</strong> This link expires in 1 hour. Do not share it with anyone.
           </p>
         </div>
 
@@ -221,7 +250,7 @@ export const sendAdminPasswordResetEmail = async (
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
 
         <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">
-          This is an automated message from CipherLearn. Please do not reply to this email.
+          This is an automated message from ${className}. Please do not reply to this email.
         </p>
       </div>
     </body>
@@ -230,7 +259,7 @@ export const sendAdminPasswordResetEmail = async (
 
   return sendEmail({
     to: email,
-    subject: "Admin Password Reset — CipherLearn",
+    subject: `Admin Password Reset — ${className}`,
     html,
   });
 };
@@ -242,24 +271,28 @@ export const sendWelcomeEmail = async (
   email: string,
   studentName: string
 ): Promise<boolean> => {
+  const className = config.CLASS.NAME;
+  const primaryColor = config.CLASS.PRIMARY_COLOR;
+  const accentColor = config.CLASS.ACCENT_COLOR;
+
   const html = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Welcome to CipherLearn</title>
+      <title>Welcome to ${className}</title>
     </head>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">CipherLearn</h1>
+      <div style="background: linear-gradient(135deg, ${primaryColor} 0%, ${accentColor} 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">${className}</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Welcome Aboard!</p>
       </div>
 
       <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e5e7eb; border-top: none;">
         <p style="font-size: 16px;">Hello <strong>${studentName}</strong>,</p>
 
-        <p style="font-size: 16px;">Your account has been successfully set up. You can now log in to the CipherLearn Student App using your email and password.</p>
+        <p style="font-size: 16px;">Your account has been successfully set up. You can now log in to the ${className} Student App using your email and password.</p>
 
         <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0; border-radius: 0 5px 5px 0;">
           <p style="margin: 0; color: #065f46; font-size: 14px;">
@@ -281,7 +314,7 @@ export const sendWelcomeEmail = async (
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
 
         <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">
-          This is an automated message from CipherLearn. Please do not reply to this email.
+          This is an automated message from ${className}. Please do not reply to this email.
         </p>
       </div>
     </body>
@@ -290,7 +323,7 @@ export const sendWelcomeEmail = async (
 
   return sendEmail({
     to: email,
-    subject: "Welcome to CipherLearn - Account Setup Complete",
+    subject: `Welcome to ${className} - Account Setup Complete`,
     html,
   });
 };

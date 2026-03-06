@@ -1,7 +1,9 @@
 import type { Request, Response } from "express";
 import { User } from "../../../../prisma/generated/prisma/client";
 import FeesService from "./service";
-import { generateReceiptPDF } from "./pdf.service";
+import { generateReceiptPDF, type InstitutionInfo } from "./pdf.service";
+import { settingsService } from "../settings/service";
+import { config } from "../../../config/env.config";
 import logger from "../../../utils/logger";
 import {
   validate,
@@ -491,8 +493,19 @@ export default class FeesController {
 
       const receipt = await feesService.getReceiptById(id);
 
+      // Build institution info from class settings + env branding
+      const settings = await settingsService.getSettings();
+      const institution: InstitutionInfo = {
+        name: settings.className || config.CLASS.NAME,
+        address: settings.classAddress || "",
+        phone: settings.classPhone || "",
+        email: settings.classEmail || "",
+        website: settings.classWebsite || "",
+        primaryColor: config.CLASS.PRIMARY_COLOR,
+      };
+
       // Generate PDF
-      const doc = generateReceiptPDF(receipt);
+      const doc = generateReceiptPDF(receipt, institution);
 
       // Set response headers
       res.setHeader("Content-Type", "application/pdf");

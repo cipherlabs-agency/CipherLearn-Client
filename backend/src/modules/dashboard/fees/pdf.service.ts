@@ -1,32 +1,25 @@
 import PDFDocument from "pdfkit";
 import { ReceiptWithRelations } from "./types";
 
-interface InstitutionInfo {
+export interface InstitutionInfo {
   name: string;
   address: string;
   phone: string;
   email: string;
   website?: string;
+  primaryColor?: string;
 }
-
-const INSTITUTION: InstitutionInfo = {
-  name: "CipherLearn Academy",
-  address: "123 Education Lane, Knowledge City - 400001",
-  phone: "+91 98765 43210",
-  email: "fees@cipherlearn.edu",
-  website: "www.cipherlearn.edu",
-};
 
 /**
  * Generate a professional PDF receipt
  */
-export function generateReceiptPDF(receipt: ReceiptWithRelations): PDFKit.PDFDocument {
+export function generateReceiptPDF(receipt: ReceiptWithRelations, institution: InstitutionInfo): PDFKit.PDFDocument {
   const doc = new PDFDocument({
     size: "A4",
     margin: 50,
     info: {
       Title: `Fee Receipt - ${receipt.receiptNumber}`,
-      Author: INSTITUTION.name,
+      Author: institution.name,
       Subject: `Fee Receipt for ${receipt.student.fullname}`,
       CreationDate: new Date(),
     },
@@ -37,7 +30,7 @@ export function generateReceiptPDF(receipt: ReceiptWithRelations): PDFKit.PDFDoc
 
   // Colors
   const primaryColor = "#111827"; // Dark gray
-  const accentColor = "#6366f1"; // Indigo
+  const accentColor = institution.primaryColor || "#0F766E";
   const lightGray = "#9ca3af";
   const successColor = "#10b981"; // Emerald
   const warningColor = "#f59e0b"; // Amber
@@ -97,7 +90,7 @@ export function generateReceiptPDF(receipt: ReceiptWithRelations): PDFKit.PDFDoc
     .fillColor(primaryColor)
     .fontSize(22)
     .font("Helvetica-Bold")
-    .text(INSTITUTION.name, leftMargin, y, { align: "center" });
+    .text(institution.name, leftMargin, y, { align: "center" });
   y += 30;
 
   // Address and contact
@@ -105,10 +98,10 @@ export function generateReceiptPDF(receipt: ReceiptWithRelations): PDFKit.PDFDoc
     .fillColor(lightGray)
     .fontSize(9)
     .font("Helvetica")
-    .text(INSTITUTION.address, leftMargin, y, { align: "center" });
+    .text(institution.address, leftMargin, y, { align: "center" });
   y += 14;
   doc.text(
-    `Tel: ${INSTITUTION.phone} | Email: ${INSTITUTION.email}`,
+    `Tel: ${institution.phone} | Email: ${institution.email}`,
     leftMargin,
     y,
     { align: "center" }

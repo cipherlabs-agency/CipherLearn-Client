@@ -39,8 +39,8 @@ export const config = {
     PORT: Number(process.env.NODE_MAILER_PORT) || 587,
     USER: process.env.NODE_MAILER_USER || "",
     PASSWORD: process.env.NODE_MAILER_PASSWORD || "",
-    FROM_EMAIL: process.env.NODE_MAILER_FROM_EMAIL || "noreply@cipherlearn.com",
-    FROM_NAME: process.env.NODE_MAILER_FROM_NAME || "CipherLearn",
+    FROM_EMAIL: process.env.NODE_MAILER_FROM_EMAIL || "",
+    FROM_NAME: process.env.NODE_MAILER_FROM_NAME || "",
   },
   RATE_LIMIT: {
     LOGIN_MAX: Number(process.env.RATE_LIMIT_LOGIN_MAX) || 5,
@@ -58,13 +58,13 @@ export const config = {
   INSTAGRAM: {
     APP_ID: process.env.INSTAGRAM_APP_ID || "",
     APP_SECRET: process.env.INSTAGRAM_APP_SECRET || "",
-    WEBHOOK_VERIFY_TOKEN: process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || "cipherlearn_ig_webhook_2026",
+    WEBHOOK_VERIFY_TOKEN: process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN || "",
     REDIRECT_URI: process.env.INSTAGRAM_REDIRECT_URI || "",
   },
   // Per-deployment class branding & feature flags
   // Set these env vars when provisioning each new coaching class deployment
   CLASS: {
-    NAME: process.env.CLASS_NAME || process.env.SCHOOL_NAME || "CipherLearn",
+    NAME: process.env.CLASS_NAME || "My Coaching Class",
     LOGO_URL: process.env.CLASS_LOGO_URL || process.env.SCHOOL_LOGO_URL || "",
     PRIMARY_COLOR: process.env.PRIMARY_COLOR || "#0F766E",
     ACCENT_COLOR: process.env.ACCENT_COLOR || "#F59E0B",

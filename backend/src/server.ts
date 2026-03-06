@@ -53,7 +53,7 @@ app.use(httpLogger);
 
 app.get("/", (req, res) => {
   logger.info("Health check endpoint hit");
-  return res.send("CipherLearn");
+  return res.json({ status: "ok", service: config.CLASS.NAME });
 });
 
 export default app;

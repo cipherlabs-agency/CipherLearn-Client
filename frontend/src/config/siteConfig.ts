@@ -8,7 +8,7 @@
 
 export const siteConfig = {
   /** Class / institute name shown in sidebar, login, page titles */
-  appName: process.env.NEXT_PUBLIC_APP_NAME || "CipherLearn",
+  appName: process.env.NEXT_PUBLIC_APP_NAME || "My Coaching Class",
 
   /** Short tagline shown below logo */
   appTagline: process.env.NEXT_PUBLIC_APP_TAGLINE || "Teaching Platform",
@@ -22,7 +22,7 @@ export const siteConfig = {
   logoUrl: process.env.NEXT_PUBLIC_LOGO_URL || "",
 
   /** Initials shown in logo when no image is provided (max 2 chars) */
-  logoInitials: process.env.NEXT_PUBLIC_LOGO_INITIALS || "CL",
+  logoInitials: process.env.NEXT_PUBLIC_LOGO_INITIALS || "MC",
 
   /** Brand primary color (hex) */
   primaryColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR || "#0F766E",
@@ -31,7 +31,7 @@ export const siteConfig = {
   accentColor: process.env.NEXT_PUBLIC_ACCENT_COLOR || "#F59E0B",
 
   /** Contact email shown on error pages */
-  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "admin@cipherlearn.com",
+  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "",
 
   /** Feature flags — default all ON; set to "false" to disable per deployment */
   features: {

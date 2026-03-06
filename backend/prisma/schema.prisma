@@ -34,6 +34,7 @@ model User {
   teacherTests         Test[]               @relation("TeacherTests")
   doubtReplies         DoubtReply[]
   deviceTokens         DeviceToken[]
+  instagramAccount     InstagramAccount?
 
   @@map("users")
 }
@@ -50,7 +51,6 @@ model Student {
   batch      Batch?   @relation(fields: [batchId], references: [id])
   userId     Int?     @unique
   user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  attendance Json?
   address    String?
   phone       String?
   parentName  String?
@@ -92,6 +92,8 @@ model Batch {
   lectures           Lecture[]
   tests              Test[]
   doubts             Doubt[]
+  youtubeVideos      YoutubeVideo[]
+  notes              Note[]
 
   updatedAt   DateTime?    @updatedAt
   createdAt   DateTime?    @default(now())
@@ -104,7 +106,7 @@ model QRAttendanceToken {
   id        Int      @id @default(autoincrement())
   batchId   Int
   batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  token     String
+  token     String   @unique
   date      DateTime @db.Date
   expiresAt DateTime
   isActive  Boolean  @default(true)
@@ -174,12 +176,14 @@ model YoutubeVideo {
   visibility  YoutubeVideoVisibility? @default(PRIVATE)
   category    String?
   batchId     Int
+  batch       Batch                   @relation(fields: [batchId], references: [id])
   isDeleted   Boolean?                @default(false)
   deletedBy   String?
 
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 
+  @@index([batchId])
   @@map("youtube_videos")
 }
 
@@ -188,6 +192,7 @@ model Note {
   title     String
   content   String[]
   batchId   Int
+  batch     Batch    @relation(fields: [batchId], references: [id])
   category  String?
   isDeleted Boolean? @default(false)
   deletedBy String?
@@ -196,6 +201,7 @@ model Note {
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 
+  @@index([batchId])
   @@map("notes")
 }
 
@@ -728,6 +734,7 @@ enum ScoreStatus {
 model InstagramAccount {
   id                Int      @id @default(autoincrement())
   userId            Int      @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   igUserId          String   @unique // Instagram-scoped user ID
   username          String
   profilePictureUrl String?
