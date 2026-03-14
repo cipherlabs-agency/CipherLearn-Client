@@ -34,13 +34,10 @@ export const config = {
     // Should be different from JWT_SECRET in production
     SECRET: process.env.QR_SECRET || process.env.JWT_SECRET || "qr_attendance_secret",
   },
-  NODE_MAILER: {
-    HOST: process.env.NODE_MAILER_HOST || "smtp.example.com",
-    PORT: Number(process.env.NODE_MAILER_PORT) || 587,
-    USER: process.env.NODE_MAILER_USER || "",
-    PASSWORD: process.env.NODE_MAILER_PASSWORD || "",
-    FROM_EMAIL: process.env.NODE_MAILER_FROM_EMAIL || "",
-    FROM_NAME: process.env.NODE_MAILER_FROM_NAME || "",
+  RESEND: {
+    API_KEY:    process.env.RESEND_API_KEY    || "",
+    FROM_EMAIL: process.env.RESEND_FROM_EMAIL || "noreply@cipherlearn.com",
+    FROM_NAME:  process.env.RESEND_FROM_NAME  || "CipherLearn",
   },
   RATE_LIMIT: {
     LOGIN_MAX: Number(process.env.RATE_LIMIT_LOGIN_MAX) || 5,

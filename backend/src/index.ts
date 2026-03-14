@@ -12,8 +12,11 @@ app.use("/api", allRoutes);
 if (config.JWT.SECRET === "your_jwt_secret") {
   logger.warn("SECURITY WARNING: JWT_SECRET is using the insecure default. Set a strong secret in production.");
 }
-if (config.APP.ENV === "production" && !config.NODE_MAILER.FROM_EMAIL) {
-  logger.warn("CONFIG WARNING: NODE_MAILER_FROM_EMAIL is not set — email delivery will fail.");
+if (config.APP.ENV === "production" && !config.RESEND.API_KEY) {
+  logger.warn("CONFIG WARNING: RESEND_API_KEY is not set — email delivery will fail.");
+}
+if (config.APP.ENV === "production" && !config.RESEND.FROM_EMAIL) {
+  logger.warn("CONFIG WARNING: RESEND_FROM_EMAIL is not set — email delivery will fail.");
 }
 if (config.APP.ENV === "production" && !config.APP.CLIENT_URL) {
   logger.warn("CONFIG WARNING: CLIENT_URL is not set — CORS will block all frontend requests.");

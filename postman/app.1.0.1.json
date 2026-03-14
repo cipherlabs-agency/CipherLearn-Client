@@ -15,6 +15,44 @@
   ],
   "item": [
     {
+      "name": "App Onboarding",
+      "description": "First-launch onboarding flow for the React Native app.\n\n**QR Scan Flow:**\n1. Admin generates QR from admin portal (Infrastructure tab → 'App Onboarding QR')\n2. QR encodes JSON: { v, api, name, slug, primary, accent, logo? }\n3. App scans QR → stores `api` base URL in AsyncStorage\n4. App calls GET /app/settings to fetch full class config (branding, features)\n5. App shows branded login screen\n\nNo authentication required — these are public endpoints.",
+      "item": [
+        {
+          "name": "Get Class Config (after QR scan)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/app/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["app", "settings"]
+            },
+            "description": "Public endpoint. Returns class branding, feature flags, and basic class info.\n\nCall this immediately after scanning the onboarding QR code to get the full configuration.\n\n**QR payload structure** (encoded in the QR image):\n```json\n{\n  \"v\": 1,\n  \"api\": \"https://your-class.onrender.com/api\",\n  \"name\": \"Sarthak Classes\",\n  \"slug\": \"sarthak-classes\",\n  \"primary\": \"#0F766E\",\n  \"accent\": \"#F59E0B\",\n  \"logo\": \"https://res.cloudinary.com/...\" (optional)\n}\n```\n\n**React Native usage:**\n```ts\n// After QR scan:\nawait AsyncStorage.setItem('apiBase', qrPayload.api);\nconst { data } = await axios.get(`${qrPayload.api}/app/settings`);\n// Apply branding from data.branding and data.features\n```\n\n**No auth required.**"
+          },
+          "response": [
+            {
+              "name": "200 OK — Class config",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/app/settings",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["app", "settings"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"class\": {\n      \"name\": \"Sarthak Classes\",\n      \"email\": \"contact@sarthakclasses.com\",\n      \"phone\": \"+91 98765 43210\",\n      \"address\": \"123 Main St, City\",\n      \"website\": \"https://sarthakclasses.com\"\n    },\n    \"branding\": {\n      \"primaryColor\": \"#0F766E\",\n      \"accentColor\": \"#F59E0B\",\n      \"logoUrl\": \"https://res.cloudinary.com/demo/image/upload/logo.png\"\n    },\n    \"features\": {\n      \"qrAttendance\": true,\n      \"fees\": true,\n      \"assignments\": true,\n      \"studyMaterials\": true,\n      \"announcements\": true,\n      \"videos\": true\n    },\n    \"teacherPermissions\": {}\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "App Auth",
       "description": "Student/Teacher mobile app authentication.\n\nRate limits:\n- Login: 5 attempts per 15 min per IP\n- Password reset: 3 requests per hour per IP\n- Enrollment check: 10 per minute per IP\n- Token refresh: 10 per minute per IP",
       "item": [
