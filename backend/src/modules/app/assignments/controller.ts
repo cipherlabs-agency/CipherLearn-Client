@@ -11,6 +11,7 @@ import type {
   CreateAssignmentInput,
   UpdateAssignmentInput,
 } from "./types";
+import { log } from "../../../utils/logtail";
 
 const cloudinaryService = new CloudinaryService();
 
@@ -81,6 +82,7 @@ class AssignmentsController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.getAssignments error:", error);
       return res.status(500).json({
         success: false,
@@ -154,6 +156,7 @@ class AssignmentsController {
         data: assignment,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.getAssignmentById error:", error);
       return res.status(500).json({
         success: false,
@@ -245,6 +248,7 @@ class AssignmentsController {
         data: submission,
       });
     } catch (error: unknown) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AssignmentsController.submitAssignment error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to submit assignment";
@@ -288,6 +292,7 @@ class AssignmentsController {
         data: submission,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AssignmentsController.getMySubmission error:", error);
       return res.status(500).json({
         success: false,
@@ -318,6 +323,7 @@ class AssignmentsController {
         data: stats,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AssignmentsController.getMyStats error:", error);
       return res.status(500).json({
         success: false,
@@ -367,6 +373,7 @@ class AssignmentsController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.getSlotSubmissions error:", error);
       return res.status(500).json({
         success: false,
@@ -413,6 +420,7 @@ class AssignmentsController {
         data: submission,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.getSubmissionById error:", error);
       return res.status(500).json({
         success: false,
@@ -465,6 +473,7 @@ class AssignmentsController {
         data: submission,
       });
     } catch (error) {
+      log("error", "app.assignments.toLowerCase failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.reviewSubmission error:", error);
       return res.status(500).json({
         success: false,
@@ -593,6 +602,7 @@ class AssignmentsController {
         data: slots,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.createAssignment error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to create assignment";
@@ -629,6 +639,7 @@ class AssignmentsController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.getTeacherAssignments error:", error);
       return res.status(500).json({ success: false, message: "Failed to get assignments" });
     }
@@ -664,6 +675,7 @@ class AssignmentsController {
         data: updated,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.updateAssignment error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to update assignment";
@@ -694,6 +706,7 @@ class AssignmentsController {
         message: "Assignment deleted",
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.deleteAssignment error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to delete assignment";
@@ -744,6 +757,7 @@ class AssignmentsController {
         data: reviewPage,
       });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.getAssignmentReviewPage error:", error);
       return res.status(500).json({ success: false, message: "Failed to get review page" });
     }
@@ -762,6 +776,7 @@ class AssignmentsController {
       const stats = await assignmentsService.getTeacherStats(user.id);
       return res.status(200).json({ success: true, data: stats });
     } catch (error) {
+      log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AssignmentsController.getTeacherStats error:", error);
       return res.status(500).json({ success: false, message: "Failed to get stats" });
     }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { YoutubeVideo, UpdateYoutubeVideoInput, GetYoutubeVideosQuery } from "./types";
 import YoutubeVideoService from "./service";
+import { log } from "../../../utils/logtail";
 
 const youtubeVideoService = new YoutubeVideoService();
 
@@ -35,6 +36,7 @@ export default class YoutubeVideoController {
         data: youtubeVideo,
       });
     } catch (error: any) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message.includes("not found")) {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -66,6 +68,7 @@ export default class YoutubeVideoController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res
         .status(500)
         .json({ success: false, message: `Internal Server Error: ${error}` });
@@ -85,6 +88,7 @@ export default class YoutubeVideoController {
       );
       return res.status(200).json({ success: true, data: youtubeVideos });
     } catch (error: any) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Batch not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -105,6 +109,7 @@ export default class YoutubeVideoController {
       const video = await youtubeVideoService.getById(Number(id));
       return res.status(200).json({ success: true, data: video });
     } catch (error: any) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Video not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -131,6 +136,7 @@ export default class YoutubeVideoController {
         data: updatedVideo,
       });
     } catch (error: any) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message.includes("not found")) {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -164,6 +170,7 @@ export default class YoutubeVideoController {
         data: draftedVideo,
       });
     } catch (error: any) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       if (error.message.includes("not found")) {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -188,6 +195,7 @@ export default class YoutubeVideoController {
         message: "Video permanently deleted",
       });
     } catch (error: any) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message.includes("not found")) {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -213,6 +221,7 @@ export default class YoutubeVideoController {
         data: restoredVideo,
       });
     } catch (error: any) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message.includes("not found")) {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -237,6 +246,7 @@ export default class YoutubeVideoController {
         data: categories,
       });
     } catch (error) {
+      log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res
         .status(500)
         .json({ success: false, message: `Internal Server Error: ${error}` });

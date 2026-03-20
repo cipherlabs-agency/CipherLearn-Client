@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { feesService } from "./service";
 import logger from "../../../utils/logger";
+import { log } from "../../../utils/logtail";
 
 class FeesController {
   /**
@@ -24,6 +25,7 @@ class FeesController {
         data: receipts,
       });
     } catch (error) {
+      log("error", "app.fees.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("FeesController.getFeeReceipts error:", error);
       return res.status(500).json({
         success: false,
@@ -53,6 +55,7 @@ class FeesController {
         data: summary,
       });
     } catch (error) {
+      log("error", "app.fees.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("FeesController.getFeesSummary error:", error);
       return res.status(500).json({
         success: false,
@@ -88,6 +91,7 @@ class FeesController {
         data: structures,
       });
     } catch (error) {
+      log("error", "app.fees.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("FeesController.getFeeStructures error:", error);
       return res.status(500).json({
         success: false,

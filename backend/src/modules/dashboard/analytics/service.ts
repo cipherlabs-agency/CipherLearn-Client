@@ -3,6 +3,7 @@ import { prisma } from "../../../config/db.config";
 import { cacheService } from "../../../cache";
 import { DashboardKeys } from "../../../cache/keys";
 import * as TTL from "../../../cache/ttl";
+import { log } from "../../../utils/logtail";
 
 interface EnrollmentTrendData {
   month: number;
@@ -50,6 +51,7 @@ export default class AnalyticsService {
       }
       return batch._count.students;
     } catch (error) {
+      log("error", "dashboard.analytics.Error failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -59,6 +61,7 @@ export default class AnalyticsService {
       const count = await prisma.student.count();
       return count;
     } catch (error) {
+      log("error", "dashboard.analytics.count failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -68,6 +71,7 @@ export default class AnalyticsService {
       const count = await prisma.batch.count();
       return count;
     } catch (error) {
+      log("error", "dashboard.analytics.count failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -92,6 +96,7 @@ export default class AnalyticsService {
         count: data._count.status,
       }));
     } catch (error) {
+      log("error", "dashboard.analytics.map failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -122,6 +127,7 @@ export default class AnalyticsService {
         count: data._count.status,
       }));
     } catch (error) {
+      log("error", "dashboard.analytics.map failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -169,6 +175,7 @@ export default class AnalyticsService {
 
       return trends;
     } catch (error) {
+      log("error", "dashboard.analytics.getMonth failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -241,6 +248,7 @@ export default class AnalyticsService {
 
       return trends;
     } catch (error) {
+      log("error", "dashboard.analytics.toISOString failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -311,6 +319,7 @@ export default class AnalyticsService {
 
       return trends;
     } catch (error) {
+      log("error", "dashboard.analytics.getMonth failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -414,6 +423,7 @@ export default class AnalyticsService {
         },
       };
     } catch (error) {
+      log("error", "dashboard.analytics.round failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -448,6 +458,7 @@ export default class AnalyticsService {
         studentCount: batch._count.students,
       }));
     } catch (error) {
+      log("error", "dashboard.analytics.map failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -517,6 +528,7 @@ export default class AnalyticsService {
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
         .slice(0, limit);
     } catch (error) {
+      log("error", "dashboard.analytics.slice failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }

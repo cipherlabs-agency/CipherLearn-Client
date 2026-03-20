@@ -13,6 +13,7 @@ import {
   BulkCreateResult,
   ReceiptWithRelations,
 } from "./types";
+import { log } from "../../../utils/logtail";
 
 export default class FeesService {
   // ============================================
@@ -374,6 +375,7 @@ export default class FeesService {
 
         result.created++;
       } catch (error: any) {
+        log("error", "dashboard.fees.Date failed", { err: error instanceof Error ? error.message : String(error) });
         result.errors.push(`Student ${student.id}: ${error.message}`);
       }
     }

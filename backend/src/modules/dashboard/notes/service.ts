@@ -3,6 +3,7 @@ import CloudinaryService from "../../../config/cloudinairy.config";
 import { validateMagicNumber } from "../../../config/multer.config";
 import { CreateNoteInput, UpdateNoteInput, GetNotesQuery } from "./types";
 import { invalidateAfterResourceMutation } from "../../../cache/invalidation";
+import { log } from "../../../utils/logtail";
 
 const cloudinaryService = new CloudinaryService();
 
@@ -81,6 +82,7 @@ export default class NotesService {
       invalidateAfterResourceMutation();
       return note;
     } catch (error: any) {
+      log("error", "dashboard.notes.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Error creating note:", error);
 
       // Provide specific error messages
@@ -217,6 +219,7 @@ export default class NotesService {
       invalidateAfterResourceMutation();
       return updatedNote;
     } catch (error: any) {
+      log("error", "dashboard.notes.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Error updating note:", error);
 
       if (error.message.includes("not found")) {

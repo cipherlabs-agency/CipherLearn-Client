@@ -21,6 +21,7 @@ import { cacheService } from "../../../cache";
 import { DashboardKeys } from "../../../cache/keys";
 import * as TTL from "../../../cache/ttl";
 import { invalidateAfterStudentMutation } from "../../../cache/invalidation";
+import { log } from "../../../utils/logtail";
 
 const FEATURE = "student-enrollment" as const;
 
@@ -331,6 +332,7 @@ export default class StudentEnrollmentService {
           logger.error(`Failed to send registration email to ${email}:`, err)
         );
       } catch (error) {
+        log("error", "dashboard.student-enrollment.error failed", { err: error instanceof Error ? error.message : String(error) });
         const errorMessage =
           error instanceof Error ? error.message : "Failed to create student";
         importErrors.push({

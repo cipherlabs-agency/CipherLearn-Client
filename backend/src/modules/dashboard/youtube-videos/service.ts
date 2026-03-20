@@ -3,6 +3,7 @@ import { prisma } from "../../../config/db.config";
 import { User } from "../../auth/types.auth";
 import { YoutubeVideo, UpdateYoutubeVideoInput, GetYoutubeVideosQuery } from "./types";
 import { invalidateAfterResourceMutation } from "../../../cache/invalidation";
+import { log } from "../../../utils/logtail";
 
 export default class YoutubeVideoService {
   /**
@@ -37,6 +38,7 @@ export default class YoutubeVideoService {
       invalidateAfterResourceMutation();
       return newYoutubeVideo;
     } catch (error) {
+      log("error", "dashboard.youtube-videos.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -111,6 +113,7 @@ export default class YoutubeVideoService {
         },
       };
     } catch (error) {
+      log("error", "dashboard.youtube-videos.ceil failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -147,6 +150,7 @@ export default class YoutubeVideoService {
 
       return youtubeVideos;
     } catch (error) {
+      log("error", "dashboard.youtube-videos.findMany failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -166,6 +170,7 @@ export default class YoutubeVideoService {
 
       return video;
     } catch (error) {
+      log("error", "dashboard.youtube-videos.Error failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -200,6 +205,7 @@ export default class YoutubeVideoService {
       invalidateAfterResourceMutation();
       return updatedVideo;
     } catch (error) {
+      log("error", "dashboard.youtube-videos.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -224,6 +230,7 @@ export default class YoutubeVideoService {
       invalidateAfterResourceMutation();
       return !!draftedYoutubeVideo;
     } catch (error) {
+      log("error", "dashboard.youtube-videos.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -248,6 +255,7 @@ export default class YoutubeVideoService {
       invalidateAfterResourceMutation();
       return true;
     } catch (error) {
+      log("error", "dashboard.youtube-videos.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -281,6 +289,7 @@ export default class YoutubeVideoService {
       invalidateAfterResourceMutation();
       return restoredVideo;
     } catch (error) {
+      log("error", "dashboard.youtube-videos.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -303,6 +312,7 @@ export default class YoutubeVideoService {
 
       return videos.map((v) => v.category).filter(Boolean);
     } catch (error) {
+      log("error", "dashboard.youtube-videos.map failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }

@@ -22,6 +22,7 @@ import {
   QRPayload,
   QRVerificationResult,
 } from "./qr.utils";
+import { log } from "../../../utils/logtail";
 
 export default class AttendanceService {
   /**
@@ -39,6 +40,7 @@ export default class AttendanceService {
       });
       return newAttendanceSheet;
     } catch (error) {
+      log("error", "dashboard.attendance.create failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -59,6 +61,7 @@ export default class AttendanceService {
       invalidateAfterAttendanceMutation();
       return newAttendance;
     } catch (error) {
+      log("error", "dashboard.attendance.invalidateAfterAttendanceMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -131,6 +134,7 @@ export default class AttendanceService {
             });
             return { success: true, studentId: record.studentId, attendance };
           } catch (error: any) {
+            log("error", "dashboard.attendance.Date failed", { err: error instanceof Error ? error.message : String(error) });
             return {
               success: false,
               studentId: record.studentId,
@@ -151,6 +155,7 @@ export default class AttendanceService {
         results,
       };
     } catch (error) {
+      log("error", "dashboard.attendance.filter failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -181,6 +186,7 @@ export default class AttendanceService {
 
       return updated;
     } catch (error) {
+      log("error", "dashboard.attendance.Date failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -226,6 +232,7 @@ export default class AttendanceService {
 
       return attendances;
     } catch (error) {
+      log("error", "dashboard.attendance.findMany failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -248,6 +255,7 @@ export default class AttendanceService {
       });
       return attendanceSheets;
     } catch (error) {
+      log("error", "dashboard.attendance.findMany failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -433,6 +441,7 @@ export default class AttendanceService {
         studentStats,
       };
     } catch (error) {
+      log("error", "dashboard.attendance.round failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -466,6 +475,7 @@ export default class AttendanceService {
         expiresAt: payload.expiresAt,
       };
     } catch (error) {
+      log("error", "dashboard.attendance.encodeQRPayload failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -566,6 +576,7 @@ export default class AttendanceService {
         attendance,
       };
     } catch (error: any) {
+      log("error", "dashboard.attendance.Date failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("QR Attendance error:", error);
       return { success: false, message: error.message || "Failed to mark attendance" };
     }
@@ -592,6 +603,7 @@ export default class AttendanceService {
 
       return attendances;
     } catch (error) {
+      log("error", "dashboard.attendance.findMany failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }

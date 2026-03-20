@@ -3,6 +3,7 @@ import AppTestService from "./service";
 import logger from "../../../utils/logger";
 import { TestStatus, UserRoles } from "../../../../prisma/generated/prisma/enums";
 import type { BulkSaveScoreInput } from "./types";
+import { log } from "../../../utils/logtail";
 
 const testService = new AppTestService();
 
@@ -23,6 +24,7 @@ export default class AppTestController {
 
       return res.status(403).json({ success: false, message: "Use /batch/:batchId for teacher access" });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.getTests error:", error);
       return res.status(500).json({
         success: false,
@@ -48,6 +50,7 @@ export default class AppTestController {
       const test = await testService.getTestDetail(Number(req.params.id), -1);
       return res.status(200).json({ success: true, data: test });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.getTestDetail error:", error);
 
       if (error.message === "Test not found") {
@@ -72,6 +75,7 @@ export default class AppTestController {
 
       return res.status(200).json({ success: true, data: performance });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AppTestController.getPerformance error:", error);
       return res.status(500).json({
         success: false,
@@ -91,6 +95,7 @@ export default class AppTestController {
 
       return res.status(200).json({ success: true, data: tests });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.getBatchTests error:", error);
       return res.status(500).json({
         success: false,
@@ -110,6 +115,7 @@ export default class AppTestController {
 
       return res.status(200).json({ success: true, data: result });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.getTestScores error:", error);
 
       if (error.message === "Test not found") {
@@ -153,6 +159,7 @@ export default class AppTestController {
         pagination: result.pagination,
       });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.getTeacherTests error:", error);
       return res.status(500).json({
         success: false,
@@ -177,6 +184,7 @@ export default class AppTestController {
       const result = await testService.getScoreSheet(testId, user.id);
       return res.status(200).json({ success: true, data: result });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.getScoreSheet error:", error);
       const status = error.message.includes("not found") ? 404 : 400;
       return res.status(status).json({ success: false, message: error.message });
@@ -214,6 +222,7 @@ export default class AppTestController {
         data: result,
       });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.bulkSaveScores error:", error);
       const status = error.message.includes("not found") ? 404 : 400;
       return res.status(status).json({ success: false, message: error.message });
@@ -241,6 +250,7 @@ export default class AppTestController {
         data: summary,
       });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.publishResults error:", error);
       const status = error.message.includes("not found") ? 404 : 400;
       return res.status(status).json({ success: false, message: error.message });
@@ -263,6 +273,7 @@ export default class AppTestController {
       const summary = await testService.getTestSummary(testId, user.id);
       return res.status(200).json({ success: true, data: summary });
     } catch (error: any) {
+      log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.getTestSummary error:", error);
       const status = error.message.includes("not found") ? 404 : 500;
       return res.status(status).json({ success: false, message: error.message });
@@ -288,6 +299,7 @@ export default class AppTestController {
       res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
       return res.send(csv);
     } catch (error: any) {
+      log("error", "app.tests.send failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.exportCsv error:", error);
       const status = error.message.includes("not found") ? 404 : 500;
       return res.status(status).json({ success: false, message: error.message });

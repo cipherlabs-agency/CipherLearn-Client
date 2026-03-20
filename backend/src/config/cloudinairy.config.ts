@@ -1,5 +1,6 @@
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { config } from "./env.config";
+import { log } from "../utils/logtail";
 
 export interface CloudinaryUploadResult {
   url: string;
@@ -114,6 +115,7 @@ export default class CloudinaryService {
 
         stream.end(file.buffer);
       } catch (error: any) {
+        log("error", "end.end failed", { err: error instanceof Error ? error.message : String(error) });
         console.error("Cloudinary upload stream error:", error);
         reject(new Error(`Failed to initiate upload: ${error.message}`));
       }
@@ -138,6 +140,7 @@ export default class CloudinaryService {
     try {
       await cloudinary.uploader.destroy(publicId);
     } catch (error: any) {
+      log("error", "destroy.destroy failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Cloudinary delete error:", error);
       throw new Error(`Failed to delete file: ${error.message}`);
     }

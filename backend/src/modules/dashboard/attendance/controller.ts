@@ -6,6 +6,7 @@ import {
   AttendanceReportQuery,
   QRAttendanceInput,
 } from "./types";
+import { log } from "../../../utils/logtail";
 
 const attendanceService = new AttendanceService();
 
@@ -25,6 +26,7 @@ export default class AttendanceController {
         data: attendanceSheet,
       });
     } catch (error) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res
         .status(500)
         .json({ success: false, message: `Internal Server Error: ${error}` });
@@ -44,6 +46,7 @@ export default class AttendanceController {
         data: attendance,
       });
     } catch (error) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res
         .status(500)
         .json({ success: false, message: `Internal Server Error: ${error}` });
@@ -78,6 +81,7 @@ export default class AttendanceController {
         data: result,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       return res.status(500).json({
         success: false,
         message: error.message || "Failed to mark bulk attendance",
@@ -110,6 +114,7 @@ export default class AttendanceController {
         data: updated,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       if (error.message === "Attendance record not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -133,6 +138,7 @@ export default class AttendanceController {
         data: attendanceSheets,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Batch not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -166,6 +172,7 @@ export default class AttendanceController {
         data: attendances,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Batch not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -203,6 +210,7 @@ export default class AttendanceController {
         data: result,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("getStudentAttendanceHandler error:", error);
       return res
         .status(500)
@@ -238,6 +246,7 @@ export default class AttendanceController {
         data: report,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Batch not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -273,6 +282,7 @@ export default class AttendanceController {
         data: qrData,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Batch not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -312,6 +322,7 @@ export default class AttendanceController {
         data: result.attendance,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({
         success: false,
         message: error.message || "Failed to mark QR attendance",
@@ -343,6 +354,7 @@ export default class AttendanceController {
         data: history,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({
         success: false,
         message: error.message || "Failed to fetch attendance history",

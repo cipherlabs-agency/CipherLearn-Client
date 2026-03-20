@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import AppLectureService from "./service";
 import logger from "../../../utils/logger";
 import { UserRoles } from "../../../../prisma/generated/prisma/enums";
+import { log } from "../../../utils/logtail";
 
 const lectureService = new AppLectureService();
 
@@ -30,6 +31,7 @@ export default class AppLectureController {
 
       return res.status(403).json({ success: false, message: "Access denied" });
     } catch (error: any) {
+      log("error", "app.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppLectureController.getMySchedule error:", error);
       return res.status(500).json({
         success: false,
@@ -47,6 +49,7 @@ export default class AppLectureController {
         data: lecture,
       });
     } catch (error: any) {
+      log("error", "app.lectures.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AppLectureController.getLectureById error:", error);
 
       if (error.message === "Lecture not found") {
@@ -80,6 +83,7 @@ export default class AppLectureController {
         data: lecture,
       });
     } catch (error: any) {
+      log("error", "app.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppLectureController.addNotes error:", error);
 
       if (error.message.includes("not found")) {
@@ -111,6 +115,7 @@ export default class AppLectureController {
         data: lecture,
       });
     } catch (error: any) {
+      log("error", "app.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppLectureController.markComplete error:", error);
 
       if (error.message.includes("not found")) {

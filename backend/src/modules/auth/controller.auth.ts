@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { SignupData, LoginData } from "./types.auth";
 import AuthService from "./service.auth";
 import logger from "../../utils/logger";
+import { log } from "../../utils/logtail";
 
 const authService = new AuthService();
 
@@ -26,6 +27,7 @@ export default class AuthController {
         message: "Registration successful",
       });
     } catch (error) {
+      log("error", "auth.status failed", { err: error instanceof Error ? error.message : String(error) });
       const message =
         error instanceof Error ? error.message : "Registration failed";
 
@@ -62,6 +64,7 @@ export default class AuthController {
         },
       });
     } catch (error) {
+      log("error", "auth.status failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Login failed";
 
       logger.error(`Login failed for ${req.body.email}: ${message}`);
@@ -97,6 +100,7 @@ export default class AuthController {
 
       return res.status(200).json({ success: true, message: "Logged out" });
     } catch (error) {
+      log("error", "auth.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("logout error:", error);
       return res.status(500).json({ success: false, message: "Logout failed" });
     }
@@ -122,6 +126,7 @@ export default class AuthController {
         message: "Password reset instructions have been sent to your email.",
       });
     } catch (error) {
+      log("error", "auth.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("forgotPassword controller error:", error);
       return res
         .status(500)
@@ -153,6 +158,7 @@ export default class AuthController {
         .status(200)
         .json({ success: true, message: "Password reset successful" });
     } catch (error) {
+      log("error", "auth.json failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("resetPassword controller error:", error);
       return res
         .status(500)
@@ -180,6 +186,7 @@ export default class AuthController {
         user: updatedUser,
       });
     } catch (error) {
+      log("error", "auth.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("updateProfile error:", error);
       return res
         .status(500)

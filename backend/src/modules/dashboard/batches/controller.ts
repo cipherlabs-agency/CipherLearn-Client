@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { Prisma, User } from "../../../../prisma/generated/prisma/client";
 import BatchService from "./service";
 import logger from "../../../utils/logger";
+import { log } from "../../../utils/logtail";
 
 const batchService = new BatchService();
 
@@ -35,6 +36,7 @@ export default class BatchController {
         .status(201)
         .json({ success: true, message: "Batch created", data: created });
     } catch (error) {
+      log("error", "dashboard.batches.json failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("Batch.create error:", error);
       return res
         .status(500)
@@ -55,6 +57,7 @@ export default class BatchController {
         .status(200)
         .json({ success: true, message: "Batch updated", data: updated });
     } catch (error) {
+      log("error", "dashboard.batches.json failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("Batch.update error:", error);
       if ((error as Error).message?.includes("not found"))
         return res
@@ -98,6 +101,7 @@ export default class BatchController {
 
       return res.status(200).json({ success: true, batches: formattedBatches });
     } catch (error) {
+      log("error", "dashboard.batches.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("Batch.getAll error:", error);
       return res
         .status(500)
@@ -111,6 +115,7 @@ export default class BatchController {
       const batch = await batchService.getById(Number(id));
       return res.status(200).json({ success: true, data: batch });
     } catch (error) {
+      log("error", "dashboard.batches.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("Batch.get error:", error);
       return res
         .status(404)
@@ -134,6 +139,7 @@ export default class BatchController {
         .status(200)
         .json({ success: true, message: "Batches drafted", result });
     } catch (error) {
+      log("error", "dashboard.batches.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("Batch.draft error:", error);
       return res
         .status(500)
@@ -146,6 +152,7 @@ export default class BatchController {
       const drafts = await batchService.getDrafts();
       return res.status(200).json({ success: true, batches: drafts });
     } catch (error) {
+      log("error", "dashboard.batches.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("Batch.getDrafts error:", error);
       return res
         .status(500)
@@ -171,6 +178,7 @@ export default class BatchController {
         .status(200)
         .json({ success: true, message: "Batches restored", data: result });
     } catch (error) {
+      log("error", "dashboard.batches.json failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("Batch.restore error:", error);
       return res
         .status(500)
@@ -192,6 +200,7 @@ export default class BatchController {
         .status(200)
         .json({ success: true, message: "Batches deleted", result });
     } catch (error) {
+      log("error", "dashboard.batches.json failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("Batch.delete error:", error);
       return res
         .status(500)
@@ -221,6 +230,7 @@ export default class BatchController {
         data: result,
       });
     } catch (error) {
+      log("error", "dashboard.batches.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("Batch.hardDelete error:", error);
       return res.status(500).json({
         success: false,
@@ -245,6 +255,7 @@ export default class BatchController {
         data: result,
       });
     } catch (error) {
+      log("error", "dashboard.batches.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("Batch.purgeDeleted error:", error);
       return res.status(500).json({
         success: false,

@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { notificationsService } from "./service";
 import logger from "../../../utils/logger";
 import type { UpdateNotificationPreferencesInput, RegisterDeviceInput } from "./types";
+import { log } from "../../../utils/logtail";
 
 class NotificationsController {
   /**
@@ -27,6 +28,7 @@ class NotificationsController {
         data: preferences,
       });
     } catch (error) {
+      log("error", "app.notifications.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("NotificationsController.getPreferences error:", error);
       return res.status(500).json({
         success: false,
@@ -82,6 +84,7 @@ class NotificationsController {
         data: preferences,
       });
     } catch (error) {
+      log("error", "app.notifications.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("NotificationsController.updatePreferences error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to save preferences";
@@ -115,6 +118,7 @@ class NotificationsController {
 
       return res.status(200).json({ success: true, message: "Device registered for push notifications" });
     } catch (error) {
+      log("error", "app.notifications.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("NotificationsController.registerDevice error:", error);
       const message = error instanceof Error ? error.message : "Failed to register device";
       return res.status(400).json({ success: false, message });
@@ -143,6 +147,7 @@ class NotificationsController {
 
       return res.status(200).json({ success: true, message: "Device deregistered" });
     } catch (error) {
+      log("error", "app.notifications.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("NotificationsController.deregisterDevice error:", error);
       return res.status(500).json({ success: false, message: "Failed to deregister device" });
     }

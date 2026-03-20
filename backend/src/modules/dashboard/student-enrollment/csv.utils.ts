@@ -1,4 +1,5 @@
 import { CSVStudentRow, CSVImportError } from "./types";
+import { log } from "../../../utils/logtail";
 
 /**
  * Parse CSV content to array of student rows
@@ -48,6 +49,7 @@ export function parseCSV(content: string): {
         rows.push(row);
       }
     } catch (error: any) {
+      log("error", "dashboard.student-enrollment.push failed", { err: error instanceof Error ? error.message : String(error) });
       errors.push({ row: i + 1, error: `Failed to parse row: ${error.message}` });
     }
   }

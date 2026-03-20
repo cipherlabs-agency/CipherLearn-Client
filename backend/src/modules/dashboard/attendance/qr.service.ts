@@ -11,6 +11,7 @@ import {
   decodeQRPayload,
 } from "./qr.utils";
 import QRCode from "qrcode";
+import { log } from "../../../utils/logtail";
 
 /**
  * QR Attendance Service
@@ -142,6 +143,7 @@ export class QRAttendanceService {
       });
       return qrImageDataUrl;
     } catch (error) {
+      log("error", "dashboard.attendance.toDataURL failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Failed to generate QR code image:", error);
       throw new Error("Failed to generate QR code image");
     }
@@ -344,6 +346,7 @@ export class QRAttendanceService {
         attendance,
       };
     } catch (error: any) {
+      log("error", "dashboard.attendance.Date failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("QR Attendance error:", error);
       return { success: false, message: error.message || "Failed to mark attendance" };
     }

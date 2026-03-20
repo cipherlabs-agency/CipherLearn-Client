@@ -8,6 +8,7 @@ import {
     sendDm,
     refreshLongLivedToken,
 } from "./instagram.utils";
+import { log } from "../../../utils/logtail";
 
 // ─── Types ────────────────────────────────────
 
@@ -145,6 +146,7 @@ export class InstagramService {
                 });
                 account.accessToken = refreshed.accessToken;
             } catch (err) {
+              log("error", "dashboard.instagram.Date failed", { err: err instanceof Error ? err.message : String(err) });
                 logger.warn("Token refresh failed, using existing token");
             }
         }

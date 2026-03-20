@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { config } from "../../../config/env.config";
+import { log } from "../../../utils/logtail";
 
 /**
  * QR Code Utilities for Attendance System
@@ -73,6 +74,7 @@ export function verifyQRPayload(payload: QRPayload): QRVerificationResult {
 
     return { valid: true, batchId, date: payloadDateString };
   } catch (error) {
+    log("error", "dashboard.attendance.generateQRToken failed", { err: error instanceof Error ? error.message : String(error) });
     return { valid: false, error: "Failed to verify QR code" };
   }
 }

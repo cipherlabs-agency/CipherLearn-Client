@@ -10,6 +10,7 @@
 
 import { prisma } from "../config/db.config";
 import logger from "./logger";
+import { log } from "./logtail";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
@@ -83,6 +84,7 @@ async function sendExpoPushMessages(messages: ExpoPushMessage[]): Promise<void> 
       logger.warn(`Push notification failures: ${failures.length}/${messages.length}`, failures);
     }
   } catch (error) {
+    log("error", "warn.warn failed", { err: error instanceof Error ? error.message : String(error) });
     logger.error("Failed to send push notifications:", error);
   }
 }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import NotesService from "./service";
 import { GetNotesQuery } from "./types";
+import { log } from "../../../utils/logtail";
 
 const notesService = new NotesService();
 
@@ -31,6 +32,7 @@ export default class NotesController {
         data: note,
       });
     } catch (error: any) {
+      log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Controller error - createNote:", error);
 
       // Handle specific errors
@@ -89,6 +91,7 @@ export default class NotesController {
         pagination: result.pagination,
       });
     } catch (error: any) {
+      log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Controller error - getNotes:", error);
 
       res.status(500).json({
@@ -121,6 +124,7 @@ export default class NotesController {
         data: note,
       });
     } catch (error: any) {
+      log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Controller error - getNoteById:", error);
 
       if (error.message.includes("not found")) {
@@ -164,6 +168,7 @@ export default class NotesController {
         data: note,
       });
     } catch (error: any) {
+      log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Controller error - updateNote:", error);
 
       if (error.message.includes("not found")) {
@@ -221,6 +226,7 @@ export default class NotesController {
         message: "Note deleted successfully",
       });
     } catch (error: any) {
+      log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Controller error - deleteNote:", error);
 
       if (error.message.includes("not found")) {

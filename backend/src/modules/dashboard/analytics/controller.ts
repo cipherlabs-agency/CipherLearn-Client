@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import AnalyticsService from "./service";
+import { log } from "../../../utils/logtail";
 
 export default class AnalyticsController {
   private analyticsService: AnalyticsService;
@@ -22,6 +23,7 @@ export default class AnalyticsController {
       );
       return res.status(200).json({ totalStudents: count });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({ error: `Internal Server Error: ${error}` });
     }
   }
@@ -31,6 +33,7 @@ export default class AnalyticsController {
       const count = await this.analyticsService.getTotalStudentsCount();
       return res.status(200).json({ totalStudents: count });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({ error: `Internal Server Error: ${error}` });
     }
   }
@@ -40,6 +43,7 @@ export default class AnalyticsController {
       const count = await this.analyticsService.getTotalBatchesCount();
       return res.status(200).json({ totalBatches: count });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({ error: `Internal Server Error: ${error}` });
     }
   }
@@ -61,6 +65,7 @@ export default class AnalyticsController {
         await this.analyticsService.getAttendanceMatrixOfDay(batchId, date);
       return res.status(200).json({ attendanceMatrix });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({ error: `Internal Server Error: ${error}` });
     }
   }
@@ -88,6 +93,7 @@ export default class AnalyticsController {
         );
       return res.status(200).json({ attendanceMatrix });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({ error: `Internal Server Error: ${error}` });
     }
   }
@@ -106,6 +112,7 @@ export default class AnalyticsController {
         data: trends,
       });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({
         success: false,
         message: `Failed to get enrollment trends: ${error}`,
@@ -128,6 +135,7 @@ export default class AnalyticsController {
         data: trends,
       });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({
         success: false,
         message: `Failed to get attendance trends: ${error}`,
@@ -150,6 +158,7 @@ export default class AnalyticsController {
         data: trends,
       });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({
         success: false,
         message: `Failed to get monthly attendance trends: ${error}`,
@@ -170,6 +179,7 @@ export default class AnalyticsController {
         data: stats,
       });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({
         success: false,
         message: `Failed to get dashboard stats: ${error}`,
@@ -190,6 +200,7 @@ export default class AnalyticsController {
         data: distribution,
       });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({
         success: false,
         message: `Failed to get batch distribution: ${error}`,
@@ -211,6 +222,7 @@ export default class AnalyticsController {
         data: activities,
       });
     } catch (error) {
+      log("error", "dashboard.analytics.status failed", { err: error instanceof Error ? error.message : String(error) });
       return res.status(500).json({
         success: false,
         message: `Failed to get recent activities: ${error}`,

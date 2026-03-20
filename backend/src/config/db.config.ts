@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, Prisma } from "../../prisma/generated/prisma/client";
 import { config } from "./env.config";
+import { log } from "../utils/logtail";
 
 export class Database {
   private adapter: PrismaPg;
@@ -36,6 +37,7 @@ export class Database {
       await this.prisma.$connect();
       console.log("Connected to the database successfully.");
     } catch (error) {
+      log("error", "log.log failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Error connecting to the database:", error);
       process.exit(1);
     }
@@ -46,6 +48,7 @@ export class Database {
       await this.prisma.$disconnect();
       console.log("Disconnected from the database.");
     } catch (error) {
+      log("error", "log.log failed", { err: error instanceof Error ? error.message : String(error) });
       console.error("Error during disconnect:", error);
     }
   }

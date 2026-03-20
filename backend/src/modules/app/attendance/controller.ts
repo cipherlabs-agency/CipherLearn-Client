@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { attendanceService } from "./service";
 import logger from "../../../utils/logger";
 import type { AttendanceHistoryQuery, MarkAttendanceInput } from "./types";
+import { log } from "../../../utils/logtail";
 
 class AttendanceController {
   /**
@@ -28,6 +29,7 @@ class AttendanceController {
         data: attendance,
       });
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AttendanceController.getAttendance error:", error);
       return res.status(500).json({
         success: false,
@@ -68,6 +70,7 @@ class AttendanceController {
         data: history,
       });
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AttendanceController.getHistory error:", error);
       return res.status(500).json({
         success: false,
@@ -105,6 +108,7 @@ class AttendanceController {
         data: calendar,
       });
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AttendanceController.getCalendar error:", error);
       return res.status(500).json({
         success: false,
@@ -150,6 +154,7 @@ class AttendanceController {
 
       return res.status(result.success ? 200 : 400).json(result);
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AttendanceController.markQRAttendance error:", error);
       return res.status(500).json({
         success: false,
@@ -169,6 +174,7 @@ class AttendanceController {
       const batches = await attendanceService.getBatches();
       return res.status(200).json({ success: true, data: batches });
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AttendanceController.getBatches error:", error);
       return res.status(500).json({ success: false, message: "Failed to get batches" });
     }
@@ -188,6 +194,7 @@ class AttendanceController {
       const students = await attendanceService.getBatchStudents(batchId);
       return res.status(200).json({ success: true, data: students });
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AttendanceController.getBatchStudents error:", error);
       return res.status(500).json({ success: false, message: "Failed to get students" });
     }
@@ -236,6 +243,7 @@ class AttendanceController {
         data: result,
       });
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AttendanceController.markTeacherAttendance error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to mark attendance";
@@ -265,6 +273,7 @@ class AttendanceController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AttendanceController.getTeacherReports error:", error);
       return res.status(500).json({ success: false, message: "Failed to get reports" });
     }
@@ -290,6 +299,7 @@ class AttendanceController {
 
       return res.status(200).json({ success: true, data: records });
     } catch (error) {
+      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AttendanceController.getDateDetail error:", error);
       return res.status(500).json({ success: false, message: "Failed to get attendance detail" });
     }

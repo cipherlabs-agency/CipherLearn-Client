@@ -1,6 +1,7 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { config } from "../../config/env.config";
 import bcryptjs from "bcryptjs";
+import { log } from "../../utils/logtail";
 
 interface LoginTokenPayload {
   id: number;
@@ -24,6 +25,7 @@ export const verifyToken = (token: string) => {
   try {
     return jwt.verify(token, config.JWT.SECRET) as JwtPayload;
   } catch (error) {
+    log("error", "auth.verify failed", { err: error instanceof Error ? error.message : String(error) });
     if (error instanceof jwt.TokenExpiredError) {
       throw new Error("Token has expired");
     } else if (error instanceof jwt.JsonWebTokenError) {

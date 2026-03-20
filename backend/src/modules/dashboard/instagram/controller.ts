@@ -3,6 +3,7 @@ import { instagramService } from "./service";
 import { automationEngine } from "./automation.engine";
 import { config } from "../../../config/env.config";
 import logger from "../../../utils/logger";
+import { log } from "../../../utils/logtail";
 
 export class InstagramController {
     /**
@@ -19,6 +20,7 @@ export class InstagramController {
             const url = instagramService.getOAuthUrl(String(userId));
             res.json({ success: true, data: { url } });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to generate OAuth URL";
             res.status(500).json({ success: false, message });
@@ -52,6 +54,7 @@ export class InstagramController {
             // Redirect back to the frontend Instagram page
             res.redirect(`${clientUrl}/instagram?connected=true`);
         } catch (error) {
+          log("error", "dashboard.instagram.redirect failed", { err: error instanceof Error ? error.message : String(error) });
             const message =
                 error instanceof Error
                     ? error.message
@@ -80,6 +83,7 @@ export class InstagramController {
                 message: "Instagram account disconnected",
             });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to disconnect";
             res.status(500).json({ success: false, message });
@@ -99,6 +103,7 @@ export class InstagramController {
             const account = await instagramService.getAccount(userId);
             res.json({ success: true, data: account });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to fetch account";
             res.status(500).json({ success: false, message });
@@ -119,6 +124,7 @@ export class InstagramController {
             const media = await instagramService.fetchMedia(userId, after);
             res.json({ success: true, data: media });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to fetch media";
             res.status(500).json({ success: false, message });
@@ -141,6 +147,7 @@ export class InstagramController {
                 : await instagramService.getRules(userId);
             res.json({ success: true, data: rules });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to fetch rules";
             res.status(500).json({ success: false, message });
@@ -185,6 +192,7 @@ export class InstagramController {
                 data: rule,
             });
         } catch (error) {
+          log("error", "dashboard.instagram.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to create rule";
             res.status(500).json({ success: false, message });
@@ -218,6 +226,7 @@ export class InstagramController {
                 data: rule,
             });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error) });
             const message =
                 error instanceof Error ? error.message : "Failed to update rule";
             res.status(500).json({ success: false, message });
@@ -238,6 +247,7 @@ export class InstagramController {
             await instagramService.deleteRule(userId, ruleId);
             res.json({ success: true, message: "Rule deleted" });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to delete rule";
             res.status(500).json({ success: false, message });
@@ -270,6 +280,7 @@ export class InstagramController {
                 pagination: result.pagination,
             });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to fetch logs";
             res.status(500).json({ success: false, message });
@@ -289,6 +300,7 @@ export class InstagramController {
             const analytics = await instagramService.getAnalytics(userId);
             res.json({ success: true, data: analytics });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to fetch analytics";
             res.status(500).json({ success: false, message });
@@ -316,6 +328,7 @@ export class InstagramController {
                 pagination: result.pagination,
             });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message =
                 error instanceof Error ? error.message : "Failed to fetch logs";
             res.status(500).json({ success: false, message });
@@ -411,6 +424,7 @@ export class InstagramController {
                 }
             }
         } catch (error) {
+          log("error", "dashboard.instagram.processMessageWebhook failed", { err: error instanceof Error ? error.message : String(error) });
             logger.error("Webhook processing error:", error);
         }
     }
@@ -469,6 +483,7 @@ export class InstagramController {
                 message: `Webhook simulated for media ${activeRule.mediaId} with keyword "${commentText}". Check your DM logs.`,
             });
         } catch (error) {
+          log("error", "dashboard.instagram.json failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
             const message = error instanceof Error ? error.message : "Test failed";
             res.status(500).json({ success: false, message });
         }

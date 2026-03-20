@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { profileService } from "./service";
 import logger from "../../../utils/logger";
+import { log } from "../../../utils/logtail";
 
 class ProfileController {
   /**
@@ -17,6 +18,7 @@ class ProfileController {
       const profile = await profileService.getProfile(student.id);
       return res.status(200).json({ success: true, data: profile });
     } catch (error) {
+      log("error", "app.profile.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ProfileController.getProfile error:", error);
       return res.status(500).json({ success: false, message: `Failed to get profile: ${error}` });
     }
@@ -37,6 +39,7 @@ class ProfileController {
       const updated = await profileService.updateStudentProfile(student.id, { phone, address, parentName });
       return res.status(200).json({ success: true, message: "Profile updated", data: updated });
     } catch (error) {
+      log("error", "app.profile.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ProfileController.updateProfile error:", error);
       return res.status(500).json({ success: false, message: "Failed to update profile" });
     }
@@ -52,6 +55,7 @@ class ProfileController {
       const profile = await profileService.getTeacherProfile(user.id);
       return res.status(200).json({ success: true, data: profile });
     } catch (error: any) {
+      log("error", "app.profile.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ProfileController.getTeacherProfile error:", error);
       if (error.message === "Teacher not found") {
         return res.status(404).json({ success: false, message: error.message });
@@ -86,6 +90,7 @@ class ProfileController {
       });
       return res.status(200).json({ success: true, message: "Profile updated", data: updated });
     } catch (error) {
+      log("error", "app.profile.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ProfileController.updateTeacherProfile error:", error);
       return res.status(500).json({ success: false, message: "Failed to update teacher profile" });
     }
@@ -111,6 +116,7 @@ class ProfileController {
       }
       return res.status(200).json({ success: true, data: teacher });
     } catch (error) {
+      log("error", "app.profile.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ProfileController.getMyTeacher error:", error);
       return res.status(500).json({ success: false, message: "Failed to get teacher info" });
     }

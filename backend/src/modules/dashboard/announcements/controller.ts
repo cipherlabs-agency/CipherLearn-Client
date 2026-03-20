@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { announcementService } from "./service";
 import { AnnouncementPriority } from "../../../../prisma/generated/prisma/enums";
+import { log } from "../../../utils/logtail";
 
 export class AnnouncementController {
   async create(req: Request, res: Response): Promise<void> {
@@ -29,6 +30,7 @@ export class AnnouncementController {
         data: announcement,
       });
     } catch (error) {
+      log("error", "dashboard.announcements.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       const message = error instanceof Error ? error.message : "Failed to create announcement";
       res.status(500).json({ success: false, message });
     }
@@ -51,6 +53,7 @@ export class AnnouncementController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "dashboard.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch announcements";
       res.status(500).json({ success: false, message });
     }
@@ -68,6 +71,7 @@ export class AnnouncementController {
 
       res.json({ success: true, data: announcement });
     } catch (error) {
+      log("error", "dashboard.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch announcement";
       res.status(500).json({ success: false, message });
     }
@@ -99,6 +103,7 @@ export class AnnouncementController {
         data: announcement,
       });
     } catch (error) {
+      log("error", "dashboard.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to update announcement";
       res.status(500).json({ success: false, message });
     }
@@ -110,6 +115,7 @@ export class AnnouncementController {
       await announcementService.delete(parseInt(id, 10));
       res.json({ success: true, message: "Announcement deleted successfully" });
     } catch (error) {
+      log("error", "dashboard.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to delete announcement";
       res.status(500).json({ success: false, message });
     }
@@ -120,6 +126,7 @@ export class AnnouncementController {
       const announcements = await announcementService.getActiveAnnouncements();
       res.json({ success: true, data: announcements });
     } catch (error) {
+      log("error", "dashboard.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch announcements";
       res.status(500).json({ success: false, message });
     }

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { config } from "../../../config/env.config";
 import logger from "../../../utils/logger";
+import { log } from "../../../utils/logtail";
 
 /**
  * Instagram Graph API v25.0 (released Feb 18, 2026)
@@ -231,6 +232,7 @@ export async function sendPrivateReply(
             messageId: res.data.message_id,
         };
     } catch (err: any) {
+      log("error", "dashboard.instagram.post failed", { err: err instanceof Error ? err.message : String(err) });
         const errorMsg =
             err.response?.data?.error?.message || err.message || "Unknown error";
         throw new Error(errorMsg);
@@ -263,6 +265,7 @@ export async function sendDirectTextDm(
             messageId: res.data.message_id,
         };
     } catch (err: any) {
+      log("error", "dashboard.instagram.post failed", { err: err instanceof Error ? err.message : String(err) });
         const errorMsg =
             err.response?.data?.error?.message || err.message || "Unknown error";
         throw new Error(errorMsg);
@@ -318,6 +321,7 @@ export async function sendGenericTemplate(
             messageId: res.data.message_id,
         };
     } catch (err: any) {
+      log("error", "dashboard.instagram.slice failed", { err: err instanceof Error ? err.message : String(err) });
         const errorMsg =
             err.response?.data?.error?.message || err.message || "Unknown error";
         throw new Error(errorMsg);
@@ -347,6 +351,7 @@ export async function sendDm(
             // This will only succeed if the 24h messaging window is already open.
             return await sendGenericTemplate(igUserId, commenterId, dmMessage, dmButtons, accessToken);
         } catch (err: any) {
+          log("error", "dashboard.instagram.sendGenericTemplate failed", { err: err instanceof Error ? err.message : String(err) });
             logger.warn(`Template DM failed for ${commenterId}. Falling back to text-only Private Reply.`);
 
             // Build the fallback string appending button URLs
@@ -416,6 +421,7 @@ export async function sendFollowGateDM(
             messageId: res.data.message_id,
         };
     } catch (err: any) {
+      log("error", "dashboard.instagram.post failed", { err: err instanceof Error ? err.message : String(err) });
         // FALLBACK: If they don't have an open window, it throws "outside allowed window".
         // We fallback to ONE standard Private Reply via comment_id.
         // We cannot use postback buttons in plain text, so we ask them to reply with the keyword to open the window.

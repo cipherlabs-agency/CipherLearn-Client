@@ -1,5 +1,6 @@
 import { prisma } from "../config/db.config";
 import logger from "./logger";
+import { log } from "./logtail";
 
 /**
  * Clean up expired password reset tokens
@@ -19,6 +20,7 @@ export const cleanupExpiredPasswordResetTokens = async (): Promise<void> => {
       logger.info(`Cleaned up ${result.count} expired/used password reset tokens`);
     }
   } catch (error) {
+    log("error", "info.info failed", { err: error instanceof Error ? error.message : String(error) });
     logger.error("Error cleaning up password reset tokens:", error);
   }
 };
@@ -38,6 +40,7 @@ export const cleanupExpiredBlacklistedTokens = async (): Promise<void> => {
       logger.info(`Cleaned up ${result.count} expired blacklisted tokens`);
     }
   } catch (error) {
+    log("error", "info.info failed", { err: error instanceof Error ? error.message : String(error) });
     logger.error("Error cleaning up blacklisted tokens:", error);
   }
 };
@@ -60,6 +63,7 @@ export const cleanupOldLoginAttempts = async (): Promise<void> => {
       logger.info(`Cleaned up ${result.count} old login attempts`);
     }
   } catch (error) {
+    log("error", "info.info failed", { err: error instanceof Error ? error.message : String(error) });
     logger.error("Error cleaning up login attempts:", error);
   }
 };

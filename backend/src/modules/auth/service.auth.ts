@@ -11,6 +11,7 @@ import {
 } from "./utils.auth";
 import { sendAdminPasswordResetEmail } from "../../utils/email";
 import logger from "../../utils/logger";
+import { log } from "../../utils/logtail";
 
 export default class AuthService {
   async signup(data: SignupData): Promise<boolean> {
@@ -50,6 +51,7 @@ export default class AuthService {
 
       return true;
     } catch (error) {
+      log("error", "auth.Error failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Signup failed";
       throw new Error(message);
     }
@@ -99,6 +101,7 @@ export default class AuthService {
 
       return { user: safeUser, token };
     } catch (error) {
+      log("error", "auth.generateLoginToken failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Login failed";
       throw new Error(message);
     }
@@ -118,6 +121,7 @@ export default class AuthService {
         },
       });
     } catch (error) {
+      log("error", "auth.create failed", { err: error instanceof Error ? error.message : String(error) });
       // Token may already be expired or invalid; still treat logout as success
       logger.warn(`Dashboard logout: could not blacklist token — ${error}`);
     }
@@ -141,6 +145,7 @@ export default class AuthService {
 
       return true;
     } catch (error) {
+      log("error", "auth.update failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("resetPassword error:", error);
       return false;
     }
@@ -160,6 +165,7 @@ export default class AuthService {
       });
       return user;
     } catch (error) {
+      log("error", "auth.update failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -182,6 +188,7 @@ export default class AuthService {
 
       return { ok: true };
     } catch (error) {
+      log("error", "auth.error failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("forgotPassword error:", error);
       return { ok: false };
     }

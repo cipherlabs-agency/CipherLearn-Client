@@ -3,6 +3,7 @@ import TestService from "./service";
 import logger from "../../../utils/logger";
 import { CreateTestInput, UpdateTestInput, UploadScoreInput, GetTestsQuery } from "./types";
 import { TestStatus, TestType, ScoreStatus } from "../../../../prisma/generated/prisma/enums";
+import { log } from "../../../utils/logtail";
 
 const testService = new TestService();
 
@@ -22,6 +23,7 @@ export default class TestController {
         data: test,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("TestController.create error:", error);
 
       if (error.message.includes("not found")) {
@@ -57,6 +59,7 @@ export default class TestController {
         pagination: result.pagination,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("TestController.getAll error:", error);
       return res.status(500).json({
         success: false,
@@ -74,6 +77,7 @@ export default class TestController {
         data: test,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("TestController.getById error:", error);
 
       if (error.message === "Test not found") {
@@ -100,6 +104,7 @@ export default class TestController {
         data: test,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("TestController.update error:", error);
 
       if (error.message.includes("not found")) {
@@ -127,6 +132,7 @@ export default class TestController {
         message: "Test deleted successfully",
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("TestController.delete error:", error);
 
       if (error.message === "Test not found") {
@@ -152,6 +158,7 @@ export default class TestController {
         data: test,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("TestController.publish error:", error);
 
       if (error.message === "Test not found") {
@@ -180,6 +187,7 @@ export default class TestController {
         data: score,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("TestController.uploadScore error:", error);
 
       if (error.message.includes("not found")) {
@@ -242,6 +250,7 @@ export default class TestController {
         data: result,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("TestController.uploadScoresBulk error:", error);
 
       if (error.message === "Test not found") {
@@ -272,6 +281,7 @@ export default class TestController {
         data: score,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("TestController.updateScore error:", error);
 
       if (error.message.includes("not found")) {
@@ -297,6 +307,7 @@ export default class TestController {
         data: stats,
       });
     } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("TestController.getStats error:", error);
 
       if (error.message === "Test not found") {

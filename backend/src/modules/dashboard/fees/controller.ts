@@ -22,6 +22,7 @@ import {
   BulkCreateReceiptsInput,
   FeeReceiptFilters,
 } from "./types";
+import { log } from "../../../utils/logtail";
 
 const feesService = new FeesService();
 
@@ -52,6 +53,7 @@ export default class FeesController {
         data: structure,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.createFeeStructure error:", err);
 
       if (err.message.includes("not found")) {
@@ -87,6 +89,7 @@ export default class FeesController {
         data: structures,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.getFeeStructuresByBatch error:", err);
 
       return res.status(500).json({
@@ -124,6 +127,7 @@ export default class FeesController {
         data: structure,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.updateFeeStructure error:", err);
 
       if (err.message.includes("not found")) {
@@ -161,6 +165,7 @@ export default class FeesController {
         message: "Fee structure deleted successfully",
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.deleteFeeStructure error:", err);
 
       if (err.message.includes("not found")) {
@@ -205,6 +210,7 @@ export default class FeesController {
         data: receipt,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err), userId: req.user?.id });
       logger.error("FeesController.createReceipt error:", err);
 
       if (err.message.includes("not found")) {
@@ -248,6 +254,7 @@ export default class FeesController {
         data: result,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.receipts failed", { err: err instanceof Error ? err.message : String(err), userId: req.user?.id });
       logger.error("FeesController.bulkCreateReceipts error:", err);
 
       if (err.message.includes("not found")) {
@@ -290,6 +297,7 @@ export default class FeesController {
         },
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.getReceipts error:", err);
 
       return res.status(500).json({
@@ -318,6 +326,7 @@ export default class FeesController {
         data: receipt,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.getReceiptById error:", err);
 
       if (err.message.includes("not found")) {
@@ -364,6 +373,7 @@ export default class FeesController {
         data: receipt,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err), userId: req.user?.id });
       logger.error("FeesController.updateReceipt error:", err);
 
       if (err.message.includes("not found")) {
@@ -398,6 +408,7 @@ export default class FeesController {
         message: "Receipt deleted successfully",
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.deleteReceipt error:", err);
 
       if (err.message.includes("not found")) {
@@ -434,6 +445,7 @@ export default class FeesController {
         data: summary,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.getReceiptsSummary error:", err);
 
       return res.status(500).json({
@@ -462,6 +474,7 @@ export default class FeesController {
         data: summary,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.getStudentFeesSummary error:", err);
 
       if (err.message.includes("not found")) {
@@ -520,6 +533,7 @@ export default class FeesController {
 
       logger.info(`PDF generated for receipt: ${receipt.receiptNumber}`);
     } catch (err: any) {
+      log("error", "dashboard.fees.info failed", { err: err instanceof Error ? err.message : String(err) });
       logger.error("FeesController.downloadReceiptPDF error:", err);
 
       if (err.message.includes("not found")) {
@@ -565,6 +579,7 @@ export default class FeesController {
         data: receipts,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err), userId: req.user?.id });
       logger.error("FeesController.getMyReceipts error:", err);
 
       return res.status(500).json({
@@ -602,6 +617,7 @@ export default class FeesController {
         data: summary,
       });
     } catch (err: any) {
+      log("error", "dashboard.fees.status failed", { err: err instanceof Error ? err.message : String(err), userId: req.user?.id });
       logger.error("FeesController.getMySummary error:", err);
 
       return res.status(500).json({

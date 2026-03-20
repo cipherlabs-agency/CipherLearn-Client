@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { dashboardService } from "./service";
 import logger from "../../../utils/logger";
+import { log } from "../../../utils/logtail";
 
 class DashboardController {
   /**
@@ -24,6 +25,7 @@ class DashboardController {
         data: dashboard,
       });
     } catch (error) {
+      log("error", "app.dashboard.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("DashboardController.getDashboard error:", error);
       return res.status(500).json({
         success: false,
@@ -53,6 +55,7 @@ class DashboardController {
         data: lectures,
       });
     } catch (error) {
+      log("error", "app.dashboard.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("DashboardController.getTodayLectures error:", error);
       return res.status(500).json({
         success: false,
@@ -82,6 +85,7 @@ class DashboardController {
         data: counts,
       });
     } catch (error) {
+      log("error", "app.dashboard.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("DashboardController.getQuickAccess error:", error);
       return res.status(500).json({
         success: false,

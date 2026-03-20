@@ -5,6 +5,7 @@ import {
   UpdateAssignmentSlotInput,
   ReviewSubmissionInput,
 } from "./types";
+import { log } from "../../../utils/logtail";
 
 export class AssignmentController {
   // ==================== ASSIGNMENT SLOTS ====================
@@ -35,6 +36,7 @@ export class AssignmentController {
         data: slot,
       });
     } catch (error) {
+      log("error", "dashboard.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       const message = error instanceof Error ? error.message : "Failed to create slot";
       res.status(500).json({ success: false, message });
     }
@@ -57,6 +59,7 @@ export class AssignmentController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch slots";
       res.status(500).json({ success: false, message });
     }
@@ -74,6 +77,7 @@ export class AssignmentController {
 
       res.json({ success: true, data: slot });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch slot";
       res.status(500).json({ success: false, message });
     }
@@ -108,6 +112,7 @@ export class AssignmentController {
         data: slot,
       });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to update slot";
       res.status(500).json({ success: false, message });
     }
@@ -119,6 +124,7 @@ export class AssignmentController {
       await assignmentService.deleteSlot(parseInt(id, 10));
       res.json({ success: true, message: "Assignment slot deleted successfully" });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to delete slot";
       res.status(500).json({ success: false, message });
     }
@@ -151,6 +157,7 @@ export class AssignmentController {
         data: submission,
       });
     } catch (error) {
+      log("error", "dashboard.assignments.status failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to submit assignment";
       res.status(500).json({ success: false, message });
     }
@@ -174,6 +181,7 @@ export class AssignmentController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch submissions";
       res.status(500).json({ success: false, message });
     }
@@ -191,6 +199,7 @@ export class AssignmentController {
 
       res.json({ success: true, data: submission });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch submission";
       res.status(500).json({ success: false, message });
     }
@@ -213,6 +222,7 @@ export class AssignmentController {
 
       res.json({ success: true, data: submission });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch submission";
       res.status(500).json({ success: false, message });
     }
@@ -237,6 +247,7 @@ export class AssignmentController {
         data: submission,
       });
     } catch (error) {
+      log("error", "dashboard.assignments.toLowerCase failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       const message = error instanceof Error ? error.message : "Failed to review submission";
       res.status(500).json({ success: false, message });
     }
@@ -248,6 +259,7 @@ export class AssignmentController {
       const stats = await assignmentService.getStudentAssignmentStats(parseInt(studentId, 10));
       res.json({ success: true, data: stats });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch stats";
       res.status(500).json({ success: false, message });
     }
@@ -259,6 +271,7 @@ export class AssignmentController {
       const stats = await assignmentService.getSlotSubmissionStats(parseInt(slotId, 10));
       res.json({ success: true, data: stats });
     } catch (error) {
+      log("error", "dashboard.assignments.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch stats";
       res.status(500).json({ success: false, message });
     }

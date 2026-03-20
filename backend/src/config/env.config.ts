@@ -74,4 +74,9 @@ export const config = {
     ANNOUNCEMENTS: process.env.FEATURE_ANNOUNCEMENTS !== "false",
     VIDEOS: process.env.FEATURE_VIDEOS !== "false",
   },
+  LOGTAIL: {
+    SOURCE_TOKEN: process.env.LOGTAIL_SOURCE_TOKEN || "",
+    INSTANCE_ID: process.env.INSTANCE_ID || "cipherlearn-local",
+    INSTANCE_NAME: process.env.INSTANCE_NAME || "CipherLearn Local",
+  },
 } as const;

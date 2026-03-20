@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import TeacherService from "./service";
 import logger from "../../../utils/logger";
 import { CreateTeacherInput, UpdateTeacherInput } from "./types";
+import { log } from "../../../utils/logtail";
 
 const teacherService = new TeacherService();
 
@@ -31,6 +32,7 @@ export default class TeacherController {
         data: teacher,
       });
     } catch (error: any) {
+      log("error", "dashboard.teachers.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("TeacherController.create error:", error);
 
       if (error.message.includes("already exists")) {
@@ -57,6 +59,7 @@ export default class TeacherController {
         data: teachers,
       });
     } catch (error: any) {
+      log("error", "dashboard.teachers.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("TeacherController.getAll error:", error);
 
       return res.status(500).json({
@@ -81,6 +84,7 @@ export default class TeacherController {
         data: teacher,
       });
     } catch (error: any) {
+      log("error", "dashboard.teachers.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("TeacherController.getById error:", error);
 
       if (error.message === "Teacher not found") {
@@ -113,6 +117,7 @@ export default class TeacherController {
         data: teacher,
       });
     } catch (error: any) {
+      log("error", "dashboard.teachers.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("TeacherController.update error:", error);
 
       if (error.message === "Teacher not found") {
@@ -147,6 +152,7 @@ export default class TeacherController {
         message: "Teacher deleted successfully",
       });
     } catch (error: any) {
+      log("error", "dashboard.teachers.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("TeacherController.delete error:", error);
 
       if (error.message === "Teacher not found") {

@@ -4,6 +4,7 @@ import logger from "../../../utils/logger";
 import { AnnouncementCategory } from "../../../../prisma/generated/prisma/enums";
 import type { GetAnnouncementsQuery } from "./types";
 import CloudinaryService from "../../../config/cloudinairy.config";
+import { log } from "../../../utils/logtail";
 
 const VALID_CATEGORIES = Object.values(AnnouncementCategory) as string[];
 const cloudinary = new CloudinaryService();
@@ -43,6 +44,7 @@ class AnnouncementsController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "app.announcements.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AnnouncementsController.getAnnouncements error:", error);
       return res.status(500).json({
         success: false,
@@ -80,6 +82,7 @@ class AnnouncementsController {
         data: announcement,
       });
     } catch (error) {
+      log("error", "app.announcements.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AnnouncementsController.getAnnouncementById error:", error);
       return res.status(500).json({
         success: false,
@@ -124,6 +127,7 @@ class AnnouncementsController {
 
       return res.status(201).json({ success: true, message: "Announcement created", data: announcement });
     } catch (error) {
+      log("error", "app.announcements.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("AnnouncementsController.createAnnouncement error:", error);
       return res.status(500).json({ success: false, message: "Failed to create announcement" });
     }
@@ -147,6 +151,7 @@ class AnnouncementsController {
       });
       return res.json({ success: true, data: announcement });
     } catch (error: any) {
+      log("error", "app.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message?.includes("not found")) {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -165,6 +170,7 @@ class AnnouncementsController {
       await announcementsService.deleteTeacherAnnouncement(id, user.id);
       return res.json({ success: true, message: "Announcement deleted" });
     } catch (error: any) {
+      log("error", "app.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message?.includes("not found")) {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -183,6 +189,7 @@ class AnnouncementsController {
       const result = await announcementsService.togglePinAnnouncement(id, user.id);
       return res.json({ success: true, data: result });
     } catch (error: any) {
+      log("error", "app.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message?.includes("not found")) {
         return res.status(404).json({ success: false, message: error.message });
       }

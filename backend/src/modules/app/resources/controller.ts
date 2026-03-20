@@ -4,6 +4,7 @@ import logger from "../../../utils/logger";
 import CloudinaryService from "../../../config/cloudinairy.config";
 import { validateMagicNumber } from "../../../config/multer.config";
 import type { AppResourceQuery, AppResourceFile, CreateMaterialInput, UpdateMaterialInput, StarResourceType } from "./types";
+import { log } from "../../../utils/logtail";
 
 const cloudinaryService = new CloudinaryService();
 
@@ -41,6 +42,7 @@ class ResourcesController {
         data: videos,
       });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ResourcesController.getVideos error:", error);
       return res.status(500).json({
         success: false,
@@ -72,6 +74,7 @@ class ResourcesController {
         data: notes,
       });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ResourcesController.getNotes error:", error);
       return res.status(500).json({
         success: false,
@@ -103,6 +106,7 @@ class ResourcesController {
         data: materials,
       });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ResourcesController.getStudyMaterials error:", error);
       return res.status(500).json({
         success: false,
@@ -145,6 +149,7 @@ class ResourcesController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("ResourcesController.getTeacherMaterials error:", error);
       return res.status(500).json({ success: false, message: "Failed to get materials" });
     }
@@ -264,6 +269,7 @@ class ResourcesController {
         data: material,
       });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("ResourcesController.createTeacherMaterial error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to upload material";
@@ -301,6 +307,7 @@ class ResourcesController {
         data: material,
       });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("ResourcesController.updateTeacherMaterial error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to update material";
@@ -328,6 +335,7 @@ class ResourcesController {
 
       return res.status(200).json({ success: true, message: "Material deleted" });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("ResourcesController.deleteTeacherMaterial error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to delete material";
@@ -363,6 +371,7 @@ class ResourcesController {
 
       return res.status(200).json({ success: true, message: "Resource starred" });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ResourcesController.starResource error:", error);
       return res.status(500).json({ success: false, message: "Failed to star resource" });
     }
@@ -389,6 +398,7 @@ class ResourcesController {
 
       return res.status(200).json({ success: true, message: "Resource unstarred" });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ResourcesController.unstarResource error:", error);
       return res.status(500).json({ success: false, message: "Failed to unstar resource" });
     }
@@ -409,6 +419,7 @@ class ResourcesController {
 
       return res.status(200).json({ success: true, data: result });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("ResourcesController.getStarredResources error:", error);
       return res.status(500).json({ success: false, message: "Failed to get starred resources" });
     }
@@ -441,6 +452,7 @@ class ResourcesController {
         data: material,
       });
     } catch (error) {
+      log("error", "app.resources.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("ResourcesController.publishTeacherMaterial error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to publish material";

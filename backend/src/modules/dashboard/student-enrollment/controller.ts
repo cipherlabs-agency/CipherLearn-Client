@@ -11,6 +11,7 @@ import {
 } from "../../../errors";
 import { EnrollStudentInput, UpdateStudentInput } from "./types";
 import { StudentValidations } from "./validation";
+import { log } from "../../../utils/logtail";
 
 const FEATURE = "student-enrollment" as const;
 const studentEnrollmentService = new StudentEnrollmentService();
@@ -57,6 +58,7 @@ export default class StudentEnrollmentController {
         data: student,
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.enrollSingle error:", error);
 
       const statusCode = getStatusCode(error);
@@ -93,6 +95,7 @@ export default class StudentEnrollmentController {
         data: preview,
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.previewCSV error:", error);
 
       const statusCode = getStatusCode(error);
@@ -133,6 +136,7 @@ export default class StudentEnrollmentController {
         data: result,
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.enrollCSV error:", error);
 
       const statusCode = getStatusCode(error);
@@ -151,6 +155,7 @@ export default class StudentEnrollmentController {
       const students = await studentEnrollmentService.getAll(batchId);
       return res.status(200).json({ success: true, data: students });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.getAll error:", error);
 
       const statusCode = getStatusCode(error);
@@ -169,6 +174,7 @@ export default class StudentEnrollmentController {
       const student = await studentEnrollmentService.getById(Number(id));
       return res.status(200).json({ success: true, data: student });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.getById error:", error);
 
       const statusCode = getStatusCode(error);
@@ -200,6 +206,7 @@ export default class StudentEnrollmentController {
         data: student,
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.update error:", error);
 
       const statusCode = getStatusCode(error);
@@ -227,6 +234,7 @@ export default class StudentEnrollmentController {
         message: "Student deleted successfully",
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("StudentEnrollment.delete error:", error);
 
       const statusCode = getStatusCode(error);
@@ -250,6 +258,7 @@ export default class StudentEnrollmentController {
 
       return res.send(csv);
     } catch (error) {
+      log("error", "dashboard.student-enrollment.send failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.downloadTemplate error:", error);
 
       const statusCode = getStatusCode(error);
@@ -286,6 +295,7 @@ export default class StudentEnrollmentController {
         data: student,
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("StudentEnrollment.getMyProfile error:", error);
 
       const statusCode = getStatusCode(error);
@@ -302,6 +312,7 @@ export default class StudentEnrollmentController {
       const students = await studentEnrollmentService.getDeleted();
       return res.status(200).json({ success: true, data: students });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.getDeleted error:", error);
 
       const statusCode = getStatusCode(error);
@@ -329,6 +340,7 @@ export default class StudentEnrollmentController {
         data: result,
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.restore error:", error);
 
       const statusCode = getStatusCode(error);
@@ -359,6 +371,7 @@ export default class StudentEnrollmentController {
         message: "Student permanently deleted",
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("StudentEnrollment.hardDelete error:", error);
 
       const statusCode = getStatusCode(error);
@@ -391,6 +404,7 @@ export default class StudentEnrollmentController {
         data: result,
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("StudentEnrollment.hardDeleteMany error:", error);
 
       const statusCode = getStatusCode(error);
@@ -416,6 +430,7 @@ export default class StudentEnrollmentController {
         data: result,
       });
     } catch (error) {
+      log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("StudentEnrollment.purgeDeleted error:", error);
 
       const statusCode = getStatusCode(error);

@@ -10,6 +10,7 @@ import {
   refreshTokenSchema,
 } from "./validations";
 import logger from "../../../utils/logger";
+import { log } from "../../../utils/logtail";
 
 /**
  * Get client IP address
@@ -42,6 +43,7 @@ export const checkEnrollment = async (
     const result = await authService.checkEnrollment(value.email);
     return res.status(200).json(result);
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error("Check enrollment error:", err);
     return res.status(500).json({
       success: false,
@@ -80,6 +82,7 @@ export const setupPassword = async (
     const statusCode = result.success ? 201 : 400;
     return res.status(statusCode).json(result);
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error("Setup password error:", err);
     return res.status(500).json({
       success: false,
@@ -115,6 +118,7 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     const statusCode = result.success ? 200 : 401;
     return res.status(statusCode).json(result);
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error("Login error:", err);
     return res.status(500).json({
       success: false,
@@ -156,6 +160,7 @@ export const logout = async (req: Request, res: Response): Promise<Response> => 
     const result = await authService.logout(token, userId);
     return res.status(200).json(result);
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err), userId: req.user?.id });
     logger.error("Logout error:", err);
     return res.status(500).json({
       success: false,
@@ -186,6 +191,7 @@ export const refreshToken = async (
     const statusCode = result.success ? 200 : 401;
     return res.status(statusCode).json(result);
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error("Refresh token error:", err);
     return res.status(500).json({
       success: false,
@@ -216,6 +222,7 @@ export const forgotPassword = async (
 
     return res.status(200).json(result);
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error("Forgot password error:", err);
     return res.status(500).json({
       success: false,
@@ -254,6 +261,7 @@ export const verifyOTP = async (
     const statusCode = result.success ? 200 : 400;
     return res.status(statusCode).json(result);
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error("Verify OTP error:", err);
     return res.status(500).json({
       success: false,
@@ -292,6 +300,7 @@ export const resetPassword = async (
     const statusCode = result.success ? 200 : 400;
     return res.status(statusCode).json(result);
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error("Reset password error:", err);
     return res.status(500).json({
       success: false,
@@ -328,6 +337,7 @@ export const getMe = async (req: Request, res: Response): Promise<Response> => {
       data: result,
     });
   } catch (err) {
+    log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err), userId: req.user?.id });
     logger.error("Get me error:", err);
     return res.status(500).json({
       success: false,

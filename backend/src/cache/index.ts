@@ -1,4 +1,5 @@
 import NodeCache from "node-cache";
+import { log } from "../utils/logtail";
 
 const MAX_KEYS = 5000;
 
@@ -45,6 +46,7 @@ class CacheService {
     try {
       return this.cache.set(key, value, ttl);
     } catch (err) {
+      log("error", "set.set failed", { err: err instanceof Error ? err.message : String(err) });
       console.warn(`CacheService.set failed for key "${key}":`, err);
       return false;
     }

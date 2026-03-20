@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { studyMaterialService } from "./service";
+import { log } from "../../../utils/logtail";
 
 export class StudyMaterialController {
   async create(req: Request, res: Response): Promise<void> {
@@ -30,6 +31,7 @@ export class StudyMaterialController {
         data: material,
       });
     } catch (error) {
+      log("error", "dashboard.study-materials.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       const message = error instanceof Error ? error.message : "Failed to create study material";
       res.status(500).json({ success: false, message });
     }
@@ -52,6 +54,7 @@ export class StudyMaterialController {
         pagination: result.pagination,
       });
     } catch (error) {
+      log("error", "dashboard.study-materials.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch study materials";
       res.status(500).json({ success: false, message });
     }
@@ -69,6 +72,7 @@ export class StudyMaterialController {
 
       res.json({ success: true, data: material });
     } catch (error) {
+      log("error", "dashboard.study-materials.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch study material";
       res.status(500).json({ success: false, message });
     }
@@ -103,6 +107,7 @@ export class StudyMaterialController {
         data: material,
       });
     } catch (error) {
+      log("error", "dashboard.study-materials.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to update study material";
       res.status(500).json({ success: false, message });
     }
@@ -114,6 +119,7 @@ export class StudyMaterialController {
       await studyMaterialService.delete(parseInt(id, 10));
       res.json({ success: true, message: "Study material deleted successfully" });
     } catch (error) {
+      log("error", "dashboard.study-materials.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to delete study material";
       res.status(500).json({ success: false, message });
     }
@@ -124,6 +130,7 @@ export class StudyMaterialController {
       const categories = await studyMaterialService.getCategories();
       res.json({ success: true, data: categories });
     } catch (error) {
+      log("error", "dashboard.study-materials.json failed", { err: error instanceof Error ? error.message : String(error) });
       const message = error instanceof Error ? error.message : "Failed to fetch categories";
       res.status(500).json({ success: false, message });
     }

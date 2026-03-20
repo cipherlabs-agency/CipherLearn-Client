@@ -15,6 +15,7 @@ import { profileController } from "./profile/controller";
 import { settingsService } from "../dashboard/settings/service";
 import { config } from "../../config/env.config";
 import { appReadRateLimiter } from "../../middleware/rateLimiter";
+import { log } from "../../utils/logtail";
 
 const router = Router();
 
@@ -50,6 +51,7 @@ router.get("/settings", async (_req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    log("error", "app.json failed", { err: error instanceof Error ? error.message : String(error) });
     const message = error instanceof Error ? error.message : "Failed to fetch settings";
     res.status(500).json({ success: false, message });
   }

@@ -12,6 +12,7 @@ import {
   TestStatsResponse,
   BulkScoreResult,
 } from "./types";
+import { log } from "../../../utils/logtail";
 
 const TEST_INCLUDE = {
   batch: { select: { id: true, name: true } },
@@ -309,6 +310,7 @@ export default class TestService {
           result.uploaded++;
         }
       } catch (error: any) {
+        log("error", "dashboard.tests.upsert failed", { err: error instanceof Error ? error.message : String(error) });
         result.errors.push({ row: i + 1, message: error.message });
         result.failed++;
       }

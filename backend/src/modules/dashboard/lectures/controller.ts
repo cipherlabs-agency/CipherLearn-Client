@@ -3,6 +3,7 @@ import LectureService from "./service";
 import logger from "../../../utils/logger";
 import { CreateLectureInput, CreateBulkLecturesInput, UpdateLectureInput, GetLecturesQuery } from "./types";
 import { LectureStatus } from "../../../../prisma/generated/prisma/enums";
+import { log } from "../../../utils/logtail";
 
 const lectureService = new LectureService();
 
@@ -26,6 +27,7 @@ export default class LectureController {
         data: lecture,
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("LectureController.create error:", error);
 
       if (error.message.includes("not found")) {
@@ -57,6 +59,7 @@ export default class LectureController {
         data: result,
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("LectureController.createBulk error:", error);
 
       if (error.message.includes("not found")) {
@@ -93,6 +96,7 @@ export default class LectureController {
         pagination: result.pagination,
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("LectureController.getAll error:", error);
       return res.status(500).json({
         success: false,
@@ -110,6 +114,7 @@ export default class LectureController {
         data: lecture,
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("LectureController.getById error:", error);
 
       if (error.message === "Lecture not found") {
@@ -136,6 +141,7 @@ export default class LectureController {
         data: lecture,
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("LectureController.update error:", error);
 
       if (error.message.includes("not found")) {
@@ -165,6 +171,7 @@ export default class LectureController {
         data: lecture,
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("LectureController.assignTeacher error:", error);
 
       if (error.message.includes("not found")) {
@@ -191,6 +198,7 @@ export default class LectureController {
         data: lecture,
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("LectureController.updateStatus error:", error);
 
       if (error.message === "Lecture not found") {
@@ -215,6 +223,7 @@ export default class LectureController {
         message: "Lecture deleted successfully",
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("LectureController.delete error:", error);
 
       if (error.message === "Lecture not found") {
@@ -251,6 +260,7 @@ export default class LectureController {
         data: lectures,
       });
     } catch (error: any) {
+      log("error", "dashboard.lectures.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("LectureController.getSchedule error:", error);
       return res.status(500).json({
         success: false,

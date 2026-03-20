@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { config } from "../config/env.config";
 import logger from "./logger";
+import { log } from "./logtail";
 
 // ── Lazy singleton — instantiated once per process ──────────────────────────
 
@@ -39,6 +40,7 @@ export async function sendEmail(opts: EmailOptions): Promise<boolean> {
     logger.info(`[email] Sent "${opts.subject}" → ${opts.to}`);
     return true;
   } catch (err) {
+    log("error", "info.info failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error(`[email] Failed to send to ${opts.to}:`, err);
     return false;
   }

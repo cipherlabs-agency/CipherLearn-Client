@@ -16,6 +16,7 @@ import {
   LoginResponse,
   VerifyOTPResponse,
 } from "./types";
+import { log } from "../../../utils/logtail";
 
 /**
  * Check if email is registered as a student or teacher
@@ -263,6 +264,7 @@ export const logout = async (
 
     return { success: true, message: "Logged out successfully" };
   } catch (error) {
+    log("error", "app.auth.create failed", { err: error instanceof Error ? error.message : String(error) });
     logger.error("Logout error:", error);
     return { success: true, message: "Logged out successfully" };
   }
@@ -312,6 +314,7 @@ export const refreshAccessToken = async (
 
     return { success: true, message: "Token refreshed", accessToken };
   } catch (error) {
+    log("error", "app.auth.generateLoginToken failed", { err: error instanceof Error ? error.message : String(error) });
     if (error instanceof jwt.TokenExpiredError) {
       return { success: false, message: "Refresh token has expired" };
     }
@@ -605,6 +608,7 @@ const logLoginAttempt = async (
       },
     });
   } catch (error) {
+    log("error", "app.auth.create failed", { err: error instanceof Error ? error.message : String(error) });
     logger.error("Failed to log login attempt:", error);
   }
 };

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "./utils.auth";
 import { prisma } from "../../config/db.config";
 import { UserRoles } from "../../../prisma/generated/prisma/enums";
+import { log } from "../../utils/logtail";
 
 /**
  * Check if a token is blacklisted
@@ -78,6 +79,7 @@ export const isAdminOrTeacher = async (
     req.user = user;
     next();
   } catch (error) {
+    log("error", "auth.next failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
     return res
       .status(403)
       .json({ success: false, message: `Access denied : ${error}` });
@@ -146,6 +148,7 @@ export const isAdmin = async (
     req.user = user;
     next();
   } catch (error) {
+    log("error", "auth.next failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
     return res
       .status(403)
       .json({ success: false, message: `Access denied : ${error}` });
@@ -207,6 +210,7 @@ export const isAuthenticated = async (
     req.user = user;
     next();
   } catch (error) {
+    log("error", "auth.next failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
     return res
       .status(403)
       .json({ success: false, message: `Access denied : ${error}` });
@@ -307,6 +311,7 @@ export const isAppUser = async (
 
     next();
   } catch (error) {
+    log("error", "auth.next failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
     return res
       .status(403)
       .json({ success: false, message: `Access denied : ${error}` });
@@ -386,6 +391,7 @@ export const isTeacher = async (
     req.user = user;
     next();
   } catch (error) {
+    log("error", "auth.next failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
     return res
       .status(403)
       .json({ success: false, message: `Access denied : ${error}` });
@@ -485,6 +491,7 @@ export const isStudent = async (
     req.student = student;
     next();
   } catch (error) {
+    log("error", "auth.next failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
     return res
       .status(403)
       .json({ success: false, message: `Access denied : ${error}` });

@@ -1,6 +1,7 @@
 import { prisma } from "../../../config/db.config";
 import logger from "../../../utils/logger";
 import { sendDm, sendFollowGateDM, sendGenericTemplate, sendDirectTextDm } from "./instagram.utils";
+import { log } from "../../../utils/logtail";
 
 /**
  * The Automation Engine is responsible for processing incoming triggers (webhooks)
@@ -115,6 +116,7 @@ export class AutomationEngine {
 
                     logger.info(`AutomationEngine: DM sent to ${commenterUsername || commenterId} via rule #${rule.id}`);
                 } catch (err: any) {
+                  log("error", "dashboard.instagram.info failed", { err: err instanceof Error ? err.message : String(err) });
                     const isRateLimit = err.message?.includes("rate") || err.message?.includes("limit");
 
                     await prisma.automationLog.create({
@@ -204,6 +206,7 @@ export class AutomationEngine {
             });
 
         } catch (err: any) {
+          log("error", "dashboard.instagram.Date failed", { err: err instanceof Error ? err.message : String(err) });
             const isRateLimit = err.message?.includes("rate") || err.message?.includes("limit");
             logger.error(`AutomationEngine: DM delivery via message reply failed for rule #${matchedRule.id}: ${err.message}`);
 
@@ -293,6 +296,7 @@ export class AutomationEngine {
                 });
 
             } catch (err: any) {
+              log("error", "dashboard.instagram.Date failed", { err: err instanceof Error ? err.message : String(err) });
                 const isRateLimit = err.message?.includes("rate") || err.message?.includes("limit");
                 logger.error(`AutomationEngine: Gated reward failed for rule #${rule.id}: ${err.message}`);
 

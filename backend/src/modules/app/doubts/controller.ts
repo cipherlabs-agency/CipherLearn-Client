@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { doubtsService } from "./service";
 import logger from "../../../utils/logger";
 import { DoubtStatus } from "../../../../prisma/generated/prisma/enums";
+import { log } from "../../../utils/logtail";
 
 export class DoubtsController {
   // ─── Student: GET /app/doubts ────────────────────────────────────────────────
@@ -14,6 +15,7 @@ export class DoubtsController {
       const result = await doubtsService.getStudentDoubts(studentId, page, limit);
       return res.json({ success: true, data: result });
     } catch (error) {
+      log("error", "app.doubts.json failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("DoubtsController.getMyDoubts error", { error });
       return res.status(500).json({ success: false, message: "Failed to fetch doubts" });
     }
@@ -45,6 +47,7 @@ export class DoubtsController {
       });
       return res.status(201).json({ success: true, data: doubt });
     } catch (error) {
+      log("error", "app.doubts.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("DoubtsController.postDoubt error", { error });
       return res.status(500).json({ success: false, message: "Failed to post doubt" });
     }
@@ -62,6 +65,7 @@ export class DoubtsController {
       const thread = await doubtsService.getDoubtThread(doubtId, studentId);
       return res.json({ success: true, data: thread });
     } catch (error: any) {
+      log("error", "app.doubts.json failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Doubt not found") {
         return res.status(404).json({ success: false, message: "Doubt not found" });
       }
@@ -82,6 +86,7 @@ export class DoubtsController {
       const result = await doubtsService.getTeacherDoubts(teacherId, batchId, status, page, limit);
       return res.json({ success: true, data: result });
     } catch (error) {
+      log("error", "app.doubts.json failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("DoubtsController.getTeacherDoubts error", { error });
       return res.status(500).json({ success: false, message: "Failed to fetch doubts" });
     }
@@ -107,6 +112,7 @@ export class DoubtsController {
       const thread = await doubtsService.replyToDoubt(doubtId, teacherId, { body });
       return res.status(201).json({ success: true, data: thread });
     } catch (error: any) {
+      log("error", "app.doubts.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message?.includes("Access denied") || error.message === "Doubt not found") {
         return res.status(error.message === "Doubt not found" ? 404 : 403).json({
           success: false,
@@ -132,6 +138,7 @@ export class DoubtsController {
       const doubt = await doubtsService.resolveDoubt(doubtId, userId, user.role);
       return res.json({ success: true, data: doubt });
     } catch (error: any) {
+      log("error", "app.doubts.json failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Doubt not found") {
         return res.status(404).json({ success: false, message: "Doubt not found" });
       }

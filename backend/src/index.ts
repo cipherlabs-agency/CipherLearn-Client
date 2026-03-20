@@ -5,6 +5,7 @@ import { db } from "./config/db.config";
 import { startCleanupScheduler } from "./utils/tokenCleanup";
 import { startNotificationScheduler } from "./utils/notificationScheduler";
 import logger from "./utils/logger";
+import { log } from "./utils/logtail";
 
 app.use("/api", allRoutes);
 
@@ -27,6 +28,7 @@ async function startServer() {
   try {
     app.listen(config.APP.PORT, () => {
       logger.info(`Server is running on port ${config.APP.PORT}`);
+      log("warn", "Instance started", { timestamp: new Date().toISOString() });
       db.connect();
 
       // Start token cleanup scheduler (runs every hour)
@@ -39,6 +41,7 @@ async function startServer() {
     });
   } catch (error) {
     logger.error("Failed to start server:", error);
+    log("error", "Failed to start server", { err: error instanceof Error ? error.message : String(error) });
     process.exit(1);
   }
 }

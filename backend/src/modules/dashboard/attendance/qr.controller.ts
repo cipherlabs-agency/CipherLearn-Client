@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { qrAttendanceService } from "./qr.service";
 import { QRAttendanceInput } from "./types";
+import { log } from "../../../utils/logtail";
 
 /**
  * QR Attendance Controller
@@ -35,6 +36,7 @@ export class QRAttendanceController {
         data: qrData,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Batch not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -69,6 +71,7 @@ export class QRAttendanceController {
         data: status,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Batch not found") {
         return res.status(404).json({ success: false, message: error.message });
       }
@@ -122,6 +125,7 @@ export class QRAttendanceController {
         data: result.attendance,
       });
     } catch (error: any) {
+      log("error", "dashboard.attendance.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       return res.status(500).json({
         success: false,
         message: error.message || "Failed to mark QR attendance",

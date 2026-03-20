@@ -4,6 +4,7 @@ import { cacheService } from "../../../cache";
 import { DashboardKeys } from "../../../cache/keys";
 import * as TTL from "../../../cache/ttl";
 import { invalidateAfterBatchMutation } from "../../../cache/invalidation";
+import { log } from "../../../utils/logtail";
 
 export default class BatchService {
   async create(batch: Prisma.BatchCreateInput): Promise<Batch> {
@@ -19,6 +20,7 @@ export default class BatchService {
       invalidateAfterBatchMutation();
       return newBatch;
     } catch (error) {
+      log("error", "dashboard.batches.invalidateAfterBatchMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -41,6 +43,7 @@ export default class BatchService {
       invalidateAfterBatchMutation(id);
       return updated;
     } catch (error) {
+      log("error", "dashboard.batches.invalidateAfterBatchMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -98,6 +101,7 @@ export default class BatchService {
       invalidateAfterBatchMutation();
       return !!drafts;
     } catch (error) {
+      log("error", "dashboard.batches.invalidateAfterBatchMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -112,6 +116,7 @@ export default class BatchService {
 
       return drafts;
     } catch (error) {
+      log("error", "dashboard.batches.findMany failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -135,6 +140,7 @@ export default class BatchService {
       invalidateAfterBatchMutation();
       return { restored: result.count };
     } catch (error) {
+      log("error", "dashboard.batches.invalidateAfterBatchMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -159,6 +165,7 @@ export default class BatchService {
       invalidateAfterBatchMutation();
       return !!deleted;
     } catch (error) {
+      log("error", "dashboard.batches.invalidateAfterBatchMutation failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -254,6 +261,7 @@ export default class BatchService {
         },
       };
     } catch (error) {
+      log("error", "dashboard.batches.flush failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
@@ -322,6 +330,7 @@ export default class BatchService {
 
       return { deleted: result.count };
     } catch (error) {
+      log("error", "dashboard.batches.flush failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }
