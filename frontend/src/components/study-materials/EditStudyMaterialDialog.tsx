@@ -79,6 +79,7 @@ export function EditStudyMaterialDialog({
     }
 
     const getFileUrl = (filepath: string) => {
+        if (filepath.startsWith('http://') || filepath.startsWith('https://')) return filepath;
         const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || ""
         return `${baseUrl}${filepath}`
     }

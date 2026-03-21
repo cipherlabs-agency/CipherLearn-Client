@@ -244,6 +244,22 @@ export default class AppTestController {
 
       const summary = await testService.publishTestResults(testId, user.id);
 
+      // Notify students that results are published
+      import("../../../config/db.config").then(async (m) => {
+        const testDetails = await m.prisma.test.findUnique({ where: { id: testId } });
+        if (testDetails) {
+          require("../../../utils/pushNotifications")
+            .sendToBatchStudents(
+              testDetails.batchId,
+              "resultPublished",
+              `Results Published: ${summary.title}`,
+              `Test results have been published for ${summary.subject}. Class average is ${summary.classAverage.toFixed(1)}.`,
+              { type: "TEST_RESULT", testId }
+            )
+            .catch((e: Error) => logger.error("Failed to send test results push notification", e));
+        }
+      }).catch(e => logger.error("DB Fetch Failed", e));
+
       return res.status(200).json({
         success: true,
         message: "Results published successfully",

@@ -506,3 +506,48 @@ export const isStudent = async (
       .json({ success: false, message: `Access denied : ${error}` });
   }
 };
+
+/**
+ * Validates teacher permissions dynamically before allowing action.
+ * Must be used in conjunction with the `isTeacher` middleware.
+ */
+export const requireTeacherPermission = (
+  permission: keyof import("../dashboard/settings/service").TeacherPermissions
+) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // 1. Double check they are in fact a TEACHER role (otherwise skip or handle)
+      if (req.user?.role !== "TEACHER") {
+        return next();
+      }
+
+      // 2. Fetch the latest settings from the database
+      const settingsService = await import("../dashboard/settings/service").then((m) => m.settingsService);
+      const settings = await settingsService.getSettings();
+
+      const permissions = settings.teacherPermissions as Record<string, boolean>;
+
+      // 3. Reject if they don't have the permission flag enabled
+      if (permissions && permissions[permission] === false) {
+        log("warn", "Teacher action blocked by permission", {
+          userId: req.user.id,
+          permission,
+          path: req.path,
+        });
+
+        return res.status(403).json({
+          success: false,
+          message: `Action denied. Your institution has disabled the '${permission}' capability.`,
+        });
+      }
+
+      next();
+    } catch (error) {
+      log("error", "requireTeacherPermission failed", {
+        err: error instanceof Error ? error.message : String(error),
+        permission,
+      });
+      return res.status(500).json({ success: false, message: "Permission verification failed." });
+    }
+  };
+};

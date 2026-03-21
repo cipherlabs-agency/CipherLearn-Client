@@ -1,65 +1,7 @@
 import { Router } from "express";
 import { assignmentController } from "./controller";
 import { isAdmin, isAdminOrTeacher, isAuthenticated } from "../../auth/middleware";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
-
-// Create uploads directory if it doesn't exist
-const uploadDir = path.join(process.cwd(), "uploads", "assignments");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (_req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `assignment-${uniqueSuffix}${ext}`);
-  },
-});
-
-const fileFilter = (
-  _req: Express.Request,
-  file: Express.Multer.File,
-  cb: multer.FileFilterCallback
-) => {
-  const allowedTypes = [
-    "application/pdf",
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/gif",
-    "image/webp",
-    // Document types for assignment materials
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "application/vnd.ms-powerpoint",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    "text/plain",
-  ];
-
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only PDF, images, and document files are allowed"));
-  }
-};
-
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB max per file
-    files: 10, // Max 10 files
-  },
-});
+import { assignmentUpload, submissionUpload } from "../../../config/multer.config";
 
 const router = Router();
 
@@ -69,7 +11,7 @@ const router = Router();
 router.post(
   "/slots",
   isAdminOrTeacher,
-  upload.array("attachments", 5),
+  assignmentUpload.array("attachments", 5),
   assignmentController.createSlot.bind(assignmentController)
 );
 
@@ -91,7 +33,7 @@ router.get(
 router.put(
   "/slots/:id",
   isAdminOrTeacher,
-  upload.array("attachments", 5),
+  assignmentUpload.array("attachments", 5),
   assignmentController.updateSlot.bind(assignmentController)
 );
 
@@ -115,7 +57,7 @@ router.get(
 router.post(
   "/submissions",
   isAuthenticated,
-  upload.array("files", 10),
+  submissionUpload.array("files", 10),
   assignmentController.createSubmission.bind(assignmentController)
 );
 

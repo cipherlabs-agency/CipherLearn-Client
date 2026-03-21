@@ -37,7 +37,7 @@ export function EditAnnouncementDialog({ announcement, open, onOpenChange }: Edi
     const [image, setImage] = useState<File | null>(null)
     const [imagePreview, setImagePreview] = useState<string | null>(
         announcement.imageUrl
-            ? `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${announcement.imageUrl}`
+            ? (announcement.imageUrl.startsWith('http') ? announcement.imageUrl : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${announcement.imageUrl}`)
             : null
     )
 
@@ -50,7 +50,7 @@ export function EditAnnouncementDialog({ announcement, open, onOpenChange }: Edi
         setIsActive(announcement.isActive)
         setImagePreview(
             announcement.imageUrl
-                ? `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${announcement.imageUrl}`
+                ? (announcement.imageUrl.startsWith('http') ? announcement.imageUrl : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${announcement.imageUrl}`)
                 : null
         )
     }, [announcement])

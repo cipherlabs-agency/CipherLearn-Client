@@ -335,7 +335,7 @@ export default function AssignmentsPage() {
                     return (
                       <a
                         key={i}
-                        href={`${process.env.NEXT_PUBLIC_API_URL}${url}`}
+                        href={url.startsWith('http') ? url : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${url}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 px-2 py-1 bg-secondary/50 hover:bg-secondary rounded text-[10px] font-medium text-muted-foreground hover:text-foreground transition-colors"

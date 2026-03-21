@@ -593,6 +593,14 @@ class AssignmentsController {
         attachments
       );
 
+        if (input.assignmentStatus === 'PUBLISHED') {
+          for (const batchId of batchIds) {
+            import('../../../utils/pushNotifications').then(({ sendToBatchStudents }) => {
+              sendToBatchStudents(batchId, 'schoolAnnouncements', 'New Assignment: ' + title, 'An assignment has been posted for ' + subject).catch(err => logger.error('err:', err));
+            });
+          }
+        }
+
       return res.status(201).json({
         success: true,
         message:

@@ -6,6 +6,10 @@ import {
   ReviewSubmissionInput,
 } from "./types";
 import { log } from "../../../utils/logtail";
+import CloudinaryService from "../../../config/cloudinairy.config";
+import { validateMagicNumber } from "../../../config/multer.config";
+
+const cloudinaryService = new CloudinaryService();
 
 export class AssignmentController {
   // ==================== ASSIGNMENT SLOTS ====================
@@ -16,8 +20,17 @@ export class AssignmentController {
       const createdBy = req.user?.name || "Unknown";
       const files = req.files as Express.Multer.File[] | undefined;
 
-      // Map uploaded files to URLs
-      const attachments = files?.map((file) => `/uploads/assignments/${file.filename}`) || [];
+      let attachments: string[] = [];
+      if (files && files.length > 0) {
+        for (const file of files) {
+          if (!validateMagicNumber(file.buffer, file.mimetype)) {
+            res.status(400).json({ success: false, message: `Invalid file signature for ${file.originalname}` });
+            return;
+          }
+        }
+        const uploadedFiles = await cloudinaryService.uploadDocuments(files, "assignments");
+        attachments = uploadedFiles.map(u => u.url);
+      }
 
       const input: CreateAssignmentSlotInput = {
         title,
@@ -90,7 +103,17 @@ export class AssignmentController {
       const files = req.files as Express.Multer.File[] | undefined;
 
       // Map new uploaded files to URLs
-      const newAttachments = files?.map((file) => `/uploads/assignments/${file.filename}`) || [];
+      let newAttachments: string[] = [];
+      if (files && files.length > 0) {
+        for (const file of files) {
+          if (!validateMagicNumber(file.buffer, file.mimetype)) {
+            res.status(400).json({ success: false, message: `Invalid file signature for ${file.originalname}` });
+            return;
+          }
+        }
+        const uploadedFiles = await cloudinaryService.uploadDocuments(files, "assignments");
+        newAttachments = uploadedFiles.map((u) => u.url);
+      }
 
       // Combine existing attachments with new ones
       const existingFiles = existingAttachments ? JSON.parse(existingAttachments) : [];
@@ -142,8 +165,15 @@ export class AssignmentController {
         return;
       }
 
-      // Map uploaded files to URLs
-      const fileUrls = files.map((file) => `/uploads/assignments/${file.filename}`);
+      // Validate and upload files
+      for (const file of files) {
+        if (!validateMagicNumber(file.buffer, file.mimetype)) {
+          res.status(400).json({ success: false, message: `Invalid file signature for ${file.originalname}` });
+          return;
+        }
+      }
+      const uploadedFiles = await cloudinaryService.uploadDocuments(files, "submissions");
+      const fileUrls = uploadedFiles.map(u => u.url);
 
       const submission = await assignmentService.createSubmission({
         slotId: parseInt(slotId, 10),

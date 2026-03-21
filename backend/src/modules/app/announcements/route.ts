@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { announcementsController } from "./controller";
 import { appReadRateLimiter, fileUploadRateLimiter } from "../../../middleware/rateLimiter";
-import { isTeacher } from "../../auth/middleware";
+import { isTeacher, requireTeacherPermission } from "../../auth/middleware";
 import { notesUpload } from "../../../config/multer.config";
 
 const router = Router();
@@ -14,7 +14,7 @@ const router = Router();
  */
 router.post(
   "/teacher",
-  isTeacher,
+  isTeacher, requireTeacherPermission('canSendAnnouncements'),
   fileUploadRateLimiter,
   notesUpload.array("files", 5),
   announcementsController.createAnnouncement.bind(announcementsController)
@@ -26,7 +26,7 @@ router.post(
  */
 router.put(
   "/teacher/:id/pin",
-  isTeacher,
+  isTeacher, requireTeacherPermission('canSendAnnouncements'),
   announcementsController.togglePin.bind(announcementsController)
 );
 
@@ -36,7 +36,7 @@ router.put(
  */
 router.put(
   "/teacher/:id",
-  isTeacher,
+  isTeacher, requireTeacherPermission('canSendAnnouncements'),
   announcementsController.updateAnnouncement.bind(announcementsController)
 );
 
@@ -46,7 +46,7 @@ router.put(
  */
 router.delete(
   "/teacher/:id",
-  isTeacher,
+  isTeacher, requireTeacherPermission('canSendAnnouncements'),
   announcementsController.deleteAnnouncement.bind(announcementsController)
 );
 

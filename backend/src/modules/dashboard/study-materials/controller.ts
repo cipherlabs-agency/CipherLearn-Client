@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { studyMaterialService } from "./service";
 import { log } from "../../../utils/logtail";
+import CloudinaryService from "../../../config/cloudinairy.config";
+import { validateMagicNumber } from "../../../config/multer.config";
+
+const cloudinaryService = new CloudinaryService();
 
 export class StudyMaterialController {
   async create(req: Request, res: Response): Promise<void> {
@@ -14,7 +18,16 @@ export class StudyMaterialController {
         return;
       }
 
-      const fileUrls = files.map((file) => `/uploads/study-materials/${file.filename}`);
+      // Validate magic numbers
+      for (const file of files) {
+        if (!validateMagicNumber(file.buffer, file.mimetype)) {
+          res.status(400).json({ success: false, message: `Invalid file signature for ${file.originalname}` });
+          return;
+        }
+      }
+
+      const uploadedFiles = await cloudinaryService.uploadDocuments(files, "study-materials");
+      const fileUrls = uploadedFiles.map(u => u.url);
 
       const material = await studyMaterialService.create({
         title,
@@ -96,7 +109,14 @@ export class StudyMaterialController {
       };
 
       if (files && files.length > 0) {
-        updateData.files = files.map((file) => `/uploads/study-materials/${file.filename}`);
+        for (const file of files) {
+          if (!validateMagicNumber(file.buffer, file.mimetype)) {
+            res.status(400).json({ success: false, message: `Invalid file signature for ${file.originalname}` });
+            return;
+          }
+        }
+        const uploadedFiles = await cloudinaryService.uploadDocuments(files, "study-materials");
+        updateData.files = uploadedFiles.map(u => u.url);
       }
 
       const material = await studyMaterialService.update(parseInt(id, 10), updateData);

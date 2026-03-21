@@ -104,7 +104,7 @@ export function AnnouncementsList({ priorityFilter, activeFilter, isAdmin }: Ann
                             {announcement.imageUrl && (
                                 <div className="flex-shrink-0">
                                     <img
-                                        src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${announcement.imageUrl}`}
+                                        src={announcement.imageUrl.startsWith('http') ? announcement.imageUrl : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${announcement.imageUrl}`}
                                         alt={announcement.title}
                                         className="w-full lg:w-32 h-32 object-cover rounded-lg border border-border/40"
                                     />

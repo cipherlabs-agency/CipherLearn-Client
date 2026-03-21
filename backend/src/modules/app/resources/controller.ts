@@ -263,6 +263,13 @@ class ResourcesController {
         uploadedFiles
       );
 
+        if (input.materialStatus === 'PUBLISHED') {
+          // Only if it goes live immediately
+          import('../../../utils/pushNotifications').then(({ sendToBatchStudents }) => {
+            sendToBatchStudents(batchId, 'schoolAnnouncements', 'New Study Material: ' + title, 'New material has been uploaded for ' + subject).catch(err => logger.error('err:', err));
+          });
+        }
+
       return res.status(201).json({
         success: true,
         message: "Study material uploaded",

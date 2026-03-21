@@ -125,6 +125,11 @@ class AnnouncementsController {
         { title, description, body, category, department, attachments, pinned: pinned === "true" || pinned === true }
       );
 
+      // Trigger Push Notification asynchronously
+      require("../../../utils/pushNotifications")
+        .sendToAllActiveStudents("schoolAnnouncements", title, description, { type: "ANNOUNCEMENT", id: announcement.id })
+        .catch((e: Error) => logger.error("Failed to send announcement push notification", e));
+
       return res.status(201).json({ success: true, message: "Announcement created", data: announcement });
     } catch (error) {
       log("error", "app.announcements.status failed", { err: error instanceof Error ? error.message : String(error) });

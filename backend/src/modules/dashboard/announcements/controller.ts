@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import { announcementService } from "./service";
 import { AnnouncementPriority } from "../../../../prisma/generated/prisma/enums";
 import { log } from "../../../utils/logtail";
+import CloudinaryService from "../../../config/cloudinairy.config";
+import { validateMagicNumber } from "../../../config/multer.config";
+
+const cloudinaryService = new CloudinaryService();
 
 export class AnnouncementController {
   async create(req: Request, res: Response): Promise<void> {
@@ -11,9 +15,16 @@ export class AnnouncementController {
 
       // Handle file upload if present
       const file = req.file as Express.Multer.File | undefined;
-      const finalImageUrl = file
-        ? `/uploads/announcements/${file.filename}`
-        : imageUrl;
+      let finalImageUrl = imageUrl;
+      
+      if (file) {
+        if (!validateMagicNumber(file.buffer, file.mimetype)) {
+          res.status(400).json({ success: false, message: "Invalid file signature for image" });
+          return;
+        }
+        const uploadedFiles = await cloudinaryService.uploadDocuments([file], "announcements");
+        finalImageUrl = uploadedFiles[0].url;
+      }
 
       const announcement = await announcementService.create({
         title,
@@ -84,9 +95,16 @@ export class AnnouncementController {
 
       // Handle file upload if present
       const file = req.file as Express.Multer.File | undefined;
-      const finalImageUrl = file
-        ? `/uploads/announcements/${file.filename}`
-        : imageUrl;
+      let finalImageUrl = imageUrl;
+
+      if (file) {
+        if (!validateMagicNumber(file.buffer, file.mimetype)) {
+          res.status(400).json({ success: false, message: "Invalid file signature for image" });
+          return;
+        }
+        const uploadedFiles = await cloudinaryService.uploadDocuments([file], "announcements");
+        finalImageUrl = uploadedFiles[0].url;
+      }
 
       const announcement = await announcementService.update(parseInt(id, 10), {
         title,
