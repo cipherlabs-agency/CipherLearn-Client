@@ -2,6 +2,7 @@ import { prisma } from "../../../config/db.config";
 import { AnnouncementPriority } from "../../../../prisma/generated/prisma/enums";
 import { invalidateAfterAnnouncementMutation } from "../../../cache/invalidation";
 import { sendToAllActiveStudents } from "../../../utils/pushNotifications";
+import logger from "../../../utils/logger";
 
 export interface CreateAnnouncementInput {
   title: string;
@@ -42,7 +43,34 @@ export class AnnouncementService {
     });
     invalidateAfterAnnouncementMutation();
 
-    // Notify all active students (fire-and-forget)
+    // 1. Generate in-app database notifications for all active students
+    try {
+      const allActiveStudents = await prisma.user.findMany({
+        where: { role: "STUDENT" },
+        select: { id: true },
+      });
+
+      if (allActiveStudents.length > 0) {
+        // truncate description to 100 chars for notification body
+        const shortDesc = data.description.length > 100 
+          ? data.description.substring(0, 97) + "..."
+          : data.description;
+
+        await prisma.notification.createMany({
+          data: allActiveStudents.map(student => ({
+            userId: student.id,
+            title: `New Announcement: ${announcement.title}`,
+            message: shortDesc,
+            type: "INFO",
+            link: "/announcements",
+          }))
+        });
+      }
+    } catch (error) {
+      logger.error("Failed to generate in-app notifications for announcement:", error);
+    }
+
+    // 2. Notify all active students (fire-and-forget push)
     sendToAllActiveStudents(
       "schoolAnnouncements",
       announcement.title,

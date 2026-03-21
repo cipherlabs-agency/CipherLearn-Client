@@ -4,6 +4,7 @@ import allRoutes from "./routes";
 import { db } from "./config/db.config";
 import { startCleanupScheduler } from "./utils/tokenCleanup";
 import { startNotificationScheduler } from "./utils/notificationScheduler";
+import { startFeeReminderJob } from "./jobs/feeReminder";
 import logger from "./utils/logger";
 import { log } from "./utils/logtail";
 
@@ -38,6 +39,9 @@ async function startServer() {
       // Start notification scheduler (classStartingSoon — runs every 5 min)
       startNotificationScheduler();
       logger.info("Notification scheduler started");
+
+      // Start the new daily fee reminder job
+      startFeeReminderJob();
     });
   } catch (error) {
     logger.error("Failed to start server:", error);

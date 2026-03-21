@@ -1,6 +1,7 @@
 import { prisma } from "../../../config/db.config";
 import { SubmissionStatus } from "../../../../prisma/generated/prisma/enums";
 import { sendToBatchStudents } from "../../../utils/pushNotifications";
+import logger from "../../../utils/logger";
 import {
   CreateAssignmentSlotInput,
   UpdateAssignmentSlotInput,
@@ -30,10 +31,33 @@ export class AssignmentService {
       },
     });
 
-    // Notify students about the new assignment (fire-and-forget)
     const dueStr = data.dueDate
       ? ` — due ${new Date(data.dueDate).toLocaleDateString("en-IN", { dateStyle: "medium" })}`
       : "";
+
+    // 1. Generate in-app database notifications for batch students
+    try {
+      const batchStudents = await prisma.user.findMany({
+        where: { role: "STUDENT", student: { batchId: data.batchId } },
+        select: { id: true },
+      });
+
+      if (batchStudents.length > 0) {
+        await prisma.notification.createMany({
+          data: batchStudents.map(student => ({
+            userId: student.id,
+            title: `New Assignment: ${data.subject}`,
+            message: `${data.title}${dueStr}`,
+            type: "INFO",
+            link: "/assignments",
+          }))
+        });
+      }
+    } catch (error) {
+      logger.error("Failed to generate in-app notifications for assignment:", error);
+    }
+
+    // 2. Notify students about the new assignment (fire-and-forget push)
     sendToBatchStudents(
       data.batchId,
       "newStudyMaterial",
