@@ -26,7 +26,28 @@ export const authApi = api.injectEndpoints({
             }),
             invalidatesTags: ['Auth'],
         }),
+        checkEmail: builder.mutation({
+            query: (email: string) => ({
+                url: '/auth/check-email',
+                method: 'POST',
+                body: { email },
+            }),
+        }),
+        resetPassword: builder.mutation({
+            query: (data: { email: string; newPassword: string }) => ({
+                url: '/auth/reset-password',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['Auth'],
+        }),
     }),
 });
 
-export const { useLoginMutation, useSignupMutation, useUpdateProfileMutation } = authApi;
+export const { 
+    useLoginMutation, 
+    useSignupMutation, 
+    useUpdateProfileMutation, 
+    useResetPasswordMutation,
+    useCheckEmailMutation
+} = authApi;

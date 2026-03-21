@@ -193,4 +193,22 @@ export default class AuthController {
         .json({ success: false, message: "Failed to update profile" });
     }
   }
+
+  async checkEmail(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required" });
+      }
+
+      const status = await authService.checkUserStatus(email);
+      return res.status(200).json({
+        success: true,
+        data: status,
+      });
+    } catch (error) {
+      logger.error("checkEmail controller error:", error);
+      return res.status(500).json({ success: false, message: "Failed to check email" });
+    }
+  }
 }

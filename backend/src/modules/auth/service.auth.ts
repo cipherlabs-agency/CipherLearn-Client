@@ -193,4 +193,16 @@ export default class AuthService {
       return { ok: false };
     }
   }
+
+  async checkUserStatus(email: string): Promise<{ exists: boolean; isPasswordSet: boolean }> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, isPasswordSet: true },
+    });
+
+    return {
+      exists: !!user,
+      isPasswordSet: user?.isPasswordSet || false,
+    };
+  }
 }
