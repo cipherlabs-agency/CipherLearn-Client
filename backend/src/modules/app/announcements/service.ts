@@ -76,10 +76,11 @@ class AnnouncementsService {
   }
 
   /**
-   * Get paginated list of active announcements with optional category filter + search
+   * Get paginated list of active announcements with optional category filter + search.
+   * Respects isDraft, scheduledAt, and targetBatchIds filters.
    */
-  async getAnnouncements(query: GetAnnouncementsQuery): Promise<AnnouncementListResponse> {
-    const { category, search = "", page = 1, limit = 10 } = query;
+  async getAnnouncements(query: GetAnnouncementsQuery & { batchId?: number }): Promise<AnnouncementListResponse> {
+    const { category, search = "", page = 1, limit = 10, batchId } = query;
     const skip = (page - 1) * limit;
 
     const cacheKey = AppKeys.announcementList(
@@ -89,57 +90,78 @@ class AnnouncementsService {
       limit
     );
 
-    return cacheService.getOrSet(
-      cacheKey,
-      async () => {
-        const where: Prisma.AnnouncementWhereInput = {
-          isActive: true,
-        };
+    const now = new Date();
 
-        if (category) {
-          where.category = category;
-        }
+    const fetcher = async () => {
+      const baseWhere: Prisma.AnnouncementWhereInput = {
+        isActive: true,
+        isDraft: false,
+        // Only show announcements that are not scheduled, or scheduled time has passed
+        OR: [{ scheduledAt: null }, { scheduledAt: { lte: now } }],
+      };
 
-        if (search.trim()) {
-          where.OR = [
-            { title: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
-          ];
-        }
+      if (category) {
+        baseWhere.category = category;
+      }
 
-        const [rows, total] = await Promise.all([
-          prisma.announcement.findMany({
-            where,
-            skip,
-            take: limit,
-            orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              category: true,
-              priority: true,
-              department: true,
-              date: true,
-              attachments: true,
-              createdAt: true,
-            },
-          }),
-          prisma.announcement.count({ where }),
-        ]);
-
-        return {
-          announcements: rows.map((a) => this.toListItem(a)),
-          pagination: {
-            page,
-            limit,
-            total,
-            totalPages: Math.ceil(total / limit),
+      if (search.trim()) {
+        (baseWhere as any).AND = [
+          {
+            OR: [
+              { title: { contains: search, mode: "insensitive" } },
+              { description: { contains: search, mode: "insensitive" } },
+            ],
           },
-        };
-      },
-      APP_ANNOUNCEMENT_LIST
-    );
+        ];
+      }
+
+      // targetBatchIds: empty array means visible to all; non-empty means only those batches
+      // We show announcement if: targetBatchIds is empty OR batchId is in targetBatchIds
+      // Since Prisma has_in_array support, we do this in JS post-fetch for simplicity
+      const [rows, total] = await Promise.all([
+        prisma.announcement.findMany({
+          where: baseWhere,
+          skip,
+          take: limit,
+          orderBy: [{ pinned: "desc" }, { priority: "desc" }, { createdAt: "desc" }],
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            category: true,
+            priority: true,
+            department: true,
+            date: true,
+            attachments: true,
+            createdAt: true,
+            targetBatchIds: true,
+          },
+        }),
+        prisma.announcement.count({ where: baseWhere }),
+      ]);
+
+      // Filter by targetBatchIds if batchId is known
+      const filtered = batchId
+        ? rows.filter((a) => {
+            const targets = (a as any).targetBatchIds as number[];
+            return !targets || targets.length === 0 || targets.includes(batchId);
+          })
+        : rows;
+
+      return {
+        announcements: filtered.map((a) => this.toListItem(a)),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    };
+
+    // Skip cache when search is active or batchId is set (personalized)
+    if (search.trim() || batchId) return fetcher();
+    return cacheService.getOrSet(cacheKey, fetcher, APP_ANNOUNCEMENT_LIST);
   }
 
   /**
@@ -183,6 +205,9 @@ class AnnouncementsService {
       department?: string;
       attachments?: object[];
       pinned?: boolean;
+      isDraft?: boolean;
+      scheduledAt?: string;
+      targetBatchIds?: number[];
     }
   ) {
     const announcement = await prisma.announcement.create({
@@ -194,6 +219,9 @@ class AnnouncementsService {
         department: data.department?.trim() ?? null,
         attachments: data.attachments && data.attachments.length > 0 ? data.attachments : undefined,
         pinned: data.pinned ?? false,
+        isDraft: data.isDraft ?? false,
+        scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null,
+        targetBatchIds: data.targetBatchIds ?? [],
         isActive: true,
         createdBy: teacherName,
         createdById: teacherId,
@@ -225,6 +253,9 @@ class AnnouncementsService {
       category?: AnnouncementCategory;
       department?: string;
       pinned?: boolean;
+      isDraft?: boolean;
+      scheduledAt?: string | null;
+      targetBatchIds?: number[];
     }
   ) {
     const existing = await prisma.announcement.findFirst({
@@ -241,6 +272,9 @@ class AnnouncementsService {
         ...(data.category !== undefined && { category: data.category }),
         ...(data.department !== undefined && { department: data.department?.trim() ?? null }),
         ...(data.pinned !== undefined && { pinned: data.pinned }),
+        ...(data.isDraft !== undefined && { isDraft: data.isDraft }),
+        ...(data.scheduledAt !== undefined && { scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null }),
+        ...(data.targetBatchIds !== undefined && { targetBatchIds: data.targetBatchIds }),
       },
     });
     this.invalidateCache();

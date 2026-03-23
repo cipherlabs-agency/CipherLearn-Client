@@ -2,6 +2,7 @@ import { Router } from "express";
 import { profileController } from "./controller";
 import { isTeacher, isStudent } from "../../auth/middleware";
 import { appReadRateLimiter } from "../../../middleware/rateLimiter";
+import { avatarUpload } from "../../../config/multer.config";
 
 const router = Router();
 
@@ -29,6 +30,17 @@ router.put(
   profileController.updateTeacherProfile.bind(profileController)
 );
 
+/**
+ * PUT /app/profile/teacher/avatar
+ * Teacher: upload profile photo (multipart, field: "avatar")
+ */
+router.put(
+  "/teacher/avatar",
+  isTeacher,
+  avatarUpload.single("avatar"),
+  profileController.uploadTeacherAvatar.bind(profileController)
+);
+
 // ==================== STUDENT ROUTES ====================
 
 /**
@@ -42,5 +54,16 @@ router.get("/", isStudent, profileController.getProfile.bind(profileController))
  * Student: update phone, address, parentName
  */
 router.put("/", isStudent, profileController.updateProfile.bind(profileController));
+
+/**
+ * PUT /app/profile/avatar
+ * Student: upload profile photo (multipart, field: "avatar")
+ */
+router.put(
+  "/avatar",
+  isStudent,
+  avatarUpload.single("avatar"),
+  profileController.uploadAvatar.bind(profileController)
+);
 
 export default router;

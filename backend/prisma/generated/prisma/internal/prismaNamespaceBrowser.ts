@@ -62,6 +62,7 @@ export const ModelName = {
   AssignmentSlot: 'AssignmentSlot',
   StudentSubmission: 'StudentSubmission',
   Announcement: 'Announcement',
+  MaterialFolder: 'MaterialFolder',
   StudyMaterial: 'StudyMaterial',
   FeeStructure: 'FeeStructure',
   FeeReceipt: 'FeeReceipt',
@@ -72,6 +73,7 @@ export const ModelName = {
   Lecture: 'Lecture',
   Test: 'Test',
   TestScore: 'TestScore',
+  TestReminder: 'TestReminder',
   InstagramAccount: 'InstagramAccount',
   AutomationRule: 'AutomationRule',
   AutomationLog: 'AutomationLog',
@@ -131,6 +133,7 @@ export const StudentScalarFieldEnum = {
   parentName: 'parentName',
   grade: 'grade',
   instituteId: 'instituteId',
+  avatarUrl: 'avatarUrl',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
@@ -208,7 +211,10 @@ export const YoutubeVideoScalarFieldEnum = {
   url: 'url',
   visibility: 'visibility',
   category: 'category',
+  subject: 'subject',
   batchId: 'batchId',
+  visibleBatchIds: 'visibleBatchIds',
+  scheduledAt: 'scheduledAt',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
@@ -288,6 +294,9 @@ export const AnnouncementScalarFieldEnum = {
   attachments: 'attachments',
   metadata: 'metadata',
   isActive: 'isActive',
+  isDraft: 'isDraft',
+  scheduledAt: 'scheduledAt',
+  targetBatchIds: 'targetBatchIds',
   pinned: 'pinned',
   createdBy: 'createdBy',
   createdById: 'createdById',
@@ -298,6 +307,19 @@ export const AnnouncementScalarFieldEnum = {
 export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
 
 
+export const MaterialFolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  batchId: 'batchId',
+  createdBy: 'createdBy',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaterialFolderScalarFieldEnum = (typeof MaterialFolderScalarFieldEnum)[keyof typeof MaterialFolderScalarFieldEnum]
+
+
 export const StudyMaterialScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -305,6 +327,7 @@ export const StudyMaterialScalarFieldEnum = {
   files: 'files',
   batchId: 'batchId',
   teacherId: 'teacherId',
+  folderId: 'folderId',
   category: 'category',
   subject: 'subject',
   chapter: 'chapter',
@@ -502,6 +525,16 @@ export const TestScoreScalarFieldEnum = {
 export type TestScoreScalarFieldEnum = (typeof TestScoreScalarFieldEnum)[keyof typeof TestScoreScalarFieldEnum]
 
 
+export const TestReminderScalarFieldEnum = {
+  id: 'id',
+  testId: 'testId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type TestReminderScalarFieldEnum = (typeof TestReminderScalarFieldEnum)[keyof typeof TestReminderScalarFieldEnum]
+
+
 export const InstagramAccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -571,6 +604,7 @@ export const TeacherProfileScalarFieldEnum = {
   primarySubjects: 'primarySubjects',
   secondarySubjects: 'secondarySubjects',
   bio: 'bio',
+  avatarUrl: 'avatarUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

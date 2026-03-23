@@ -44,13 +44,17 @@ export default class AppTestService {
 
     const tests = await prisma.test.findMany({
       where,
-      include: { batch: { select: { id: true, name: true } } },
+      include: {
+        batch: { select: { id: true, name: true } },
+        reminders: { where: { userId: studentId }, select: { id: true } },
+      },
       orderBy: { date: "desc" },
     });
 
     return tests.map((t) => ({
       ...t,
       daysUntil: getDaysUntil(t.date),
+      isReminderSet: t.reminders.length > 0,
     }));
   }
 
@@ -619,5 +623,24 @@ export default class AppTestService {
     const csv = [header, ...rows].join("\n");
     const filename = `test-${testId}-scores.csv`;
     return { csv, filename };
+  }
+
+  // ==================== TEST REMINDERS ====================
+
+  public async toggleReminder(testId: number, userId: number): Promise<{ isReminderSet: boolean }> {
+    const existing = await (prisma as any).testReminder.findUnique({
+      where: { testId_userId: { testId, userId } },
+    });
+    if (existing) {
+      await (prisma as any).testReminder.delete({ where: { testId_userId: { testId, userId } } });
+      return { isReminderSet: false };
+    } else {
+      await (prisma as any).testReminder.create({ data: { testId, userId } });
+      return { isReminderSet: true };
+    }
+  }
+
+  public async removeReminder(testId: number, userId: number): Promise<void> {
+    await (prisma as any).testReminder.deleteMany({ where: { testId, userId } });
   }
 }

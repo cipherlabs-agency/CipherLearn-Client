@@ -285,8 +285,8 @@ export const isAppUser = async (
       });
     }
 
-    // Only STUDENT and TEACHER can access app routes
-    if (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER) {
+    // STUDENT, TEACHER, and ADMIN can access app routes (admin acts as teacher)
+    if (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
       log("warn", "isAppUser role denied", { userId: user.id, role: user.role, path: req.path });
       return res.status(403).json({
         success: false,
@@ -386,7 +386,8 @@ export const isTeacher = async (
       });
     }
 
-    if (user.role !== UserRoles.TEACHER) {
+    // TEACHER and ADMIN can access teacher routes (admin acts as teacher)
+    if (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
       log("warn", "isTeacher role denied", { userId: user.id, role: user.role, path: req.path });
       return res.status(403).json({
         success: false,

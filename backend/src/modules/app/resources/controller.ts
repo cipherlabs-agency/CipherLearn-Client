@@ -181,6 +181,7 @@ class ResourcesController {
         scheduledAt,
         batchId: rawBatchId,
         visibleBatchIds: rawVisible,
+        folderId: rawFolderId,
       } = req.body;
 
       if (!title?.trim()) {
@@ -244,6 +245,8 @@ class ResourcesController {
         });
       }
 
+      const folderId = rawFolderId ? Number(rawFolderId) : undefined;
+
       const input: CreateMaterialInput = {
         title,
         description,
@@ -254,6 +257,7 @@ class ResourcesController {
         scheduledAt,
         batchId,
         visibleBatchIds,
+        folderId: folderId && !isNaN(folderId) ? folderId : undefined,
       };
 
       const material = await resourcesService.createTeacherMaterial(
@@ -346,6 +350,201 @@ class ResourcesController {
       logger.error("ResourcesController.deleteTeacherMaterial error:", error);
       const message =
         error instanceof Error ? error.message : "Failed to delete material";
+      return res.status(400).json({ success: false, message });
+    }
+  }
+
+  // ==================== TEACHER VIDEO (YOUTUBE) ====================
+
+  /**
+   * GET /app/resources/teacher/videos?batchId=&page=&limit=&search=
+   * Teacher: list YouTube video lectures for a batch
+   */
+  async getTeacherVideos(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      if (!user) return res.status(401).json({ success: false, message: "Not authenticated" });
+
+      const batchId = Number(req.query.batchId);
+      if (isNaN(batchId) || batchId <= 0) return res.status(400).json({ success: false, message: "Valid batchId is required" });
+
+      const page = Math.max(1, Number(req.query.page) || 1);
+      const limit = Math.min(50, Number(req.query.limit) || 20);
+      const search = req.query.search ? String(req.query.search) : undefined;
+
+      const result = await resourcesService.getTeacherVideos(batchId, { page, limit, search });
+      return res.status(200).json({ success: true, data: result.videos, pagination: { page, limit, total: result.total, pages: Math.ceil(result.total / limit) } });
+    } catch (error) {
+      logger.error("ResourcesController.getTeacherVideos error:", error);
+      return res.status(500).json({ success: false, message: "Failed to get videos" });
+    }
+  }
+
+  /**
+   * POST /app/resources/teacher/video
+   * Teacher: add a YouTube video lecture
+   * Body: { url, title, batchId, description?, category?, publish?, notifyStudents? }
+   */
+  async createVideo(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      if (!user) return res.status(401).json({ success: false, message: "Not authenticated" });
+
+      const { url, title, batchId, description, category, subject, publish, notifyStudents, visibleBatchIds, scheduledAt } = req.body;
+
+      if (!url?.trim()) return res.status(400).json({ success: false, message: "url is required" });
+      if (!title?.trim()) return res.status(400).json({ success: false, message: "title is required" });
+      if (!batchId) return res.status(400).json({ success: false, message: "batchId is required" });
+
+      const video = await resourcesService.createVideo({
+        url, title, batchId: Number(batchId), description, category, subject,
+        publish: publish === true || publish === "true",
+        visibleBatchIds: Array.isArray(visibleBatchIds) ? visibleBatchIds.map(Number) : undefined,
+        scheduledAt: scheduledAt || undefined,
+      });
+
+      if ((notifyStudents === true || notifyStudents === "true") && (publish === true || publish === "true")) {
+        import("../../../utils/pushNotifications").then(({ sendToBatchStudents }) => {
+          sendToBatchStudents(Number(batchId), "classResourceUploaded", `New Video: ${title}`, `A new video lecture has been uploaded for your class.`).catch(() => {});
+        });
+      }
+
+      return res.status(201).json({ success: true, message: "Video lecture added", data: video });
+    } catch (error) {
+      logger.error("ResourcesController.createVideo error:", error);
+      const message = error instanceof Error ? error.message : "Failed to add video";
+      return res.status(400).json({ success: false, message });
+    }
+  }
+
+  /**
+   * PUT /app/resources/teacher/video/:id
+   * Teacher: update a YouTube video
+   * Body: { title?, description?, category?, visibility? }
+   */
+  async updateVideo(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const videoId = Number(req.params.id);
+      const batchId = Number(req.body.batchId || req.query.batchId);
+
+      if (!user) return res.status(401).json({ success: false, message: "Not authenticated" });
+      if (isNaN(videoId)) return res.status(400).json({ success: false, message: "Invalid video ID" });
+      if (isNaN(batchId)) return res.status(400).json({ success: false, message: "batchId is required" });
+
+      const { title, description, category, subject, visibility, visibleBatchIds, scheduledAt } = req.body;
+      const video = await resourcesService.updateVideo(videoId, batchId, {
+        title, description, category, subject, visibility,
+        visibleBatchIds: Array.isArray(visibleBatchIds) ? visibleBatchIds.map(Number) : undefined,
+        scheduledAt: scheduledAt !== undefined ? scheduledAt || null : undefined,
+      });
+
+      return res.status(200).json({ success: true, message: "Video updated", data: video });
+    } catch (error) {
+      logger.error("ResourcesController.updateVideo error:", error);
+      const message = error instanceof Error ? error.message : "Failed to update video";
+      return res.status(400).json({ success: false, message });
+    }
+  }
+
+  /**
+   * DELETE /app/resources/teacher/video/:id
+   * Teacher: soft-delete a YouTube video
+   * Body or query: { batchId }
+   */
+  async deleteVideo(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const videoId = Number(req.params.id);
+      const batchId = Number(req.body.batchId || req.query.batchId);
+
+      if (!user) return res.status(401).json({ success: false, message: "Not authenticated" });
+      if (isNaN(videoId)) return res.status(400).json({ success: false, message: "Invalid video ID" });
+      if (isNaN(batchId)) return res.status(400).json({ success: false, message: "batchId is required" });
+
+      await resourcesService.deleteVideo(videoId, batchId, user.name);
+      return res.status(200).json({ success: true, message: "Video deleted" });
+    } catch (error) {
+      logger.error("ResourcesController.deleteVideo error:", error);
+      const message = error instanceof Error ? error.message : "Failed to delete video";
+      return res.status(400).json({ success: false, message });
+    }
+  }
+
+  // ==================== MATERIAL FOLDERS ====================
+
+  /**
+   * GET /app/resources/teacher/folders?batchId=
+   * Teacher: list material folders for a batch
+   */
+  async getFolders(req: Request, res: Response) {
+    try {
+      const batchId = Number(req.query.batchId);
+      if (isNaN(batchId)) return res.status(400).json({ success: false, message: "batchId is required" });
+      const folders = await resourcesService.getFolders(batchId);
+      return res.status(200).json({ success: true, data: folders });
+    } catch (error) {
+      logger.error("ResourcesController.getFolders error:", error);
+      return res.status(500).json({ success: false, message: "Failed to get folders" });
+    }
+  }
+
+  /**
+   * POST /app/resources/teacher/folders
+   * Teacher: create a new folder
+   * Body: { batchId, name }
+   */
+  async createFolder(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      if (!user) return res.status(401).json({ success: false, message: "Not authenticated" });
+      const { batchId, name } = req.body;
+      if (!batchId || !name?.trim()) return res.status(400).json({ success: false, message: "batchId and name are required" });
+      const folder = await resourcesService.createFolder(Number(batchId), name, user.name);
+      return res.status(201).json({ success: true, message: "Folder created", data: folder });
+    } catch (error) {
+      logger.error("ResourcesController.createFolder error:", error);
+      const message = error instanceof Error ? error.message : "Failed to create folder";
+      return res.status(400).json({ success: false, message });
+    }
+  }
+
+  /**
+   * PUT /app/resources/teacher/folder/:id
+   * Teacher: rename a folder
+   * Body: { batchId, name }
+   */
+  async updateFolder(req: Request, res: Response) {
+    try {
+      const folderId = Number(req.params.id);
+      const { batchId, name } = req.body;
+      if (isNaN(folderId)) return res.status(400).json({ success: false, message: "Invalid folder ID" });
+      if (!batchId || !name?.trim()) return res.status(400).json({ success: false, message: "batchId and name are required" });
+      const folder = await resourcesService.updateFolder(folderId, Number(batchId), name);
+      return res.status(200).json({ success: true, message: "Folder renamed", data: folder });
+    } catch (error) {
+      logger.error("ResourcesController.updateFolder error:", error);
+      const message = error instanceof Error ? error.message : "Failed to update folder";
+      return res.status(400).json({ success: false, message });
+    }
+  }
+
+  /**
+   * DELETE /app/resources/teacher/folder/:id
+   * Teacher: delete a folder (materials move to no-folder)
+   * Body/query: { batchId }
+   */
+  async deleteFolder(req: Request, res: Response) {
+    try {
+      const folderId = Number(req.params.id);
+      const batchId = Number(req.body.batchId || req.query.batchId);
+      if (isNaN(folderId)) return res.status(400).json({ success: false, message: "Invalid folder ID" });
+      if (isNaN(batchId)) return res.status(400).json({ success: false, message: "batchId is required" });
+      await resourcesService.deleteFolder(folderId, batchId);
+      return res.status(200).json({ success: true, message: "Folder deleted" });
+    } catch (error) {
+      logger.error("ResourcesController.deleteFolder error:", error);
+      const message = error instanceof Error ? error.message : "Failed to delete folder";
       return res.status(400).json({ success: false, message });
     }
   }

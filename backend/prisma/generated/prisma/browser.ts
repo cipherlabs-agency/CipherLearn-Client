@@ -73,6 +73,11 @@ export type StudentSubmission = Prisma.StudentSubmissionModel
  */
 export type Announcement = Prisma.AnnouncementModel
 /**
+ * Model MaterialFolder
+ * 
+ */
+export type MaterialFolder = Prisma.MaterialFolderModel
+/**
  * Model StudyMaterial
  * 
  */
@@ -122,6 +127,11 @@ export type Test = Prisma.TestModel
  * 
  */
 export type TestScore = Prisma.TestScoreModel
+/**
+ * Model TestReminder
+ * 
+ */
+export type TestReminder = Prisma.TestReminderModel
 /**
  * Model InstagramAccount
  * 

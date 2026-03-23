@@ -57,6 +57,7 @@ model Student {
   parentName  String?
   grade       String?
   instituteId String?
+  avatarUrl   String?
   isDeleted  Boolean? @default(false)
   deletedBy  String?
 
@@ -88,6 +89,7 @@ model Batch {
   qrAttendanceTokens QRAttendanceToken[]
   assignmentSlots    AssignmentSlot[]
   studyMaterials     StudyMaterial[]
+  materialFolders    MaterialFolder[]
   feeStructures      FeeStructure[]
   feeReceipts        FeeReceipt[]
   lectures           Lecture[]
@@ -170,16 +172,19 @@ model Attendance {
 }
 
 model YoutubeVideo {
-  id          Int                     @id @default(autoincrement())
-  title       String
-  description String?
-  url         String                  @unique
-  visibility  YoutubeVideoVisibility? @default(PRIVATE)
-  category    String?
-  batchId     Int
-  batch       Batch                   @relation(fields: [batchId], references: [id])
-  isDeleted   Boolean?                @default(false)
-  deletedBy   String?
+  id              Int                     @id @default(autoincrement())
+  title           String
+  description     String?
+  url             String                  @unique
+  visibility      YoutubeVideoVisibility? @default(PRIVATE)
+  category        String?
+  subject         String?
+  batchId         Int
+  batch           Batch                   @relation(fields: [batchId], references: [id])
+  visibleBatchIds Int[]                   // Additional batch IDs that can view this video
+  scheduledAt     DateTime?               // Publish at this time (when visibility=PUBLIC)
+  isDeleted       Boolean?                @default(false)
+  deletedBy       String?
 
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
@@ -262,27 +267,48 @@ model StudentSubmission {
 }
 
 model Announcement {
-  id          Int                  @id @default(autoincrement())
-  title       String
-  description String               // Short preview text
-  body        String?              // Full rich-text content shown in detail view
-  imageUrl    String?
-  date        DateTime?
-  category    AnnouncementCategory @default(GENERAL)
-  priority    AnnouncementPriority @default(NORMAL)
-  department  String?              // e.g., "Admin Office", "Mathematics Dept"
-  attachments Json?                // Array of { url, filename, size, mimeType }
-  metadata    Json?                // Structured key-value e.g., { "Start Date": "June 1st, 2026" }
-  isActive    Boolean              @default(true)
-  pinned      Boolean              @default(false)
-  createdBy   String
-  createdById Int?                 // userId of creator (null = admin via dashboard)
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  id              Int                  @id @default(autoincrement())
+  title           String
+  description     String               // Short preview text
+  body            String?              // Full rich-text content shown in detail view
+  imageUrl        String?
+  date            DateTime?
+  category        AnnouncementCategory @default(GENERAL)
+  priority        AnnouncementPriority @default(NORMAL)
+  department      String?              // e.g., "Admin Office", "Mathematics Dept"
+  attachments     Json?                // Array of { url, filename, size, mimeType }
+  metadata        Json?                // Structured key-value e.g., { "Start Date": "June 1st, 2026" }
+  isActive        Boolean              @default(true)
+  isDraft         Boolean              @default(false)
+  scheduledAt     DateTime?            // Publish at this time (when isDraft=true + scheduledAt set)
+  targetBatchIds  Int[]                // Empty = visible to all; non-empty = only those batches
+  pinned          Boolean              @default(false)
+  createdBy       String
+  createdById     Int?                 // userId of creator (null = admin via dashboard)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
 
   @@index([category, isActive])
   @@index([isActive, createdAt])
   @@map("announcements")
+}
+
+model MaterialFolder {
+  id        Int      @id @default(autoincrement())
+  name      String
+  batchId   Int
+  batch     Batch    @relation(fields: [batchId], references: [id])
+  createdBy String
+  isDeleted Boolean  @default(false)
+
+  materials StudyMaterial[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([batchId, name])
+  @@index([batchId])
+  @@map("material_folders")
 }
 
 model StudyMaterial {
@@ -294,6 +320,8 @@ model StudyMaterial {
   batch       Batch             @relation(fields: [batchId], references: [id])
   teacherId   Int?
   teacher     User?             @relation("TeacherMaterials", fields: [teacherId], references: [id], onDelete: SetNull)
+  folderId    Int?
+  folder      MaterialFolder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
   // Classification
   category        String?
@@ -316,6 +344,7 @@ model StudyMaterial {
 
   @@index([batchId])
   @@index([teacherId])
+  @@index([folderId])
   @@index([materialStatus, isDeleted])
   @@index([materialType])
   @@map("study_materials")
@@ -663,6 +692,7 @@ model Test {
 
   // Relations
   scores        TestScore[]
+  reminders     TestReminder[]
 
   // Audit
   createdBy     Int
@@ -704,6 +734,20 @@ model TestScore {
   @@index([testId])
   @@index([studentId])
   @@map("test_scores")
+}
+
+model TestReminder {
+  id        Int      @id @default(autoincrement())
+  testId    Int
+  test      Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  userId    Int
+
+  createdAt DateTime @default(now())
+
+  @@unique([testId, userId])
+  @@index([testId])
+  @@index([userId])
+  @@map("test_reminders")
 }
 
 enum TestType {
@@ -838,6 +882,7 @@ model TeacherProfile {
   primarySubjects  String[]  // e.g., ["Algebra", "Calculus"]
   secondarySubjects String[] // e.g., ["Physics"]
   bio              String?
+  avatarUrl        String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -178,4 +178,112 @@ export default class AppLectureService {
       batch: updated.batch,
     };
   }
+
+  // ==================== TEACHER CRUD ====================
+
+  public async createLecture(data: {
+    title: string;
+    subject: string;
+    batchId: number;
+    date: Date;
+    startTime: string;
+    endTime: string;
+    room?: string;
+    description?: string;
+    isOnline?: boolean;
+    meetingLink?: string;
+    attachments?: unknown;
+    teacherId: number;
+    createdByName: string;
+  }): Promise<AppLectureResponse> {
+    const [sh, sm] = data.startTime.split(":").map(Number);
+    const [eh, em] = data.endTime.split(":").map(Number);
+    const duration = Math.max(0, (eh * 60 + em) - (sh * 60 + sm));
+
+    const lecture = await prisma.lecture.create({
+      data: {
+        title: data.title,
+        subject: data.subject,
+        batchId: data.batchId,
+        date: data.date,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        duration,
+        room: data.room,
+        description: data.description,
+        isOnline: data.isOnline ?? false,
+        meetingLink: data.meetingLink,
+        attachments: data.attachments as any,
+        teacherId: data.teacherId,
+        assignedBy: data.createdByName,
+        createdBy: data.teacherId,
+        status: LectureStatus.SCHEDULED,
+      },
+      include: LECTURE_INCLUDE,
+    });
+
+    return {
+      ...lecture,
+      status: computeStatus(lecture),
+      teacher: lecture.teacher,
+      batch: lecture.batch,
+    };
+  }
+
+  public async updateLecture(
+    lectureId: number,
+    teacherId: number,
+    data: {
+      title?: string;
+      subject?: string;
+      batchId?: number;
+      date?: Date;
+      startTime?: string;
+      endTime?: string;
+      room?: string;
+      description?: string;
+      isOnline?: boolean;
+      meetingLink?: string;
+      status?: LectureStatus;
+      attachments?: unknown;
+    }
+  ): Promise<AppLectureResponse> {
+    const lecture = await prisma.lecture.findFirst({
+      where: { id: lectureId, teacherId, isDeleted: false },
+    });
+    if (!lecture) throw new Error("Lecture not found or not assigned to you");
+
+    const updateData: Record<string, unknown> = { ...data };
+    // Recompute duration if times changed
+    const startTime = data.startTime ?? lecture.startTime;
+    const endTime = data.endTime ?? lecture.endTime;
+    const [sh, sm] = startTime.split(":").map(Number);
+    const [eh, em] = endTime.split(":").map(Number);
+    updateData.duration = Math.max(0, (eh * 60 + em) - (sh * 60 + sm));
+
+    const updated = await prisma.lecture.update({
+      where: { id: lectureId },
+      data: updateData as any,
+      include: LECTURE_INCLUDE,
+    });
+
+    return {
+      ...updated,
+      status: computeStatus(updated),
+      teacher: updated.teacher,
+      batch: updated.batch,
+    };
+  }
+
+  public async deleteLecture(lectureId: number, teacherId: number): Promise<void> {
+    const lecture = await prisma.lecture.findFirst({
+      where: { id: lectureId, teacherId, isDeleted: false },
+    });
+    if (!lecture) throw new Error("Lecture not found or not assigned to you");
+
+    await prisma.lecture.update({
+      where: { id: lectureId },
+      data: { isDeleted: true, status: LectureStatus.CANCELLED },
+    });
+  }
 }

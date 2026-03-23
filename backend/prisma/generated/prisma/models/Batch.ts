@@ -237,6 +237,7 @@ export type BatchWhereInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenListRelationFilter
   assignmentSlots?: Prisma.AssignmentSlotListRelationFilter
   studyMaterials?: Prisma.StudyMaterialListRelationFilter
+  materialFolders?: Prisma.MaterialFolderListRelationFilter
   feeStructures?: Prisma.FeeStructureListRelationFilter
   feeReceipts?: Prisma.FeeReceiptListRelationFilter
   lectures?: Prisma.LectureListRelationFilter
@@ -261,6 +262,7 @@ export type BatchOrderByWithRelationInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenOrderByRelationAggregateInput
   assignmentSlots?: Prisma.AssignmentSlotOrderByRelationAggregateInput
   studyMaterials?: Prisma.StudyMaterialOrderByRelationAggregateInput
+  materialFolders?: Prisma.MaterialFolderOrderByRelationAggregateInput
   feeStructures?: Prisma.FeeStructureOrderByRelationAggregateInput
   feeReceipts?: Prisma.FeeReceiptOrderByRelationAggregateInput
   lectures?: Prisma.LectureOrderByRelationAggregateInput
@@ -288,6 +290,7 @@ export type BatchWhereUniqueInput = Prisma.AtLeast<{
   qrAttendanceTokens?: Prisma.QRAttendanceTokenListRelationFilter
   assignmentSlots?: Prisma.AssignmentSlotListRelationFilter
   studyMaterials?: Prisma.StudyMaterialListRelationFilter
+  materialFolders?: Prisma.MaterialFolderListRelationFilter
   feeStructures?: Prisma.FeeStructureListRelationFilter
   feeReceipts?: Prisma.FeeReceiptListRelationFilter
   lectures?: Prisma.LectureListRelationFilter
@@ -341,6 +344,7 @@ export type BatchCreateInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -365,6 +369,7 @@ export type BatchUncheckedCreateInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -388,6 +393,7 @@ export type BatchUpdateInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -412,6 +418,7 @@ export type BatchUncheckedUpdateInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -601,6 +608,20 @@ export type BatchUpdateOneRequiredWithoutAssignmentSlotsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutAssignmentSlotsInput, Prisma.BatchUpdateWithoutAssignmentSlotsInput>, Prisma.BatchUncheckedUpdateWithoutAssignmentSlotsInput>
 }
 
+export type BatchCreateNestedOneWithoutMaterialFoldersInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutMaterialFoldersInput, Prisma.BatchUncheckedCreateWithoutMaterialFoldersInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutMaterialFoldersInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneRequiredWithoutMaterialFoldersNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutMaterialFoldersInput, Prisma.BatchUncheckedCreateWithoutMaterialFoldersInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutMaterialFoldersInput
+  upsert?: Prisma.BatchUpsertWithoutMaterialFoldersInput
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutMaterialFoldersInput, Prisma.BatchUpdateWithoutMaterialFoldersInput>, Prisma.BatchUncheckedUpdateWithoutMaterialFoldersInput>
+}
+
 export type BatchCreateNestedOneWithoutStudyMaterialsInput = {
   create?: Prisma.XOR<Prisma.BatchCreateWithoutStudyMaterialsInput, Prisma.BatchUncheckedCreateWithoutStudyMaterialsInput>
   connectOrCreate?: Prisma.BatchCreateOrConnectWithoutStudyMaterialsInput
@@ -697,6 +718,7 @@ export type BatchCreateWithoutStudentsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -720,6 +742,7 @@ export type BatchUncheckedCreateWithoutStudentsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -758,6 +781,7 @@ export type BatchUpdateWithoutStudentsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -781,6 +805,7 @@ export type BatchUncheckedUpdateWithoutStudentsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -803,6 +828,7 @@ export type BatchCreateWithoutQrAttendanceTokensInput = {
   sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -826,6 +852,7 @@ export type BatchUncheckedCreateWithoutQrAttendanceTokensInput = {
   sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -864,6 +891,7 @@ export type BatchUpdateWithoutQrAttendanceTokensInput = {
   sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -887,6 +915,7 @@ export type BatchUncheckedUpdateWithoutQrAttendanceTokensInput = {
   sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -909,6 +938,7 @@ export type BatchCreateWithoutSheetsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -932,6 +962,7 @@ export type BatchUncheckedCreateWithoutSheetsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -970,6 +1001,7 @@ export type BatchUpdateWithoutSheetsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -993,6 +1025,7 @@ export type BatchUncheckedUpdateWithoutSheetsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -1016,6 +1049,7 @@ export type BatchCreateWithoutAttendancesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -1039,6 +1073,7 @@ export type BatchUncheckedCreateWithoutAttendancesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -1077,6 +1112,7 @@ export type BatchUpdateWithoutAttendancesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -1100,6 +1136,7 @@ export type BatchUncheckedUpdateWithoutAttendancesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -1122,6 +1159,7 @@ export type BatchCreateWithoutYoutubeVideosInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -1145,6 +1183,7 @@ export type BatchUncheckedCreateWithoutYoutubeVideosInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -1183,6 +1222,7 @@ export type BatchUpdateWithoutYoutubeVideosInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -1206,6 +1246,7 @@ export type BatchUncheckedUpdateWithoutYoutubeVideosInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -1228,6 +1269,7 @@ export type BatchCreateWithoutNotesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -1251,6 +1293,7 @@ export type BatchUncheckedCreateWithoutNotesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -1289,6 +1332,7 @@ export type BatchUpdateWithoutNotesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -1312,6 +1356,7 @@ export type BatchUncheckedUpdateWithoutNotesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -1333,6 +1378,7 @@ export type BatchCreateWithoutAssignmentSlotsInput = {
   sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -1356,6 +1402,7 @@ export type BatchUncheckedCreateWithoutAssignmentSlotsInput = {
   sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -1394,6 +1441,7 @@ export type BatchUpdateWithoutAssignmentSlotsInput = {
   sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -1417,6 +1465,117 @@ export type BatchUncheckedUpdateWithoutAssignmentSlotsInput = {
   sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+}
+
+export type BatchCreateWithoutMaterialFoldersInput = {
+  name: string
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+}
+
+export type BatchUncheckedCreateWithoutMaterialFoldersInput = {
+  id?: number
+  name: string
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+}
+
+export type BatchCreateOrConnectWithoutMaterialFoldersInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutMaterialFoldersInput, Prisma.BatchUncheckedCreateWithoutMaterialFoldersInput>
+}
+
+export type BatchUpsertWithoutMaterialFoldersInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutMaterialFoldersInput, Prisma.BatchUncheckedUpdateWithoutMaterialFoldersInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutMaterialFoldersInput, Prisma.BatchUncheckedCreateWithoutMaterialFoldersInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutMaterialFoldersInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutMaterialFoldersInput, Prisma.BatchUncheckedUpdateWithoutMaterialFoldersInput>
+}
+
+export type BatchUpdateWithoutMaterialFoldersInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutMaterialFoldersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -1439,6 +1598,7 @@ export type BatchCreateWithoutStudyMaterialsInput = {
   sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -1462,6 +1622,7 @@ export type BatchUncheckedCreateWithoutStudyMaterialsInput = {
   sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -1500,6 +1661,7 @@ export type BatchUpdateWithoutStudyMaterialsInput = {
   sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -1523,6 +1685,7 @@ export type BatchUncheckedUpdateWithoutStudyMaterialsInput = {
   sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -1546,6 +1709,7 @@ export type BatchCreateWithoutFeeStructuresInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
@@ -1569,6 +1733,7 @@ export type BatchUncheckedCreateWithoutFeeStructuresInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
@@ -1607,6 +1772,7 @@ export type BatchUpdateWithoutFeeStructuresInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
@@ -1630,6 +1796,7 @@ export type BatchUncheckedUpdateWithoutFeeStructuresInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
@@ -1652,6 +1819,7 @@ export type BatchCreateWithoutFeeReceiptsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
@@ -1675,6 +1843,7 @@ export type BatchUncheckedCreateWithoutFeeReceiptsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
@@ -1713,6 +1882,7 @@ export type BatchUpdateWithoutFeeReceiptsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
@@ -1736,6 +1906,7 @@ export type BatchUncheckedUpdateWithoutFeeReceiptsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
@@ -1758,6 +1929,7 @@ export type BatchCreateWithoutLecturesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
@@ -1781,6 +1953,7 @@ export type BatchUncheckedCreateWithoutLecturesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
@@ -1819,6 +1992,7 @@ export type BatchUpdateWithoutLecturesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
@@ -1842,6 +2016,7 @@ export type BatchUncheckedUpdateWithoutLecturesInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
@@ -1864,6 +2039,7 @@ export type BatchCreateWithoutTestsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -1887,6 +2063,7 @@ export type BatchUncheckedCreateWithoutTestsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -1925,6 +2102,7 @@ export type BatchUpdateWithoutTestsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -1948,6 +2126,7 @@ export type BatchUncheckedUpdateWithoutTestsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -1970,6 +2149,7 @@ export type BatchCreateWithoutDoubtsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
@@ -1993,6 +2173,7 @@ export type BatchUncheckedCreateWithoutDoubtsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
@@ -2031,6 +2212,7 @@ export type BatchUpdateWithoutDoubtsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
@@ -2054,6 +2236,7 @@ export type BatchUncheckedUpdateWithoutDoubtsInput = {
   qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
@@ -2074,6 +2257,7 @@ export type BatchCountOutputType = {
   qrAttendanceTokens: number
   assignmentSlots: number
   studyMaterials: number
+  materialFolders: number
   feeStructures: number
   feeReceipts: number
   lectures: number
@@ -2090,6 +2274,7 @@ export type BatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   qrAttendanceTokens?: boolean | BatchCountOutputTypeCountQrAttendanceTokensArgs
   assignmentSlots?: boolean | BatchCountOutputTypeCountAssignmentSlotsArgs
   studyMaterials?: boolean | BatchCountOutputTypeCountStudyMaterialsArgs
+  materialFolders?: boolean | BatchCountOutputTypeCountMaterialFoldersArgs
   feeStructures?: boolean | BatchCountOutputTypeCountFeeStructuresArgs
   feeReceipts?: boolean | BatchCountOutputTypeCountFeeReceiptsArgs
   lectures?: boolean | BatchCountOutputTypeCountLecturesArgs
@@ -2143,6 +2328,13 @@ export type BatchCountOutputTypeCountAssignmentSlotsArgs<ExtArgs extends runtime
  */
 export type BatchCountOutputTypeCountStudyMaterialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.StudyMaterialWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountMaterialFoldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MaterialFolderWhereInput
 }
 
 /**
@@ -2216,6 +2408,7 @@ export type BatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   qrAttendanceTokens?: boolean | Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>
   assignmentSlots?: boolean | Prisma.Batch$assignmentSlotsArgs<ExtArgs>
   studyMaterials?: boolean | Prisma.Batch$studyMaterialsArgs<ExtArgs>
+  materialFolders?: boolean | Prisma.Batch$materialFoldersArgs<ExtArgs>
   feeStructures?: boolean | Prisma.Batch$feeStructuresArgs<ExtArgs>
   feeReceipts?: boolean | Prisma.Batch$feeReceiptsArgs<ExtArgs>
   lectures?: boolean | Prisma.Batch$lecturesArgs<ExtArgs>
@@ -2267,6 +2460,7 @@ export type BatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   qrAttendanceTokens?: boolean | Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>
   assignmentSlots?: boolean | Prisma.Batch$assignmentSlotsArgs<ExtArgs>
   studyMaterials?: boolean | Prisma.Batch$studyMaterialsArgs<ExtArgs>
+  materialFolders?: boolean | Prisma.Batch$materialFoldersArgs<ExtArgs>
   feeStructures?: boolean | Prisma.Batch$feeStructuresArgs<ExtArgs>
   feeReceipts?: boolean | Prisma.Batch$feeReceiptsArgs<ExtArgs>
   lectures?: boolean | Prisma.Batch$lecturesArgs<ExtArgs>
@@ -2288,6 +2482,7 @@ export type $BatchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     qrAttendanceTokens: Prisma.$QRAttendanceTokenPayload<ExtArgs>[]
     assignmentSlots: Prisma.$AssignmentSlotPayload<ExtArgs>[]
     studyMaterials: Prisma.$StudyMaterialPayload<ExtArgs>[]
+    materialFolders: Prisma.$MaterialFolderPayload<ExtArgs>[]
     feeStructures: Prisma.$FeeStructurePayload<ExtArgs>[]
     feeReceipts: Prisma.$FeeReceiptPayload<ExtArgs>[]
     lectures: Prisma.$LecturePayload<ExtArgs>[]
@@ -2705,6 +2900,7 @@ export interface Prisma__BatchClient<T, Null = never, ExtArgs extends runtime.Ty
   qrAttendanceTokens<T extends Prisma.Batch$qrAttendanceTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QRAttendanceTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignmentSlots<T extends Prisma.Batch$assignmentSlotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$assignmentSlotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   studyMaterials<T extends Prisma.Batch$studyMaterialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$studyMaterialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyMaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  materialFolders<T extends Prisma.Batch$materialFoldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$materialFoldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaterialFolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   feeStructures<T extends Prisma.Batch$feeStructuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$feeStructuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeeStructurePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   feeReceipts<T extends Prisma.Batch$feeReceiptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$feeReceiptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeeReceiptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lectures<T extends Prisma.Batch$lecturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$lecturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LecturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3255,6 +3451,30 @@ export type Batch$studyMaterialsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.StudyMaterialScalarFieldEnum | Prisma.StudyMaterialScalarFieldEnum[]
+}
+
+/**
+ * Batch.materialFolders
+ */
+export type Batch$materialFoldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MaterialFolder
+   */
+  select?: Prisma.MaterialFolderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MaterialFolder
+   */
+  omit?: Prisma.MaterialFolderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MaterialFolderInclude<ExtArgs> | null
+  where?: Prisma.MaterialFolderWhereInput
+  orderBy?: Prisma.MaterialFolderOrderByWithRelationInput | Prisma.MaterialFolderOrderByWithRelationInput[]
+  cursor?: Prisma.MaterialFolderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MaterialFolderScalarFieldEnum | Prisma.MaterialFolderScalarFieldEnum[]
 }
 
 /**

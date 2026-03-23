@@ -78,6 +78,10 @@ router.get(
 // Student: get my tests (with optional filter: upcoming, complete, results)
 router.get("/", isAppUser, controller.getTests.bind(controller));
 
+// Student: toggle/remove test reminder (BEFORE /:id to avoid conflict)
+router.post("/:id/remind", isAppUser, controller.toggleReminder.bind(controller));
+router.delete("/:id/remind", isAppUser, controller.removeReminder.bind(controller));
+
 // Student: performance analytics
 router.get("/performance", isStudent, controller.getPerformance.bind(controller));
 

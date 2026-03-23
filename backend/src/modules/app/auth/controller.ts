@@ -9,6 +9,8 @@ import {
   resetPasswordSchema,
   refreshTokenSchema,
 } from "./validations";
+import { prisma } from "../../../config/db.config";
+import { compareHash, generateHash } from "../../auth/utils.auth";
 import logger from "../../../utils/logger";
 import { log } from "../../../utils/logtail";
 
@@ -343,5 +345,46 @@ export const getMe = async (req: Request, res: Response): Promise<Response> => {
       success: false,
       message: "An error occurred. Please try again.",
     });
+  }
+};
+
+/**
+ * Change password for authenticated app user (student or teacher)
+ * POST /app/auth/change-password
+ * Body: { currentPassword, newPassword }
+ */
+export const changePassword = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Not authenticated" });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: "currentPassword and newPassword are required" });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: "New password must be at least 6 characters" });
+    }
+
+    const dbUser = await prisma.user.findUnique({ where: { id: user.id }, select: { password: true } });
+    if (!dbUser?.password) {
+      return res.status(400).json({ success: false, message: "No password set. Use setup-password instead." });
+    }
+
+    const isMatch = compareHash(currentPassword, dbUser.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Current password is incorrect" });
+    }
+
+    const hashedNew = generateHash(newPassword);
+    await prisma.user.update({ where: { id: user.id }, data: { password: hashedNew } });
+
+    return res.status(200).json({ success: true, message: "Password changed successfully" });
+  } catch (err) {
+    log("error", "app.auth.changePassword failed", { err: err instanceof Error ? err.message : String(err), userId: req.user?.id });
+    logger.error("changePassword error:", err);
+    return res.status(500).json({ success: false, message: "An error occurred. Please try again." });
   }
 };

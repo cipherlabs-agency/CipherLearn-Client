@@ -78,4 +78,12 @@ router.get(
   authController.getMe
 );
 
+// Change password (requires current password)
+router.post(
+  "/change-password",
+  generalRateLimiter,
+  isAppUser,
+  authController.changePassword
+);
+
 export default router;

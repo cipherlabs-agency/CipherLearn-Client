@@ -395,6 +395,7 @@ export const ModelName = {
   AssignmentSlot: 'AssignmentSlot',
   StudentSubmission: 'StudentSubmission',
   Announcement: 'Announcement',
+  MaterialFolder: 'MaterialFolder',
   StudyMaterial: 'StudyMaterial',
   FeeStructure: 'FeeStructure',
   FeeReceipt: 'FeeReceipt',
@@ -405,6 +406,7 @@ export const ModelName = {
   Lecture: 'Lecture',
   Test: 'Test',
   TestScore: 'TestScore',
+  TestReminder: 'TestReminder',
   InstagramAccount: 'InstagramAccount',
   AutomationRule: 'AutomationRule',
   AutomationLog: 'AutomationLog',
@@ -430,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "notificationPreference" | "loginAttempt" | "lecture" | "test" | "testScore" | "instagramAccount" | "automationRule" | "automationLog" | "teacherProfile" | "doubt" | "doubtReply" | "resourceStar" | "deviceToken" | "appSettings" | "notification"
+    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "materialFolder" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "notificationPreference" | "loginAttempt" | "lecture" | "test" | "testScore" | "testReminder" | "instagramAccount" | "automationRule" | "automationLog" | "teacherProfile" | "doubt" | "doubtReply" | "resourceStar" | "deviceToken" | "appSettings" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1248,6 +1250,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MaterialFolder: {
+      payload: Prisma.$MaterialFolderPayload<ExtArgs>
+      fields: Prisma.MaterialFolderFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MaterialFolderFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MaterialFolderFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>
+        }
+        findFirst: {
+          args: Prisma.MaterialFolderFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MaterialFolderFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>
+        }
+        findMany: {
+          args: Prisma.MaterialFolderFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>[]
+        }
+        create: {
+          args: Prisma.MaterialFolderCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>
+        }
+        createMany: {
+          args: Prisma.MaterialFolderCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MaterialFolderCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>[]
+        }
+        delete: {
+          args: Prisma.MaterialFolderDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>
+        }
+        update: {
+          args: Prisma.MaterialFolderUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>
+        }
+        deleteMany: {
+          args: Prisma.MaterialFolderDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MaterialFolderUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MaterialFolderUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>[]
+        }
+        upsert: {
+          args: Prisma.MaterialFolderUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaterialFolderPayload>
+        }
+        aggregate: {
+          args: Prisma.MaterialFolderAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMaterialFolder>
+        }
+        groupBy: {
+          args: Prisma.MaterialFolderGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MaterialFolderGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MaterialFolderCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MaterialFolderCountAggregateOutputType> | number
+        }
+      }
+    }
     StudyMaterial: {
       payload: Prisma.$StudyMaterialPayload<ExtArgs>
       fields: Prisma.StudyMaterialFieldRefs
@@ -1985,6 +2061,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TestScoreCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TestScoreCountAggregateOutputType> | number
+        }
+      }
+    }
+    TestReminder: {
+      payload: Prisma.$TestReminderPayload<ExtArgs>
+      fields: Prisma.TestReminderFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TestReminderFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TestReminderFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>
+        }
+        findFirst: {
+          args: Prisma.TestReminderFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TestReminderFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>
+        }
+        findMany: {
+          args: Prisma.TestReminderFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>[]
+        }
+        create: {
+          args: Prisma.TestReminderCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>
+        }
+        createMany: {
+          args: Prisma.TestReminderCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TestReminderCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>[]
+        }
+        delete: {
+          args: Prisma.TestReminderDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>
+        }
+        update: {
+          args: Prisma.TestReminderUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>
+        }
+        deleteMany: {
+          args: Prisma.TestReminderDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TestReminderUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TestReminderUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>[]
+        }
+        upsert: {
+          args: Prisma.TestReminderUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TestReminderPayload>
+        }
+        aggregate: {
+          args: Prisma.TestReminderAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTestReminder>
+        }
+        groupBy: {
+          args: Prisma.TestReminderGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TestReminderGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TestReminderCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TestReminderCountAggregateOutputType> | number
         }
       }
     }
@@ -2798,6 +2948,7 @@ export const StudentScalarFieldEnum = {
   parentName: 'parentName',
   grade: 'grade',
   instituteId: 'instituteId',
+  avatarUrl: 'avatarUrl',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
@@ -2875,7 +3026,10 @@ export const YoutubeVideoScalarFieldEnum = {
   url: 'url',
   visibility: 'visibility',
   category: 'category',
+  subject: 'subject',
   batchId: 'batchId',
+  visibleBatchIds: 'visibleBatchIds',
+  scheduledAt: 'scheduledAt',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
@@ -2955,6 +3109,9 @@ export const AnnouncementScalarFieldEnum = {
   attachments: 'attachments',
   metadata: 'metadata',
   isActive: 'isActive',
+  isDraft: 'isDraft',
+  scheduledAt: 'scheduledAt',
+  targetBatchIds: 'targetBatchIds',
   pinned: 'pinned',
   createdBy: 'createdBy',
   createdById: 'createdById',
@@ -2965,6 +3122,19 @@ export const AnnouncementScalarFieldEnum = {
 export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
 
 
+export const MaterialFolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  batchId: 'batchId',
+  createdBy: 'createdBy',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaterialFolderScalarFieldEnum = (typeof MaterialFolderScalarFieldEnum)[keyof typeof MaterialFolderScalarFieldEnum]
+
+
 export const StudyMaterialScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -2972,6 +3142,7 @@ export const StudyMaterialScalarFieldEnum = {
   files: 'files',
   batchId: 'batchId',
   teacherId: 'teacherId',
+  folderId: 'folderId',
   category: 'category',
   subject: 'subject',
   chapter: 'chapter',
@@ -3169,6 +3340,16 @@ export const TestScoreScalarFieldEnum = {
 export type TestScoreScalarFieldEnum = (typeof TestScoreScalarFieldEnum)[keyof typeof TestScoreScalarFieldEnum]
 
 
+export const TestReminderScalarFieldEnum = {
+  id: 'id',
+  testId: 'testId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type TestReminderScalarFieldEnum = (typeof TestReminderScalarFieldEnum)[keyof typeof TestReminderScalarFieldEnum]
+
+
 export const InstagramAccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3238,6 +3419,7 @@ export const TeacherProfileScalarFieldEnum = {
   primarySubjects: 'primarySubjects',
   secondarySubjects: 'secondarySubjects',
   bio: 'bio',
+  avatarUrl: 'avatarUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -3895,6 +4077,7 @@ export type GlobalOmitConfig = {
   assignmentSlot?: Prisma.AssignmentSlotOmit
   studentSubmission?: Prisma.StudentSubmissionOmit
   announcement?: Prisma.AnnouncementOmit
+  materialFolder?: Prisma.MaterialFolderOmit
   studyMaterial?: Prisma.StudyMaterialOmit
   feeStructure?: Prisma.FeeStructureOmit
   feeReceipt?: Prisma.FeeReceiptOmit
@@ -3905,6 +4088,7 @@ export type GlobalOmitConfig = {
   lecture?: Prisma.LectureOmit
   test?: Prisma.TestOmit
   testScore?: Prisma.TestScoreOmit
+  testReminder?: Prisma.TestReminderOmit
   instagramAccount?: Prisma.InstagramAccountOmit
   automationRule?: Prisma.AutomationRuleOmit
   automationLog?: Prisma.AutomationLogOmit

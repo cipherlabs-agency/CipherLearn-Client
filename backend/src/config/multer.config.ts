@@ -161,6 +161,31 @@ export const materialUpload = createUploader({
   maxFiles: 5,
 });
 
+/** Avatar upload: images only (JPEG, PNG, WEBP), 5 MB/file, 1 file */
+export const avatarUpload = createUploader({
+  mimeTypes: new Set(["image/jpeg", "image/png", "image/webp"]),
+  maxFileSize: 5 * 1024 * 1024,
+  maxFiles: 1,
+});
+
+/** Lecture attachment upload: docs + images, 20 MB/file, 5 files */
+export const lectureAttachmentUpload = createUploader({
+  mimeTypes: new Set([
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "text/plain",
+    "application/octet-stream",
+  ]),
+  maxFileSize: 20 * 1024 * 1024,
+  maxFiles: 5,
+});
+
 // ─── Security helpers ─────────────────────────────────────────────────────────
 
 /**

@@ -8,6 +8,36 @@ const router = Router();
 // Preference endpoints do an additional isStudent check via req.student
 
 /**
+ * GET /app/notifications
+ * List in-app notifications for the current user (students & teachers)
+ *   ?page=&limit=&unreadOnly=true
+ */
+router.get(
+  "/",
+  appReadRateLimiter,
+  notificationsController.getNotifications.bind(notificationsController)
+);
+
+/**
+ * PUT /app/notifications/read-all
+ * Mark all notifications as read
+ * Must be BEFORE /:id/read to avoid route conflict
+ */
+router.put(
+  "/read-all",
+  notificationsController.markAllRead.bind(notificationsController)
+);
+
+/**
+ * PUT /app/notifications/:id/read
+ * Mark a single notification as read
+ */
+router.put(
+  "/:id/read",
+  notificationsController.markNotificationRead.bind(notificationsController)
+);
+
+/**
  * GET /app/notifications/preferences
  * Returns student's notification preferences.
  * Returns defaults if no preferences saved yet.

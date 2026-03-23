@@ -53,6 +53,7 @@ export type StudentMinAggregateOutputType = {
   parentName: string | null
   grade: string | null
   instituteId: string | null
+  avatarUrl: string | null
   isDeleted: boolean | null
   deletedBy: string | null
   updatedAt: Date | null
@@ -74,6 +75,7 @@ export type StudentMaxAggregateOutputType = {
   parentName: string | null
   grade: string | null
   instituteId: string | null
+  avatarUrl: string | null
   isDeleted: boolean | null
   deletedBy: string | null
   updatedAt: Date | null
@@ -95,6 +97,7 @@ export type StudentCountAggregateOutputType = {
   parentName: number
   grade: number
   instituteId: number
+  avatarUrl: number
   isDeleted: number
   deletedBy: number
   updatedAt: number
@@ -130,6 +133,7 @@ export type StudentMinAggregateInputType = {
   parentName?: true
   grade?: true
   instituteId?: true
+  avatarUrl?: true
   isDeleted?: true
   deletedBy?: true
   updatedAt?: true
@@ -151,6 +155,7 @@ export type StudentMaxAggregateInputType = {
   parentName?: true
   grade?: true
   instituteId?: true
+  avatarUrl?: true
   isDeleted?: true
   deletedBy?: true
   updatedAt?: true
@@ -172,6 +177,7 @@ export type StudentCountAggregateInputType = {
   parentName?: true
   grade?: true
   instituteId?: true
+  avatarUrl?: true
   isDeleted?: true
   deletedBy?: true
   updatedAt?: true
@@ -280,6 +286,7 @@ export type StudentGroupByOutputType = {
   parentName: string | null
   grade: string | null
   instituteId: string | null
+  avatarUrl: string | null
   isDeleted: boolean | null
   deletedBy: string | null
   updatedAt: Date | null
@@ -324,6 +331,7 @@ export type StudentWhereInput = {
   parentName?: Prisma.StringNullableFilter<"Student"> | string | null
   grade?: Prisma.StringNullableFilter<"Student"> | string | null
   instituteId?: Prisma.StringNullableFilter<"Student"> | string | null
+  avatarUrl?: Prisma.StringNullableFilter<"Student"> | string | null
   isDeleted?: Prisma.BoolNullableFilter<"Student"> | boolean | null
   deletedBy?: Prisma.StringNullableFilter<"Student"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
@@ -354,6 +362,7 @@ export type StudentOrderByWithRelationInput = {
   parentName?: Prisma.SortOrderInput | Prisma.SortOrder
   grade?: Prisma.SortOrderInput | Prisma.SortOrder
   instituteId?: Prisma.SortOrderInput | Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isDeleted?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -387,6 +396,7 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   parentName?: Prisma.StringNullableFilter<"Student"> | string | null
   grade?: Prisma.StringNullableFilter<"Student"> | string | null
   instituteId?: Prisma.StringNullableFilter<"Student"> | string | null
+  avatarUrl?: Prisma.StringNullableFilter<"Student"> | string | null
   isDeleted?: Prisma.BoolNullableFilter<"Student"> | boolean | null
   deletedBy?: Prisma.StringNullableFilter<"Student"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
@@ -417,6 +427,7 @@ export type StudentOrderByWithAggregationInput = {
   parentName?: Prisma.SortOrderInput | Prisma.SortOrder
   grade?: Prisma.SortOrderInput | Prisma.SortOrder
   instituteId?: Prisma.SortOrderInput | Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isDeleted?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -446,6 +457,7 @@ export type StudentScalarWhereWithAggregatesInput = {
   parentName?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   grade?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   instituteId?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
+  avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   isDeleted?: Prisma.BoolNullableWithAggregatesFilter<"Student"> | boolean | null
   deletedBy?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Student"> | Date | string | null
@@ -464,6 +476,7 @@ export type StudentCreateInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -494,6 +507,7 @@ export type StudentUncheckedCreateInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -519,6 +533,7 @@ export type StudentUpdateInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -549,6 +564,7 @@ export type StudentUncheckedUpdateInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -577,6 +593,7 @@ export type StudentCreateManyInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -595,6 +612,7 @@ export type StudentUpdateManyMutationInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -616,6 +634,7 @@ export type StudentUncheckedUpdateManyInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -642,6 +661,7 @@ export type StudentCountOrderByAggregateInput = {
   parentName?: Prisma.SortOrder
   grade?: Prisma.SortOrder
   instituteId?: Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -669,6 +689,7 @@ export type StudentMaxOrderByAggregateInput = {
   parentName?: Prisma.SortOrder
   grade?: Prisma.SortOrder
   instituteId?: Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -690,6 +711,7 @@ export type StudentMinOrderByAggregateInput = {
   parentName?: Prisma.SortOrder
   grade?: Prisma.SortOrder
   instituteId?: Prisma.SortOrder
+  avatarUrl?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -913,6 +935,7 @@ export type StudentCreateWithoutUserInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -941,6 +964,7 @@ export type StudentUncheckedCreateWithoutUserInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -982,6 +1006,7 @@ export type StudentUpdateWithoutUserInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1010,6 +1035,7 @@ export type StudentUncheckedUpdateWithoutUserInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1035,6 +1061,7 @@ export type StudentCreateWithoutBatchInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1063,6 +1090,7 @@ export type StudentUncheckedCreateWithoutBatchInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1120,6 +1148,7 @@ export type StudentScalarWhereInput = {
   parentName?: Prisma.StringNullableFilter<"Student"> | string | null
   grade?: Prisma.StringNullableFilter<"Student"> | string | null
   instituteId?: Prisma.StringNullableFilter<"Student"> | string | null
+  avatarUrl?: Prisma.StringNullableFilter<"Student"> | string | null
   isDeleted?: Prisma.BoolNullableFilter<"Student"> | boolean | null
   deletedBy?: Prisma.StringNullableFilter<"Student"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
@@ -1138,6 +1167,7 @@ export type StudentCreateWithoutAttendancesInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1167,6 +1197,7 @@ export type StudentUncheckedCreateWithoutAttendancesInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1207,6 +1238,7 @@ export type StudentUpdateWithoutAttendancesInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1236,6 +1268,7 @@ export type StudentUncheckedUpdateWithoutAttendancesInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1260,6 +1293,7 @@ export type StudentCreateWithoutSubmissionsInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1289,6 +1323,7 @@ export type StudentUncheckedCreateWithoutSubmissionsInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1329,6 +1364,7 @@ export type StudentUpdateWithoutSubmissionsInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1358,6 +1394,7 @@ export type StudentUncheckedUpdateWithoutSubmissionsInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1382,6 +1419,7 @@ export type StudentCreateWithoutFeeReceiptsInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1411,6 +1449,7 @@ export type StudentUncheckedCreateWithoutFeeReceiptsInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1451,6 +1490,7 @@ export type StudentUpdateWithoutFeeReceiptsInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1480,6 +1520,7 @@ export type StudentUncheckedUpdateWithoutFeeReceiptsInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1504,6 +1545,7 @@ export type StudentCreateWithoutNotificationPreferenceInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1533,6 +1575,7 @@ export type StudentUncheckedCreateWithoutNotificationPreferenceInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1573,6 +1616,7 @@ export type StudentUpdateWithoutNotificationPreferenceInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1602,6 +1646,7 @@ export type StudentUncheckedUpdateWithoutNotificationPreferenceInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1626,6 +1671,7 @@ export type StudentCreateWithoutTestScoresInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1655,6 +1701,7 @@ export type StudentUncheckedCreateWithoutTestScoresInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1695,6 +1742,7 @@ export type StudentUpdateWithoutTestScoresInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1724,6 +1772,7 @@ export type StudentUncheckedUpdateWithoutTestScoresInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1748,6 +1797,7 @@ export type StudentCreateWithoutDoubtsInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1777,6 +1827,7 @@ export type StudentUncheckedCreateWithoutDoubtsInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1817,6 +1868,7 @@ export type StudentUpdateWithoutDoubtsInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1846,6 +1898,7 @@ export type StudentUncheckedUpdateWithoutDoubtsInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1870,6 +1923,7 @@ export type StudentCreateWithoutStarredResourcesInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1899,6 +1953,7 @@ export type StudentUncheckedCreateWithoutStarredResourcesInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -1939,6 +1994,7 @@ export type StudentUpdateWithoutStarredResourcesInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1968,6 +2024,7 @@ export type StudentUncheckedUpdateWithoutStarredResourcesInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1994,6 +2051,7 @@ export type StudentCreateManyBatchInput = {
   parentName?: string | null
   grade?: string | null
   instituteId?: string | null
+  avatarUrl?: string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
@@ -2012,6 +2070,7 @@ export type StudentUpdateWithoutBatchInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2040,6 +2099,7 @@ export type StudentUncheckedUpdateWithoutBatchInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2067,6 +2127,7 @@ export type StudentUncheckedUpdateManyWithoutBatchInput = {
   parentName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instituteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2164,6 +2225,7 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   parentName?: boolean
   grade?: boolean
   instituteId?: boolean
+  avatarUrl?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
@@ -2195,6 +2257,7 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   parentName?: boolean
   grade?: boolean
   instituteId?: boolean
+  avatarUrl?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
@@ -2218,6 +2281,7 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   parentName?: boolean
   grade?: boolean
   instituteId?: boolean
+  avatarUrl?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
@@ -2241,13 +2305,14 @@ export type StudentSelectScalar = {
   parentName?: boolean
   grade?: boolean
   instituteId?: boolean
+  avatarUrl?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
 }
 
-export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstname" | "middlename" | "lastname" | "fullname" | "email" | "dob" | "batchId" | "userId" | "address" | "phone" | "parentName" | "grade" | "instituteId" | "isDeleted" | "deletedBy" | "updatedAt" | "createdAt", ExtArgs["result"]["student"]>
+export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstname" | "middlename" | "lastname" | "fullname" | "email" | "dob" | "batchId" | "userId" | "address" | "phone" | "parentName" | "grade" | "instituteId" | "avatarUrl" | "isDeleted" | "deletedBy" | "updatedAt" | "createdAt", ExtArgs["result"]["student"]>
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   batch?: boolean | Prisma.Student$batchArgs<ExtArgs>
   user?: boolean | Prisma.Student$userArgs<ExtArgs>
@@ -2297,6 +2362,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     parentName: string | null
     grade: string | null
     instituteId: string | null
+    avatarUrl: string | null
     isDeleted: boolean | null
     deletedBy: string | null
     updatedAt: Date | null
@@ -2747,6 +2813,7 @@ export interface StudentFieldRefs {
   readonly parentName: Prisma.FieldRef<"Student", 'String'>
   readonly grade: Prisma.FieldRef<"Student", 'String'>
   readonly instituteId: Prisma.FieldRef<"Student", 'String'>
+  readonly avatarUrl: Prisma.FieldRef<"Student", 'String'>
   readonly isDeleted: Prisma.FieldRef<"Student", 'Boolean'>
   readonly deletedBy: Prisma.FieldRef<"Student", 'String'>
   readonly updatedAt: Prisma.FieldRef<"Student", 'DateTime'>

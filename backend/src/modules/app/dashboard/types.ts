@@ -3,15 +3,7 @@ import type { AttendancePerformance } from "../attendance/types";
 import type { UpcomingAssignment } from "../assignments/types";
 import type { AppAnnouncementListItem } from "../announcements/types";
 import type { AppFeesSummary } from "../fees/types";
-
-export interface TodayLecture {
-  batchName: string;
-  time: string;
-  startTime?: string;
-  endTime?: string;
-  isToday: boolean;
-  dayOfWeek: string;
-}
+import type { AppLectureResponse, DailyScheduleResponse } from "../lectures/types";
 
 export interface QuickAccessCounts {
   videos: number;
@@ -23,12 +15,14 @@ export interface QuickAccessCounts {
 
 export interface DashboardData {
   profile: StudentProfile;
-  todayLectures: TodayLecture[];
+  todayLectures: AppLectureResponse[];
+  nextClass: DailyScheduleResponse["nextClass"];
   attendance: AttendancePerformance;
   upcomingAssignments: UpcomingAssignment[];
   announcements: AppAnnouncementListItem[];
   quickAccess: QuickAccessCounts;
   feesSummary: AppFeesSummary;
+  unreadNotificationCount: number;
 }
 
 export interface TeacherQuickAccessCounts {
@@ -42,8 +36,9 @@ export interface TeacherQuickAccessCounts {
 
 export interface TeacherDashboardData {
   profile: import("../profile/types").TeacherProfileResponse;
-  todayLectures: import("../lectures/types").AppLectureResponse[];
-  nextClass: import("../lectures/types").DailyScheduleResponse["nextClass"];
+  todayLectures: AppLectureResponse[];
+  nextClass: DailyScheduleResponse["nextClass"];
   announcements: AppAnnouncementListItem[];
   quickAccess: TeacherQuickAccessCounts;
+  unreadNotificationCount: number;
 }

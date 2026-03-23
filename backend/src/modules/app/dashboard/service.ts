@@ -1,12 +1,10 @@
 import { prisma } from "../../../config/db.config";
 import type {
-  TodayLecture,
   QuickAccessCounts,
   DashboardData,
   TeacherQuickAccessCounts,
   TeacherDashboardData,
 } from "./types";
-import type { BatchTimings } from "../types";
 import { profileService } from "../profile/service";
 import { attendanceService } from "../attendance/service";
 import { assignmentsService } from "../assignments/service";
@@ -19,41 +17,12 @@ const lectureService = new AppLectureService();
 
 class DashboardService {
   /**
-   * Get today's lectures based on batch timings
+   * Get today's lectures for a student from the Lecture table
    */
-  async getTodayLectures(batchId: number | null): Promise<TodayLecture[]> {
-    if (!batchId) return [];
-
-    const batch = await prisma.batch.findUnique({
-      where: { id: batchId },
-      select: {
-        name: true,
-        timings: true,
-      },
-    });
-
-    if (!batch || !batch.timings) return [];
-
-    const timings = batch.timings as BatchTimings;
-    const today = new Date();
-    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const todayDay = daysOfWeek[today.getDay()];
-
-    const scheduledDays = timings.days || [];
-    const isToday = scheduledDays.some(
-      (day) => day.toLowerCase() === todayDay.toLowerCase()
-    );
-
-    return [
-      {
-        batchName: batch.name,
-        time: timings.time || "",
-        startTime: timings.startTime,
-        endTime: timings.endTime,
-        isToday,
-        dayOfWeek: todayDay,
-      },
-    ];
+  async getTodayLectures(batchId: number | null) {
+    if (!batchId) return { lectures: [], nextClass: null };
+    const schedule = await lectureService.getStudentSchedule(batchId);
+    return { lectures: schedule.lectures, nextClass: schedule.nextClass };
   }
 
   /**
@@ -116,15 +85,16 @@ class DashboardService {
   /**
    * Get full dashboard data in one call
    */
-  async getDashboard(studentId: number, batchId: number | null): Promise<DashboardData> {
+  async getDashboard(studentId: number, batchId: number | null, userId?: number): Promise<DashboardData> {
     const [
       profile,
-      todayLectures,
+      todaySchedule,
       attendance,
       upcomingAssignments,
       announcementsResult,
       quickAccess,
       feesSummary,
+      unreadNotificationCount,
     ] = await Promise.all([
       profileService.getProfile(studentId),
       this.getTodayLectures(batchId),
@@ -133,16 +103,19 @@ class DashboardService {
       announcementsService.getAnnouncements({ limit: 5 }),
       this.getQuickAccessCounts(studentId, batchId),
       feesService.getFeesSummary(studentId),
+      userId ? (prisma as any).notification.count({ where: { userId, isRead: false } }) : Promise.resolve(0),
     ]);
 
     return {
       profile,
-      todayLectures,
+      todayLectures: todaySchedule.lectures,
+      nextClass: todaySchedule.nextClass,
       attendance,
       upcomingAssignments,
       announcements: announcementsResult.announcements,
       quickAccess,
       feesSummary,
+      unreadNotificationCount,
     };
   }
 
@@ -198,11 +171,12 @@ class DashboardService {
   }
 
   async getTeacherDashboard(teacherId: number): Promise<TeacherDashboardData> {
-    const [profile, todaySchedule, announcementsResult, quickAccess] = await Promise.all([
+    const [profile, todaySchedule, announcementsResult, quickAccess, unreadNotificationCount] = await Promise.all([
       profileService.getTeacherProfile(teacherId),
       lectureService.getTeacherSchedule(teacherId),
       announcementsService.getAnnouncements({ limit: 5 }),
       this.getTeacherQuickAccessCounts(teacherId),
+      (prisma as any).notification.count({ where: { userId: teacherId, isRead: false } }),
     ]);
 
     return {
@@ -211,6 +185,7 @@ class DashboardService {
       nextClass: todaySchedule.nextClass,
       announcements: announcementsResult.announcements,
       quickAccess,
+      unreadNotificationCount,
     };
   }
 }

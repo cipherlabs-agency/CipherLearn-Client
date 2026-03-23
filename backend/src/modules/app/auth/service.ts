@@ -39,8 +39,8 @@ export const checkUserStatus = async (
     };
   }
 
-  // Only allow STUDENT and TEACHER roles for app authentication
-  if (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER) {
+  // Allow STUDENT, TEACHER, and ADMIN roles for app authentication (admin acts as teacher)
+  if (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
     return {
       success: true,
       isRegistered: false,

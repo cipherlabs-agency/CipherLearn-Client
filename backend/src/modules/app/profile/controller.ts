@@ -97,6 +97,49 @@ class ProfileController {
   }
 
   /**
+   * Student: upload profile avatar
+   * PUT /app/profile/avatar  (multipart, field: "avatar")
+   */
+  async uploadAvatar(req: Request, res: Response) {
+    try {
+      const student = req.student;
+      if (!student) {
+        return res.status(401).json({ success: false, message: "Student not authenticated" });
+      }
+      const file = (req as any).file as Express.Multer.File | undefined;
+      if (!file) {
+        return res.status(400).json({ success: false, message: "No image file uploaded" });
+      }
+      const result = await profileService.updateStudentAvatar(student.id, file);
+      return res.status(200).json({ success: true, message: "Avatar updated", data: result });
+    } catch (error) {
+      log("error", "app.profile.avatar failed", { err: error instanceof Error ? error.message : String(error) });
+      logger.error("ProfileController.uploadAvatar error:", error);
+      return res.status(500).json({ success: false, message: "Failed to upload avatar" });
+    }
+  }
+
+  /**
+   * Teacher: upload profile avatar
+   * PUT /app/profile/teacher/avatar  (multipart, field: "avatar")
+   */
+  async uploadTeacherAvatar(req: Request, res: Response) {
+    try {
+      const user = (req as any).user;
+      const file = (req as any).file as Express.Multer.File | undefined;
+      if (!file) {
+        return res.status(400).json({ success: false, message: "No image file uploaded" });
+      }
+      const result = await profileService.updateTeacherAvatar(user.id, file);
+      return res.status(200).json({ success: true, message: "Avatar updated", data: result });
+    } catch (error) {
+      log("error", "app.profile.teacher.avatar failed", { err: error instanceof Error ? error.message : String(error) });
+      logger.error("ProfileController.uploadTeacherAvatar error:", error);
+      return res.status(500).json({ success: false, message: "Failed to upload avatar" });
+    }
+  }
+
+  /**
    * Student: get their class teacher info (Ask Doubts screen)
    * GET /app/teachers/my-teacher
    */

@@ -29,11 +29,12 @@ class AnnouncementsController {
       const parsedPage = page ? Math.max(1, parseInt(page as string, 10)) : 1;
       const parsedLimit = limit ? Math.min(50, Math.max(1, parseInt(limit as string, 10))) : 10;
 
-      const query: GetAnnouncementsQuery = {
+      const query: GetAnnouncementsQuery & { batchId?: number } = {
         category: category as AnnouncementCategory | undefined,
         search: typeof search === "string" ? search.slice(0, 100) : undefined,
         page: isNaN(parsedPage) ? 1 : parsedPage,
         limit: isNaN(parsedLimit) ? 10 : parsedLimit,
+        batchId: (req as any).student?.batchId ?? undefined,
       };
 
       const result = await announcementsService.getAnnouncements(query);
@@ -95,7 +96,7 @@ class AnnouncementsController {
     try {
       const user = (req as any).user;
       const files = (req.files as Express.Multer.File[]) ?? [];
-      const { title, description, body, category, department, pinned } = req.body;
+      const { title, description, body, category, department, pinned, notifyStudents, isDraft, scheduledAt, targetBatchIds } = req.body;
 
       if (!title?.trim() || !description?.trim()) {
         return res.status(400).json({ success: false, message: "Title and description are required" });
@@ -119,16 +120,30 @@ class AnnouncementsController {
         }));
       }
 
+      const parsedTargetBatchIds = Array.isArray(targetBatchIds)
+        ? targetBatchIds.map(Number)
+        : typeof targetBatchIds === "string"
+        ? JSON.parse(targetBatchIds)
+        : [];
+
       const announcement = await announcementsService.createTeacherAnnouncement(
         user.id,
         user.name,
-        { title, description, body, category, department, attachments, pinned: pinned === "true" || pinned === true }
+        {
+          title, description, body, category, department, attachments,
+          pinned: pinned === "true" || pinned === true,
+          isDraft: isDraft === "true" || isDraft === true,
+          scheduledAt: scheduledAt || undefined,
+          targetBatchIds: parsedTargetBatchIds,
+        }
       );
 
-      // Trigger Push Notification asynchronously
-      require("../../../utils/pushNotifications")
-        .sendToAllActiveStudents("schoolAnnouncements", title, description, { type: "ANNOUNCEMENT", id: announcement.id })
-        .catch((e: Error) => logger.error("Failed to send announcement push notification", e));
+      // Trigger Push Notification asynchronously (only if notifyStudents is explicitly true)
+      if (notifyStudents === true || notifyStudents === "true") {
+        require("../../../utils/pushNotifications")
+          .sendToAllActiveStudents("schoolAnnouncements", title, description, { type: "ANNOUNCEMENT", id: announcement.id })
+          .catch((e: Error) => logger.error("Failed to send announcement push notification", e));
+      }
 
       return res.status(201).json({ success: true, message: "Announcement created", data: announcement });
     } catch (error) {
@@ -145,14 +160,23 @@ class AnnouncementsController {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) return res.status(400).json({ success: false, message: "Invalid ID" });
 
-      const { title, description, body, category, department, pinned } = req.body;
+      const { title, description, body, category, department, pinned, isDraft, scheduledAt, targetBatchIds } = req.body;
       if (category && !VALID_CATEGORIES.includes(category)) {
         return res.status(400).json({ success: false, message: `Invalid category` });
       }
 
+      const parsedTargetBatchIds = Array.isArray(targetBatchIds)
+        ? targetBatchIds.map(Number)
+        : typeof targetBatchIds === "string"
+        ? JSON.parse(targetBatchIds)
+        : undefined;
+
       const announcement = await announcementsService.updateTeacherAnnouncement(id, user.id, {
         title, description, body, category, department,
-        pinned: pinned === "true" || pinned === true,
+        pinned: pinned !== undefined ? (pinned === "true" || pinned === true) : undefined,
+        isDraft: isDraft !== undefined ? (isDraft === "true" || isDraft === true) : undefined,
+        scheduledAt: scheduledAt !== undefined ? scheduledAt || null : undefined,
+        targetBatchIds: parsedTargetBatchIds,
       });
       return res.json({ success: true, data: announcement });
     } catch (error: any) {

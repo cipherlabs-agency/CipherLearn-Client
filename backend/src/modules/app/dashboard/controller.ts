@@ -18,7 +18,7 @@ class DashboardController {
         });
       }
 
-      const dashboard = await dashboardService.getDashboard(student.id, student.batchId);
+      const dashboard = await dashboardService.getDashboard(student.id, student.batchId, req.user?.id);
 
       return res.status(200).json({
         success: true,
@@ -48,11 +48,11 @@ class DashboardController {
         });
       }
 
-      const lectures = await dashboardService.getTodayLectures(student.batchId);
+      const { lectures, nextClass } = await dashboardService.getTodayLectures(student.batchId);
 
       return res.status(200).json({
         success: true,
-        data: lectures,
+        data: { lectures, nextClass },
       });
     } catch (error) {
       log("error", "app.dashboard.status failed", { err: error instanceof Error ? error.message : String(error) });

@@ -13,6 +13,7 @@ export interface StudentProfile {
   parentName: string | null;
   grade: string | null;
   instituteId: string | null;
+  avatarUrl: string | null;
   classTeacher: string | null;
   batch: {
     id: number;
@@ -42,6 +43,7 @@ export interface TeacherProfileResponse {
   primarySubjects: string[];
   secondarySubjects: string[];
   bio: string | null;
+  avatarUrl: string | null;
   // Computed workload
   batchesTaught: number;
   weeklyHours: number;

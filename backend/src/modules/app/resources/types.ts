@@ -11,6 +11,7 @@ export interface AppVideo {
   description: string | null;
   url: string;
   category: string | null;
+  subject?: string | null;
   createdAt: string;
 }
 
@@ -51,6 +52,7 @@ export interface TeacherMaterialListItem {
   batchId: number;
   batchName: string;
   visibleBatchIds: number[];
+  folderId?: number | null;
   createdAt: string;
 }
 
@@ -64,6 +66,7 @@ export interface CreateMaterialInput {
   scheduledAt?: string;
   batchId: number;
   visibleBatchIds?: number[];
+  folderId?: number;
 }
 
 export interface UpdateMaterialInput {
@@ -75,6 +78,7 @@ export interface UpdateMaterialInput {
   materialStatus?: string;
   scheduledAt?: string | null;
   visibleBatchIds?: number[];
+  folderId?: number | null;
 }
 
 export interface GetTeacherMaterialsQuery {

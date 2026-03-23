@@ -31,22 +31,25 @@ class ResourcesService {
     const isFiltered = !!(query?.search || query?.category);
 
     const fetcher = async (): Promise<AppVideo[]> => {
-      const where: Prisma.YoutubeVideoWhereInput = {
-        batchId,
-        isDeleted: false,
-        visibility: { not: "PRIVATE" },
-      };
-
-      if (query?.search) {
-        where.title = { contains: query.search, mode: "insensitive" };
-      }
-
-      if (query?.category) {
-        where.category = query.category;
-      }
-
+      const now = new Date();
+      // Student can see: videos for their batch, OR videos where visibleBatchIds contains their batch
       const videos = await prisma.youtubeVideo.findMany({
-        where,
+        where: {
+          isDeleted: false,
+          visibility: { not: "PRIVATE" },
+          // Hide scheduled videos not yet due
+          OR: [{ scheduledAt: null }, { scheduledAt: { lte: now } }],
+          AND: [
+            {
+              OR: [
+                { batchId },
+                { visibleBatchIds: { has: batchId } },
+              ],
+            },
+            ...(query?.search ? [{ title: { contains: query.search, mode: "insensitive" as const } }] : []),
+            ...(query?.category ? [{ category: query.category }] : []),
+          ],
+        },
         orderBy: { createdAt: "desc" },
         take: limit,
       });
@@ -57,6 +60,7 @@ class ResourcesService {
         description: v.description,
         url: v.url,
         category: v.category,
+        subject: (v as any).subject ?? null,
         createdAt: v.createdAt?.toISOString() || new Date().toISOString(),
       }));
     };
@@ -249,6 +253,7 @@ class ResourcesService {
         batchId: input.batchId,
         teacherId,
         visibleBatchIds: input.visibleBatchIds ?? [],
+        folderId: input.folderId ?? null,
         createdBy: teacherName,
       },
       include: { batch: { select: { id: true, name: true } } },
@@ -270,6 +275,7 @@ class ResourcesService {
       batchId: material.batchId,
       batchName: material.batch.name,
       visibleBatchIds: material.visibleBatchIds,
+      folderId: material.folderId ?? null,
       createdAt: material.createdAt.toISOString(),
     };
   }
@@ -311,6 +317,7 @@ class ResourcesService {
         ...(input.visibleBatchIds !== undefined && {
           visibleBatchIds: input.visibleBatchIds,
         }),
+        ...(input.folderId !== undefined && { folderId: input.folderId }),
       },
       include: { batch: { select: { id: true, name: true } } },
     });
@@ -330,6 +337,7 @@ class ResourcesService {
       batchId: material.batchId,
       batchName: material.batch.name,
       visibleBatchIds: material.visibleBatchIds,
+      folderId: material.folderId ?? null,
       createdAt: material.createdAt.toISOString(),
     };
   }
@@ -485,6 +493,113 @@ class ResourcesService {
       materialStatus: "PUBLISHED",
       scheduledAt: null,
     });
+  }
+
+  // ==================== TEACHER VIDEO (YOUTUBE) MANAGEMENT ====================
+
+  async getTeacherVideos(
+    batchId: number,
+    opts: { page: number; limit: number; search?: string }
+  ): Promise<{ videos: AppVideo[]; total: number }> {
+    const where = {
+      batchId,
+      isDeleted: false,
+      ...(opts.search ? { title: { contains: opts.search, mode: "insensitive" as const } } : {}),
+    };
+    const [videos, total] = await Promise.all([
+      prisma.youtubeVideo.findMany({ where, orderBy: { createdAt: "desc" }, skip: (opts.page - 1) * opts.limit, take: opts.limit }),
+      prisma.youtubeVideo.count({ where }),
+    ]);
+    return {
+      total,
+      videos: videos.map((v) => ({
+        id: v.id, title: v.title, description: v.description,
+        url: v.url, category: v.category,
+        createdAt: v.createdAt?.toISOString() || new Date().toISOString(),
+      })),
+    };
+  }
+
+  async createVideo(data: {
+    title: string; url: string; batchId: number;
+    description?: string; category?: string; subject?: string;
+    publish?: boolean; visibleBatchIds?: number[]; scheduledAt?: string;
+  }): Promise<AppVideo> {
+    const video = await prisma.youtubeVideo.create({
+      data: {
+        title: data.title, url: data.url, batchId: data.batchId,
+        description: data.description, category: data.category,
+        subject: data.subject,
+        visibility: data.publish ? "PUBLIC" : "PRIVATE",
+        visibleBatchIds: data.visibleBatchIds ?? [],
+        scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null,
+      },
+    });
+    await cacheService.delByPrefix(`app:videos:${data.batchId}`);
+    return {
+      id: video.id, title: video.title, description: video.description,
+      url: video.url, category: video.category, subject: (video as any).subject ?? null,
+      createdAt: video.createdAt?.toISOString() || new Date().toISOString(),
+    };
+  }
+
+  async updateVideo(
+    videoId: number, batchId: number,
+    data: { title?: string; description?: string; category?: string; subject?: string; visibility?: string; visibleBatchIds?: number[]; scheduledAt?: string | null }
+  ): Promise<AppVideo> {
+    const existing = await prisma.youtubeVideo.findFirst({ where: { id: videoId, batchId, isDeleted: false } });
+    if (!existing) throw new Error("Video not found");
+    const updatePayload: Record<string, unknown> = { ...data };
+    if (data.scheduledAt !== undefined) {
+      updatePayload.scheduledAt = data.scheduledAt ? new Date(data.scheduledAt) : null;
+    }
+    const updated = await prisma.youtubeVideo.update({ where: { id: videoId }, data: updatePayload as any });
+    await cacheService.delByPrefix(`app:videos:${batchId}`);
+    return {
+      id: updated.id, title: updated.title, description: updated.description,
+      url: updated.url, category: updated.category, subject: (updated as any).subject ?? null,
+      createdAt: updated.createdAt?.toISOString() || new Date().toISOString(),
+    };
+  }
+
+  async deleteVideo(videoId: number, batchId: number, deletedByName: string): Promise<void> {
+    const existing = await prisma.youtubeVideo.findFirst({ where: { id: videoId, batchId, isDeleted: false } });
+    if (!existing) throw new Error("Video not found");
+    await prisma.youtubeVideo.update({ where: { id: videoId }, data: { isDeleted: true, deletedBy: deletedByName } });
+    await cacheService.delByPrefix(`app:videos:${batchId}`);
+  }
+
+  // ==================== MATERIAL FOLDERS ====================
+
+  async getFolders(batchId: number): Promise<{ id: number; name: string; materialCount: number }[]> {
+    const folders = await prisma.materialFolder.findMany({
+      where: { batchId, isDeleted: false },
+      include: { _count: { select: { materials: { where: { isDeleted: false, materialStatus: "PUBLISHED" } } } } },
+      orderBy: { name: "asc" },
+    });
+    return folders.map((f) => ({ id: f.id, name: f.name, materialCount: f._count.materials }));
+  }
+
+  async createFolder(batchId: number, name: string, createdBy: string): Promise<{ id: number; name: string }> {
+    const folder = await prisma.materialFolder.create({
+      data: { batchId, name: name.trim(), createdBy },
+    });
+    return { id: folder.id, name: folder.name };
+  }
+
+  async updateFolder(folderId: number, batchId: number, name: string): Promise<{ id: number; name: string }> {
+    const existing = await prisma.materialFolder.findFirst({ where: { id: folderId, batchId, isDeleted: false } });
+    if (!existing) throw new Error("Folder not found");
+    const updated = await prisma.materialFolder.update({ where: { id: folderId }, data: { name: name.trim() } });
+    return { id: updated.id, name: updated.name };
+  }
+
+  async deleteFolder(folderId: number, batchId: number): Promise<void> {
+    const existing = await prisma.materialFolder.findFirst({ where: { id: folderId, batchId, isDeleted: false } });
+    if (!existing) throw new Error("Folder not found");
+    // Move materials to no folder before deleting
+    await prisma.studyMaterial.updateMany({ where: { folderId }, data: { folderId: null } });
+    await prisma.materialFolder.update({ where: { id: folderId }, data: { isDeleted: true } });
   }
 }
 

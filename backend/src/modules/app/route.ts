@@ -72,8 +72,8 @@ router.get(
 // Profile - student and teacher (each handles own auth within the route)
 router.use("/profile", profileRoutes);
 
-// Fees - student only (their own fees)
-router.use("/fees", isStudent, feesRoutes);
+// Fees - role-specific auth handled within the route module (student own fees + teacher management)
+router.use("/fees", feesRoutes);
 
 // ==================== MULTI-ROLE ROUTES ====================
 // Routes accessible to students and teachers

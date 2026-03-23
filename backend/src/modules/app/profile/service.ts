@@ -2,6 +2,7 @@ import { prisma } from "../../../config/db.config";
 import { cacheService } from "../../../cache/index";
 import { AppKeys } from "../../../cache/keys";
 import { APP_PROFILE } from "../../../cache/ttl";
+import CloudinaryService from "../../../config/cloudinairy.config";
 import type {
   StudentProfile,
   UpdateStudentProfileInput,
@@ -10,6 +11,8 @@ import type {
   MyTeacherResponse,
 } from "./types";
 import type { BatchTimings } from "../types";
+
+const cloudinary = new CloudinaryService();
 
 class ProfileService {
   /**
@@ -72,6 +75,7 @@ class ProfileService {
           parentName: student.parentName,
           grade: student.grade,
           instituteId: student.instituteId,
+          avatarUrl: student.avatarUrl ?? null,
           classTeacher,
           batch: student.batch
             ? {
@@ -158,6 +162,7 @@ class ProfileService {
       primarySubjects: tp?.primarySubjects ?? [],
       secondarySubjects: tp?.secondarySubjects ?? [],
       bio: tp?.bio ?? null,
+      avatarUrl: tp?.avatarUrl ?? null,
       batchesTaught: batchGroups.length,
       weeklyHours,
       grades,
@@ -196,6 +201,39 @@ class ProfileService {
         ...(data.bio !== undefined && { bio: data.bio?.trim() ?? null }),
       },
     });
+    return this.getTeacherProfile(userId);
+  }
+
+  /**
+   * Student: upload avatar photo
+   */
+  async updateStudentAvatar(studentId: number, file: Express.Multer.File): Promise<{ avatarUrl: string }> {
+    const uploaded = await cloudinary.uploadDocument(file, "avatars/students");
+    await prisma.student.update({
+      where: { id: studentId },
+      data: { avatarUrl: uploaded.url },
+    });
+    await cacheService.delByPrefix(`app:profile:${studentId}`);
+    return { avatarUrl: uploaded.url };
+  }
+
+  /**
+   * Teacher: upload avatar photo
+   */
+  async updateTeacherAvatar(userId: number, file: Express.Multer.File): Promise<{ avatarUrl: string }> {
+    const uploaded = await cloudinary.uploadDocument(file, "avatars/teachers");
+    await prisma.teacherProfile.upsert({
+      where: { userId },
+      create: { userId, avatarUrl: uploaded.url, primarySubjects: [], secondarySubjects: [] },
+      update: { avatarUrl: uploaded.url },
+    });
+    return { avatarUrl: uploaded.url };
+  }
+
+  /**
+   * Teacher: get own profile with extended info (includes avatarUrl)
+   */
+  private async buildTeacherProfileResponse(userId: number): Promise<TeacherProfileResponse> {
     return this.getTeacherProfile(userId);
   }
 

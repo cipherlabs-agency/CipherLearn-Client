@@ -321,4 +321,42 @@ export default class AppTestController {
       return res.status(status).json({ success: false, message: error.message });
     }
   }
+
+  // ==================== TEST REMINDERS ====================
+
+  /**
+   * POST /app/tests/:id/remind
+   * Student: toggle reminder for a test
+   */
+  public async toggleReminder(req: Request, res: Response) {
+    try {
+      const user = req.user!;
+      const testId = Number(req.params.id);
+      if (isNaN(testId)) return res.status(400).json({ success: false, message: "Invalid test ID" });
+      const result = await testService.toggleReminder(testId, user.id);
+      return res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+      log("error", "app.tests.remind failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
+      logger.error("AppTestController.toggleReminder error:", error);
+      return res.status(500).json({ success: false, message: "Failed to toggle reminder" });
+    }
+  }
+
+  /**
+   * DELETE /app/tests/:id/remind
+   * Student: remove reminder for a test
+   */
+  public async removeReminder(req: Request, res: Response) {
+    try {
+      const user = req.user!;
+      const testId = Number(req.params.id);
+      if (isNaN(testId)) return res.status(400).json({ success: false, message: "Invalid test ID" });
+      await testService.removeReminder(testId, user.id);
+      return res.status(200).json({ success: true, message: "Reminder removed" });
+    } catch (error: any) {
+      log("error", "app.tests.remind failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
+      logger.error("AppTestController.removeReminder error:", error);
+      return res.status(500).json({ success: false, message: "Failed to remove reminder" });
+    }
+  }
 }

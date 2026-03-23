@@ -17,6 +17,7 @@ export interface AppTestResponse {
   status: TestStatus;
   batch: { id: number; name: string };
   daysUntil: number | null;
+  isReminderSet?: boolean;
 }
 
 export interface AppTestDetailResponse extends AppTestResponse {
