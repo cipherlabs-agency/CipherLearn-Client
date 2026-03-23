@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { profileController } from "./controller";
 import { isTeacher, isStudent } from "../../auth/middleware";
-import { appReadRateLimiter } from "../../../middleware/rateLimiter";
+import { appReadRateLimiter, appWriteRateLimiter } from "../../../middleware/rateLimiter";
 import { avatarUpload } from "../../../config/multer.config";
+import { validate } from "../../../middleware/validate";
+import { ProfileValidations } from "./validation";
 
 const router = Router();
 
@@ -27,6 +29,8 @@ router.get(
 router.put(
   "/teacher",
   isTeacher,
+  appWriteRateLimiter,
+  validate(ProfileValidations.updateTeacherProfile),
   profileController.updateTeacherProfile.bind(profileController)
 );
 
@@ -53,7 +57,7 @@ router.get("/", isStudent, profileController.getProfile.bind(profileController))
  * PUT /app/profile
  * Student: update phone, address, parentName
  */
-router.put("/", isStudent, profileController.updateProfile.bind(profileController));
+router.put("/", isStudent, appWriteRateLimiter, validate(ProfileValidations.updateStudentProfile), profileController.updateProfile.bind(profileController));
 
 /**
  * PUT /app/profile/avatar

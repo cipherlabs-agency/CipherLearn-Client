@@ -96,6 +96,8 @@ export const analyticsApi = api.injectEndpoints({
             }),
             transformResponse: (response: ApiResponse<AttendanceMatrixDay>) => response.data!,
             providesTags: ['Dashboard', 'Attendance'],
+            // Live attendance data — expire cache after 60s
+            keepUnusedDataFor: 60,
         }),
         getAttendanceMatrixOfMonth: builder.query<AttendanceMatrixMonth, { batchId: number; month?: number; year?: number }>({
             query: ({ batchId, month, year }) => ({
@@ -111,6 +113,8 @@ export const analyticsApi = api.injectEndpoints({
             query: () => '/dashboard/analytics/dashboard-stats',
             transformResponse: (response: ApiResponse<DashboardStats>) => response.data!,
             providesTags: ['Dashboard'],
+            // Dashboard stats include today's live attendance — refresh every minute
+            keepUnusedDataFor: 60,
         }),
         getEnrollmentTrends: builder.query<EnrollmentTrendData[], { months?: number }>({
             query: ({ months = 12 }) => `/dashboard/analytics/enrollment-trends?months=${months}`,

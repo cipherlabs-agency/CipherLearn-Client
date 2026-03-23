@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { resourcesController } from "./controller";
 import { isStudent, isTeacher } from "../../auth/middleware";
-import { appReadRateLimiter, fileUploadRateLimiter } from "../../../middleware/rateLimiter";
+import { appReadRateLimiter, appWriteRateLimiter, fileUploadRateLimiter } from "../../../middleware/rateLimiter";
 import { materialUpload } from "../../../config/multer.config";
+import { validate } from "../../../middleware/validate";
+import { ResourcesValidations } from "./validation";
 
 const router = Router();
 
@@ -17,6 +19,7 @@ router.get(
   "/teacher",
   isTeacher,
   appReadRateLimiter,
+  validate(ResourcesValidations.teacherListQuery, "query"),
   resourcesController.getTeacherMaterials.bind(resourcesController)
 );
 
@@ -32,6 +35,7 @@ router.post(
   isTeacher,
   fileUploadRateLimiter,
   materialUpload.array("files", 5),
+  validate(ResourcesValidations.createMaterial),
   resourcesController.createTeacherMaterial.bind(resourcesController)
 );
 
@@ -55,6 +59,8 @@ router.put(
 router.put(
   "/teacher/:id",
   isTeacher,
+  appWriteRateLimiter,
+  validate(ResourcesValidations.updateMaterial),
   resourcesController.updateTeacherMaterial.bind(resourcesController)
 );
 
@@ -81,14 +87,14 @@ router.get("/teacher/folders", isTeacher, appReadRateLimiter, resourcesControlle
  * Teacher: create a folder
  * Body: { batchId, name }
  */
-router.post("/teacher/folders", isTeacher, resourcesController.createFolder.bind(resourcesController));
+router.post("/teacher/folders", isTeacher, appWriteRateLimiter, validate(ResourcesValidations.createFolder), resourcesController.createFolder.bind(resourcesController));
 
 /**
  * PUT /app/resources/teacher/folder/:id
  * Teacher: rename a folder
  * Body: { batchId, name }
  */
-router.put("/teacher/folder/:id", isTeacher, resourcesController.updateFolder.bind(resourcesController));
+router.put("/teacher/folder/:id", isTeacher, appWriteRateLimiter, validate(ResourcesValidations.updateFolder), resourcesController.updateFolder.bind(resourcesController));
 
 /**
  * DELETE /app/resources/teacher/folder/:id
@@ -119,6 +125,8 @@ router.get(
 router.post(
   "/teacher/video",
   isTeacher,
+  appWriteRateLimiter,
+  validate(ResourcesValidations.createVideo),
   resourcesController.createVideo.bind(resourcesController)
 );
 
@@ -129,6 +137,8 @@ router.post(
 router.put(
   "/teacher/video/:id",
   isTeacher,
+  appWriteRateLimiter,
+  validate(ResourcesValidations.updateVideo),
   resourcesController.updateVideo.bind(resourcesController)
 );
 
@@ -163,6 +173,8 @@ router.get(
 router.post(
   "/starred",
   isStudent,
+  appWriteRateLimiter,
+  validate(ResourcesValidations.starResource),
   resourcesController.starResource.bind(resourcesController)
 );
 

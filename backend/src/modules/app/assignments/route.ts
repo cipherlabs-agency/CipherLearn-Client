@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { assignmentsController } from "./controller";
 import { isStudent, isAppUser, isTeacher } from "../../auth/middleware";
-import { fileUploadRateLimiter, appReadRateLimiter } from "../../../middleware/rateLimiter";
+import { fileUploadRateLimiter, appReadRateLimiter, appWriteRateLimiter } from "../../../middleware/rateLimiter";
 import { submissionUpload, assignmentUpload } from "../../../config/multer.config";
+import { validate } from "../../../middleware/validate";
+import { AssignmentsValidations } from "./validation";
 
 const router = Router();
 
@@ -47,6 +49,7 @@ router.post(
   isTeacher,
   fileUploadRateLimiter,
   assignmentUpload.array("files", 5),
+  validate(AssignmentsValidations.createAssignment),
   assignmentsController.createAssignment.bind(assignmentsController)
 );
 
@@ -71,6 +74,8 @@ router.get(
 router.put(
   "/teacher/:id",
   isTeacher,
+  appWriteRateLimiter,
+  validate(AssignmentsValidations.updateAssignment),
   assignmentsController.updateAssignment.bind(assignmentsController)
 );
 
@@ -109,6 +114,7 @@ router.get(
   "/",
   isAppUser,
   appReadRateLimiter,
+  validate(AssignmentsValidations.listQuery, "query"),
   assignmentsController.getAssignments.bind(assignmentsController)
 );
 
@@ -183,6 +189,8 @@ router.get(
 router.put(
   "/submissions/:submissionId/review",
   isAppUser,
+  appWriteRateLimiter,
+  validate(AssignmentsValidations.reviewSubmission),
   assignmentsController.reviewSubmission.bind(assignmentsController)
 );
 

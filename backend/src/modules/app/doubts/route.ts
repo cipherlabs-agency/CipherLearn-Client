@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { doubtsController } from "./controller";
 import { isStudent, isTeacher, isAppUser } from "../../auth/middleware";
-import { appReadRateLimiter } from "../../../middleware/rateLimiter";
+import { appReadRateLimiter, appWriteRateLimiter } from "../../../middleware/rateLimiter";
+import { validate } from "../../../middleware/validate";
+import { DoubtsValidations } from "./validation";
 
 const router = Router();
 
@@ -16,6 +18,7 @@ router.get(
   "/teacher",
   isTeacher,
   appReadRateLimiter,
+  validate(DoubtsValidations.listQuery, "query"),
   doubtsController.getTeacherDoubts.bind(doubtsController)
 );
 
@@ -27,6 +30,8 @@ router.get(
 router.post(
   "/:id/reply",
   isTeacher,
+  appWriteRateLimiter,
+  validate(DoubtsValidations.replyToDoubt),
   doubtsController.replyToDoubt.bind(doubtsController)
 );
 
@@ -37,6 +42,7 @@ router.post(
 router.put(
   "/:id/resolve",
   isAppUser,
+  appWriteRateLimiter,
   doubtsController.resolveDoubt.bind(doubtsController)
 );
 
@@ -51,6 +57,7 @@ router.get(
   "/",
   isStudent,
   appReadRateLimiter,
+  validate(DoubtsValidations.listQuery, "query"),
   doubtsController.getMyDoubts.bind(doubtsController)
 );
 
@@ -62,6 +69,8 @@ router.get(
 router.post(
   "/",
   isStudent,
+  appWriteRateLimiter,
+  validate(DoubtsValidations.postDoubt),
   doubtsController.postDoubt.bind(doubtsController)
 );
 

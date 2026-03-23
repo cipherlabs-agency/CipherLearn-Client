@@ -9,7 +9,17 @@ export class Database {
   public prisma: PrismaClient;
 
   constructor(connectionString: string = config.DB.URL) {
-    this.adapter = new PrismaPg({ connectionString });
+    // Explicit pool sizing for 300+ concurrent users.
+    // Rule of thumb: pool = (max_concurrent_requests / avg_queries_per_request) * safety_factor
+    // We target 300 concurrent users, each request ~2-3 queries → pool of 20-25 is sufficient.
+    const poolConfig = {
+      connectionString,
+      max: Number(process.env.DB_POOL_MAX) || 20,
+      min: Number(process.env.DB_POOL_MIN) || 5,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 5_000,
+    };
+    this.adapter = new PrismaPg(poolConfig);
     this.prisma = new PrismaClient({
       adapter: this.adapter,
       log: [

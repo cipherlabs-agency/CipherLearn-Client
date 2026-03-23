@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { notificationsController } from "./controller";
-import { appReadRateLimiter } from "../../../middleware/rateLimiter";
+import { appReadRateLimiter, appWriteRateLimiter } from "../../../middleware/rateLimiter";
+import { validate } from "../../../middleware/validate";
+import { NotificationsValidations } from "./validation";
 
 const router = Router();
 
@@ -15,6 +17,7 @@ const router = Router();
 router.get(
   "/",
   appReadRateLimiter,
+  validate(NotificationsValidations.listQuery, "query"),
   notificationsController.getNotifications.bind(notificationsController)
 );
 
@@ -68,7 +71,8 @@ router.get(
  */
 router.put(
   "/preferences",
-  appReadRateLimiter,
+  appWriteRateLimiter,
+  validate(NotificationsValidations.updatePreferences),
   notificationsController.updatePreferences.bind(notificationsController)
 );
 
@@ -81,6 +85,8 @@ router.put(
  */
 router.post(
   "/register-device",
+  appWriteRateLimiter,
+  validate(NotificationsValidations.registerDevice),
   notificationsController.registerDevice.bind(notificationsController)
 );
 
@@ -92,6 +98,8 @@ router.post(
  */
 router.delete(
   "/register-device",
+  appWriteRateLimiter,
+  validate(NotificationsValidations.deregisterDevice),
   notificationsController.deregisterDevice.bind(notificationsController)
 );
 

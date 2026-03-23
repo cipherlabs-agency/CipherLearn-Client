@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { isAppUser, isStudent, isTeacher } from "../../auth/middleware";
-import { appReadRateLimiter } from "../../../middleware/rateLimiter";
+import { appReadRateLimiter, appWriteRateLimiter } from "../../../middleware/rateLimiter";
 import AppTestController from "./controller";
+import { validate } from "../../../middleware/validate";
+import { TestsValidations } from "./validation";
 
 const router = Router();
 const controller = new AppTestController();
@@ -17,6 +19,7 @@ router.get(
   "/teacher",
   isTeacher,
   appReadRateLimiter,
+  validate(TestsValidations.teacherTestsQuery, "query"),
   controller.getTeacherTests.bind(controller)
 );
 
@@ -39,6 +42,8 @@ router.get(
 router.put(
   "/teacher/:id/scores",
   isTeacher,
+  appWriteRateLimiter,
+  validate(TestsValidations.bulkSaveScores),
   controller.bulkSaveScores.bind(controller)
 );
 
@@ -76,7 +81,7 @@ router.get(
 // ==================== STUDENT ROUTES ====================
 
 // Student: get my tests (with optional filter: upcoming, complete, results)
-router.get("/", isAppUser, controller.getTests.bind(controller));
+router.get("/", isAppUser, appReadRateLimiter, validate(TestsValidations.studentTestsQuery, "query"), controller.getTests.bind(controller));
 
 // Student: toggle/remove test reminder (BEFORE /:id to avoid conflict)
 router.post("/:id/remind", isAppUser, controller.toggleReminder.bind(controller));

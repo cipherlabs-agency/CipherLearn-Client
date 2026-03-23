@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { announcementsController } from "./controller";
-import { appReadRateLimiter, fileUploadRateLimiter } from "../../../middleware/rateLimiter";
+import { appReadRateLimiter, appWriteRateLimiter, fileUploadRateLimiter } from "../../../middleware/rateLimiter";
 import { isTeacher, requireTeacherPermission } from "../../auth/middleware";
 import { notesUpload } from "../../../config/multer.config";
+import { validate } from "../../../middleware/validate";
+import { AnnouncementsValidations } from "./validation";
 
 const router = Router();
 
@@ -17,6 +19,7 @@ router.post(
   isTeacher, requireTeacherPermission('canSendAnnouncements'),
   fileUploadRateLimiter,
   notesUpload.array("files", 5),
+  validate(AnnouncementsValidations.createAnnouncement),
   announcementsController.createAnnouncement.bind(announcementsController)
 );
 
@@ -37,6 +40,8 @@ router.put(
 router.put(
   "/teacher/:id",
   isTeacher, requireTeacherPermission('canSendAnnouncements'),
+  appWriteRateLimiter,
+  validate(AnnouncementsValidations.updateAnnouncement),
   announcementsController.updateAnnouncement.bind(announcementsController)
 );
 
@@ -68,6 +73,7 @@ router.delete(
 router.get(
   "/",
   appReadRateLimiter,
+  validate(AnnouncementsValidations.listQuery, "query"),
   announcementsController.getAnnouncements.bind(announcementsController)
 );
 

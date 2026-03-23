@@ -68,6 +68,6 @@ export const api = createApi({
     refetchOnReconnect: true,
     // Cache unused data for 5 minutes to improve performance
     keepUnusedDataFor: 300,
-    tagTypes: ['Auth', 'Students', 'Batches', 'Announcements', 'Attendance', 'Fees', 'Notes', 'Videos', 'Dashboard', 'Analytics', 'Assignments', 'Submissions', 'StudyMaterials', 'Teachers', 'Lectures', 'Tests', 'TestScores', 'Instagram', 'Settings', 'Notifications'],
+    tagTypes: ['Auth', 'Students', 'Batches', 'Announcements', 'Attendance', 'Fees', 'Notes', 'Videos', 'Dashboard', 'Analytics', 'Assignments', 'Submissions', 'StudyMaterials', 'Teachers', 'Lectures', 'Tests', 'TestScores', 'Instagram', 'Settings', 'Notifications', 'Doubts'],
     endpoints: () => ({}),
 });

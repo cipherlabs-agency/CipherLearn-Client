@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { feesController } from "./controller";
 import { isStudent, isTeacher } from "../../auth/middleware";
-import { appReadRateLimiter } from "../../../middleware/rateLimiter";
+import { appReadRateLimiter, appWriteRateLimiter } from "../../../middleware/rateLimiter";
+import { validate } from "../../../middleware/validate";
+import { FeesValidations } from "./validation";
 
 const router = Router();
 
@@ -24,7 +26,7 @@ router.get("/teacher/students/:studentId", isTeacher, appReadRateLimiter, feesCo
  * Teacher: record a payment for a fee receipt
  * Body: { paidAmount, paymentMode, transactionId?, chequeNumber?, notes? }
  */
-router.post("/teacher/receipts/:receiptId/payment", isTeacher, feesController.recordPayment.bind(feesController));
+router.post("/teacher/receipts/:receiptId/payment", isTeacher, appWriteRateLimiter, validate(FeesValidations.recordPayment), feesController.recordPayment.bind(feesController));
 
 /**
  * POST /app/fees/teacher/students/:studentId/reminder
@@ -34,7 +36,7 @@ router.post("/teacher/students/:studentId/reminder", isTeacher, feesController.s
 
 // ==================== STUDENT ROUTES ====================
 
-router.get("/receipts", isStudent, feesController.getFeeReceipts.bind(feesController));
+router.get("/receipts", isStudent, appReadRateLimiter, validate(FeesValidations.receiptsQuery, "query"), feesController.getFeeReceipts.bind(feesController));
 router.get("/receipts/:id/pdf", isStudent, feesController.getReceiptPdf.bind(feesController));
 router.get("/summary", isStudent, feesController.getFeesSummary.bind(feesController));
 router.get("/structures", isStudent, feesController.getFeeStructures.bind(feesController));

@@ -263,6 +263,7 @@ model StudentSubmission {
   @@unique([slotId, studentId])
   @@index([slotId])
   @@index([studentId])
+  @@index([studentId, status])  // Student submission history filtered by status
   @@map("student_submissions")
 }
 
@@ -290,6 +291,8 @@ model Announcement {
 
   @@index([category, isActive])
   @@index([isActive, createdAt])
+  @@index([isActive, isDraft, scheduledAt])  // Main listing: filter active, non-draft, scheduled-past
+  @@index([createdById])                     // Teacher: find own announcements
   @@map("announcements")
 }
 
@@ -516,6 +519,8 @@ model FeeReceipt {
   @@index([studentId])
   @@index([batchId])
   @@index([status])
+  @@index([studentId, status])            // Student fee view: filter by student + payment status
+  @@index([batchId, academicYear, academicMonth])  // Admin monthly fee report
   @@index([academicMonth, academicYear])
   @@index([dueDate])
   @@map("fee_receipts")
@@ -644,6 +649,8 @@ model Lecture {
   @@index([teacherId])
   @@index([date])
   @@index([batchId, date])
+  @@index([batchId, isDeleted, date])    // Student schedule: filter active lectures by batch + date range
+  @@index([teacherId, isDeleted, date])  // Teacher schedule: filter own active lectures by date range
   @@map("lectures")
 }
 
@@ -912,6 +919,7 @@ model Doubt {
   @@index([studentId])
   @@index([batchId])
   @@index([status])
+  @@index([batchId, status])  // Teacher: filter doubts by batch + status
   @@map("doubts")
 }
 

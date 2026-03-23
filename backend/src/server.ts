@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import compression from "compression";
 import httpLogger from "./middleware/httpLogger";
 import logger from "./utils/logger";
 import { config } from "./config/env.config";
@@ -9,6 +10,9 @@ const app = express();
 
 // Security headers
 app.use(helmet());
+
+// Gzip/Brotli compression for all responses
+app.use(compression());
 
 // CORS — allow main client, portal, and subdomains
 const allowedOrigins = [
@@ -47,8 +51,9 @@ app.use(
 // Trust proxy for rate limiting (important for production behind load balancer)
 app.set("trust proxy", 1);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Body size limits — 10 MB for JSON, 50 MB for file upload form data
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(httpLogger);
 
 app.get("/", (req, res) => {

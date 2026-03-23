@@ -37,6 +37,8 @@ export const attendanceApi = api.injectEndpoints({
             query: ({ batchId, date }) => `/dashboard/attendance/batch/${batchId}/date?date=${date}`,
             transformResponse: (response: ApiResponse<AttendanceRecord[]>) => response.data || [],
             providesTags: ['Attendance'],
+            // Attendance can be updated mid-session — expire after 60s
+            keepUnusedDataFor: 60,
         }),
 
         // Get batch attendance sheet (all records)
