@@ -1,0 +1,4225 @@
+{
+  "info": {
+    "_postman_id": "cipherlearn-app-api-v1.0.11",
+    "name": "CipherLearn App API v1.0.11",
+    "version": "1.0.12",
+    "description": "Complete API collection for CipherLearn Mobile App (Student + Teacher single app).\n\n**Auth Flow:**\n1. Admin creates student/teacher accounts from dashboard → registration email sent\n2. User opens app → enters registered email\n3. First time: set password (POST /app/auth/setup-password)\n4. Login (POST /app/auth/login) → JWT returned with role\n5. Role-based dashboard: STUDENT or TEACHER\n\n**Endpoints by role:**\n\nStudent-only:\n- Profile, Fees, Notifications (preferences)\n- Attendance: self-view (summary, history, calendar, QR mark)\n- Assignments: browse, submit, view submission\n- Tests: upcoming, results, performance analytics\n- Resources: videos, notes, study materials\n\nTeacher (requires TEACHER role JWT):\n- Attendance: get batch students, bulk mark, reports, date detail\n- Assignments: create/update/delete, review per-student status\n- Tests: manage grading (score sheet, bulk save scores, publish results, summary)\n- Resources: upload/manage study materials (PDF, video, etc.)\n\nShared (both roles):\n- Auth, Dashboard, Lectures/Timetable, Announcements\n- Notifications: device token registration\n\n**Lecture creation is admin-only (via dashboard).** Teachers and students can only VIEW lectures, add notes, and mark complete.\n\n**Security Headers on all requests:**\n- Authorization: Bearer {{appToken}}\n- Content-Type: application/json (or multipart/form-data for uploads)\n\n**Rate Limits:**\n- Auth: 5 req/15min (login), 3 req/hr (password reset)\n- File uploads: 10 uploads/5min per IP\n- General reads: 120 req/min per IP\n- Token refresh: 10 req/min per IP\n\n**File Upload Limits:**\n- Assignment submission: 25 MB/file, 5 files (PDF, Word, Excel, PPT, images, ZIP)\n- Assignment attachments (teacher): 50 MB/file, 5 files\n- Study materials (teacher): 100 MB/file, 5 files (includes video: MP4, MOV, AVI)\n- All uploads: memory storage → Cloudinary, magic number validated\n\n**Caching:**\n- Announcement list: 3 min | detail: 5 min\n- Notification preferences: 10 min per student\n- Fee structures: 60 min per batch\n- Attendance: 2 min\n\n**Setup:**\n1. Import into Postman\n2. Create environment: baseUrl = http://localhost:5000/api\n3. Run 'App Login' → appToken auto-saved\n4. Use STUDENT email for student routes, TEACHER email for teacher routes\n\n**Base URL:** http://localhost:5000/api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "App Onboarding",
+      "description": "First-launch onboarding flow for the React Native app.\n\n**QR Scan Flow:**\n1. Admin generates QR from admin portal (Infrastructure tab → 'App Onboarding QR')\n2. QR encodes JSON: { v, api, name, slug, primary, accent, logo? }\n3. App scans QR → stores `api` base URL in AsyncStorage\n4. App calls GET /app/settings to fetch full class config (branding, features)\n5. App shows branded login screen\n\nNo authentication required — these are public endpoints.",
+      "item": [
+        {
+          "name": "Get Class Config (after QR scan)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/app/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "settings"
+              ]
+            },
+            "description": "Public endpoint. Returns class branding, feature flags, and basic class info.\n\nCall this immediately after scanning the onboarding QR code to get the full configuration.\n\n**QR payload structure** (encoded in the QR image):\n```json\n{\n  \"v\": 1,\n  \"api\": \"https://your-class.onrender.com/api\",\n  \"name\": \"Sarthak Classes\",\n  \"slug\": \"sarthak-classes\",\n  \"primary\": \"#0F766E\",\n  \"accent\": \"#F59E0B\",\n  \"logo\": \"https://res.cloudinary.com/...\" (optional)\n}\n```\n\n**React Native usage:**\n```ts\n// After QR scan:\nawait AsyncStorage.setItem('apiBase', qrPayload.api);\nconst { data } = await axios.get(`${qrPayload.api}/app/settings`);\n// Apply branding from data.branding and data.features\n```\n\n**No auth required.**"
+          },
+          "response": [
+            {
+              "name": "200 OK — Class config",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/app/settings",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "settings"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"class\": {\n      \"name\": \"Sarthak Classes\",\n      \"email\": \"contact@sarthakclasses.com\",\n      \"phone\": \"+91 98765 43210\",\n      \"address\": \"123 Main St, City\",\n      \"website\": \"https://sarthakclasses.com\"\n    },\n    \"branding\": {\n      \"primaryColor\": \"#0F766E\",\n      \"accentColor\": \"#F59E0B\",\n      \"logoUrl\": \"https://res.cloudinary.com/demo/image/upload/logo.png\"\n    },\n    \"features\": {\n      \"qrAttendance\": true,\n      \"fees\": true,\n      \"assignments\": true,\n      \"studyMaterials\": true,\n      \"announcements\": true,\n      \"videos\": true\n    },\n    \"teacherPermissions\": {\n      \"canManageLectures\": false,\n      \"canUploadNotes\": false,\n      \"canUploadVideos\": false,\n      \"canManageAssignments\": false,\n      \"canViewFees\": false,\n      \"canManageStudyMaterials\": false,\n      \"canSendAnnouncements\": false,\n      \"canViewAnalytics\": false,\n      \"canExportData\": false\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "App Auth",
+      "description": "Student/Teacher mobile app authentication.\n\nRate limits:\n- Login: 5 attempts per 15 min per IP\n- Password reset: 3 requests per hour per IP\n- Enrollment check: 10 per minute per IP\n- Token refresh: 10 per minute per IP",
+      "item": [
+        {
+          "name": "Check Enrollment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"student@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/check-enrollment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "check-enrollment"
+              ]
+            },
+            "description": "Check if a student is enrolled before allowing password setup.\n\nRate limit: 10 req/min per IP"
+          },
+          "response": []
+        },
+        {
+          "name": "Setup Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"student@example.com\",\n    \"password\": \"Student@123\",\n    \"confirmPassword\": \"Student@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/setup-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "setup-password"
+              ]
+            },
+            "description": "First-time password setup for enrolled students."
+          },
+          "response": []
+        },
+        {
+          "name": "App Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data) {",
+                  "    var token = jsonData.data.accessToken || jsonData.data.token;",
+                  "    if (token) {",
+                  "        pm.environment.set('appToken', token);",
+                  "        console.log('App token set: ' + token.substring(0, 20) + '...');",
+                  "    }",
+                  "    if (jsonData.data.refreshToken) {",
+                  "        pm.environment.set('appRefreshToken', jsonData.data.refreshToken);",
+                  "    }",
+                  "    if (jsonData.data.user) {",
+                  "        pm.environment.set('appUserId', jsonData.data.user.id);",
+                  "        pm.environment.set('appUserRole', jsonData.data.user.role);",
+                  "        console.log('Logged in as: ' + jsonData.data.user.role);",
+                  "    }",
+                  "}",
+                  "pm.test('Login successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"student@example.com\",\n    \"password\": \"Student@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Student/Teacher login. Token auto-saved to appToken env variable.\n\nRate limit: 5 attempts per 15 min per IP\nSecurity: Account locked after 5 failed attempts"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refreshToken\": \"{{appRefreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "refresh-token"
+              ]
+            },
+            "description": "Refresh JWT token before expiry.\n\nRate limit: 10 req/min per IP"
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"student@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "description": "Request password reset OTP via email.\n\nRate limit: 3 req/hr per IP"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"student@example.com\",\n    \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/verify-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "verify-otp"
+              ]
+            },
+            "description": "Verify the OTP sent to email for password reset."
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"resetToken\": \"paste-reset-token-from-verify-otp\",\n    \"password\": \"NewPassword@123\",\n    \"confirmPassword\": \"NewPassword@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "reset-password"
+              ]
+            },
+            "description": "Reset password using verified OTP."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Get current authenticated user profile."
+          },
+          "response": []
+        },
+        {
+          "name": "App Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logout and blacklist the current token. Token is invalidated immediately."
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"currentPassword\": \"OldPass123\",\n    \"newPassword\": \"NewPass456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "auth",
+                "change-password"
+              ]
+            },
+            "description": "Change password for the authenticated user (student or teacher).\n\nRequired: currentPassword (must match stored hash), newPassword (min 6 chars)\n\nErrors: 401 if currentPassword is wrong, 400 if newPassword is too short\n\n**New in v1.0.11**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "description": "Student and teacher profile endpoints",
+      "item": [
+        {
+          "name": "Student: Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "profile"
+              ]
+            },
+            "description": "Get full student profile with batch details.\n\nCache: 5 min"
+          },
+          "response": []
+        },
+        {
+          "name": "Student: Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "profile"
+              ]
+            },
+            "description": "Student: update phone, address, parentName. All fields optional.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"+91 9876543210\",\n    \"address\": \"123 Main Street, Mumbai\",\n    \"parentName\": \"Rajesh Khan\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/profile/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "profile",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: get own profile with extended fields."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/profile/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "profile",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: update profile fields like qualification, work timings, subjects, and bio.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"+91 9876543210\",\n    \"qualification\": \"M.Sc Mathematics\",\n    \"experience\": 5,\n    \"workTimingFrom\": \"09:00\",\n    \"workTimingTo\": \"17:00\",\n    \"primarySubjects\": [\"Mathematics\"],\n    \"secondarySubjects\": [\"Physics\"],\n    \"bio\": \"Focused on conceptual clarity.\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Student: Get My Teacher",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/teachers/my-teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "teachers",
+                "my-teacher"
+              ]
+            },
+            "description": "Student: get their class teacher info for the Ask Doubts screen. Returns teacher profile with qualification, subjects, etc."
+          },
+          "response": []
+        },
+        {
+          "name": "Student: Upload Avatar",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/profile/avatar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "profile",
+                "avatar"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": "/path/to/photo.jpg"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teacher: Upload Avatar",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/profile/teacher/avatar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "profile",
+                "teacher",
+                "avatar"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": "/path/to/photo.jpg"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "description": "App dashboard data (student-only in current backend implementation)",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "dashboard"
+              ]
+            },
+            "description": "Student-only dashboard overview."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/teacher/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "teacher",
+                "dashboard"
+              ]
+            },
+            "description": "Teacher-only dashboard overview (profile, today's lectures, announcements, quick access counts)."
+          },
+          "response": []
+        },
+        {
+          "name": "Today's Lectures",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/dashboard/today-lectures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "dashboard",
+                "today-lectures"
+              ]
+            },
+            "description": "Get today's lecture schedule for the dashboard."
+          },
+          "response": []
+        },
+        {
+          "name": "Quick Access",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/dashboard/quick-access",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "dashboard",
+                "quick-access"
+              ]
+            },
+            "description": "Get quick access items for dashboard."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lectures (Timetable)",
+      "description": "Daily timetable / lecture schedule",
+      "item": [
+        {
+          "name": "Get My Schedule (Today)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/lectures/my-schedule",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "lectures",
+                "my-schedule"
+              ]
+            },
+            "description": "Today's schedule. Returns: date, totalClasses, lectures (title, teacher, startTime, endTime, room, status: FINISHED/ONGOING/UPCOMING), nextClass with countdown."
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Schedule (Specific Date)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/lectures/my-schedule?date=2026-02-15",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "lectures",
+                "my-schedule"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-02-15",
+                  "description": "YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Schedule for a specific date."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Lecture Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/lectures/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "lectures",
+                "1"
+              ]
+            },
+            "description": "Single lecture detail: description, notes, status."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Post-Lecture Notes (Teacher)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"notes\": \"Covered chapters 3-4. Students need to review quadratic formula.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/lectures/1/notes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "lectures",
+                "1",
+                "notes"
+              ]
+            },
+            "description": "Teacher adds post-lecture notes."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Lecture Complete (Teacher)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/lectures/1/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "lectures",
+                "1",
+                "complete"
+              ]
+            },
+            "description": "Teacher marks a lecture as completed."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Schedule New Lecture",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Mathematics - Chapter 5\",\n    \"subject\": \"Mathematics\",\n    \"batchId\": 1,\n    \"date\": \"2026-03-25\",\n    \"startTime\": \"10:00\",\n    \"endTime\": \"11:30\",\n    \"room\": \"Room 101\",\n    \"description\": \"Quadratic equations and graphs\",\n    \"isOnline\": false,\n    \"meetingLink\": null,\n    \"notifyStudents\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/lectures/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "lectures",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: schedule a new lecture for a batch.\n\nRequired: title, subject, batchId, date (YYYY-MM-DD), startTime (HH:MM), endTime (HH:MM)\nOptional: room, description, isOnline, meetingLink, notifyStudents (sends push notification to batch students)\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Update Lecture",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"startTime\": \"10:30\",\n    \"endTime\": \"12:00\",\n    \"room\": \"Room 202\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/lectures/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "lectures",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: update a lecture they own. All fields are optional.\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Delete Lecture",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/lectures/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "lectures",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: soft-delete a lecture they own. Sets isDeleted=true, status=CANCELLED.\n\n**New in v1.0.10**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tests & Exams",
+      "description": "Tests, scores, and performance analytics",
+      "item": [
+        {
+          "name": "Get All Tests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests"
+              ]
+            },
+            "description": "All tests for the student. Returns: title, subject, testType, date, time, syllabus, daysUntil."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Upcoming Tests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests?status=upcoming",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "upcoming"
+                }
+              ]
+            },
+            "description": "Filter: upcoming tests only (SCHEDULED/ONGOING)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Completed Tests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests?status=complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "complete"
+                }
+              ]
+            },
+            "description": "Filter: completed tests (COMPLETED/PUBLISHED)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Results (Published)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests?status=results",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "results"
+                }
+              ]
+            },
+            "description": "Filter: published results with 'VIEW SCORE' button."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Test Detail (Student)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "1"
+              ]
+            },
+            "description": "Test details: type, subject, date, time, duration, totalMarks, hall, syllabus, instructions, daysUntil. If PUBLISHED: includes myScore (marksObtained, percentage, grade, status, remarks, checkedBy)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Performance Analytics (Student)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/performance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "performance"
+              ]
+            },
+            "description": "Student performance analytics: overallAverage, totalTests, passed, failed, highestScore, lowestScore, subjectWise averages, trend over time."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Batch Tests (Teacher)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/batch/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "batch",
+                "1"
+              ]
+            },
+            "description": "Teacher view: all tests for a specific batch."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Test Scores (Teacher)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/1/scores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "1",
+                "scores"
+              ]
+            },
+            "description": "Teacher view: all student scores for a test, sorted by marks descending."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get My Tests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher?tab=grading_pending&batchId=1&page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "grading_pending",
+                  "description": "grading_pending | graded | draft. Optional — omit for all."
+                },
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "description": "Filter by batch. Optional."
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max 50."
+                }
+              ]
+            },
+            "description": "Teacher: list their own tests with grading status tabs.\n\nTabs:\n- grading_pending: test is COMPLETED/PUBLISHED but not all students have scores yet\n- graded: all students have scores entered\n- draft: test in SCHEDULED/ONGOING status (not yet graded)\n\nResponse: { tests: [{ id, title, subject, testType, batchId, batchName, date, totalMarks, status, gradingStatus: GRADING_PENDING|GRADED|DRAFT, scoredCount, totalStudents }], pagination }\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Score Sheet",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher/1/score-sheet",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher",
+                "1",
+                "score-sheet"
+              ]
+            },
+            "description": "Teacher: score entry sheet for a test — all students in the batch.\n\nResponse: [{ studentId, name, rollNo, marksObtained (null if not entered), percentage, grade, isPassed, remarks, status: PENDING|PUBLISHED }]\n\nmarksObtained=null means not yet graded. Use this to populate the score entry form.\n\nAuth: TEACHER role + must own the test."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Bulk Save Scores",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"scores\": [\n        { \"studentId\": 1, \"marksObtained\": 85, \"remarks\": \"Excellent\" },\n        { \"studentId\": 2, \"marksObtained\": 62 },\n        { \"studentId\": 3, \"marksObtained\": 45, \"remarks\": \"Needs improvement in section B\" }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher/1/scores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher",
+                "1",
+                "scores"
+              ]
+            },
+            "description": "Teacher: bulk save/update student scores for a test.\n\nAuto-computes per student: percentage = (marksObtained / totalMarks) × 100, grade (A/B/C/D/F), isPassed (marks ≥ passingMarks).\n\nUpsert — safe to call multiple times (e.g., save progress in stages).\n\nBlocked if results are already published (scoresLocked=true).\n\nAuth: TEACHER role + must own the test."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Publish Test Results",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher/1/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher",
+                "1",
+                "publish"
+              ]
+            },
+            "description": "Teacher: publish test results — students can now see their scores.\n\nSets test.status=PUBLISHED, scoresLocked=true, publishedAt=now.\nAll saved scores become visible to students in their Test Detail screen.\n\nOnce published, scores cannot be edited (scoresLocked=true).\n\nAuth: TEACHER role + must own the test."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Test Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher/1/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher",
+                "1",
+                "summary"
+              ]
+            },
+            "description": "Teacher: class performance summary for a test.\n\nResponse: { testId, title, totalStudents, scored, averageScore, highestScore, lowestScore, passRate, distribution: { A, B, C, D, F } }\n\nUsed for the analytics card in the Teacher Test Detail screen.\n\nAuth: TEACHER role + must own the test."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Export Scores CSV",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher/1/export-csv",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher",
+                "1",
+                "export-csv"
+              ]
+            },
+            "description": "Teacher: download all student scores for a test as a CSV file.\n\nResponse: text/csv file download.\nColumns: Student Name, Marks Obtained, Total Marks, Percentage, Grade, Status (PASS/FAIL/PENDING)\n\nFilename: test-{id}-scores.csv\n\nTriggers a file download in Postman (Save Response → Save to a file).\n\nAuth: TEACHER role + must own the test."
+          },
+          "response": []
+        },
+        {
+          "name": "Student: Toggle Test Reminder",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/:id/remind",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                ":id",
+                "remind"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Student: Remove Test Reminder",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/:id/remind",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                ":id",
+                "remind"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "description": "Attendance records for students (self-view) and teachers (batch management).\n\n**Student:** performance summary, history, calendar, QR mark\n**Teacher:** list batches, get batch students, bulk mark (with subject), date reports, date detail",
+      "item": [
+        {
+          "name": "Get My Attendance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance"
+              ]
+            },
+            "description": "Student attendance performance: totalClasses, present, absent, late, attendancePercentage, statusLabel, monthlyBreakdown, recentAttendance.\n\nCache: 2 min"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Attendance History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance/history?month=2&year=2026&status=PRESENT",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2",
+                  "description": "Month (1-12). Optional."
+                },
+                {
+                  "key": "year",
+                  "value": "2026",
+                  "description": "Year. Optional."
+                },
+                {
+                  "key": "status",
+                  "value": "PRESENT",
+                  "description": "PRESENT | ABSENT | LATE. Optional."
+                }
+              ]
+            },
+            "description": "Filtered attendance history. All params optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Attendance Calendar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance/calendar?month=2&year=2026",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance",
+                "calendar"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2",
+                  "description": "Month (1-12). Required."
+                },
+                {
+                  "key": "year",
+                  "value": "2026",
+                  "description": "Year. Required."
+                }
+              ]
+            },
+            "description": "Per-day attendance for a month. Returns array of {date, status, subject}.\n\nCache: 2 min"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark QR Attendance (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"qrData\": \"<scanned-qr-token>\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance/mark-qr",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance",
+                "mark-qr"
+              ]
+            },
+            "description": "Student scans QR code to mark attendance.\n\nqrData: opaque token embedded in the QR image (generated by teacher dashboard).\nReturns: { success, message } — success=false with reason if QR expired, already marked, or wrong batch."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get All Batches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance/teacher/batches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance",
+                "teacher",
+                "batches"
+              ]
+            },
+            "description": "Teacher: list all active batches (for Select Class/Batch dropdowns in the Mark Attendance screen).\n\nResponse: [{ id, name, studentCount }]\n\nExample response:\n[\n  { \"id\": 1, \"name\": \"Grade 10 - Batch A\", \"studentCount\": 35 },\n  { \"id\": 2, \"name\": \"Grade 11 - Batch B\", \"studentCount\": 28 }\n]\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Batch Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance/teacher/students?batchId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance",
+                "teacher",
+                "students"
+              ],
+              "query": [
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "description": "Required. Batch to load students for."
+                }
+              ]
+            },
+            "description": "Teacher: load all active students in a batch for the attendance marking screen.\n\nResponse: [{ id, fullname, email }]\n\nAuth: Bearer token with TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Mark Attendance (Bulk)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"batchId\": 1,\n    \"date\": \"2026-02-23\",\n    \"subject\": \"Mathematics\",\n    \"records\": [\n        { \"studentId\": 1, \"status\": \"PRESENT\" },\n        { \"studentId\": 2, \"status\": \"ABSENT\", \"reason\": \"Medical leave\" },\n        { \"studentId\": 3, \"status\": \"LATE\" }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance/teacher/mark",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance",
+                "teacher",
+                "mark"
+              ]
+            },
+            "description": "Teacher: bulk mark attendance for a date.\n\nBody fields:\n- batchId: number (required)\n- date: YYYY-MM-DD (required)\n- subject: string (optional) — subject taught in this session, shown in student's attendance history\n- records[]: array of { studentId, status: PRESENT|ABSENT|LATE, reason? }\n\nUses upsert — safe to re-submit to correct a record.\nReturns: { marked: number }\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Attendance Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance/teacher/reports?batchId=1&page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance",
+                "teacher",
+                "reports"
+              ],
+              "query": [
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "description": "Required."
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max 50."
+                }
+              ]
+            },
+            "description": "Teacher: paginated attendance reports — one entry per date.\n\nResponse: { reports: [{ date, present, absent, late, total, markedBy, markedAt }], pagination }\n\nEach row is an expandable card in the UI. Click date to fetch detail.\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Date Attendance Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/attendance/teacher/detail?batchId=1&date=2026-02-23",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "attendance",
+                "teacher",
+                "detail"
+              ],
+              "query": [
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "description": "Required."
+                },
+                {
+                  "key": "date",
+                  "value": "2026-02-23",
+                  "description": "YYYY-MM-DD. Required."
+                }
+              ]
+            },
+            "description": "Teacher: per-student attendance for a specific date.\n\nReturns array of { studentId, name, status: PRESENT|ABSENT|LATE, reason, markedAt }\n\nUsed by expandable card in the Reports screen.\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Assignments",
+      "description": "Assignment slots, submissions with Cloudinary file upload, and teacher reviews.\n\n**Changes in v1.0.2:**\n- Submit: 25MB per file (was 10MB), Cloudinary storage (no local disk)\n- Submit: optional `note` field (text note from student)\n- List: `?status=pending|completed` for Pending/Completed tabs\n- Submission response now includes `note`, `publicId` in files",
+      "item": [
+        {
+          "name": "Get My Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "stats"
+              ]
+            },
+            "description": "Student assignment statistics: total, pending, accepted, rejected counts."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Assignments (Student — All)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments"
+              ]
+            },
+            "description": "All assignments for the student's batch with submission status.\n\nResponse includes: id, title, subject, dueDate, isOverdue, daysRemaining, hasSubmitted, submissionStatus, submission (if exists, includes note field)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Assignments — Pending Tab",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments?status=pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "Only assignments not yet submitted (Pending tab)"
+                }
+              ]
+            },
+            "description": "Student Pending tab: assignments not yet submitted.\n\nStatus badges: Overdue (red), Pending (yellow)\nDeadline display: 'Overdue' | 'Due Tomorrow, 11:59 PM' | 'Due Mar 05 (7 days)'"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Assignments — Completed Tab",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments?status=completed",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "completed",
+                  "description": "Only submitted assignments (Completed tab)"
+                }
+              ]
+            },
+            "description": "Student Completed tab: submitted assignments.\n\nStatus badge: Completed (green)\nShows submission timestamp"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Assignments (Teacher — with stats)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments?batchId=1&page=1&limit=20&includeExpired=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments"
+              ],
+              "query": [
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "description": "Filter by batch. Optional."
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "includeExpired",
+                  "value": "true",
+                  "description": "Include past due assignments"
+                }
+              ]
+            },
+            "description": "Teacher/Admin view: all assignments with submission stats (total, pending, accepted, rejected)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Assignment Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "1"
+              ]
+            },
+            "description": "Assignment detail: subject badge, title, dueDate, teacher (createdBy), instructions, attached files (Cloudinary URLs + video links).\n\nFor students: includes their submission with files, note, status, feedback."
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Assignment (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": "",
+                  "description": "Upload 1-5 files. Max 25MB each. PDF, Word, Excel, PPT, images, ZIP accepted."
+                },
+                {
+                  "key": "note",
+                  "value": "Please find my completed worksheet attached. I used the quadratic formula method.",
+                  "type": "text",
+                  "description": "Optional text note (max 1000 chars)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/1/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "1",
+                "submit"
+              ]
+            },
+            "description": "Student submits assignment.\n\n**Upload specs (v1.0.2):**\n- Storage: Cloudinary (submissions/ folder)\n- Max per file: 25 MB\n- Max files: 5\n- Types: PDF, Word, Excel, PPT, images (JPEG/PNG/GIF/WebP), ZIP, TXT\n- Security: MIME type validation + magic number (file signature) check\n\n**Rate limit:** 10 uploads per 5 min per IP\n\nRe-submission allowed if previous status is REJECTED."
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Submission",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/1/my-submission",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "1",
+                "my-submission"
+              ]
+            },
+            "description": "Student's own submission for an assignment slot.\n\nResponse includes: files (url, publicId, originalFilename, size, mimeType), note, status, feedback, submittedAt, reviewedAt, reviewedBy."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Slot Submissions (Teacher)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/1/submissions?status=PENDING&page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "1",
+                "submissions"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "description": "Filter: PENDING | ACCEPTED | REJECTED. Optional."
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Teacher/Admin: all submissions for an assignment slot with student details."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Submission Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/submissions/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "submissions",
+                "1"
+              ]
+            },
+            "description": "Teacher/Admin: single submission with files, note, student info."
+          },
+          "response": []
+        },
+        {
+          "name": "Review Submission (Teacher)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": \"ACCEPTED\",\n    \"feedback\": \"Excellent work! Well structured and clear steps shown.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/submissions/1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "submissions",
+                "1",
+                "review"
+              ]
+            },
+            "description": "Teacher reviews and grades a student submission.\n\nstatus: ACCEPTED | REJECTED\nfeedback: optional (required if REJECTED is good practice)"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Assignment Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/teacher/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "teacher",
+                "stats"
+              ]
+            },
+            "description": "Teacher: quick-stat counters for the Assignments home screen header.\n\nResponse: { dueToday: number, toReview: number }\n\n- dueToday: count of PUBLISHED assignments whose dueDate falls today\n- toReview: count of PENDING (unreviewed) student submissions across the teacher's assignments\n\nUsed for the '3 Due Today' and '12 To Review' cards at the top of the Assignments screen.\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get My Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/teacher?tab=active&batchId=1&page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "teacher"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "active",
+                  "description": "active | drafts | graded. Optional — omit for all."
+                },
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "description": "Filter by batch. Optional."
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max 50."
+                }
+              ]
+            },
+            "description": "Teacher: list their own assignments with tab filters.\n\nTabs:\n- active: PUBLISHED + future dueDate (or no dueDate)\n- drafts: DRAFT status\n- graded: assignments with at least one ACCEPTED/REJECTED submission\n\nResponse: { assignments: [{ id, title, subject, batchId, batchName, dueDate, submissionType, assignmentStatus, totalStudents, submitted, pending, accepted }], pagination }\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Create Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Chapter 5 — Algebra Worksheet",
+                  "type": "text"
+                },
+                {
+                  "key": "subject",
+                  "value": "Mathematics",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Solve all 20 problems. Show working steps.",
+                  "type": "text"
+                },
+                {
+                  "key": "batchIds",
+                  "value": "[1, 2]",
+                  "type": "text",
+                  "description": "JSON array of batch IDs. All get the same assignment (linked by groupId)."
+                },
+                {
+                  "key": "dueDate",
+                  "value": "2026-03-01T23:59:00.000Z",
+                  "type": "text",
+                  "description": "ISO 8601. Optional."
+                },
+                {
+                  "key": "submissionType",
+                  "value": "FILE",
+                  "type": "text",
+                  "description": "FILE | LINK | TEXT. Optional (default FILE)."
+                },
+                {
+                  "key": "assignmentStatus",
+                  "value": "PUBLISHED",
+                  "type": "text",
+                  "description": "PUBLISHED | DRAFT. Optional (default PUBLISHED)."
+                },
+                {
+                  "key": "allowLateSubmissions",
+                  "value": "false",
+                  "type": "text"
+                },
+                {
+                  "key": "plagiarismCheck",
+                  "value": "false",
+                  "type": "text"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": "",
+                  "description": "Optional brief attachment. Max 5 files, 50 MB each."
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: create assignment for one or more batches.\n\nbatchIds: JSON array — one AssignmentSlot is created per batch, all linked by a shared groupId UUID.\n\nFile attachments (optional): PDF, Word, Excel, PPT, images, ZIP. Max 50 MB per file, 5 files.\nStorage: Cloudinary (study-materials/ folder).\nSecurity: magic number validation.\n\nRate limit: 10 uploads per 5 min.\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Assignment Review Page",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/teacher/1/review?status=submitted",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "teacher",
+                "1",
+                "review"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "submitted",
+                  "description": "submitted | not_submitted | late. Optional — omit for all."
+                }
+              ]
+            },
+            "description": "Teacher: per-student status page for an assignment.\n\nResponse: { assignment: { title, subject, dueDate, batchName, totalStudents }, students: [{ studentId, name, status: SUBMITTED|LATE|MISSING, submittedAt?, submissionId? }] }\n\nstatus filter:\n- submitted: has a PENDING/ACCEPTED/REJECTED submission submitted on time\n- late: submitted after dueDate\n- not_submitted: no submission (MISSING)\n\nAuth: TEACHER role (must own the assignment)."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Update Assignment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Chapter 5 — Algebra Worksheet (Revised)\",\n    \"description\": \"Updated instructions. Focus on problems 10-20.\",\n    \"dueDate\": \"2026-03-05T23:59:00.000Z\",\n    \"assignmentStatus\": \"PUBLISHED\",\n    \"allowLateSubmissions\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: update assignment details.\n\nAll fields optional. Only provided fields are updated.\nAllowed: title, subject, description, dueDate, submissionType, assignmentStatus, allowLateSubmissions, plagiarismCheck.\n\nAuth: TEACHER role + must own the assignment."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Delete Assignment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/assignments/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "assignments",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: soft-delete an assignment.\n\nSets isDeleted=true + records deletedBy. Hidden from students immediately.\n\nAuth: TEACHER role + must own the assignment."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Announcements",
+      "description": "School announcements with category filtering, search, and rich detail view.\n\n**Changes in v1.0.2 (complete rewrite):**\n- New: category filter (EXAM, HOLIDAY, LECTURE, GENERAL, EVENT)\n- New: search by title/description\n- New: pagination\n- New: detail endpoint with full body, Important Dates metadata, downloadable attachments, department\n- Cache: list 3 min, detail 5 min\n- Rate limit: 120 req/min",
+      "item": [
+        {
+          "name": "Get Announcements (All)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Paginated list of active announcements, sorted by priority then date.\n\nResponse: { announcements: [...], pagination: { page, limit, total, totalPages } }\n\nEach item: id, title, description (preview), category, priority, department, date, hasAttachments, createdAt\n\nCache: 3 min (category/search/page scoped)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Announcements — Exams Tab",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements?category=EXAM&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "EXAM",
+                  "description": "EXAM | HOLIDAY | LECTURE | GENERAL | EVENT"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter to EXAM category (Exams tab in UI)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Announcements — Holiday Tab",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements?category=HOLIDAY&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "HOLIDAY"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter to HOLIDAY category."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Announcements — General Tab",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements?category=GENERAL&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "GENERAL"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Filter to GENERAL category."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Announcements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements?search=winter+exam&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "winter exam",
+                  "description": "Search in title and description (max 100 chars)"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Full-text search across title and description. Case-insensitive.\n\nCan combine with category: ?category=EXAM&search=winter"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Announcement Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements",
+                "1"
+              ]
+            },
+            "description": "Full announcement detail:\n- title, description (preview), body (full rich text)\n- category, priority, department (e.g., 'Admin Office')\n- date, imageUrl\n- hasAttachments\n- attachments: [{ url, filename, size, mimeType }] — downloadable files\n- metadata: { 'Start Date': 'June 1st, 2026', 'End Date': 'July 14th, 2026', 'Institute Reopens': 'July 15th, 2026' } — Important Dates section\n\nCache: 5 min per id"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "description": "Student notification preferences (student-only).\n\n**New in v1.0.2**\n\nCategories:\n- Academic Alerts: classStartingSoon, timetableChanges\n- Exams & Results: newTestScheduled, resultPublished\n- Materials & Updates: newStudyMaterial, classResourceUploaded\n- Administrative: schoolAnnouncements, doubtResponses\n- Quiet Hours: enabled, from (HH:MM), to (HH:MM)\n\nReturns defaults if no preferences saved yet (no 404).\nCache: 10 min per student.\nRate limit: 120 req/min.",
+      "item": [
+        {
+          "name": "Get Notification Preferences",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications",
+                "preferences"
+              ]
+            },
+            "description": "Get student's notification preferences.\n\nReturns defaults on first call (no 404 — safe to call without setup):\n{\n  academicAlerts: { classStartingSoon: true, timetableChanges: true },\n  examsResults: { newTestScheduled: true, resultPublished: true },\n  materialsUpdates: { newStudyMaterial: true, classResourceUploaded: false },\n  administrative: { schoolAnnouncements: true, doubtResponses: true },\n  quietHours: { enabled: false, from: '22:00', to: '07:00' }\n}\n\nCache: 10 min"
+          },
+          "response": []
+        },
+        {
+          "name": "Save Notification Preferences (Full)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"academicAlerts\": {\n        \"classStartingSoon\": true,\n        \"timetableChanges\": true\n    },\n    \"examsResults\": {\n        \"newTestScheduled\": true,\n        \"resultPublished\": true\n    },\n    \"materialsUpdates\": {\n        \"newStudyMaterial\": true,\n        \"classResourceUploaded\": false\n    },\n    \"administrative\": {\n        \"schoolAnnouncements\": true,\n        \"doubtResponses\": true\n    },\n    \"quietHours\": {\n        \"enabled\": false,\n        \"from\": \"22:00\",\n        \"to\": \"07:00\"\n    }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications",
+                "preferences"
+              ]
+            },
+            "description": "Save all notification preferences (full update).\n\nReturns complete updated preferences object.\nUpsert — safe to call even if no preferences exist yet."
+          },
+          "response": []
+        },
+        {
+          "name": "Save Notification Preferences (Partial — toggle one)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"materialsUpdates\": {\n        \"classResourceUploaded\": true\n    }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications",
+                "preferences"
+              ]
+            },
+            "description": "Partial update — only send the categories/fields you want to change. Other preferences remain unchanged.\n\nUse case: user toggles a single switch in the UI."
+          },
+          "response": []
+        },
+        {
+          "name": "Enable Quiet Hours (Focus Mode)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"quietHours\": {\n        \"enabled\": true,\n        \"from\": \"22:00\",\n        \"to\": \"07:00\"\n    }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications",
+                "preferences"
+              ]
+            },
+            "description": "Enable quiet hours with time range.\n\nfrom/to: HH:MM format (24-hour). Validated on server.\nWhen enabled: notifications are muted between 'from' and 'to' times."
+          },
+          "response": []
+        },
+        {
+          "name": "Register Device Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]\",\n    \"platform\": \"EXPO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications/register-device",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications",
+                "register-device"
+              ]
+            },
+            "description": "Register a device push token (student or teacher).\n\nCall after login once push permission is granted. Upsert — safe to call multiple times.\n\nBody: token (ExponentPushToken[...]), platform (EXPO|IOS|ANDROID).\n\n**New in v1.0.6**"
+          },
+          "response": []
+        },
+        {
+          "name": "Deregister Device Token",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications/register-device",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications",
+                "register-device"
+              ]
+            },
+            "description": "Remove a device push token. Call on logout so the user stops receiving notifications on this device.\n\n**New in v1.0.6**"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notification Inbox",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications?page=1&limit=20&unreadOnly=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "unreadOnly",
+                  "value": "false",
+                  "description": "Set true to return only unread notifications"
+                }
+              ]
+            },
+            "description": "Get paginated notification inbox for the authenticated user.\n\nReturns: { notifications: [...], total, unreadCount, page, limit }\n\nEach notification: { id, title, message, type, isRead, link?, createdAt }\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications/1/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications",
+                "1",
+                "read"
+              ]
+            },
+            "description": "Mark a specific notification as read.\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark All Notifications Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/notifications/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "notifications",
+                "read-all"
+              ]
+            },
+            "description": "Mark all unread notifications as read for the authenticated user.\n\n**New in v1.0.10**"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Resources",
+      "description": "Study resources: videos, notes, study materials (student view) + material management (teacher).\n\n**Student:** videos, notes, study materials for their batch\n**Teacher:** upload and manage study materials (PDF, Word, Excel, PPT, images, video — up to 100 MB/file)",
+      "item": [
+        {
+          "name": "Teacher: Get My Materials",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher?tab=published&batchId=1&subject=Mathematics&page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "published",
+                  "description": "published | drafts | scheduled. Optional — omit for all."
+                },
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "description": "Filter by batch. Optional."
+                },
+                {
+                  "key": "subject",
+                  "value": "Mathematics",
+                  "description": "Filter by subject. Optional."
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Max 50."
+                }
+              ]
+            },
+            "description": "Teacher: list their own study materials with tab filter.\n\nTabs:\n- published: materialStatus=PUBLISHED\n- drafts: materialStatus=DRAFT\n- scheduled: materialStatus=SCHEDULED (scheduledAt in future)\n\nResponse: { materials: [{ id, title, subject, chapter, materialType, materialStatus, scheduledAt, batchId, batchName, visibleBatchIds, files: [{ url, filename, size }], createdAt }], pagination }\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Upload Study Material",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Chapter 6 — Quadratic Equations Notes",
+                  "type": "text"
+                },
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "type": "text",
+                  "description": "Required. Primary batch."
+                },
+                {
+                  "key": "description",
+                  "value": "Complete theory notes with solved examples.",
+                  "type": "text"
+                },
+                {
+                  "key": "subject",
+                  "value": "Mathematics",
+                  "type": "text"
+                },
+                {
+                  "key": "chapter",
+                  "value": "Chapter 6",
+                  "type": "text"
+                },
+                {
+                  "key": "materialType",
+                  "value": "NOTES",
+                  "type": "text",
+                  "description": "NOTES | ASSIGNMENT | REFERENCE | WORKSHEET | OTHER. Optional."
+                },
+                {
+                  "key": "materialStatus",
+                  "value": "PUBLISHED",
+                  "type": "text",
+                  "description": "PUBLISHED | DRAFT | SCHEDULED. Optional (default PUBLISHED)."
+                },
+                {
+                  "key": "scheduledAt",
+                  "value": "2026-03-01T09:00:00.000Z",
+                  "type": "text",
+                  "description": "ISO 8601. Required only if materialStatus=SCHEDULED."
+                },
+                {
+                  "key": "visibleBatchIds",
+                  "value": "[1, 2, 3]",
+                  "type": "text",
+                  "description": "JSON array of batch IDs that can view this material."
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": "",
+                  "description": "Required. 1-5 files. Max 100 MB each. PDF, Word, Excel, PPT, images (JPEG/PNG/WebP), video (MP4/MOV/AVI), ZIP, TXT."
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: upload study material files.\n\nFile specs:\n- Storage: Cloudinary (study-materials/ folder)\n- Max per file: 100 MB\n- Max files: 5\n- Types: PDF, Word, Excel, PPT, images, video (MP4/MOV/AVI), ZIP, TXT\n- Security: MIME type guard + magic number validation\n\nRate limit: 10 uploads per 5 min.\n\nAuth: TEACHER role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Update Material",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Chapter 6 — Quadratic Equations (Updated)\",\n    \"description\": \"Added solved examples for sections 6.3 and 6.4.\",\n    \"subject\": \"Mathematics\",\n    \"chapter\": \"Chapter 6\",\n    \"materialType\": \"NOTES\",\n    \"materialStatus\": \"PUBLISHED\",\n    \"visibleBatchIds\": [1, 2]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: update study material metadata.\n\nAll fields optional. Files cannot be updated here — delete and re-upload.\n\nAuth: TEACHER role + must own the material."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Publish Material",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/1/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "1",
+                "publish"
+              ]
+            },
+            "description": "Teacher: publish a DRAFT or SCHEDULED material immediately.\n\nSets materialStatus=PUBLISHED. Students can now access it.\n\nAuth: TEACHER role + must own the material."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Delete Material",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: soft-delete a study material.\n\nSets isDeleted=true + records deletedBy. Hidden from students immediately. Files remain on Cloudinary.\n\nAuth: TEACHER role + must own the material."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get My Videos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/videos?batchId=1&page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "videos"
+              ],
+              "query": [
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "description": "Required: filter by batch"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Teacher: list YouTube videos for a batch.\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Add YouTube Video",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n    \"title\": \"Quadratic Equations - Full Lecture\",\n    \"batchId\": 1,\n    \"description\": \"Complete walkthrough of quadratic equations\",\n    \"category\": \"Mathematics\",\n    \"publish\": true,\n    \"notifyStudents\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/video",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "video"
+              ]
+            },
+            "description": "Teacher: add a YouTube video for a batch.\n\nRequired: url (YouTube link), title, batchId\nOptional: description, category, publish (true=PUBLIC, false=PRIVATE), notifyStudents\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Update Video",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Updated Title\",\n    \"description\": \"Updated description\",\n    \"publish\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/video/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "video",
+                "1"
+              ]
+            },
+            "description": "Teacher: update a YouTube video. All fields optional.\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Delete Video",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/video/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "video",
+                "1"
+              ]
+            },
+            "description": "Teacher: soft-delete a YouTube video. Hidden from students immediately.\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Folders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/folders?batchId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "folders?batchId=1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Teacher: Create Folder",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/folders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "folders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batchId\": 1,\n  \"name\": \"Chapter 1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Teacher: Rename Folder",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/folder/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "folder",
+                ":id"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batchId\": 1,\n  \"name\": \"Chapter 1 Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Teacher: Delete Folder",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/teacher/folder/:id?batchId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "teacher",
+                "folder",
+                ":id?batchId=1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Starred Resources",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/starred",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "starred"
+              ]
+            },
+            "description": "Student: get all starred resources grouped by type.\n\nResponse: { data: { notes: AppNote[], studyMaterials: AppStudyMaterial[], videos: AppVideo[] } }\n\nAuth: STUDENT role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Star a Resource",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"note\",\n  \"resourceId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/starred",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "starred"
+              ]
+            },
+            "description": "Student: star a resource. Idempotent — starring an already-starred resource is a no-op.\n\nBody: { resourceType: \"note\" | \"study_material\" | \"video\", resourceId: number }\n\nAuth: STUDENT role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Unstar a Resource",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceType\": \"note\",\n  \"resourceId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/starred",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "starred"
+              ]
+            },
+            "description": "Student: unstar a resource. Silently succeeds if the star does not exist.\n\nBody: { resourceType: \"note\" | \"study_material\" | \"video\", resourceId: number }\n\nAuth: STUDENT role required."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Videos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/videos?search=&category=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "videos"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search by title. Optional."
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "description": "Filter by category. Optional."
+                }
+              ]
+            },
+            "description": "YouTube videos for the student's batch.\n\nCache: 10 min (per batch)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/notes?search=&category=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "notes"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search by title. Optional."
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "description": "Filter by category. Optional."
+                }
+              ]
+            },
+            "description": "Notes/PDFs for the student's batch.\n\nCache: 10 min (per batch)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Study Materials",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/resources/study-materials?search=&category=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "resources",
+                "study-materials"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search by title. Optional."
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "description": "Filter by category. Optional."
+                }
+              ]
+            },
+            "description": "Study materials with typed file arrays for the student's batch.\n\nCache: 10 min (per batch)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fees",
+      "description": "Student fee receipts and summary + Teacher fee management",
+      "item": [
+        {
+          "name": "Get My Receipts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/fees/receipts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "fees",
+                "receipts"
+              ]
+            },
+            "description": "All fee receipts for the authenticated student."
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Fees Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/fees/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "fees",
+                "summary"
+              ]
+            },
+            "description": "Fees summary: total due, total paid, balance, payment history."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Fee Structures",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/fees/structures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "fees",
+                "structures"
+              ]
+            },
+            "description": "Active fee structures for the student's batch: name, amount, frequency, dueDay, lateFee, gracePeriod, description.\n\nCache: 60 min"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Students with Fee Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/fees/teacher/students",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "fees",
+                "teacher",
+                "students"
+              ],
+              "query": [
+                {
+                  "key": "batchId",
+                  "value": "1",
+                  "disabled": true,
+                  "description": "Filter by batch ID"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "disabled": true,
+                  "description": "Filter: PENDING|PARTIAL|OVERDUE|PAID"
+                }
+              ]
+            },
+            "description": "Teacher: list all students in their batches with fee status.\n\nReturns: [{ id, fullname, rollNumber, batch, paidAmount, pendingAmount, dueDate, status }]\n\nQuery params: ?batchId= (filter by batch), ?status= (PENDING|PARTIAL|OVERDUE|PAID)\n\nAuth: TEACHER role\n\n**Updated in v1.0.11**: added rollNumber, paidAmount, batchId/status filters"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Get Student Fee Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/fees/teacher/students/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "fees",
+                "teacher",
+                "students",
+                "1"
+              ]
+            },
+            "description": "Teacher: get full fee history and summary for a specific student.\n\nReturns: { student, receipts[], summary }\n\nAuth: TEACHER role + must teach in student's batch\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Record Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"paidAmount\": 500,\n    \"paymentMode\": \"CASH\",\n    \"transactionId\": null,\n    \"chequeNumber\": null,\n    \"notes\": \"Partial payment collected in class\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/fees/teacher/receipts/1/payment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "fees",
+                "teacher",
+                "receipts",
+                "1",
+                "payment"
+              ]
+            },
+            "description": "Teacher: record a payment against a fee receipt.\n\nRequired: paidAmount (number > 0), paymentMode (CASH|UPI|BANK_TRANSFER|CHEQUE|ONLINE)\nOptional: transactionId, chequeNumber, notes\n\nStatus auto-computed: PAID if remaining=0, PARTIAL if partially paid\n\nAuth: TEACHER role + must teach in student's batch\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Send Fee Reminder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/fees/teacher/students/1/reminder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "fees",
+                "teacher",
+                "students",
+                "1",
+                "reminder"
+              ]
+            },
+            "description": "Teacher: send a push notification fee reminder to a student.\n\nFires a push notification to all the student's registered devices.\n\nAuth: TEACHER role\n\n**New in v1.0.10**"
+          },
+          "response": []
+        },
+        {
+          "name": "Student: Download Receipt PDF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/app/fees/receipts/:id/pdf",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "fees",
+                "receipts",
+                ":id",
+                "pdf"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doubts",
+      "description": "Student asks doubts, teacher replies. Bottom nav tab Doubts.",
+      "item": [
+        {
+          "name": "Student: List My Doubts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/doubts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "doubts"
+              ]
+            },
+            "description": "Student: list all my doubts. ?page=&limit="
+          },
+          "response": []
+        },
+        {
+          "name": "Student: Post Doubt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/doubts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "doubts"
+              ]
+            },
+            "description": "Student: post a new doubt. Body: {title, description, subject?}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"How to solve quadratic equations?\",\n    \"description\": \"I am confused about the discriminant formula...\",\n    \"subject\": \"Mathematics\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Student: View Doubt Thread",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/doubts/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "doubts",
+                "1"
+              ]
+            },
+            "description": "Student: view doubt with all replies. Replace 1 with actual doubtId."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: List Doubts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/doubts/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "doubts",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: list doubts from their batch students. ?batchId=&status=OPEN|ANSWERED|RESOLVED&page=&limit="
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Reply to Doubt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/doubts/1/reply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "doubts",
+                "1",
+                "reply"
+              ]
+            },
+            "description": "Teacher: reply to a student doubt. Replace 1 with doubtId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"body\": \"The discriminant b^2-4ac tells you the nature of roots. If positive, 2 real roots; if zero, 1 root; if negative, no real roots.\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resolve Doubt",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/doubts/1/resolve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "doubts",
+                "1",
+                "resolve"
+              ]
+            },
+            "description": "Teacher or Student: mark a doubt as resolved. Replace 1 with doubtId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Teacher: Announcements",
+      "description": "Teacher creates and manages their own announcements.",
+      "item": [
+        {
+          "name": "Teacher: Create Announcement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: create an announcement visible to all students. Multipart form.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Assignment Deadline Extended",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Short preview of the announcement...",
+                  "type": "text"
+                },
+                {
+                  "key": "body",
+                  "value": "Full content of the announcement goes here.",
+                  "type": "text"
+                },
+                {
+                  "key": "category",
+                  "value": "GENERAL",
+                  "type": "text",
+                  "description": "GENERAL|EXAM|HOLIDAY|LECTURE|EVENT"
+                },
+                {
+                  "key": "department",
+                  "value": "Mathematics Dept",
+                  "type": "text"
+                },
+                {
+                  "key": "pinned",
+                  "value": "false",
+                  "type": "text"
+                },
+                {
+                  "key": "files",
+                  "value": "",
+                  "type": "file",
+                  "description": "Attachments (PDF/images, 10MB max, 5 files)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Update Announcement",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: update their own announcement. Replace 1 with announcementId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Updated Title\",\n    \"body\": \"Updated body content\",\n    \"pinned\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Delete Announcement",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: soft-delete (deactivate) their own announcement. Replace 1 with announcementId."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Toggle Pin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/announcements/teacher/1/pin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "announcements",
+                "teacher",
+                "1",
+                "pin"
+              ]
+            },
+            "description": "Teacher: toggle pinned status on their announcement. Replace 1 with announcementId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Teacher: Profile",
+      "description": "Teacher profile with extended info: Academic Background, Workload, Subjects, and Grade Chips (computed from distinct batch names the teacher teaches).",
+      "item": [
+        {
+          "name": "Teacher: Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/profile/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "profile",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: get own profile including qualification, experience, subjects, computed workload (batches, weekly hours), and grades[] — distinct batch names the teacher currently teaches (e.g. [\"Grade 9-A\", \"Grade 10-B\"]). Frontend uses these to render the GRADE X chip badges."
+          },
+          "response": []
+        },
+        {
+          "name": "Teacher: Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/profile/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "profile",
+                "teacher"
+              ]
+            },
+            "description": "Teacher: update own extended profile. All fields optional.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\": \"+91 9876543210\",\n    \"gender\": \"Female\",\n    \"qualification\": \"Ph.D. in Mathematics\",\n    \"university\": \"University of Mumbai, 2015\",\n    \"experience\": 10,\n    \"workTimingFrom\": \"08:00\",\n    \"workTimingTo\": \"16:00\",\n    \"primarySubjects\": [\n        \"Algebra\",\n        \"Calculus\"\n    ],\n    \"secondarySubjects\": [\n        \"Statistics\"\n    ],\n    \"bio\": \"Passionate mathematics teacher with 10 years experience.\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
