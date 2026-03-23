@@ -15,6 +15,7 @@ import testsRoutes from "./tests/route";
 import instagramRoutes from "./instagram/route";
 import settingsRoutes from "./settings/route";
 import notificationRoutes from "./notifications/route";
+import maintenanceRoutes from "./maintenance/route";
 
 const router = Router();
 
@@ -26,6 +27,7 @@ router.use("/batches", batchesRoutes);
 router.use("/fees", feesRoutes);
 router.use("/instagram", instagramRoutes);
 router.use("/lectures", lecturesRoutes);
+router.use("/maintenance", maintenanceRoutes);
 router.use("/notes", notesRoutes);
 router.use("/student-enrollment", studentEnrollmentRoutes);
 router.use("/study-materials", studyMaterialsRoutes);

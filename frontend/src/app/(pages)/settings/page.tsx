@@ -430,6 +430,32 @@ export default function SettingsPage() {
                     <DangerZone />
                 </section>
             )}
+
+            {/* Maintenance Mode - Admin Only (hidden at very bottom) */}
+            {isAdmin && (
+                <section className="pb-12">
+                    <button
+                        onClick={() => window.location.href = "/maintenance"}
+                        className="w-full group cursor-pointer"
+                    >
+                        <div className="rounded-lg border border-dashed border-zinc-800 hover:border-amber-600/40 bg-zinc-950/40 hover:bg-amber-950/10 p-4 transition-all duration-300">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500">
+                                        <Settings className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-mono font-bold text-zinc-500 group-hover:text-amber-500 tracking-wider transition-colors">
+                                        ENTER MAINTENANCE MODE
+                                    </span>
+                                </div>
+                                <span className="text-[10px] font-mono text-zinc-700 group-hover:text-zinc-500 transition-colors">
+                                    →
+                                </span>
+                            </div>
+                        </div>
+                    </button>
+                </section>
+            )}
         </div>
     )
 }

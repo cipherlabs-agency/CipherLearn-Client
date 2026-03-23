@@ -79,4 +79,7 @@ export const config = {
     INSTANCE_ID: process.env.INSTANCE_ID || "cipherlearn-local",
     INSTANCE_NAME: process.env.INSTANCE_NAME || "CipherLearn Local",
   },
+  MAINTENANCE: {
+    PASSWORD_HASH: process.env.MAINTENANCE_PASSWORD_HASH || "",
+  },
 } as const;
