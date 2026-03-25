@@ -20,6 +20,7 @@ import {
     ClipboardCheck,
     FolderOpen,
     Instagram,
+    LayoutTemplate
 } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -76,6 +77,7 @@ export function Sidebar() {
             label: "Growth",
             items: [
                 { href: "/instagram", label: "Instagram", icon: Instagram, show: isAdmin },
+                { href: "/builder", label: "Page Builder", icon: LayoutTemplate, show: isAdmin },
             ]
         },
         {

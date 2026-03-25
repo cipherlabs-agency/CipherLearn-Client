@@ -4,6 +4,7 @@ import dashboardRoutes from "./modules/dashboard/routes";
 import appRoutes from "./modules/app/route";
 import studentAuthRoutes from "./modules/app/auth/route";
 import { generalRateLimiter } from "./middleware/rateLimiter";
+import publicLandingPageRoutes from "./modules/public/landing-pages/route";
 
 const router = Router();
 
@@ -18,5 +19,8 @@ router.use("/app/auth", studentAuthRoutes);
 
 // Protected student app routes with rate limiting
 router.use("/app", generalRateLimiter, appRoutes);
+
+// Public landing pages
+router.use("/public/landing-pages", publicLandingPageRoutes);
 
 export default router;

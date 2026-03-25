@@ -387,6 +387,8 @@ export const ModelName = {
   User: 'User',
   Student: 'Student',
   Batch: 'Batch',
+  LandingPage: 'LandingPage',
+  Lead: 'Lead',
   QRAttendanceToken: 'QRAttendanceToken',
   AttendanceSheet: 'AttendanceSheet',
   Attendance: 'Attendance',
@@ -432,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "student" | "batch" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "materialFolder" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "notificationPreference" | "loginAttempt" | "lecture" | "test" | "testScore" | "testReminder" | "instagramAccount" | "automationRule" | "automationLog" | "teacherProfile" | "doubt" | "doubtReply" | "resourceStar" | "deviceToken" | "appSettings" | "notification"
+    modelProps: "user" | "student" | "batch" | "landingPage" | "lead" | "qRAttendanceToken" | "attendanceSheet" | "attendance" | "youtubeVideo" | "note" | "assignmentSlot" | "studentSubmission" | "announcement" | "materialFolder" | "studyMaterial" | "feeStructure" | "feeReceipt" | "passwordResetToken" | "tokenBlacklist" | "notificationPreference" | "loginAttempt" | "lecture" | "test" | "testScore" | "testReminder" | "instagramAccount" | "automationRule" | "automationLog" | "teacherProfile" | "doubt" | "doubtReply" | "resourceStar" | "deviceToken" | "appSettings" | "notification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -655,6 +657,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.BatchCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.BatchCountAggregateOutputType> | number
+        }
+      }
+    }
+    LandingPage: {
+      payload: Prisma.$LandingPagePayload<ExtArgs>
+      fields: Prisma.LandingPageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LandingPageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LandingPageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>
+        }
+        findFirst: {
+          args: Prisma.LandingPageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LandingPageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>
+        }
+        findMany: {
+          args: Prisma.LandingPageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>[]
+        }
+        create: {
+          args: Prisma.LandingPageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>
+        }
+        createMany: {
+          args: Prisma.LandingPageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LandingPageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>[]
+        }
+        delete: {
+          args: Prisma.LandingPageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>
+        }
+        update: {
+          args: Prisma.LandingPageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>
+        }
+        deleteMany: {
+          args: Prisma.LandingPageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LandingPageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LandingPageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>[]
+        }
+        upsert: {
+          args: Prisma.LandingPageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LandingPagePayload>
+        }
+        aggregate: {
+          args: Prisma.LandingPageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLandingPage>
+        }
+        groupBy: {
+          args: Prisma.LandingPageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LandingPageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LandingPageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LandingPageCountAggregateOutputType> | number
+        }
+      }
+    }
+    Lead: {
+      payload: Prisma.$LeadPayload<ExtArgs>
+      fields: Prisma.LeadFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LeadFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LeadFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        findFirst: {
+          args: Prisma.LeadFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LeadFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        findMany: {
+          args: Prisma.LeadFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>[]
+        }
+        create: {
+          args: Prisma.LeadCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        createMany: {
+          args: Prisma.LeadCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LeadCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>[]
+        }
+        delete: {
+          args: Prisma.LeadDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        update: {
+          args: Prisma.LeadUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        deleteMany: {
+          args: Prisma.LeadDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LeadUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LeadUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>[]
+        }
+        upsert: {
+          args: Prisma.LeadUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadPayload>
+        }
+        aggregate: {
+          args: Prisma.LeadAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLead>
+        }
+        groupBy: {
+          args: Prisma.LeadGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeadGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LeadCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeadCountAggregateOutputType> | number
         }
       }
     }
@@ -2923,11 +3073,11 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
-  isPasswordSet: 'isPasswordSet',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt',
   failedLoginAttempts: 'failedLoginAttempts',
   lockedUntil: 'lockedUntil',
-  updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  isPasswordSet: 'isPasswordSet'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -2942,17 +3092,17 @@ export const StudentScalarFieldEnum = {
   email: 'email',
   dob: 'dob',
   batchId: 'batchId',
-  userId: 'userId',
   address: 'address',
-  phone: 'phone',
-  parentName: 'parentName',
-  grade: 'grade',
-  instituteId: 'instituteId',
-  avatarUrl: 'avatarUrl',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  userId: 'userId',
+  grade: 'grade',
+  instituteId: 'instituteId',
+  parentName: 'parentName',
+  phone: 'phone',
+  avatarUrl: 'avatarUrl'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
@@ -2961,15 +3111,44 @@ export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeo
 export const BatchScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  totalStudents: 'totalStudents',
   timings: 'timings',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  totalStudents: 'totalStudents'
 } as const
 
 export type BatchScalarFieldEnum = (typeof BatchScalarFieldEnum)[keyof typeof BatchScalarFieldEnum]
+
+
+export const LandingPageScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  slug: 'slug',
+  config: 'config',
+  theme: 'theme',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LandingPageScalarFieldEnum = (typeof LandingPageScalarFieldEnum)[keyof typeof LandingPageScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  batchId: 'batchId',
+  message: 'message',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
 
 
 export const QRAttendanceTokenScalarFieldEnum = {
@@ -2979,8 +3158,8 @@ export const QRAttendanceTokenScalarFieldEnum = {
   date: 'date',
   expiresAt: 'expiresAt',
   isActive: 'isActive',
-  updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type QRAttendanceTokenScalarFieldEnum = (typeof QRAttendanceTokenScalarFieldEnum)[keyof typeof QRAttendanceTokenScalarFieldEnum]
@@ -3008,12 +3187,12 @@ export const AttendanceScalarFieldEnum = {
   markedById: 'markedById',
   method: 'method',
   status: 'status',
-  reason: 'reason',
-  subject: 'subject',
-  lectureId: 'lectureId',
   attendanceSheetId: 'attendanceSheetId',
   updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  lectureId: 'lectureId',
+  reason: 'reason',
+  subject: 'subject'
 } as const
 
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
@@ -3026,14 +3205,14 @@ export const YoutubeVideoScalarFieldEnum = {
   url: 'url',
   visibility: 'visibility',
   category: 'category',
-  subject: 'subject',
   batchId: 'batchId',
-  visibleBatchIds: 'visibleBatchIds',
-  scheduledAt: 'scheduledAt',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  scheduledAt: 'scheduledAt',
+  subject: 'subject',
+  visibleBatchIds: 'visibleBatchIds'
 } as const
 
 export type YoutubeVideoScalarFieldEnum = (typeof YoutubeVideoScalarFieldEnum)[keyof typeof YoutubeVideoScalarFieldEnum]
@@ -3060,20 +3239,20 @@ export const AssignmentSlotScalarFieldEnum = {
   title: 'title',
   subject: 'subject',
   description: 'description',
-  attachments: 'attachments',
   batchId: 'batchId',
-  teacherId: 'teacherId',
-  groupId: 'groupId',
-  submissionType: 'submissionType',
-  assignmentStatus: 'assignmentStatus',
-  allowLateSubmissions: 'allowLateSubmissions',
-  plagiarismCheck: 'plagiarismCheck',
   dueDate: 'dueDate',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   isDeleted: 'isDeleted',
-  deletedBy: 'deletedBy'
+  attachments: 'attachments',
+  allowLateSubmissions: 'allowLateSubmissions',
+  assignmentStatus: 'assignmentStatus',
+  deletedBy: 'deletedBy',
+  groupId: 'groupId',
+  plagiarismCheck: 'plagiarismCheck',
+  submissionType: 'submissionType',
+  teacherId: 'teacherId'
 } as const
 
 export type AssignmentSlotScalarFieldEnum = (typeof AssignmentSlotScalarFieldEnum)[keyof typeof AssignmentSlotScalarFieldEnum]
@@ -3084,13 +3263,13 @@ export const StudentSubmissionScalarFieldEnum = {
   slotId: 'slotId',
   studentId: 'studentId',
   files: 'files',
-  note: 'note',
   status: 'status',
   feedback: 'feedback',
   reviewedBy: 'reviewedBy',
   reviewedAt: 'reviewedAt',
   submittedAt: 'submittedAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  note: 'note'
 } as const
 
 export type StudentSubmissionScalarFieldEnum = (typeof StudentSubmissionScalarFieldEnum)[keyof typeof StudentSubmissionScalarFieldEnum]
@@ -3100,23 +3279,23 @@ export const AnnouncementScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  body: 'body',
   imageUrl: 'imageUrl',
   date: 'date',
-  category: 'category',
   priority: 'priority',
-  department: 'department',
-  attachments: 'attachments',
-  metadata: 'metadata',
   isActive: 'isActive',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  attachments: 'attachments',
+  body: 'body',
+  category: 'category',
+  department: 'department',
+  metadata: 'metadata',
+  createdById: 'createdById',
+  pinned: 'pinned',
   isDraft: 'isDraft',
   scheduledAt: 'scheduledAt',
-  targetBatchIds: 'targetBatchIds',
-  pinned: 'pinned',
-  createdBy: 'createdBy',
-  createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  targetBatchIds: 'targetBatchIds'
 } as const
 
 export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
@@ -3141,20 +3320,20 @@ export const StudyMaterialScalarFieldEnum = {
   description: 'description',
   files: 'files',
   batchId: 'batchId',
-  teacherId: 'teacherId',
-  folderId: 'folderId',
   category: 'category',
-  subject: 'subject',
-  chapter: 'chapter',
-  materialType: 'materialType',
-  materialStatus: 'materialStatus',
-  scheduledAt: 'scheduledAt',
-  visibleBatchIds: 'visibleBatchIds',
   createdBy: 'createdBy',
   isDeleted: 'isDeleted',
-  deletedBy: 'deletedBy',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  chapter: 'chapter',
+  deletedBy: 'deletedBy',
+  materialStatus: 'materialStatus',
+  materialType: 'materialType',
+  scheduledAt: 'scheduledAt',
+  subject: 'subject',
+  teacherId: 'teacherId',
+  visibleBatchIds: 'visibleBatchIds',
+  folderId: 'folderId'
 } as const
 
 export type StudyMaterialScalarFieldEnum = (typeof StudyMaterialScalarFieldEnum)[keyof typeof StudyMaterialScalarFieldEnum]
@@ -3282,14 +3461,14 @@ export const LectureScalarFieldEnum = {
   duration: 'duration',
   status: 'status',
   notes: 'notes',
-  isOnline: 'isOnline',
-  meetingLink: 'meetingLink',
-  attachments: 'attachments',
   recurrenceId: 'recurrenceId',
   createdBy: 'createdBy',
   isDeleted: 'isDeleted',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  attachments: 'attachments',
+  isOnline: 'isOnline',
+  meetingLink: 'meetingLink'
 } as const
 
 export type LectureScalarFieldEnum = (typeof LectureScalarFieldEnum)[keyof typeof LectureScalarFieldEnum]
@@ -3311,13 +3490,13 @@ export const TestScalarFieldEnum = {
   syllabus: 'syllabus',
   instructions: 'instructions',
   status: 'status',
-  publishedAt: 'publishedAt',
-  scoresLocked: 'scoresLocked',
-  teacherId: 'teacherId',
   createdBy: 'createdBy',
   isDeleted: 'isDeleted',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  publishedAt: 'publishedAt',
+  scoresLocked: 'scoresLocked',
+  teacherId: 'teacherId'
 } as const
 
 export type TestScalarFieldEnum = (typeof TestScalarFieldEnum)[keyof typeof TestScalarFieldEnum]
@@ -3419,9 +3598,9 @@ export const TeacherProfileScalarFieldEnum = {
   primarySubjects: 'primarySubjects',
   secondarySubjects: 'secondarySubjects',
   bio: 'bio',
-  avatarUrl: 'avatarUrl',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  avatarUrl: 'avatarUrl'
 } as const
 
 export type TeacherProfileScalarFieldEnum = (typeof TeacherProfileScalarFieldEnum)[keyof typeof TeacherProfileScalarFieldEnum]
@@ -3479,13 +3658,13 @@ export type DeviceTokenScalarFieldEnum = (typeof DeviceTokenScalarFieldEnum)[key
 
 export const AppSettingsScalarFieldEnum = {
   id: 'id',
-  className: 'className',
-  classEmail: 'classEmail',
-  classPhone: 'classPhone',
-  classAddress: 'classAddress',
-  classWebsite: 'classWebsite',
   teacherPermissions: 'teacherPermissions',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  classAddress: 'classAddress',
+  classEmail: 'classEmail',
+  className: 'className',
+  classPhone: 'classPhone',
+  classWebsite: 'classWebsite'
 } as const
 
 export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
@@ -3602,13 +3781,6 @@ export type ListEnumUserRolesFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
 
 
 /**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -3619,6 +3791,13 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -3679,20 +3858,6 @@ export type ListEnumYoutubeVideoVisibilityFieldRefInput<$PrismaModel> = FieldRef
 
 
 /**
- * Reference to a field of type 'SubmissionType'
- */
-export type EnumSubmissionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionType'>
-    
-
-
-/**
- * Reference to a field of type 'SubmissionType[]'
- */
-export type ListEnumSubmissionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionType[]'>
-    
-
-
-/**
  * Reference to a field of type 'AssignmentStatus'
  */
 export type EnumAssignmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssignmentStatus'>
@@ -3703,6 +3868,20 @@ export type EnumAssignmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'AssignmentStatus[]'
  */
 export type ListEnumAssignmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssignmentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SubmissionType'
+ */
+export type EnumSubmissionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionType'>
+    
+
+
+/**
+ * Reference to a field of type 'SubmissionType[]'
+ */
+export type ListEnumSubmissionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionType[]'>
     
 
 
@@ -3721,20 +3900,6 @@ export type ListEnumSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
- * Reference to a field of type 'AnnouncementCategory'
- */
-export type EnumAnnouncementCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementCategory'>
-    
-
-
-/**
- * Reference to a field of type 'AnnouncementCategory[]'
- */
-export type ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementCategory[]'>
-    
-
-
-/**
  * Reference to a field of type 'AnnouncementPriority'
  */
 export type EnumAnnouncementPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementPriority'>
@@ -3749,16 +3914,16 @@ export type ListEnumAnnouncementPriorityFieldRefInput<$PrismaModel> = FieldRefIn
 
 
 /**
- * Reference to a field of type 'StudyMaterialType'
+ * Reference to a field of type 'AnnouncementCategory'
  */
-export type EnumStudyMaterialTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StudyMaterialType'>
+export type EnumAnnouncementCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementCategory'>
     
 
 
 /**
- * Reference to a field of type 'StudyMaterialType[]'
+ * Reference to a field of type 'AnnouncementCategory[]'
  */
-export type ListEnumStudyMaterialTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StudyMaterialType[]'>
+export type ListEnumAnnouncementCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnnouncementCategory[]'>
     
 
 
@@ -3773,6 +3938,20 @@ export type EnumMaterialStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'MaterialStatus[]'
  */
 export type ListEnumMaterialStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaterialStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'StudyMaterialType'
+ */
+export type EnumStudyMaterialTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StudyMaterialType'>
+    
+
+
+/**
+ * Reference to a field of type 'StudyMaterialType[]'
+ */
+export type ListEnumStudyMaterialTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StudyMaterialType[]'>
     
 
 
@@ -4069,6 +4248,8 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   student?: Prisma.StudentOmit
   batch?: Prisma.BatchOmit
+  landingPage?: Prisma.LandingPageOmit
+  lead?: Prisma.LeadOmit
   qRAttendanceToken?: Prisma.QRAttendanceTokenOmit
   attendanceSheet?: Prisma.AttendanceSheetOmit
   attendance?: Prisma.AttendanceOmit

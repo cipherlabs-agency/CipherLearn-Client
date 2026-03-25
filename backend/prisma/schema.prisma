@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "./generated/prisma"
@@ -14,62 +8,60 @@ datasource db {
 }
 
 model User {
-  id                  Int       @id @default(autoincrement())
+  id                  Int                  @id @default(autoincrement())
   name                String
-  email               String    @unique
+  email               String               @unique
   password            String?
-  role                UserRoles @default(STUDENT)
-  isPasswordSet       Boolean   @default(false)
-  failedLoginAttempts Int       @default(0)
+  role                UserRoles            @default(STUDENT)
+  updatedAt           DateTime?            @updatedAt
+  createdAt           DateTime?            @default(now())
+  failedLoginAttempts Int                  @default(0)
   lockedUntil         DateTime?
-
-  updatedAt            DateTime?            @updatedAt
-  createdAt            DateTime?            @default(now())
-  passwordResetTokens  PasswordResetToken[]
-  student              Student?
-  teacherProfile       TeacherProfile?
-  lectures             Lecture[]            @relation("TeacherLectures")
-  teacherAssignments   AssignmentSlot[]     @relation("TeacherAssignments")
-  teacherMaterials     StudyMaterial[]      @relation("TeacherMaterials")
-  teacherTests         Test[]               @relation("TeacherTests")
-  doubtReplies         DoubtReply[]
-  deviceTokens         DeviceToken[]
-  instagramAccount     InstagramAccount?
-  notifications        Notification[]   @relation("UserNotifications")
+  isPasswordSet       Boolean              @default(false)
+  teacherAssignments  AssignmentSlot[]     @relation("TeacherAssignments")
+  deviceTokens        DeviceToken[]
+  doubtReplies        DoubtReply[]
+  instagramAccount    InstagramAccount?
+  lectures            Lecture[]            @relation("TeacherLectures")
+  notifications       Notification[]       @relation("UserNotifications")
+  passwordResetTokens PasswordResetToken[]
+  student             Student?
+  teacherMaterials    StudyMaterial[]      @relation("TeacherMaterials")
+  teacherProfile      TeacherProfile?
+  teacherTests        Test[]               @relation("TeacherTests")
 
   @@map("users")
 }
 
 model Student {
-  id         Int      @id @default(autoincrement())
-  firstname  String
-  middlename String
-  lastname   String
-  fullname   String
-  email      String   @unique
-  dob        String
-  batchId    Int?
-  batch      Batch?   @relation(fields: [batchId], references: [id])
-  userId     Int?     @unique
-  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  address    String?
-  phone       String?
-  parentName  String?
-  grade       String?
-  instituteId String?
-  avatarUrl   String?
-  isDeleted  Boolean? @default(false)
-  deletedBy  String?
-
-  updatedAt               DateTime?              @updatedAt
-  createdAt               DateTime?              @default(now())
-  attendances             Attendance[]
-  submissions             StudentSubmission[]
-  feeReceipts             FeeReceipt[]
-  testScores              TestScore[]
-  notificationPreference  NotificationPreference?
-  doubts                  Doubt[]
-  starredResources        ResourceStar[]
+  id                     Int                     @id @default(autoincrement())
+  firstname              String
+  middlename             String
+  lastname               String
+  fullname               String
+  email                  String                  @unique
+  dob                    String
+  batchId                Int?
+  address                String?
+  isDeleted              Boolean?                @default(false)
+  deletedBy              String?
+  updatedAt              DateTime?               @updatedAt
+  createdAt              DateTime?               @default(now())
+  userId                 Int?                    @unique
+  grade                  String?
+  instituteId            String?
+  parentName             String?
+  phone                  String?
+  avatarUrl              String?
+  attendances            Attendance[]
+  doubts                 Doubt[]
+  feeReceipts            FeeReceipt[]
+  notificationPreference NotificationPreference?
+  starredResources       ResourceStar[]
+  submissions            StudentSubmission[]
+  batch                  Batch?                  @relation(fields: [batchId], references: [id])
+  user                   User?                   @relation(fields: [userId], references: [id])
+  testScores             TestScore[]
 
   @@index([batchId])
   @@index([userId])
@@ -79,45 +71,73 @@ model Student {
 }
 
 model Batch {
-  id            Int      @id @default(autoincrement())
-  name          String
-  totalStudents Json?
-  timings       Json?
-  isDeleted     Boolean? @default(false)
-  deletedBy     String?
-
-  students           Student[]
-  sheets             AttendanceSheet[]
-  qrAttendanceTokens QRAttendanceToken[]
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  timings            Json?
+  isDeleted          Boolean?            @default(false)
+  deletedBy          String?
+  updatedAt          DateTime?           @updatedAt
+  createdAt          DateTime?           @default(now())
+  totalStudents      Json?
   assignmentSlots    AssignmentSlot[]
-  studyMaterials     StudyMaterial[]
-  materialFolders    MaterialFolder[]
-  feeStructures      FeeStructure[]
-  feeReceipts        FeeReceipt[]
-  lectures           Lecture[]
-  tests              Test[]
+  sheets             AttendanceSheet[]
+  attendances        Attendance[]
   doubts             Doubt[]
-  youtubeVideos      YoutubeVideo[]
+  feeReceipts        FeeReceipt[]
+  feeStructures      FeeStructure[]
+  lectures           Lecture[]
+  materialFolders    MaterialFolder[]
   notes              Note[]
-
-  updatedAt   DateTime?    @updatedAt
-  createdAt   DateTime?    @default(now())
-  attendances Attendance[]
+  qrAttendanceTokens QRAttendanceToken[]
+  students           Student[]
+  studyMaterials     StudyMaterial[]
+  tests              Test[]
+  youtubeVideos      YoutubeVideo[]
+  landingPage        LandingPage?
+  leads              Lead[]
 
   @@map("batches")
 }
 
-model QRAttendanceToken {
-  id        Int      @id @default(autoincrement())
-  batchId   Int
-  batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  token     String   @unique
-  date      DateTime @db.Date
-  expiresAt DateTime
-  isActive  Boolean  @default(true)
+model LandingPage {
+  id          Int      @id @default(autoincrement())
+  batchId     Int      @unique
+  slug        String   @unique
+  config      Json
+  theme       Json
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  batch       Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
 
-  updatedAt DateTime? @updatedAt
+  @@map("landing_pages")
+}
+
+model Lead {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  batchId   Int
+  message   String?
+  status    String   @default("NEW") // NEW, CONTACTED, CONVERTED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@map("leads")
+}
+
+model QRAttendanceToken {
+  id        Int       @id @default(autoincrement())
+  batchId   Int
+  token     String    @unique
+  date      DateTime  @db.Date
+  expiresAt DateTime
+  isActive  Boolean   @default(true)
   createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  batch     Batch     @relation(fields: [batchId], references: [id], onDelete: Cascade)
 
   @@unique([batchId, date])
   @@index([batchId, date])
@@ -128,13 +148,12 @@ model QRAttendanceToken {
 model AttendanceSheet {
   id         Int          @id @default(autoincrement())
   batchId    Int
-  batch      Batch        @relation(fields: [batchId], references: [id])
   month      String
   year       String
+  updatedAt  DateTime?    @updatedAt
+  createdAt  DateTime?    @default(now())
+  batch      Batch        @relation(fields: [batchId], references: [id])
   attendance Attendance[]
-
-  updatedAt DateTime? @updatedAt
-  createdAt DateTime? @default(now())
 
   @@unique([batchId, year, month])
   @@index([batchId, year, month])
@@ -142,28 +161,25 @@ model AttendanceSheet {
 }
 
 model Attendance {
-  id         Int              @id @default(autoincrement())
-  studentId  Int
-  student    Student          @relation(fields: [studentId], references: [id])
-  batchId    Int
-  batch      Batch            @relation(fields: [batchId], references: [id])
-  date       DateTime         @default(now())
-  time       String?
-  markedBy   String?
-  markedById Int?
-  method     AttendanceMethod @default(MANUAL)
-  status     AttendanceStatus @default(ABSENT)
-
-  reason    String?
-  subject   String?
-  lectureId Int?
-  lecture   Lecture?  @relation(fields: [lectureId], references: [id])
-
-  attendanceSheet   AttendanceSheet? @relation(fields: [attendanceSheetId], references: [id])
+  id                Int              @id @default(autoincrement())
+  studentId         Int
+  batchId           Int
+  date              DateTime         @default(now())
+  time              String?
+  markedBy          String?
+  markedById        Int?
+  method            AttendanceMethod @default(MANUAL)
+  status            AttendanceStatus @default(ABSENT)
   attendanceSheetId Int?
-
-  updatedAt DateTime? @updatedAt
-  createdAt DateTime? @default(now())
+  updatedAt         DateTime?        @updatedAt
+  createdAt         DateTime?        @default(now())
+  lectureId         Int?
+  reason            String?
+  subject           String?
+  attendanceSheet   AttendanceSheet? @relation(fields: [attendanceSheetId], references: [id])
+  batch             Batch            @relation(fields: [batchId], references: [id])
+  lecture           Lecture?         @relation(fields: [lectureId], references: [id])
+  student           Student          @relation(fields: [studentId], references: [id])
 
   @@unique([studentId, date, batchId])
   @@index([studentId, date])
@@ -180,16 +196,15 @@ model YoutubeVideo {
   url             String                  @unique
   visibility      YoutubeVideoVisibility? @default(PRIVATE)
   category        String?
-  subject         String?
   batchId         Int
-  batch           Batch                   @relation(fields: [batchId], references: [id])
-  visibleBatchIds Int[]                   // Additional batch IDs that can view this video
-  scheduledAt     DateTime?               // Publish at this time (when visibility=PUBLIC)
   isDeleted       Boolean?                @default(false)
   deletedBy       String?
-
-  updatedAt DateTime? @updatedAt
-  createdAt DateTime? @default(now())
+  updatedAt       DateTime?               @updatedAt
+  createdAt       DateTime?               @default(now())
+  scheduledAt     DateTime?
+  subject         String?
+  visibleBatchIds Int[]
+  batch           Batch                   @relation(fields: [batchId], references: [id])
 
   @@index([batchId])
   @@index([batchId, isDeleted])   // Dashboard list: WHERE batchId=? AND isDeleted=false
@@ -197,18 +212,17 @@ model YoutubeVideo {
 }
 
 model Note {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   title     String
   content   String[]
   batchId   Int
-  batch     Batch    @relation(fields: [batchId], references: [id])
   category  String?
-  isDeleted Boolean? @default(false)
+  isDeleted Boolean?  @default(false)
   deletedBy String?
   deletedAt DateTime?
-
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
+  batch     Batch     @relation(fields: [batchId], references: [id])
 
   @@index([batchId])
   @@index([batchId, isDeleted])   // Dashboard list: WHERE batchId=? AND isDeleted=false
@@ -216,31 +230,27 @@ model Note {
 }
 
 model AssignmentSlot {
-  id          Int              @id @default(autoincrement())
-  title       String
-  subject     String
-  description String?
-  attachments Json?            // Array of { url, publicId, originalFilename, size, mimeType }
-  batchId     Int
-  batch       Batch            @relation(fields: [batchId], references: [id])
-  teacherId   Int?
-  teacher     User?            @relation("TeacherAssignments", fields: [teacherId], references: [id], onDelete: SetNull)
-  groupId     String?          // Links multi-batch assignment sets (same groupId = same assignment)
-
-  // Assignment settings
-  submissionType       SubmissionType   @default(FILE_UPLOAD)
-  assignmentStatus     AssignmentStatus @default(PUBLISHED)
-  allowLateSubmissions Boolean          @default(false)
-  plagiarismCheck      Boolean          @default(false)
-
-  dueDate     DateTime?
-  createdBy   String
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  isDeleted   Boolean          @default(false)
-  deletedBy   String?
-
-  submissions StudentSubmission[]
+  id                   Int                 @id @default(autoincrement())
+  title                String
+  subject              String
+  description          String?
+  batchId              Int
+  dueDate              DateTime?
+  createdBy            String
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  isDeleted            Boolean             @default(false)
+  attachments          Json?
+  allowLateSubmissions Boolean             @default(false)
+  assignmentStatus     AssignmentStatus    @default(PUBLISHED)
+  deletedBy            String?
+  groupId              String?
+  plagiarismCheck      Boolean             @default(false)
+  submissionType       SubmissionType      @default(FILE_UPLOAD)
+  teacherId            Int?
+  batch                Batch               @relation(fields: [batchId], references: [id])
+  teacher              User?               @relation("TeacherAssignments", fields: [teacherId], references: [id])
+  submissions          StudentSubmission[]
 
   @@index([batchId])
   @@index([teacherId])
@@ -252,66 +262,64 @@ model AssignmentSlot {
 model StudentSubmission {
   id          Int              @id @default(autoincrement())
   slotId      Int
-  slot        AssignmentSlot   @relation(fields: [slotId], references: [id])
   studentId   Int
-  student     Student          @relation(fields: [studentId], references: [id])
-  files       Json             // Array of { url, publicId, originalFilename, size, mimeType }
-  note        String?          // Optional text note from student with submission
+  files       Json
   status      SubmissionStatus @default(PENDING)
   feedback    String?
   reviewedBy  String?
   reviewedAt  DateTime?
   submittedAt DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
+  note        String?
+  slot        AssignmentSlot   @relation(fields: [slotId], references: [id])
+  student     Student          @relation(fields: [studentId], references: [id])
 
   @@unique([slotId, studentId])
   @@index([slotId])
   @@index([studentId])
-  @@index([studentId, status])  // Student submission history filtered by status
+  @@index([studentId, status])
   @@map("student_submissions")
 }
 
 model Announcement {
-  id              Int                  @id @default(autoincrement())
-  title           String
-  description     String               // Short preview text
-  body            String?              // Full rich-text content shown in detail view
-  imageUrl        String?
-  date            DateTime?
-  category        AnnouncementCategory @default(GENERAL)
-  priority        AnnouncementPriority @default(NORMAL)
-  department      String?              // e.g., "Admin Office", "Mathematics Dept"
-  attachments     Json?                // Array of { url, filename, size, mimeType }
-  metadata        Json?                // Structured key-value e.g., { "Start Date": "June 1st, 2026" }
-  isActive        Boolean              @default(true)
-  isDraft         Boolean              @default(false)
-  scheduledAt     DateTime?            // Publish at this time (when isDraft=true + scheduledAt set)
-  targetBatchIds  Int[]                // Empty = visible to all; non-empty = only those batches
-  pinned          Boolean              @default(false)
-  createdBy       String
-  createdById     Int?                 // userId of creator (null = admin via dashboard)
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  id             Int                  @id @default(autoincrement())
+  title          String
+  description    String
+  imageUrl       String?
+  date           DateTime?
+  priority       AnnouncementPriority @default(NORMAL)
+  isActive       Boolean              @default(true)
+  createdBy      String
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  attachments    Json?
+  body           String?
+  category       AnnouncementCategory @default(GENERAL)
+  department     String?
+  metadata       Json?
+  createdById    Int?
+  pinned         Boolean              @default(false)
+  isDraft        Boolean              @default(false)
+  scheduledAt    DateTime?
+  targetBatchIds Int[]
 
   @@index([category, isActive])
   @@index([isActive, createdAt])
-  @@index([isActive, isDraft, scheduledAt])  // Main listing: filter active, non-draft, scheduled-past
-  @@index([createdById])                     // Teacher: find own announcements
+  @@index([isActive, isDraft, scheduledAt])
+  @@index([createdById])
   @@map("announcements")
 }
 
 model MaterialFolder {
-  id        Int      @id @default(autoincrement())
+  id        Int             @id @default(autoincrement())
   name      String
   batchId   Int
-  batch     Batch    @relation(fields: [batchId], references: [id])
   createdBy String
-  isDeleted Boolean  @default(false)
-
+  isDeleted Boolean         @default(false)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  batch     Batch           @relation(fields: [batchId], references: [id])
   materials StudyMaterial[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@unique([batchId, name])
   @@index([batchId])
@@ -319,35 +327,28 @@ model MaterialFolder {
 }
 
 model StudyMaterial {
-  id          Int               @id @default(autoincrement())
-  title       String
-  description String?
-  files       Json              // Array of { url, publicId, originalFilename, size, mimeType }
-  batchId     Int
-  batch       Batch             @relation(fields: [batchId], references: [id])
-  teacherId   Int?
-  teacher     User?             @relation("TeacherMaterials", fields: [teacherId], references: [id], onDelete: SetNull)
-  folderId    Int?
-  folder      MaterialFolder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
-
-  // Classification
+  id              Int               @id @default(autoincrement())
+  title           String
+  description     String?
+  files           Json
+  batchId         Int
   category        String?
-  subject         String?
+  createdBy       String
+  isDeleted       Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   chapter         String?
-  materialType    StudyMaterialType @default(DOCUMENT)
-
-  // Status & Scheduling
+  deletedBy       String?
   materialStatus  MaterialStatus    @default(PUBLISHED)
-  scheduledAt     DateTime?         // Only relevant when materialStatus = SCHEDULED
-
-  // Multi-class visibility (besides primary batchId)
-  visibleBatchIds Int[]             // Additional batch IDs that can view this material
-
-  createdBy   String
-  isDeleted   Boolean           @default(false)
-  deletedBy   String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  materialType    StudyMaterialType @default(DOCUMENT)
+  scheduledAt     DateTime?
+  subject         String?
+  teacherId       Int?
+  visibleBatchIds Int[]
+  folderId        Int?
+  batch           Batch             @relation(fields: [batchId], references: [id])
+  folder          MaterialFolder?   @relation(fields: [folderId], references: [id])
+  teacher         User?             @relation("TeacherMaterials", fields: [teacherId], references: [id])
 
   @@index([batchId])
   @@index([teacherId])
@@ -355,6 +356,411 @@ model StudyMaterial {
   @@index([materialStatus, isDeleted])
   @@index([materialType])
   @@map("study_materials")
+}
+
+model FeeStructure {
+  id          Int          @id @default(autoincrement())
+  batchId     Int
+  name        String
+  amount      Float
+  frequency   FeeFrequency @default(MONTHLY)
+  dueDay      Int          @default(5)
+  lateFee     Float        @default(0)
+  gracePeriod Int          @default(5)
+  isActive    Boolean      @default(true)
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  receipts    FeeReceipt[]
+  batch       Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@unique([batchId, name])
+  @@index([batchId])
+  @@map("fee_structures")
+}
+
+model FeeReceipt {
+  id              Int           @id @default(autoincrement())
+  receiptNumber   String        @unique
+  studentId       Int
+  batchId         Int
+  feeStructureId  Int?
+  totalAmount     Float
+  paidAmount      Float         @default(0)
+  discountAmount  Float         @default(0)
+  lateFeeAmount   Float         @default(0)
+  remainingAmount Float         @default(0)
+  paymentMode     PaymentMode?
+  transactionId   String?
+  chequeNumber    String?
+  bankName        String?
+  paymentNotes    String?
+  academicMonth   Int
+  academicYear    Int
+  status          PaymentStatus @default(PENDING)
+  dueDate         DateTime
+  paymentDate     DateTime?
+  generatedBy     String
+  generatedById   Int?
+  modifiedBy      String?
+  modifiedById    Int?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  batch           Batch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  feeStructure    FeeStructure? @relation(fields: [feeStructureId], references: [id])
+  student         Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([batchId])
+  @@index([status])
+  @@index([studentId, status])
+  @@index([batchId, academicYear, academicMonth])
+  @@index([academicMonth, academicYear])
+  @@index([dueDate])
+  @@map("fee_receipts")
+}
+
+model PasswordResetToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+model TokenBlacklist {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  expiresAt DateTime
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@map("token_blacklist")
+}
+
+model NotificationPreference {
+  id                    Int      @id @default(autoincrement())
+  studentId             Int      @unique
+  classStartingSoon     Boolean  @default(true)
+  timetableChanges      Boolean  @default(true)
+  newTestScheduled      Boolean  @default(true)
+  resultPublished       Boolean  @default(true)
+  newStudyMaterial      Boolean  @default(true)
+  classResourceUploaded Boolean  @default(false)
+  schoolAnnouncements   Boolean  @default(true)
+  doubtResponses        Boolean  @default(true)
+  quietHoursEnabled     Boolean  @default(false)
+  quietHoursFrom        String   @default("22:00")
+  quietHoursTo          String   @default("07:00")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  student               Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
+}
+
+model LoginAttempt {
+  id        Int      @id @default(autoincrement())
+  email     String?
+  ipAddress String
+  success   Boolean
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("login_attempts")
+}
+
+model Lecture {
+  id           Int           @id @default(autoincrement())
+  title        String
+  subject      String
+  description  String?
+  room         String?
+  batchId      Int
+  teacherId    Int?
+  assignedBy   String?
+  date         DateTime
+  startTime    String
+  endTime      String
+  duration     Int
+  status       LectureStatus @default(SCHEDULED)
+  notes        String?
+  recurrenceId String?
+  createdBy    Int
+  isDeleted    Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  attachments  Json?
+  isOnline     Boolean       @default(false)
+  meetingLink  String?
+  attendances  Attendance[]
+  batch        Batch         @relation(fields: [batchId], references: [id])
+  teacher      User?         @relation("TeacherLectures", fields: [teacherId], references: [id])
+
+  @@index([batchId])
+  @@index([teacherId])
+  @@index([date])
+  @@index([batchId, date])
+  @@index([batchId, isDeleted, date])
+  @@index([teacherId, isDeleted, date])
+  @@map("lectures")
+}
+
+model Test {
+  id           Int            @id @default(autoincrement())
+  title        String
+  subject      String
+  description  String?
+  testType     TestType       @default(UNIT_TEST)
+  batchId      Int
+  totalMarks   Float
+  passingMarks Float?
+  date         DateTime
+  time         String?
+  duration     Int?
+  hall         String?
+  syllabus     String?
+  instructions String?
+  status       TestStatus     @default(DRAFT)
+  createdBy    Int
+  isDeleted    Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  publishedAt  DateTime?
+  scoresLocked Boolean        @default(false)
+  teacherId    Int?
+  reminders    TestReminder[]
+  scores       TestScore[]
+  batch        Batch          @relation(fields: [batchId], references: [id])
+  teacher      User?          @relation("TeacherTests", fields: [teacherId], references: [id])
+
+  @@index([batchId])
+  @@index([teacherId])
+  @@index([batchId, date])
+  @@index([status, isDeleted])
+  @@index([isDeleted, date])
+  @@map("tests")
+}
+
+model TestScore {
+  id            Int         @id @default(autoincrement())
+  testId        Int
+  studentId     Int
+  marksObtained Float
+  percentage    Float
+  grade         String?
+  status        ScoreStatus @default(PASS)
+  remarks       String?
+  uploadedBy    Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  student       Student     @relation(fields: [studentId], references: [id])
+  test          Test        @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([testId, studentId])
+  @@index([testId])
+  @@index([studentId])
+  @@index([testId, marksObtained])
+  @@map("test_scores")
+}
+
+model TestReminder {
+  id        Int      @id @default(autoincrement())
+  testId    Int
+  userId    Int
+  createdAt DateTime @default(now())
+  test      Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([testId, userId])
+  @@index([testId])
+  @@index([userId])
+  @@map("test_reminders")
+}
+
+model InstagramAccount {
+  id                Int              @id @default(autoincrement())
+  userId            Int              @unique
+  igUserId          String           @unique
+  username          String
+  profilePictureUrl String?
+  accessToken       String
+  tokenExpiresAt    DateTime?
+  followersCount    Int?
+  mediaCount        Int?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  automationRules   AutomationRule[]
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("instagram_accounts")
+}
+
+model AutomationRule {
+  id                 Int                  @id @default(autoincrement())
+  instagramAccountId Int
+  mediaId            String
+  mediaUrl           String?
+  mediaCaption       String?
+  mediaType          String?
+  triggerKeyword     String
+  dmMessage          String
+  dmType             DmType               @default(TEXT)
+  dmButtons          Json?
+  autoReplyComment   Boolean              @default(false)
+  autoReplyText      String?
+  status             AutomationRuleStatus @default(ACTIVE)
+  dmsSentCount       Int                  @default(0)
+  isFollowGated      Boolean              @default(false)
+  unfollowedMessage  String?
+  lastTriggeredAt    DateTime?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  logs               AutomationLog[]
+  instagramAccount   InstagramAccount     @relation(fields: [instagramAccountId], references: [id], onDelete: Cascade)
+
+  @@index([instagramAccountId])
+  @@index([mediaId])
+  @@index([instagramAccountId, mediaId, triggerKeyword])
+  @@map("automation_rules")
+}
+
+model AutomationLog {
+  id                Int            @id @default(autoincrement())
+  ruleId            Int
+  commenterId       String
+  commenterUsername String?
+  commentText       String
+  dmStatus          DmStatus       @default(SENT)
+  errorMessage      String?
+  createdAt         DateTime       @default(now())
+  rule              AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([ruleId])
+  @@index([commenterId])
+  @@map("automation_logs")
+}
+
+model TeacherProfile {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @unique
+  phone             String?
+  gender            String?
+  qualification     String?
+  university        String?
+  experience        Int?
+  workTimingFrom    String?
+  workTimingTo      String?
+  primarySubjects   String[]
+  secondarySubjects String[]
+  bio               String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  avatarUrl         String?
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("teacher_profiles")
+}
+
+model Doubt {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  subject     String?
+  studentId   Int
+  batchId     Int
+  status      DoubtStatus  @default(OPEN)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  replies     DoubtReply[]
+  batch       Batch        @relation(fields: [batchId], references: [id])
+  student     Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([batchId])
+  @@index([status])
+  @@index([batchId, status])
+  @@map("doubts")
+}
+
+model DoubtReply {
+  id        Int      @id @default(autoincrement())
+  doubtId   Int
+  userId    Int
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  doubt     Doubt    @relation(fields: [doubtId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([doubtId])
+  @@map("doubt_replies")
+}
+
+model ResourceStar {
+  id           Int      @id @default(autoincrement())
+  studentId    Int
+  /// "note" | "study_material" | "video"
+  resourceType String
+  resourceId   Int
+  createdAt    DateTime @default(now())
+  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, resourceType, resourceId])
+  @@index([studentId])
+  @@map("resource_stars")
+}
+
+model DeviceToken {
+  id        Int            @id @default(autoincrement())
+  userId    Int
+  token     String         @unique
+  platform  DevicePlatform @default(EXPO)
+  createdAt DateTime       @default(now())
+  lastUsed  DateTime       @default(now())
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("device_tokens")
+}
+
+model AppSettings {
+  id                 Int      @id @default(1)
+  teacherPermissions Json     @default("{\"canViewFees\": false, \"canExportData\": false, \"canUploadNotes\": true, \"canUploadVideos\": false, \"canViewAnalytics\": false, \"canManageLectures\": true, \"canManageAssignments\": true, \"canSendAnnouncements\": true, \"canManageStudyMaterials\": false}")
+  updatedAt          DateTime @updatedAt
+  classAddress       String   @default("")
+  classEmail         String   @default("")
+  className          String   @default("My Coaching Class")
+  classPhone         String   @default("")
+  classWebsite       String   @default("")
+
+  @@map("app_settings")
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+  user      User             @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
 }
 
 enum AnnouncementPriority {
@@ -426,10 +832,6 @@ enum YoutubeVideoVisibility {
   UNLISTED
 }
 
-// ============================================
-// Fee Management Enums & Models
-// ============================================
-
 enum PaymentStatus {
   PAID
   PARTIAL
@@ -453,314 +855,11 @@ enum FeeFrequency {
   ONE_TIME
 }
 
-model FeeStructure {
-  id          Int          @id @default(autoincrement())
-  batchId     Int
-  batch       Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  name        String       // e.g., "Monthly Tuition Fee", "Lab Fee"
-  amount      Float
-  frequency   FeeFrequency @default(MONTHLY)
-  dueDay      Int          @default(5) // Day of month when fee is due
-  lateFee     Float        @default(0)
-  gracePeriod Int          @default(5) // Days after due date before late fee applies
-  isActive    Boolean      @default(true)
-  description String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  receipts FeeReceipt[]
-
-  @@unique([batchId, name])
-  @@index([batchId])
-  @@map("fee_structures")
-}
-
-model FeeReceipt {
-  id              Int           @id @default(autoincrement())
-  receiptNumber   String        @unique // Format: RCP-YYYY-NNNNN
-  studentId       Int
-  student         Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  batchId         Int
-  batch           Batch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  feeStructureId  Int?
-  feeStructure    FeeStructure? @relation(fields: [feeStructureId], references: [id], onDelete: SetNull)
-
-  // Amount Details
-  totalAmount     Float
-  paidAmount      Float         @default(0)
-  discountAmount  Float         @default(0)
-  lateFeeAmount   Float         @default(0)
-  remainingAmount Float         @default(0) // Computed: totalAmount - paidAmount - discountAmount + lateFeeAmount
-
-  // Payment Details
-  paymentMode     PaymentMode?
-  transactionId   String?       // For digital payments
-  chequeNumber    String?
-  bankName        String?
-  paymentNotes    String?
-
-  // Period
-  academicMonth   Int           // 1-12
-  academicYear    Int           // e.g., 2024
-
-  // Status
-  status          PaymentStatus @default(PENDING)
-
-  // Dates
-  dueDate         DateTime
-  paymentDate     DateTime?
-
-  // Audit
-  generatedBy     String        // Admin who generated
-  generatedById   Int?
-  modifiedBy      String?
-  modifiedById    Int?
-
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  @@index([studentId])
-  @@index([batchId])
-  @@index([status])
-  @@index([studentId, status])            // Student fee view: filter by student + payment status
-  @@index([batchId, academicYear, academicMonth])  // Admin monthly fee report
-  @@index([academicMonth, academicYear])
-  @@index([dueDate])
-  @@map("fee_receipts")
-}
-
-// ============================================
-// Student Authentication Models
-// ============================================
-
-model PasswordResetToken {
-  id        Int       @id @default(autoincrement())
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  token     String    @unique
-  expiresAt DateTime
-  usedAt    DateTime?
-  createdAt DateTime  @default(now())
-
-  @@index([token])
-  @@index([userId])
-  @@map("password_reset_tokens")
-}
-
-model TokenBlacklist {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  userId    Int
-  expiresAt DateTime
-  reason    String?
-  createdAt DateTime @default(now())
-
-  @@index([token])
-  @@map("token_blacklist")
-}
-
-model NotificationPreference {
-  id        Int     @id @default(autoincrement())
-  studentId Int     @unique
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  // Academic Alerts
-  classStartingSoon    Boolean @default(true)
-  timetableChanges     Boolean @default(true)
-
-  // Exams & Results
-  newTestScheduled     Boolean @default(true)
-  resultPublished      Boolean @default(true)
-
-  // Materials & Updates
-  newStudyMaterial     Boolean @default(true)
-  classResourceUploaded Boolean @default(false)
-
-  // Administrative
-  schoolAnnouncements  Boolean @default(true)
-  doubtResponses       Boolean @default(true)
-
-  // Quiet Hours
-  quietHoursEnabled    Boolean @default(false)
-  quietHoursFrom       String  @default("22:00") // HH:MM format
-  quietHoursTo         String  @default("07:00") // HH:MM format
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("notification_preferences")
-}
-
-model LoginAttempt {
-  id        Int      @id @default(autoincrement())
-  email     String?
-  ipAddress String
-  success   Boolean
-  userAgent String?
-  createdAt DateTime @default(now())
-
-  @@index([email, createdAt])
-  @@index([ipAddress, createdAt])
-  @@map("login_attempts")
-}
-
-// ============================================
-// Lectures System
-// ============================================
-
-model Lecture {
-  id            Int           @id @default(autoincrement())
-  title         String
-  subject       String
-  description   String?
-  room          String?
-  batchId       Int
-  batch         Batch         @relation(fields: [batchId], references: [id])
-  teacherId     Int?
-  teacher       User?         @relation("TeacherLectures", fields: [teacherId], references: [id])
-  assignedBy    String?
-
-  // Schedule
-  date          DateTime
-  startTime     String
-  endTime       String
-  duration      Int
-
-  // Status
-  status        LectureStatus @default(SCHEDULED)
-  notes         String?
-
-  // Online session
-  isOnline      Boolean       @default(false)
-  meetingLink   String?
-
-  // Attachments (slides, PDFs, etc.)
-  attachments   Json?         // Array of { url, publicId, originalFilename, size, mimeType }
-
-  // Recurrence
-  recurrenceId  String?
-
-  // Audit
-  createdBy     Int
-  isDeleted     Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-
-  attendances   Attendance[]
-
-  @@index([batchId])
-  @@index([teacherId])
-  @@index([date])
-  @@index([batchId, date])
-  @@index([batchId, isDeleted, date])    // Student schedule: filter active lectures by batch + date range
-  @@index([teacherId, isDeleted, date])  // Teacher schedule: filter own active lectures by date range
-  @@map("lectures")
-}
-
 enum LectureStatus {
   SCHEDULED
   IN_PROGRESS
   COMPLETED
   CANCELLED
-}
-
-// ============================================
-// Tests & Scores System
-// ============================================
-
-model Test {
-  id            Int        @id @default(autoincrement())
-  title         String
-  subject       String
-  description   String?
-  testType      TestType   @default(UNIT_TEST)
-  batchId       Int
-  batch         Batch      @relation(fields: [batchId], references: [id])
-
-  // Scoring
-  totalMarks    Float
-  passingMarks  Float?
-
-  // Schedule
-  date          DateTime
-  time          String?
-  duration      Int?
-  hall          String?
-
-  // Content
-  syllabus      String?
-  instructions  String?
-
-  // Status
-  status        TestStatus @default(DRAFT)
-  publishedAt   DateTime?
-  scoresLocked  Boolean    @default(false) // Locked after results are published
-
-  // Teacher
-  teacherId     Int?
-  teacher       User?      @relation("TeacherTests", fields: [teacherId], references: [id], onDelete: SetNull)
-
-  // Relations
-  scores        TestScore[]
-  reminders     TestReminder[]
-
-  // Audit
-  createdBy     Int
-  isDeleted     Boolean    @default(false)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  @@index([batchId])
-  @@index([teacherId])
-  @@index([batchId, date])
-  @@index([status, isDeleted])
-  @@index([isDeleted, date])      // List all tests sorted by date (no batchId filter)
-  @@map("tests")
-}
-
-model TestScore {
-  id            Int         @id @default(autoincrement())
-  testId        Int
-  test          Test        @relation(fields: [testId], references: [id], onDelete: Cascade)
-  studentId     Int
-  student       Student     @relation(fields: [studentId], references: [id])
-
-  // Score
-  marksObtained Float
-  percentage    Float
-  grade         String?
-  status        ScoreStatus @default(PASS)
-
-  // Feedback
-  remarks       String?
-
-  // Who uploaded
-  uploadedBy    Int
-
-  // Audit
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@unique([testId, studentId])
-  @@index([testId])
-  @@index([testId, marksObtained]) // Paginated score list sorted by marks DESC
-  @@index([studentId])
-  @@map("test_scores")
-}
-
-model TestReminder {
-  id        Int      @id @default(autoincrement())
-  testId    Int
-  test      Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
-  userId    Int
-
-  createdAt DateTime @default(now())
-
-  @@unique([testId, userId])
-  @@index([testId])
-  @@index([userId])
-  @@map("test_reminders")
 }
 
 enum TestType {
@@ -785,81 +884,6 @@ enum ScoreStatus {
   ABSENT
 }
 
-// ============================================
-// Instagram Automation System
-// ============================================
-
-model InstagramAccount {
-  id                Int      @id @default(autoincrement())
-  userId            Int      @unique
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  igUserId          String   @unique // Instagram-scoped user ID
-  username          String
-  profilePictureUrl String?
-  accessToken       String   // Long-lived access token (encrypted at app level)
-  tokenExpiresAt    DateTime?
-  followersCount    Int?
-  mediaCount        Int?
-
-  // Relations
-  automationRules AutomationRule[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@map("instagram_accounts")
-}
-
-model AutomationRule {
-  id                 Int                  @id @default(autoincrement())
-  instagramAccountId Int
-  instagramAccount   InstagramAccount     @relation(fields: [instagramAccountId], references: [id], onDelete: Cascade)
-  mediaId            String               // Instagram media ID (post/reel)
-  mediaUrl           String?              // Thumbnail URL for display
-  mediaCaption       String?              // Cached caption
-  mediaType          String?              // IMAGE, VIDEO, CAROUSEL_ALBUM
-  triggerKeyword     String               // e.g. "LINK", "INFO", "PRICE"
-  dmMessage          String               // The DM text to send
-  dmType             DmType               @default(TEXT) // TEXT or TEMPLATE
-  dmButtons          Json?                // For TEMPLATE type: [{ title, url }]
-  autoReplyComment   Boolean              @default(false) // Whether to auto-reply to the triggering comment
-  autoReplyText      String?              // Auto-reply comment text (used when autoReplyComment is true)
-  status             AutomationRuleStatus @default(ACTIVE)
-  dmsSentCount       Int                  @default(0)
-  isFollowGated      Boolean              @default(false)
-  unfollowedMessage  String?              // The DM text to send if they don't follow
-  lastTriggeredAt    DateTime?
-
-  // Relations
-  logs AutomationLog[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([instagramAccountId])
-  @@index([mediaId])
-  @@index([instagramAccountId, mediaId, triggerKeyword])
-  @@map("automation_rules")
-}
-
-model AutomationLog {
-  id               Int            @id @default(autoincrement())
-  ruleId           Int
-  rule             AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
-  commenterId      String         // IG user ID of commenter
-  commenterUsername String?
-  commentText      String         // Original comment text
-  dmStatus         DmStatus       @default(SENT)
-  errorMessage     String?
-
-  createdAt DateTime @default(now())
-
-  @@index([ruleId])
-  @@index([commenterId])
-  @@map("automation_logs")
-}
-
 enum AutomationRuleStatus {
   ACTIVE
   PAUSED
@@ -876,113 +900,10 @@ enum DmType {
   TEMPLATE
 }
 
-// ============================================
-// Teacher Profile (extended info for teacher app)
-// ============================================
-
-model TeacherProfile {
-  id               Int      @id @default(autoincrement())
-  userId           Int      @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  phone            String?
-  gender           String?
-  qualification    String?   // e.g., "Ph.D. in Mathematics"
-  university       String?   // e.g., "University of Oxford, 2012"
-  experience       Int?      // Years of teaching experience
-  workTimingFrom   String?   // e.g., "08:00"
-  workTimingTo     String?   // e.g., "16:00"
-  primarySubjects  String[]  // e.g., ["Algebra", "Calculus"]
-  secondarySubjects String[] // e.g., ["Physics"]
-  bio              String?
-  avatarUrl        String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("teacher_profiles")
-}
-
-// ============================================
-// Doubts System (Student ask, Teacher reply)
-// ============================================
-
-model Doubt {
-  id          Int         @id @default(autoincrement())
-  title       String
-  description String
-  subject     String?
-  studentId   Int
-  student     Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  batchId     Int
-  batch       Batch       @relation(fields: [batchId], references: [id])
-  status      DoubtStatus @default(OPEN)
-  replies     DoubtReply[]
-
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@index([studentId])
-  @@index([batchId])
-  @@index([status])
-  @@index([batchId, status])  // Teacher: filter doubts by batch + status
-  @@map("doubts")
-}
-
-model DoubtReply {
-  id        Int      @id @default(autoincrement())
-  doubtId   Int
-  doubt     Doubt    @relation(fields: [doubtId], references: [id], onDelete: Cascade)
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  body      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([doubtId])
-  @@map("doubt_replies")
-}
-
 enum DoubtStatus {
   OPEN
   ANSWERED
   RESOLVED
-}
-
-// ============================================
-// Starred Resources (student bookmarks)
-// ============================================
-
-model ResourceStar {
-  id           Int      @id @default(autoincrement())
-  studentId    Int
-  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  /// "note" | "study_material" | "video"
-  resourceType String
-  resourceId   Int
-
-  createdAt    DateTime @default(now())
-
-  @@unique([studentId, resourceType, resourceId])
-  @@index([studentId])
-  @@map("resource_stars")
-}
-
-// ============================================
-// Push Notification Device Tokens
-// ============================================
-
-model DeviceToken {
-  id        Int            @id @default(autoincrement())
-  userId    Int
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  token     String         @unique  // Expo push token: ExponentPushToken[xxxxxxxx]
-  platform  DevicePlatform @default(EXPO)
-  createdAt DateTime       @default(now())
-  lastUsed  DateTime       @default(now())
-
-  @@index([userId])
-  @@map("device_tokens")
 }
 
 enum DevicePlatform {
@@ -991,50 +912,9 @@ enum DevicePlatform {
   ANDROID
 }
 
-// ============================================
-// Per-Deployment Application Settings
-// ============================================
-
-// Single-row table — always id = 1
-// Runtime-configurable by the class admin (no redeployment required)
-model AppSettings {
-  id Int @id @default(1)
-
-  // Class profile (can be edited by admin at runtime)
-  className    String @default("My Coaching Class")
-  classEmail   String @default("")
-  classPhone   String @default("")
-  classAddress String @default("")
-  classWebsite String @default("")
-
-  // Teacher permissions matrix (what teachers are allowed to do)
-  // Defaults: safe conservative set (no fee access, no export, no analytics)
-  teacherPermissions Json @default("{\"canManageLectures\":true,\"canUploadNotes\":true,\"canUploadVideos\":false,\"canManageAssignments\":true,\"canViewFees\":false,\"canManageStudyMaterials\":false,\"canSendAnnouncements\":true,\"canViewAnalytics\":false,\"canExportData\":false}")
-
-  updatedAt DateTime @updatedAt
-
-  @@map("app_settings")
-}
-
 enum NotificationType {
   INFO
   WARNING
   SUCCESS
   ALERT
-}
-
-model Notification {
-  id        Int              @id @default(autoincrement())
-  userId    Int
-  user      User             @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
-  title     String
-  message   String
-  type      NotificationType @default(INFO)
-  isRead    Boolean          @default(false)
-  link      String?
-  createdAt DateTime         @default(now())
-
-  @@index([userId, isRead])
-  @@index([userId, createdAt])
-  @@map("notifications")
 }
