@@ -33,6 +33,11 @@ export type Student = Prisma.StudentModel
  */
 export type Batch = Prisma.BatchModel
 /**
+ * Model LandingPage
+ * 
+ */
+export type LandingPage = Prisma.LandingPageModel
+/**
  * Model QRAttendanceToken
  * 
  */

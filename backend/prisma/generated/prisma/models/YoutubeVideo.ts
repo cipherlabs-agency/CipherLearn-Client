@@ -45,13 +45,13 @@ export type YoutubeVideoMinAggregateOutputType = {
   url: string | null
   visibility: $Enums.YoutubeVideoVisibility | null
   category: string | null
-  subject: string | null
   batchId: number | null
-  scheduledAt: Date | null
   isDeleted: boolean | null
   deletedBy: string | null
   updatedAt: Date | null
   createdAt: Date | null
+  scheduledAt: Date | null
+  subject: string | null
 }
 
 export type YoutubeVideoMaxAggregateOutputType = {
@@ -61,13 +61,13 @@ export type YoutubeVideoMaxAggregateOutputType = {
   url: string | null
   visibility: $Enums.YoutubeVideoVisibility | null
   category: string | null
-  subject: string | null
   batchId: number | null
-  scheduledAt: Date | null
   isDeleted: boolean | null
   deletedBy: string | null
   updatedAt: Date | null
   createdAt: Date | null
+  scheduledAt: Date | null
+  subject: string | null
 }
 
 export type YoutubeVideoCountAggregateOutputType = {
@@ -77,14 +77,14 @@ export type YoutubeVideoCountAggregateOutputType = {
   url: number
   visibility: number
   category: number
-  subject: number
   batchId: number
-  visibleBatchIds: number
-  scheduledAt: number
   isDeleted: number
   deletedBy: number
   updatedAt: number
   createdAt: number
+  scheduledAt: number
+  subject: number
+  visibleBatchIds: number
   _all: number
 }
 
@@ -108,13 +108,13 @@ export type YoutubeVideoMinAggregateInputType = {
   url?: true
   visibility?: true
   category?: true
-  subject?: true
   batchId?: true
-  scheduledAt?: true
   isDeleted?: true
   deletedBy?: true
   updatedAt?: true
   createdAt?: true
+  scheduledAt?: true
+  subject?: true
 }
 
 export type YoutubeVideoMaxAggregateInputType = {
@@ -124,13 +124,13 @@ export type YoutubeVideoMaxAggregateInputType = {
   url?: true
   visibility?: true
   category?: true
-  subject?: true
   batchId?: true
-  scheduledAt?: true
   isDeleted?: true
   deletedBy?: true
   updatedAt?: true
   createdAt?: true
+  scheduledAt?: true
+  subject?: true
 }
 
 export type YoutubeVideoCountAggregateInputType = {
@@ -140,14 +140,14 @@ export type YoutubeVideoCountAggregateInputType = {
   url?: true
   visibility?: true
   category?: true
-  subject?: true
   batchId?: true
-  visibleBatchIds?: true
-  scheduledAt?: true
   isDeleted?: true
   deletedBy?: true
   updatedAt?: true
   createdAt?: true
+  scheduledAt?: true
+  subject?: true
+  visibleBatchIds?: true
   _all?: true
 }
 
@@ -244,14 +244,14 @@ export type YoutubeVideoGroupByOutputType = {
   url: string
   visibility: $Enums.YoutubeVideoVisibility | null
   category: string | null
-  subject: string | null
   batchId: number
-  visibleBatchIds: number[]
-  scheduledAt: Date | null
   isDeleted: boolean | null
   deletedBy: string | null
   updatedAt: Date | null
   createdAt: Date | null
+  scheduledAt: Date | null
+  subject: string | null
+  visibleBatchIds: number[]
   _count: YoutubeVideoCountAggregateOutputType | null
   _avg: YoutubeVideoAvgAggregateOutputType | null
   _sum: YoutubeVideoSumAggregateOutputType | null
@@ -284,14 +284,14 @@ export type YoutubeVideoWhereInput = {
   url?: Prisma.StringFilter<"YoutubeVideo"> | string
   visibility?: Prisma.EnumYoutubeVideoVisibilityNullableFilter<"YoutubeVideo"> | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
-  subject?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   batchId?: Prisma.IntFilter<"YoutubeVideo"> | number
-  visibleBatchIds?: Prisma.IntNullableListFilter<"YoutubeVideo">
-  scheduledAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
   isDeleted?: Prisma.BoolNullableFilter<"YoutubeVideo"> | boolean | null
   deletedBy?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  scheduledAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  subject?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
+  visibleBatchIds?: Prisma.IntNullableListFilter<"YoutubeVideo">
   batch?: Prisma.XOR<Prisma.BatchScalarRelationFilter, Prisma.BatchWhereInput>
 }
 
@@ -302,14 +302,14 @@ export type YoutubeVideoOrderByWithRelationInput = {
   url?: Prisma.SortOrder
   visibility?: Prisma.SortOrderInput | Prisma.SortOrder
   category?: Prisma.SortOrderInput | Prisma.SortOrder
-  subject?: Prisma.SortOrderInput | Prisma.SortOrder
   batchId?: Prisma.SortOrder
-  visibleBatchIds?: Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isDeleted?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  subject?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibleBatchIds?: Prisma.SortOrder
   batch?: Prisma.BatchOrderByWithRelationInput
 }
 
@@ -323,14 +323,14 @@ export type YoutubeVideoWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   visibility?: Prisma.EnumYoutubeVideoVisibilityNullableFilter<"YoutubeVideo"> | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
-  subject?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   batchId?: Prisma.IntFilter<"YoutubeVideo"> | number
-  visibleBatchIds?: Prisma.IntNullableListFilter<"YoutubeVideo">
-  scheduledAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
   isDeleted?: Prisma.BoolNullableFilter<"YoutubeVideo"> | boolean | null
   deletedBy?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  scheduledAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  subject?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
+  visibleBatchIds?: Prisma.IntNullableListFilter<"YoutubeVideo">
   batch?: Prisma.XOR<Prisma.BatchScalarRelationFilter, Prisma.BatchWhereInput>
 }, "id" | "url">
 
@@ -341,14 +341,14 @@ export type YoutubeVideoOrderByWithAggregationInput = {
   url?: Prisma.SortOrder
   visibility?: Prisma.SortOrderInput | Prisma.SortOrder
   category?: Prisma.SortOrderInput | Prisma.SortOrder
-  subject?: Prisma.SortOrderInput | Prisma.SortOrder
   batchId?: Prisma.SortOrder
-  visibleBatchIds?: Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isDeleted?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  scheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  subject?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibleBatchIds?: Prisma.SortOrder
   _count?: Prisma.YoutubeVideoCountOrderByAggregateInput
   _avg?: Prisma.YoutubeVideoAvgOrderByAggregateInput
   _max?: Prisma.YoutubeVideoMaxOrderByAggregateInput
@@ -366,14 +366,14 @@ export type YoutubeVideoScalarWhereWithAggregatesInput = {
   url?: Prisma.StringWithAggregatesFilter<"YoutubeVideo"> | string
   visibility?: Prisma.EnumYoutubeVideoVisibilityNullableWithAggregatesFilter<"YoutubeVideo"> | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.StringNullableWithAggregatesFilter<"YoutubeVideo"> | string | null
-  subject?: Prisma.StringNullableWithAggregatesFilter<"YoutubeVideo"> | string | null
   batchId?: Prisma.IntWithAggregatesFilter<"YoutubeVideo"> | number
-  visibleBatchIds?: Prisma.IntNullableListFilter<"YoutubeVideo">
-  scheduledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"YoutubeVideo"> | Date | string | null
   isDeleted?: Prisma.BoolNullableWithAggregatesFilter<"YoutubeVideo"> | boolean | null
   deletedBy?: Prisma.StringNullableWithAggregatesFilter<"YoutubeVideo"> | string | null
   updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"YoutubeVideo"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableWithAggregatesFilter<"YoutubeVideo"> | Date | string | null
+  scheduledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"YoutubeVideo"> | Date | string | null
+  subject?: Prisma.StringNullableWithAggregatesFilter<"YoutubeVideo"> | string | null
+  visibleBatchIds?: Prisma.IntNullableListFilter<"YoutubeVideo">
 }
 
 export type YoutubeVideoCreateInput = {
@@ -382,13 +382,13 @@ export type YoutubeVideoCreateInput = {
   url: string
   visibility?: $Enums.YoutubeVideoVisibility | null
   category?: string | null
-  subject?: string | null
-  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
-  scheduledAt?: Date | string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  scheduledAt?: Date | string | null
+  subject?: string | null
+  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
   batch: Prisma.BatchCreateNestedOneWithoutYoutubeVideosInput
 }
 
@@ -399,14 +399,14 @@ export type YoutubeVideoUncheckedCreateInput = {
   url: string
   visibility?: $Enums.YoutubeVideoVisibility | null
   category?: string | null
-  subject?: string | null
   batchId: number
-  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
-  scheduledAt?: Date | string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  scheduledAt?: Date | string | null
+  subject?: string | null
+  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoUpdateInput = {
@@ -415,13 +415,13 @@ export type YoutubeVideoUpdateInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
   batch?: Prisma.BatchUpdateOneRequiredWithoutYoutubeVideosNestedInput
 }
 
@@ -432,14 +432,14 @@ export type YoutubeVideoUncheckedUpdateInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   batchId?: Prisma.IntFieldUpdateOperationsInput | number
-  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoCreateManyInput = {
@@ -449,14 +449,14 @@ export type YoutubeVideoCreateManyInput = {
   url: string
   visibility?: $Enums.YoutubeVideoVisibility | null
   category?: string | null
-  subject?: string | null
   batchId: number
-  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
-  scheduledAt?: Date | string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  scheduledAt?: Date | string | null
+  subject?: string | null
+  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoUpdateManyMutationInput = {
@@ -465,13 +465,13 @@ export type YoutubeVideoUpdateManyMutationInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoUncheckedUpdateManyInput = {
@@ -481,14 +481,14 @@ export type YoutubeVideoUncheckedUpdateManyInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   batchId?: Prisma.IntFieldUpdateOperationsInput | number
-  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoListRelationFilter = {
@@ -516,14 +516,14 @@ export type YoutubeVideoCountOrderByAggregateInput = {
   url?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
   category?: Prisma.SortOrder
-  subject?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
-  visibleBatchIds?: Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  scheduledAt?: Prisma.SortOrder
+  subject?: Prisma.SortOrder
+  visibleBatchIds?: Prisma.SortOrder
 }
 
 export type YoutubeVideoAvgOrderByAggregateInput = {
@@ -539,13 +539,13 @@ export type YoutubeVideoMaxOrderByAggregateInput = {
   url?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
   category?: Prisma.SortOrder
-  subject?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  scheduledAt?: Prisma.SortOrder
+  subject?: Prisma.SortOrder
 }
 
 export type YoutubeVideoMinOrderByAggregateInput = {
@@ -555,13 +555,13 @@ export type YoutubeVideoMinOrderByAggregateInput = {
   url?: Prisma.SortOrder
   visibility?: Prisma.SortOrder
   category?: Prisma.SortOrder
-  subject?: Prisma.SortOrder
   batchId?: Prisma.SortOrder
-  scheduledAt?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  scheduledAt?: Prisma.SortOrder
+  subject?: Prisma.SortOrder
 }
 
 export type YoutubeVideoSumOrderByAggregateInput = {
@@ -631,13 +631,13 @@ export type YoutubeVideoCreateWithoutBatchInput = {
   url: string
   visibility?: $Enums.YoutubeVideoVisibility | null
   category?: string | null
-  subject?: string | null
-  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
-  scheduledAt?: Date | string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  scheduledAt?: Date | string | null
+  subject?: string | null
+  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoUncheckedCreateWithoutBatchInput = {
@@ -647,13 +647,13 @@ export type YoutubeVideoUncheckedCreateWithoutBatchInput = {
   url: string
   visibility?: $Enums.YoutubeVideoVisibility | null
   category?: string | null
-  subject?: string | null
-  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
-  scheduledAt?: Date | string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  scheduledAt?: Date | string | null
+  subject?: string | null
+  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoCreateOrConnectWithoutBatchInput = {
@@ -692,14 +692,14 @@ export type YoutubeVideoScalarWhereInput = {
   url?: Prisma.StringFilter<"YoutubeVideo"> | string
   visibility?: Prisma.EnumYoutubeVideoVisibilityNullableFilter<"YoutubeVideo"> | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
-  subject?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   batchId?: Prisma.IntFilter<"YoutubeVideo"> | number
-  visibleBatchIds?: Prisma.IntNullableListFilter<"YoutubeVideo">
-  scheduledAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
   isDeleted?: Prisma.BoolNullableFilter<"YoutubeVideo"> | boolean | null
   deletedBy?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  scheduledAt?: Prisma.DateTimeNullableFilter<"YoutubeVideo"> | Date | string | null
+  subject?: Prisma.StringNullableFilter<"YoutubeVideo"> | string | null
+  visibleBatchIds?: Prisma.IntNullableListFilter<"YoutubeVideo">
 }
 
 export type YoutubeVideoCreateManyBatchInput = {
@@ -709,13 +709,13 @@ export type YoutubeVideoCreateManyBatchInput = {
   url: string
   visibility?: $Enums.YoutubeVideoVisibility | null
   category?: string | null
-  subject?: string | null
-  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
-  scheduledAt?: Date | string | null
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  scheduledAt?: Date | string | null
+  subject?: string | null
+  visibleBatchIds?: Prisma.YoutubeVideoCreatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoUpdateWithoutBatchInput = {
@@ -724,13 +724,13 @@ export type YoutubeVideoUpdateWithoutBatchInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoUncheckedUpdateWithoutBatchInput = {
@@ -740,13 +740,13 @@ export type YoutubeVideoUncheckedUpdateWithoutBatchInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
 }
 
 export type YoutubeVideoUncheckedUpdateManyWithoutBatchInput = {
@@ -756,13 +756,13 @@ export type YoutubeVideoUncheckedUpdateManyWithoutBatchInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   visibility?: Prisma.NullableEnumYoutubeVideoVisibilityFieldUpdateOperationsInput | $Enums.YoutubeVideoVisibility | null
   category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
-  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibleBatchIds?: Prisma.YoutubeVideoUpdatevisibleBatchIdsInput | number[]
 }
 
 
@@ -774,14 +774,14 @@ export type YoutubeVideoSelect<ExtArgs extends runtime.Types.Extensions.Internal
   url?: boolean
   visibility?: boolean
   category?: boolean
-  subject?: boolean
   batchId?: boolean
-  visibleBatchIds?: boolean
-  scheduledAt?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  scheduledAt?: boolean
+  subject?: boolean
+  visibleBatchIds?: boolean
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["youtubeVideo"]>
 
@@ -792,14 +792,14 @@ export type YoutubeVideoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   url?: boolean
   visibility?: boolean
   category?: boolean
-  subject?: boolean
   batchId?: boolean
-  visibleBatchIds?: boolean
-  scheduledAt?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  scheduledAt?: boolean
+  subject?: boolean
+  visibleBatchIds?: boolean
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["youtubeVideo"]>
 
@@ -810,14 +810,14 @@ export type YoutubeVideoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   url?: boolean
   visibility?: boolean
   category?: boolean
-  subject?: boolean
   batchId?: boolean
-  visibleBatchIds?: boolean
-  scheduledAt?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  scheduledAt?: boolean
+  subject?: boolean
+  visibleBatchIds?: boolean
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["youtubeVideo"]>
 
@@ -828,17 +828,17 @@ export type YoutubeVideoSelectScalar = {
   url?: boolean
   visibility?: boolean
   category?: boolean
-  subject?: boolean
   batchId?: boolean
-  visibleBatchIds?: boolean
-  scheduledAt?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  scheduledAt?: boolean
+  subject?: boolean
+  visibleBatchIds?: boolean
 }
 
-export type YoutubeVideoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "url" | "visibility" | "category" | "subject" | "batchId" | "visibleBatchIds" | "scheduledAt" | "isDeleted" | "deletedBy" | "updatedAt" | "createdAt", ExtArgs["result"]["youtubeVideo"]>
+export type YoutubeVideoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "url" | "visibility" | "category" | "batchId" | "isDeleted" | "deletedBy" | "updatedAt" | "createdAt" | "scheduledAt" | "subject" | "visibleBatchIds", ExtArgs["result"]["youtubeVideo"]>
 export type YoutubeVideoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   batch?: boolean | Prisma.BatchDefaultArgs<ExtArgs>
 }
@@ -861,14 +861,14 @@ export type $YoutubeVideoPayload<ExtArgs extends runtime.Types.Extensions.Intern
     url: string
     visibility: $Enums.YoutubeVideoVisibility | null
     category: string | null
-    subject: string | null
     batchId: number
-    visibleBatchIds: number[]
-    scheduledAt: Date | null
     isDeleted: boolean | null
     deletedBy: string | null
     updatedAt: Date | null
     createdAt: Date | null
+    scheduledAt: Date | null
+    subject: string | null
+    visibleBatchIds: number[]
   }, ExtArgs["result"]["youtubeVideo"]>
   composites: {}
 }
@@ -1299,14 +1299,14 @@ export interface YoutubeVideoFieldRefs {
   readonly url: Prisma.FieldRef<"YoutubeVideo", 'String'>
   readonly visibility: Prisma.FieldRef<"YoutubeVideo", 'YoutubeVideoVisibility'>
   readonly category: Prisma.FieldRef<"YoutubeVideo", 'String'>
-  readonly subject: Prisma.FieldRef<"YoutubeVideo", 'String'>
   readonly batchId: Prisma.FieldRef<"YoutubeVideo", 'Int'>
-  readonly visibleBatchIds: Prisma.FieldRef<"YoutubeVideo", 'Int[]'>
-  readonly scheduledAt: Prisma.FieldRef<"YoutubeVideo", 'DateTime'>
   readonly isDeleted: Prisma.FieldRef<"YoutubeVideo", 'Boolean'>
   readonly deletedBy: Prisma.FieldRef<"YoutubeVideo", 'String'>
   readonly updatedAt: Prisma.FieldRef<"YoutubeVideo", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"YoutubeVideo", 'DateTime'>
+  readonly scheduledAt: Prisma.FieldRef<"YoutubeVideo", 'DateTime'>
+  readonly subject: Prisma.FieldRef<"YoutubeVideo", 'String'>
+  readonly visibleBatchIds: Prisma.FieldRef<"YoutubeVideo", 'Int[]'>
 }
     
 

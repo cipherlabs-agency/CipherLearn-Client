@@ -11,6 +11,7 @@
 export type * from './models/User'
 export type * from './models/Student'
 export type * from './models/Batch'
+export type * from './models/LandingPage'
 export type * from './models/QRAttendanceToken'
 export type * from './models/AttendanceSheet'
 export type * from './models/Attendance'

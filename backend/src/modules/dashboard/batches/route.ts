@@ -21,6 +21,9 @@ router.post(
 router.put("/:id", isAdmin, controller.update.bind(controller));
 router.get("/", controller.getAll.bind(controller));
 router.get("/drafts", isAdmin, controller.getDrafts.bind(controller));
+router.get("/:id/landing-context", controller.getLandingContext.bind(controller));
+router.get("/:id/landing-page", controller.getLandingPage.bind(controller));
+router.post("/:id/landing-page", isAdmin, controller.saveLandingPage.bind(controller));
 router.get("/:id", controller.get.bind(controller));
 router.put("/draft", isAdmin, controller.draft.bind(controller));
 router.put("/restore", isAdmin, controller.restore.bind(controller));
