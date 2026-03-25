@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import MaintenanceService from "./service";
 import { log } from "../../../utils/logtail";
 import logger from "../../../utils/logger";
-import { sendToUser, sendTestNotification } from "../../../utils/pushNotifications";
+import { sendToUser, sendTestNotification, getExternalUserId } from "../../../utils/pushNotifications";
 import { config } from "../../../config/env.config";
 import { prisma } from "../../../config/db.config";
 
@@ -231,7 +231,7 @@ export default class MaintenanceController {
         }
 
         result = await sendTestNotification(
-          [String(userId)],
+          [getExternalUserId(userId)],
           title,
           body,
           data
@@ -244,7 +244,8 @@ export default class MaintenanceController {
             targetUser: user,
             onesignalResponse: result,
             debug: {
-              externalUserId: String(userId),
+              externalUserId: getExternalUserId(userId),
+              instanceId: (() => { const url = config.APP.URL || ""; if (!url) return "local"; try { return new URL(url).hostname.split(".")[0] || "local"; } catch { return "local"; } })(),
               timestamp: new Date().toISOString(),
             },
           },

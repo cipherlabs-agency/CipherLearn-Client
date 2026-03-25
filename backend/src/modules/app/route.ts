@@ -49,6 +49,14 @@ router.get("/settings", async (_req: Request, res: Response) => {
           videos: config.FEATURES.VIDEOS,
         },
         teacherPermissions: settings.teacherPermissions,
+        // Instance prefix for OneSignal external user ID scoping (derived from API URL)
+        // App must use: OneSignal.login(`${instanceId}_${userId}`)
+        instanceId: (() => {
+          const url = config.APP.URL || "";
+          if (!url) return "local";
+          try { return new URL(url).hostname.split(".")[0] || "local"; }
+          catch { return url.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 30); }
+        })(),
       },
     });
   } catch (error) {

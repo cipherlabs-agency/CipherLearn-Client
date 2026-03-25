@@ -18,6 +18,35 @@ import { log } from "./logtail";
 
 const ONESIGNAL_API_URL = "https://api.onesignal.com/notifications";
 
+// ─── Instance-scoped external user ID ─────────────────────────────────────────
+// Each deployment instance has a unique API URL (e.g., https://xyz.onrender.com/api).
+// We derive a short prefix from the hostname to prevent cross-instance
+// notification leaking when multiple instances share one OneSignal app.
+// No extra env var needed — the URL is already unique per deployment.
+
+function getInstancePrefix(): string {
+  const url = config.APP.URL || "";
+  if (!url) return "local";
+  try {
+    const hostname = new URL(url).hostname;
+    // "cipherlearn-client.onrender.com" → "cipherlearn-client"
+    // "api.sarthak-classes.com" → "api" (first subdomain)
+    return hostname.split(".")[0] || hostname;
+  } catch {
+    // Fallback: slugify the URL
+    return url.replace(/[^a-zA-Z0-9-]/g, "-").slice(0, 30);
+  }
+}
+
+/**
+ * Prefix a user ID with the instance identifier (derived from API URL hostname).
+ * e.g., URL=https://cipherlearn-client.onrender.com → "cipherlearn-client_5"
+ * The React Native app MUST use the same format when calling OneSignal.login().
+ */
+export function getExternalUserId(userId: number | string): string {
+  return `${getInstancePrefix()}_${userId}`;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type StudentPrefKey =
@@ -174,8 +203,9 @@ export async function sendToUser(
   body: string,
   data?: Record<string, unknown>
 ): Promise<void> {
-  logger.info(`[OneSignal] sendToUser: userId=${userId}`, { title });
-  await sendOneSignalNotification([String(userId)], title, body, data);
+  const extId = getExternalUserId(userId);
+  logger.info(`[OneSignal] sendToUser: userId=${userId}, externalId=${extId}`, { title });
+  await sendOneSignalNotification([extId], title, body, data);
 }
 
 /**
@@ -219,7 +249,7 @@ export async function sendToBatchStudents(
       continue;
     }
 
-    eligibleUserIds.push(String(student.userId));
+    eligibleUserIds.push(getExternalUserId(student.userId));
   }
 
   logger.info(`[OneSignal] sendToBatchStudents: ${eligibleUserIds.length}/${students.length} eligible`, {
@@ -290,7 +320,7 @@ export async function sendToAllActiveStudents(
       continue;
     }
 
-    eligibleUserIds.push(String(student.userId));
+    eligibleUserIds.push(getExternalUserId(student.userId));
   }
 
   logger.info(`[OneSignal] sendToAllActiveStudents: ${eligibleUserIds.length}/${students.length} eligible`);
@@ -319,7 +349,7 @@ export async function sendToAllTeachersOfBatch(
 
   const teacherIds = lectures
     .filter((l) => l.teacherId !== null)
-    .map((l) => String(l.teacherId));
+    .map((l) => getExternalUserId(l.teacherId!));
 
   if (teacherIds.length > 0) {
     await sendOneSignalNotification(teacherIds, title, body, data);
