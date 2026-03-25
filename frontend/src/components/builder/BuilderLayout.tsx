@@ -53,26 +53,27 @@ export function BuilderLayout({ courseId }: { courseId?: string }) {
 
     if (!over) return;
 
-    // Dropping a new block from sidebar onto canvas
-    if (active.data.current?.type === "block-template" && over.id === "builder-canvas") {
+    if (active.data.current?.type === "block-template") {
       const type = active.data.current.blockType as BlockType;
       
-      const definition = getBlockDefinition(type);
-      
-      addBlock({
-        id: Math.random().toString(36).substring(2, 9),
-        type,
-        content: definition?.defaultContent || {},
-        styles: definition?.defaultStyles || {},
-      });
-      return;
-    }
+      // Enforce Singleton Rule when dropping
+      const SINGLETON_BLOCKS = ["hero", "instructor", "pricing", "faq"];
+      if (SINGLETON_BLOCKS.includes(type) && blocks.some(b => b.type === type)) {
+        return; // Prevent duplicate injection
+      }
 
-    // Dropping a template directly over another block
-    if (active.data.current?.type === "block-template" && over.id !== "builder-canvas") {
+      if (over.id === "builder-canvas") {
+        const definition = getBlockDefinition(type);
+        addBlock({
+          id: Math.random().toString(36).substring(2, 9),
+          type,
+          content: definition?.defaultContent || {},
+          styles: definition?.defaultStyles || {},
+        });
+        return;
+      } else {
         const dropIndex = blocks.findIndex((b) => b.id === over.id);
         if (dropIndex !== -1) {
-            const type = active.data.current.blockType as BlockType;
             const definition = getBlockDefinition(type);
             addBlock({
                 id: Math.random().toString(36).substring(2, 9),
@@ -82,6 +83,7 @@ export function BuilderLayout({ courseId }: { courseId?: string }) {
             }, dropIndex);
         }
         return;
+      }
     }
 
     // Reordering existing blocks

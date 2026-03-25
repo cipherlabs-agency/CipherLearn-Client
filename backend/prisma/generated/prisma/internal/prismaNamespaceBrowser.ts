@@ -55,6 +55,7 @@ export const ModelName = {
   Student: 'Student',
   Batch: 'Batch',
   LandingPage: 'LandingPage',
+  Lead: 'Lead',
   QRAttendanceToken: 'QRAttendanceToken',
   AttendanceSheet: 'AttendanceSheet',
   Attendance: 'Attendance',
@@ -170,6 +171,21 @@ export const LandingPageScalarFieldEnum = {
 } as const
 
 export type LandingPageScalarFieldEnum = (typeof LandingPageScalarFieldEnum)[keyof typeof LandingPageScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  batchId: 'batchId',
+  message: 'message',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
 
 
 export const QRAttendanceTokenScalarFieldEnum = {

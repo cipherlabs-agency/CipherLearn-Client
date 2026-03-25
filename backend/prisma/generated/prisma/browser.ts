@@ -38,6 +38,11 @@ export type Batch = Prisma.BatchModel
  */
 export type LandingPage = Prisma.LandingPageModel
 /**
+ * Model Lead
+ * 
+ */
+export type Lead = Prisma.LeadModel
+/**
  * Model QRAttendanceToken
  * 
  */

@@ -247,6 +247,7 @@ export type BatchWhereInput = {
   tests?: Prisma.TestListRelationFilter
   youtubeVideos?: Prisma.YoutubeVideoListRelationFilter
   landingPage?: Prisma.XOR<Prisma.LandingPageNullableScalarRelationFilter, Prisma.LandingPageWhereInput> | null
+  leads?: Prisma.LeadListRelationFilter
 }
 
 export type BatchOrderByWithRelationInput = {
@@ -273,6 +274,7 @@ export type BatchOrderByWithRelationInput = {
   tests?: Prisma.TestOrderByRelationAggregateInput
   youtubeVideos?: Prisma.YoutubeVideoOrderByRelationAggregateInput
   landingPage?: Prisma.LandingPageOrderByWithRelationInput
+  leads?: Prisma.LeadOrderByRelationAggregateInput
 }
 
 export type BatchWhereUniqueInput = Prisma.AtLeast<{
@@ -302,6 +304,7 @@ export type BatchWhereUniqueInput = Prisma.AtLeast<{
   tests?: Prisma.TestListRelationFilter
   youtubeVideos?: Prisma.YoutubeVideoListRelationFilter
   landingPage?: Prisma.XOR<Prisma.LandingPageNullableScalarRelationFilter, Prisma.LandingPageWhereInput> | null
+  leads?: Prisma.LeadListRelationFilter
 }, "id">
 
 export type BatchOrderByWithAggregationInput = {
@@ -357,6 +360,7 @@ export type BatchCreateInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateInput = {
@@ -383,6 +387,7 @@ export type BatchUncheckedCreateInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUpdateInput = {
@@ -408,6 +413,7 @@ export type BatchUpdateInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateInput = {
@@ -434,6 +440,7 @@ export type BatchUncheckedUpdateInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateManyInput = {
@@ -543,6 +550,20 @@ export type BatchUpdateOneRequiredWithoutLandingPageNestedInput = {
   upsert?: Prisma.BatchUpsertWithoutLandingPageInput
   connect?: Prisma.BatchWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutLandingPageInput, Prisma.BatchUpdateWithoutLandingPageInput>, Prisma.BatchUncheckedUpdateWithoutLandingPageInput>
+}
+
+export type BatchCreateNestedOneWithoutLeadsInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutLeadsInput, Prisma.BatchUncheckedCreateWithoutLeadsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutLeadsInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneRequiredWithoutLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutLeadsInput, Prisma.BatchUncheckedCreateWithoutLeadsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutLeadsInput
+  upsert?: Prisma.BatchUpsertWithoutLeadsInput
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutLeadsInput, Prisma.BatchUpdateWithoutLeadsInput>, Prisma.BatchUncheckedUpdateWithoutLeadsInput>
 }
 
 export type BatchCreateNestedOneWithoutQrAttendanceTokensInput = {
@@ -749,6 +770,7 @@ export type BatchCreateWithoutStudentsInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutStudentsInput = {
@@ -774,6 +796,7 @@ export type BatchUncheckedCreateWithoutStudentsInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutStudentsInput = {
@@ -814,6 +837,7 @@ export type BatchUpdateWithoutStudentsInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutStudentsInput = {
@@ -839,6 +863,7 @@ export type BatchUncheckedUpdateWithoutStudentsInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutLandingPageInput = {
@@ -863,6 +888,7 @@ export type BatchCreateWithoutLandingPageInput = {
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutLandingPageInput = {
@@ -888,6 +914,7 @@ export type BatchUncheckedCreateWithoutLandingPageInput = {
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutLandingPageInput = {
@@ -928,6 +955,7 @@ export type BatchUpdateWithoutLandingPageInput = {
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutLandingPageInput = {
@@ -953,6 +981,125 @@ export type BatchUncheckedUpdateWithoutLandingPageInput = {
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
+}
+
+export type BatchCreateWithoutLeadsInput = {
+  name: string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+}
+
+export type BatchUncheckedCreateWithoutLeadsInput = {
+  id?: number
+  name: string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+}
+
+export type BatchCreateOrConnectWithoutLeadsInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutLeadsInput, Prisma.BatchUncheckedCreateWithoutLeadsInput>
+}
+
+export type BatchUpsertWithoutLeadsInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutLeadsInput, Prisma.BatchUncheckedUpdateWithoutLeadsInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutLeadsInput, Prisma.BatchUncheckedCreateWithoutLeadsInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutLeadsInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutLeadsInput, Prisma.BatchUncheckedUpdateWithoutLeadsInput>
+}
+
+export type BatchUpdateWithoutLeadsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutLeadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutQrAttendanceTokensInput = {
@@ -977,6 +1124,7 @@ export type BatchCreateWithoutQrAttendanceTokensInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutQrAttendanceTokensInput = {
@@ -1002,6 +1150,7 @@ export type BatchUncheckedCreateWithoutQrAttendanceTokensInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutQrAttendanceTokensInput = {
@@ -1042,6 +1191,7 @@ export type BatchUpdateWithoutQrAttendanceTokensInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutQrAttendanceTokensInput = {
@@ -1067,6 +1217,7 @@ export type BatchUncheckedUpdateWithoutQrAttendanceTokensInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutSheetsInput = {
@@ -1091,6 +1242,7 @@ export type BatchCreateWithoutSheetsInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutSheetsInput = {
@@ -1116,6 +1268,7 @@ export type BatchUncheckedCreateWithoutSheetsInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutSheetsInput = {
@@ -1156,6 +1309,7 @@ export type BatchUpdateWithoutSheetsInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutSheetsInput = {
@@ -1181,6 +1335,7 @@ export type BatchUncheckedUpdateWithoutSheetsInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutAttendancesInput = {
@@ -1205,6 +1360,7 @@ export type BatchCreateWithoutAttendancesInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutAttendancesInput = {
@@ -1230,6 +1386,7 @@ export type BatchUncheckedCreateWithoutAttendancesInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutAttendancesInput = {
@@ -1270,6 +1427,7 @@ export type BatchUpdateWithoutAttendancesInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutAttendancesInput = {
@@ -1295,6 +1453,7 @@ export type BatchUncheckedUpdateWithoutAttendancesInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutYoutubeVideosInput = {
@@ -1319,6 +1478,7 @@ export type BatchCreateWithoutYoutubeVideosInput = {
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutYoutubeVideosInput = {
@@ -1344,6 +1504,7 @@ export type BatchUncheckedCreateWithoutYoutubeVideosInput = {
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutYoutubeVideosInput = {
@@ -1384,6 +1545,7 @@ export type BatchUpdateWithoutYoutubeVideosInput = {
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutYoutubeVideosInput = {
@@ -1409,6 +1571,7 @@ export type BatchUncheckedUpdateWithoutYoutubeVideosInput = {
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutNotesInput = {
@@ -1433,6 +1596,7 @@ export type BatchCreateWithoutNotesInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutNotesInput = {
@@ -1458,6 +1622,7 @@ export type BatchUncheckedCreateWithoutNotesInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutNotesInput = {
@@ -1498,6 +1663,7 @@ export type BatchUpdateWithoutNotesInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutNotesInput = {
@@ -1523,6 +1689,7 @@ export type BatchUncheckedUpdateWithoutNotesInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutAssignmentSlotsInput = {
@@ -1547,6 +1714,7 @@ export type BatchCreateWithoutAssignmentSlotsInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutAssignmentSlotsInput = {
@@ -1572,6 +1740,7 @@ export type BatchUncheckedCreateWithoutAssignmentSlotsInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutAssignmentSlotsInput = {
@@ -1612,6 +1781,7 @@ export type BatchUpdateWithoutAssignmentSlotsInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutAssignmentSlotsInput = {
@@ -1637,6 +1807,7 @@ export type BatchUncheckedUpdateWithoutAssignmentSlotsInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutMaterialFoldersInput = {
@@ -1661,6 +1832,7 @@ export type BatchCreateWithoutMaterialFoldersInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutMaterialFoldersInput = {
@@ -1686,6 +1858,7 @@ export type BatchUncheckedCreateWithoutMaterialFoldersInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutMaterialFoldersInput = {
@@ -1726,6 +1899,7 @@ export type BatchUpdateWithoutMaterialFoldersInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutMaterialFoldersInput = {
@@ -1751,6 +1925,7 @@ export type BatchUncheckedUpdateWithoutMaterialFoldersInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutStudyMaterialsInput = {
@@ -1775,6 +1950,7 @@ export type BatchCreateWithoutStudyMaterialsInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutStudyMaterialsInput = {
@@ -1800,6 +1976,7 @@ export type BatchUncheckedCreateWithoutStudyMaterialsInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutStudyMaterialsInput = {
@@ -1840,6 +2017,7 @@ export type BatchUpdateWithoutStudyMaterialsInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutStudyMaterialsInput = {
@@ -1865,6 +2043,7 @@ export type BatchUncheckedUpdateWithoutStudyMaterialsInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutFeeStructuresInput = {
@@ -1889,6 +2068,7 @@ export type BatchCreateWithoutFeeStructuresInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutFeeStructuresInput = {
@@ -1914,6 +2094,7 @@ export type BatchUncheckedCreateWithoutFeeStructuresInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutFeeStructuresInput = {
@@ -1954,6 +2135,7 @@ export type BatchUpdateWithoutFeeStructuresInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutFeeStructuresInput = {
@@ -1979,6 +2161,7 @@ export type BatchUncheckedUpdateWithoutFeeStructuresInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutFeeReceiptsInput = {
@@ -2003,6 +2186,7 @@ export type BatchCreateWithoutFeeReceiptsInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutFeeReceiptsInput = {
@@ -2028,6 +2212,7 @@ export type BatchUncheckedCreateWithoutFeeReceiptsInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutFeeReceiptsInput = {
@@ -2068,6 +2253,7 @@ export type BatchUpdateWithoutFeeReceiptsInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutFeeReceiptsInput = {
@@ -2093,6 +2279,7 @@ export type BatchUncheckedUpdateWithoutFeeReceiptsInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutLecturesInput = {
@@ -2117,6 +2304,7 @@ export type BatchCreateWithoutLecturesInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutLecturesInput = {
@@ -2142,6 +2330,7 @@ export type BatchUncheckedCreateWithoutLecturesInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutLecturesInput = {
@@ -2182,6 +2371,7 @@ export type BatchUpdateWithoutLecturesInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutLecturesInput = {
@@ -2207,6 +2397,7 @@ export type BatchUncheckedUpdateWithoutLecturesInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutTestsInput = {
@@ -2231,6 +2422,7 @@ export type BatchCreateWithoutTestsInput = {
   studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutTestsInput = {
@@ -2256,6 +2448,7 @@ export type BatchUncheckedCreateWithoutTestsInput = {
   studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutTestsInput = {
@@ -2296,6 +2489,7 @@ export type BatchUpdateWithoutTestsInput = {
   studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutTestsInput = {
@@ -2321,6 +2515,7 @@ export type BatchUncheckedUpdateWithoutTestsInput = {
   studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutDoubtsInput = {
@@ -2345,6 +2540,7 @@ export type BatchCreateWithoutDoubtsInput = {
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutDoubtsInput = {
@@ -2370,6 +2566,7 @@ export type BatchUncheckedCreateWithoutDoubtsInput = {
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
   landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutDoubtsInput = {
@@ -2410,6 +2607,7 @@ export type BatchUpdateWithoutDoubtsInput = {
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutDoubtsInput = {
@@ -2435,6 +2633,7 @@ export type BatchUncheckedUpdateWithoutDoubtsInput = {
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
   landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 
@@ -2457,6 +2656,7 @@ export type BatchCountOutputType = {
   studyMaterials: number
   tests: number
   youtubeVideos: number
+  leads: number
 }
 
 export type BatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2474,6 +2674,7 @@ export type BatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   studyMaterials?: boolean | BatchCountOutputTypeCountStudyMaterialsArgs
   tests?: boolean | BatchCountOutputTypeCountTestsArgs
   youtubeVideos?: boolean | BatchCountOutputTypeCountYoutubeVideosArgs
+  leads?: boolean | BatchCountOutputTypeCountLeadsArgs
 }
 
 /**
@@ -2584,6 +2785,13 @@ export type BatchCountOutputTypeCountYoutubeVideosArgs<ExtArgs extends runtime.T
   where?: Prisma.YoutubeVideoWhereInput
 }
 
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadWhereInput
+}
+
 
 export type BatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2609,6 +2817,7 @@ export type BatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   tests?: boolean | Prisma.Batch$testsArgs<ExtArgs>
   youtubeVideos?: boolean | Prisma.Batch$youtubeVideosArgs<ExtArgs>
   landingPage?: boolean | Prisma.Batch$landingPageArgs<ExtArgs>
+  leads?: boolean | Prisma.Batch$leadsArgs<ExtArgs>
   _count?: boolean | Prisma.BatchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["batch"]>
 
@@ -2662,6 +2871,7 @@ export type BatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   tests?: boolean | Prisma.Batch$testsArgs<ExtArgs>
   youtubeVideos?: boolean | Prisma.Batch$youtubeVideosArgs<ExtArgs>
   landingPage?: boolean | Prisma.Batch$landingPageArgs<ExtArgs>
+  leads?: boolean | Prisma.Batch$leadsArgs<ExtArgs>
   _count?: boolean | Prisma.BatchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BatchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2685,6 +2895,7 @@ export type $BatchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     tests: Prisma.$TestPayload<ExtArgs>[]
     youtubeVideos: Prisma.$YoutubeVideoPayload<ExtArgs>[]
     landingPage: Prisma.$LandingPagePayload<ExtArgs> | null
+    leads: Prisma.$LeadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -3104,6 +3315,7 @@ export interface Prisma__BatchClient<T, Null = never, ExtArgs extends runtime.Ty
   tests<T extends Prisma.Batch$testsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$testsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   youtubeVideos<T extends Prisma.Batch$youtubeVideosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$youtubeVideosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$YoutubeVideoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   landingPage<T extends Prisma.Batch$landingPageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$landingPageArgs<ExtArgs>>): Prisma.Prisma__LandingPageClient<runtime.Types.Result.GetResult<Prisma.$LandingPagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  leads<T extends Prisma.Batch$leadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3881,6 +4093,30 @@ export type Batch$landingPageArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.LandingPageInclude<ExtArgs> | null
   where?: Prisma.LandingPageWhereInput
+}
+
+/**
+ * Batch.leads
+ */
+export type Batch$leadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+  orderBy?: Prisma.LeadOrderByWithRelationInput | Prisma.LeadOrderByWithRelationInput[]
+  cursor?: Prisma.LeadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
 }
 
 /**

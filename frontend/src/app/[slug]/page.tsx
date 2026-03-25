@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { getBlockDefinition } from "@/components/builder/registry";
 import { BuilderBlock } from "@/components/builder/types";
 import { Loader2 } from "lucide-react";
-import { use } from "react";
+import { useBuilderStore } from "@/components/builder/store";
 
 export default function PublicLandingPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const [blocks, setBlocks] = useState<BuilderBlock[]>([]);
   const [theme, setTheme] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { setBatchContext } = useBuilderStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +22,10 @@ export default function PublicLandingPage({ params }: { params: Promise<{ slug: 
         if (json.success && json.data) {
           setBlocks(json.data.config);
           setTheme(json.data.theme);
+          
+          if (json.data.batch) {
+            setBatchContext({ batch: json.data.batch });
+          }
         }
       } catch (e) {
         console.error("Failed to fetch landing page", e);
