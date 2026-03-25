@@ -16,6 +16,7 @@ import instagramRoutes from "./instagram/route";
 import settingsRoutes from "./settings/route";
 import notificationRoutes from "./notifications/route";
 import maintenanceRoutes from "./maintenance/route";
+import crmRoutes from "./crm/route";
 
 const router = Router();
 
@@ -36,6 +37,7 @@ router.use("/tests", testsRoutes);
 router.use("/youtube-videos", youtubeVideoRoutes);
 router.use("/settings", settingsRoutes);
 router.use("/notifications", notificationRoutes);
+router.use("/crm", crmRoutes);
 
 export default router;
 

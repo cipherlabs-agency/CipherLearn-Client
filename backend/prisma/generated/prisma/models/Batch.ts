@@ -55,12 +55,12 @@ export type BatchMaxAggregateOutputType = {
 export type BatchCountAggregateOutputType = {
   id: number
   name: number
-  totalStudents: number
   timings: number
   isDeleted: number
   deletedBy: number
   updatedAt: number
   createdAt: number
+  totalStudents: number
   _all: number
 }
 
@@ -94,12 +94,12 @@ export type BatchMaxAggregateInputType = {
 export type BatchCountAggregateInputType = {
   id?: true
   name?: true
-  totalStudents?: true
   timings?: true
   isDeleted?: true
   deletedBy?: true
   updatedAt?: true
   createdAt?: true
+  totalStudents?: true
   _all?: true
 }
 
@@ -192,12 +192,12 @@ export type BatchGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type BatchGroupByOutputType = {
   id: number
   name: string
-  totalStudents: runtime.JsonValue | null
   timings: runtime.JsonValue | null
   isDeleted: boolean | null
   deletedBy: string | null
   updatedAt: Date | null
   createdAt: Date | null
+  totalStudents: runtime.JsonValue | null
   _count: BatchCountAggregateOutputType | null
   _avg: BatchAvgAggregateOutputType | null
   _sum: BatchSumAggregateOutputType | null
@@ -226,51 +226,55 @@ export type BatchWhereInput = {
   NOT?: Prisma.BatchWhereInput | Prisma.BatchWhereInput[]
   id?: Prisma.IntFilter<"Batch"> | number
   name?: Prisma.StringFilter<"Batch"> | string
-  totalStudents?: Prisma.JsonNullableFilter<"Batch">
   timings?: Prisma.JsonNullableFilter<"Batch">
   isDeleted?: Prisma.BoolNullableFilter<"Batch"> | boolean | null
   deletedBy?: Prisma.StringNullableFilter<"Batch"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
-  students?: Prisma.StudentListRelationFilter
-  sheets?: Prisma.AttendanceSheetListRelationFilter
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenListRelationFilter
+  totalStudents?: Prisma.JsonNullableFilter<"Batch">
   assignmentSlots?: Prisma.AssignmentSlotListRelationFilter
-  studyMaterials?: Prisma.StudyMaterialListRelationFilter
-  materialFolders?: Prisma.MaterialFolderListRelationFilter
-  feeStructures?: Prisma.FeeStructureListRelationFilter
-  feeReceipts?: Prisma.FeeReceiptListRelationFilter
-  lectures?: Prisma.LectureListRelationFilter
-  tests?: Prisma.TestListRelationFilter
-  doubts?: Prisma.DoubtListRelationFilter
-  youtubeVideos?: Prisma.YoutubeVideoListRelationFilter
-  notes?: Prisma.NoteListRelationFilter
+  sheets?: Prisma.AttendanceSheetListRelationFilter
   attendances?: Prisma.AttendanceListRelationFilter
+  doubts?: Prisma.DoubtListRelationFilter
+  feeReceipts?: Prisma.FeeReceiptListRelationFilter
+  feeStructures?: Prisma.FeeStructureListRelationFilter
+  lectures?: Prisma.LectureListRelationFilter
+  materialFolders?: Prisma.MaterialFolderListRelationFilter
+  notes?: Prisma.NoteListRelationFilter
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenListRelationFilter
+  students?: Prisma.StudentListRelationFilter
+  studyMaterials?: Prisma.StudyMaterialListRelationFilter
+  tests?: Prisma.TestListRelationFilter
+  youtubeVideos?: Prisma.YoutubeVideoListRelationFilter
+  landingPage?: Prisma.XOR<Prisma.LandingPageNullableScalarRelationFilter, Prisma.LandingPageWhereInput> | null
+  leads?: Prisma.LeadListRelationFilter
 }
 
 export type BatchOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  totalStudents?: Prisma.SortOrderInput | Prisma.SortOrder
   timings?: Prisma.SortOrderInput | Prisma.SortOrder
   isDeleted?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  students?: Prisma.StudentOrderByRelationAggregateInput
-  sheets?: Prisma.AttendanceSheetOrderByRelationAggregateInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenOrderByRelationAggregateInput
+  totalStudents?: Prisma.SortOrderInput | Prisma.SortOrder
   assignmentSlots?: Prisma.AssignmentSlotOrderByRelationAggregateInput
-  studyMaterials?: Prisma.StudyMaterialOrderByRelationAggregateInput
-  materialFolders?: Prisma.MaterialFolderOrderByRelationAggregateInput
-  feeStructures?: Prisma.FeeStructureOrderByRelationAggregateInput
-  feeReceipts?: Prisma.FeeReceiptOrderByRelationAggregateInput
-  lectures?: Prisma.LectureOrderByRelationAggregateInput
-  tests?: Prisma.TestOrderByRelationAggregateInput
-  doubts?: Prisma.DoubtOrderByRelationAggregateInput
-  youtubeVideos?: Prisma.YoutubeVideoOrderByRelationAggregateInput
-  notes?: Prisma.NoteOrderByRelationAggregateInput
+  sheets?: Prisma.AttendanceSheetOrderByRelationAggregateInput
   attendances?: Prisma.AttendanceOrderByRelationAggregateInput
+  doubts?: Prisma.DoubtOrderByRelationAggregateInput
+  feeReceipts?: Prisma.FeeReceiptOrderByRelationAggregateInput
+  feeStructures?: Prisma.FeeStructureOrderByRelationAggregateInput
+  lectures?: Prisma.LectureOrderByRelationAggregateInput
+  materialFolders?: Prisma.MaterialFolderOrderByRelationAggregateInput
+  notes?: Prisma.NoteOrderByRelationAggregateInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenOrderByRelationAggregateInput
+  students?: Prisma.StudentOrderByRelationAggregateInput
+  studyMaterials?: Prisma.StudyMaterialOrderByRelationAggregateInput
+  tests?: Prisma.TestOrderByRelationAggregateInput
+  youtubeVideos?: Prisma.YoutubeVideoOrderByRelationAggregateInput
+  landingPage?: Prisma.LandingPageOrderByWithRelationInput
+  leads?: Prisma.LeadOrderByRelationAggregateInput
 }
 
 export type BatchWhereUniqueInput = Prisma.AtLeast<{
@@ -279,37 +283,39 @@ export type BatchWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.BatchWhereInput[]
   NOT?: Prisma.BatchWhereInput | Prisma.BatchWhereInput[]
   name?: Prisma.StringFilter<"Batch"> | string
-  totalStudents?: Prisma.JsonNullableFilter<"Batch">
   timings?: Prisma.JsonNullableFilter<"Batch">
   isDeleted?: Prisma.BoolNullableFilter<"Batch"> | boolean | null
   deletedBy?: Prisma.StringNullableFilter<"Batch"> | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"Batch"> | Date | string | null
-  students?: Prisma.StudentListRelationFilter
-  sheets?: Prisma.AttendanceSheetListRelationFilter
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenListRelationFilter
+  totalStudents?: Prisma.JsonNullableFilter<"Batch">
   assignmentSlots?: Prisma.AssignmentSlotListRelationFilter
-  studyMaterials?: Prisma.StudyMaterialListRelationFilter
-  materialFolders?: Prisma.MaterialFolderListRelationFilter
-  feeStructures?: Prisma.FeeStructureListRelationFilter
-  feeReceipts?: Prisma.FeeReceiptListRelationFilter
-  lectures?: Prisma.LectureListRelationFilter
-  tests?: Prisma.TestListRelationFilter
-  doubts?: Prisma.DoubtListRelationFilter
-  youtubeVideos?: Prisma.YoutubeVideoListRelationFilter
-  notes?: Prisma.NoteListRelationFilter
+  sheets?: Prisma.AttendanceSheetListRelationFilter
   attendances?: Prisma.AttendanceListRelationFilter
+  doubts?: Prisma.DoubtListRelationFilter
+  feeReceipts?: Prisma.FeeReceiptListRelationFilter
+  feeStructures?: Prisma.FeeStructureListRelationFilter
+  lectures?: Prisma.LectureListRelationFilter
+  materialFolders?: Prisma.MaterialFolderListRelationFilter
+  notes?: Prisma.NoteListRelationFilter
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenListRelationFilter
+  students?: Prisma.StudentListRelationFilter
+  studyMaterials?: Prisma.StudyMaterialListRelationFilter
+  tests?: Prisma.TestListRelationFilter
+  youtubeVideos?: Prisma.YoutubeVideoListRelationFilter
+  landingPage?: Prisma.XOR<Prisma.LandingPageNullableScalarRelationFilter, Prisma.LandingPageWhereInput> | null
+  leads?: Prisma.LeadListRelationFilter
 }, "id">
 
 export type BatchOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  totalStudents?: Prisma.SortOrderInput | Prisma.SortOrder
   timings?: Prisma.SortOrderInput | Prisma.SortOrder
   isDeleted?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  totalStudents?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BatchCountOrderByAggregateInput
   _avg?: Prisma.BatchAvgOrderByAggregateInput
   _max?: Prisma.BatchMaxOrderByAggregateInput
@@ -323,142 +329,150 @@ export type BatchScalarWhereWithAggregatesInput = {
   NOT?: Prisma.BatchScalarWhereWithAggregatesInput | Prisma.BatchScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Batch"> | number
   name?: Prisma.StringWithAggregatesFilter<"Batch"> | string
-  totalStudents?: Prisma.JsonNullableWithAggregatesFilter<"Batch">
   timings?: Prisma.JsonNullableWithAggregatesFilter<"Batch">
   isDeleted?: Prisma.BoolNullableWithAggregatesFilter<"Batch"> | boolean | null
   deletedBy?: Prisma.StringNullableWithAggregatesFilter<"Batch"> | string | null
   updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Batch"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Batch"> | Date | string | null
+  totalStudents?: Prisma.JsonNullableWithAggregatesFilter<"Batch">
 }
 
 export type BatchCreateInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateManyInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type BatchUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type BatchUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type BatchNullableScalarRelationFilter = {
@@ -469,12 +483,12 @@ export type BatchNullableScalarRelationFilter = {
 export type BatchCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  totalStudents?: Prisma.SortOrder
   timings?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  totalStudents?: Prisma.SortOrder
 }
 
 export type BatchAvgOrderByAggregateInput = {
@@ -522,6 +536,34 @@ export type BatchUpdateOneWithoutStudentsNestedInput = {
   delete?: Prisma.BatchWhereInput | boolean
   connect?: Prisma.BatchWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutStudentsInput, Prisma.BatchUpdateWithoutStudentsInput>, Prisma.BatchUncheckedUpdateWithoutStudentsInput>
+}
+
+export type BatchCreateNestedOneWithoutLandingPageInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutLandingPageInput, Prisma.BatchUncheckedCreateWithoutLandingPageInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutLandingPageInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneRequiredWithoutLandingPageNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutLandingPageInput, Prisma.BatchUncheckedCreateWithoutLandingPageInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutLandingPageInput
+  upsert?: Prisma.BatchUpsertWithoutLandingPageInput
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutLandingPageInput, Prisma.BatchUpdateWithoutLandingPageInput>, Prisma.BatchUncheckedUpdateWithoutLandingPageInput>
+}
+
+export type BatchCreateNestedOneWithoutLeadsInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutLeadsInput, Prisma.BatchUncheckedCreateWithoutLeadsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutLeadsInput
+  connect?: Prisma.BatchWhereUniqueInput
+}
+
+export type BatchUpdateOneRequiredWithoutLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.BatchCreateWithoutLeadsInput, Prisma.BatchUncheckedCreateWithoutLeadsInput>
+  connectOrCreate?: Prisma.BatchCreateOrConnectWithoutLeadsInput
+  upsert?: Prisma.BatchUpsertWithoutLeadsInput
+  connect?: Prisma.BatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BatchUpdateToOneWithWhereWithoutLeadsInput, Prisma.BatchUpdateWithoutLeadsInput>, Prisma.BatchUncheckedUpdateWithoutLeadsInput>
 }
 
 export type BatchCreateNestedOneWithoutQrAttendanceTokensInput = {
@@ -708,49 +750,53 @@ export type BatchUpdateOneRequiredWithoutDoubtsNestedInput = {
 
 export type BatchCreateWithoutStudentsInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutStudentsInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutStudentsInput = {
@@ -771,96 +817,340 @@ export type BatchUpdateToOneWithWhereWithoutStudentsInput = {
 
 export type BatchUpdateWithoutStudentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutStudentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
-export type BatchCreateWithoutQrAttendanceTokensInput = {
+export type BatchCreateWithoutLandingPageInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
+}
+
+export type BatchUncheckedCreateWithoutLandingPageInput = {
+  id?: number
+  name: string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
+}
+
+export type BatchCreateOrConnectWithoutLandingPageInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutLandingPageInput, Prisma.BatchUncheckedCreateWithoutLandingPageInput>
+}
+
+export type BatchUpsertWithoutLandingPageInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutLandingPageInput, Prisma.BatchUncheckedUpdateWithoutLandingPageInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutLandingPageInput, Prisma.BatchUncheckedCreateWithoutLandingPageInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutLandingPageInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutLandingPageInput, Prisma.BatchUncheckedUpdateWithoutLandingPageInput>
+}
+
+export type BatchUpdateWithoutLandingPageInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutLandingPageInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
+}
+
+export type BatchCreateWithoutLeadsInput = {
+  name: string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+}
+
+export type BatchUncheckedCreateWithoutLeadsInput = {
+  id?: number
+  name: string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+}
+
+export type BatchCreateOrConnectWithoutLeadsInput = {
+  where: Prisma.BatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BatchCreateWithoutLeadsInput, Prisma.BatchUncheckedCreateWithoutLeadsInput>
+}
+
+export type BatchUpsertWithoutLeadsInput = {
+  update: Prisma.XOR<Prisma.BatchUpdateWithoutLeadsInput, Prisma.BatchUncheckedUpdateWithoutLeadsInput>
+  create: Prisma.XOR<Prisma.BatchCreateWithoutLeadsInput, Prisma.BatchUncheckedCreateWithoutLeadsInput>
+  where?: Prisma.BatchWhereInput
+}
+
+export type BatchUpdateToOneWithWhereWithoutLeadsInput = {
+  where?: Prisma.BatchWhereInput
+  data: Prisma.XOR<Prisma.BatchUpdateWithoutLeadsInput, Prisma.BatchUncheckedUpdateWithoutLeadsInput>
+}
+
+export type BatchUpdateWithoutLeadsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+}
+
+export type BatchUncheckedUpdateWithoutLeadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+}
+
+export type BatchCreateWithoutQrAttendanceTokensInput = {
+  name: string
+  timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isDeleted?: boolean | null
+  deletedBy?: string | null
+  updatedAt?: Date | string | null
+  createdAt?: Date | string | null
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutQrAttendanceTokensInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutQrAttendanceTokensInput = {
@@ -881,96 +1171,104 @@ export type BatchUpdateToOneWithWhereWithoutQrAttendanceTokensInput = {
 
 export type BatchUpdateWithoutQrAttendanceTokensInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutQrAttendanceTokensInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutSheetsInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutSheetsInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutSheetsInput = {
@@ -991,96 +1289,104 @@ export type BatchUpdateToOneWithWhereWithoutSheetsInput = {
 
 export type BatchUpdateWithoutSheetsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutSheetsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutAttendancesInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutAttendancesInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutAttendancesInput = {
@@ -1101,96 +1407,104 @@ export type BatchUpdateToOneWithWhereWithoutAttendancesInput = {
 
 export type BatchUpdateWithoutAttendancesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutAttendancesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutYoutubeVideosInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutYoutubeVideosInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutYoutubeVideosInput = {
@@ -1211,96 +1525,104 @@ export type BatchUpdateToOneWithWhereWithoutYoutubeVideosInput = {
 
 export type BatchUpdateWithoutYoutubeVideosInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutYoutubeVideosInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutNotesInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutNotesInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutNotesInput = {
@@ -1321,96 +1643,104 @@ export type BatchUpdateToOneWithWhereWithoutNotesInput = {
 
 export type BatchUpdateWithoutNotesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutNotesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutAssignmentSlotsInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutAssignmentSlotsInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutAssignmentSlotsInput = {
@@ -1431,96 +1761,104 @@ export type BatchUpdateToOneWithWhereWithoutAssignmentSlotsInput = {
 
 export type BatchUpdateWithoutAssignmentSlotsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutAssignmentSlotsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutMaterialFoldersInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutMaterialFoldersInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutMaterialFoldersInput = {
@@ -1541,96 +1879,104 @@ export type BatchUpdateToOneWithWhereWithoutMaterialFoldersInput = {
 
 export type BatchUpdateWithoutMaterialFoldersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutMaterialFoldersInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutStudyMaterialsInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutStudyMaterialsInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutStudyMaterialsInput = {
@@ -1651,96 +1997,104 @@ export type BatchUpdateToOneWithWhereWithoutStudyMaterialsInput = {
 
 export type BatchUpdateWithoutStudyMaterialsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutStudyMaterialsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutFeeStructuresInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
-  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutFeeStructuresInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
-  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutFeeStructuresInput = {
@@ -1761,96 +2115,104 @@ export type BatchUpdateToOneWithWhereWithoutFeeStructuresInput = {
 
 export type BatchUpdateWithoutFeeStructuresInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
-  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutFeeStructuresInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
-  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutFeeReceiptsInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
   notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
-  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutFeeReceiptsInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
   feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
-  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutFeeReceiptsInput = {
@@ -1871,96 +2233,104 @@ export type BatchUpdateToOneWithWhereWithoutFeeReceiptsInput = {
 
 export type BatchUpdateWithoutFeeReceiptsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
   notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
-  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutFeeReceiptsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
   feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
-  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutLecturesInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutLecturesInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutLecturesInput = {
@@ -1981,96 +2351,104 @@ export type BatchUpdateToOneWithWhereWithoutLecturesInput = {
 
 export type BatchUpdateWithoutLecturesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutLecturesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutTestsInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutTestsInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
-  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
   attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  doubts?: Prisma.DoubtUncheckedCreateNestedManyWithoutBatchInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutTestsInput = {
@@ -2091,96 +2469,104 @@ export type BatchUpdateToOneWithWhereWithoutTestsInput = {
 
 export type BatchUpdateWithoutTestsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutTestsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
-  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
-  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
-  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
   attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  doubts?: Prisma.DoubtUncheckedUpdateManyWithoutBatchNestedInput
+  feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
+  youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchCreateWithoutDoubtsInput = {
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteCreateNestedManyWithoutBatchInput
-  attendances?: Prisma.AttendanceCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadCreateNestedManyWithoutBatchInput
 }
 
 export type BatchUncheckedCreateWithoutDoubtsInput = {
   id?: number
   name: string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: boolean | null
   deletedBy?: string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
-  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutBatchInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
-  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
-  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
+  sheets?: Prisma.AttendanceSheetUncheckedCreateNestedManyWithoutBatchInput
+  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
   feeReceipts?: Prisma.FeeReceiptUncheckedCreateNestedManyWithoutBatchInput
+  feeStructures?: Prisma.FeeStructureUncheckedCreateNestedManyWithoutBatchInput
   lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutBatchInput
+  materialFolders?: Prisma.MaterialFolderUncheckedCreateNestedManyWithoutBatchInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedCreateNestedManyWithoutBatchInput
+  students?: Prisma.StudentUncheckedCreateNestedManyWithoutBatchInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutBatchInput
   tests?: Prisma.TestUncheckedCreateNestedManyWithoutBatchInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedCreateNestedManyWithoutBatchInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutBatchInput
-  attendances?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBatchInput
+  landingPage?: Prisma.LandingPageUncheckedCreateNestedOneWithoutBatchInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutBatchInput
 }
 
 export type BatchCreateOrConnectWithoutDoubtsInput = {
@@ -2201,49 +2587,53 @@ export type BatchUpdateToOneWithWhereWithoutDoubtsInput = {
 
 export type BatchUpdateWithoutDoubtsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutBatchNestedInput
-  attendances?: Prisma.AttendanceUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutBatchNestedInput
 }
 
 export type BatchUncheckedUpdateWithoutDoubtsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isDeleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
-  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
-  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  totalStudents?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   assignmentSlots?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutBatchNestedInput
-  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
-  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
-  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
+  sheets?: Prisma.AttendanceSheetUncheckedUpdateManyWithoutBatchNestedInput
+  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
   feeReceipts?: Prisma.FeeReceiptUncheckedUpdateManyWithoutBatchNestedInput
+  feeStructures?: Prisma.FeeStructureUncheckedUpdateManyWithoutBatchNestedInput
   lectures?: Prisma.LectureUncheckedUpdateManyWithoutBatchNestedInput
+  materialFolders?: Prisma.MaterialFolderUncheckedUpdateManyWithoutBatchNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
+  qrAttendanceTokens?: Prisma.QRAttendanceTokenUncheckedUpdateManyWithoutBatchNestedInput
+  students?: Prisma.StudentUncheckedUpdateManyWithoutBatchNestedInput
+  studyMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutBatchNestedInput
   tests?: Prisma.TestUncheckedUpdateManyWithoutBatchNestedInput
   youtubeVideos?: Prisma.YoutubeVideoUncheckedUpdateManyWithoutBatchNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutBatchNestedInput
-  attendances?: Prisma.AttendanceUncheckedUpdateManyWithoutBatchNestedInput
+  landingPage?: Prisma.LandingPageUncheckedUpdateOneWithoutBatchNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutBatchNestedInput
 }
 
 
@@ -2252,37 +2642,39 @@ export type BatchUncheckedUpdateWithoutDoubtsInput = {
  */
 
 export type BatchCountOutputType = {
-  students: number
-  sheets: number
-  qrAttendanceTokens: number
   assignmentSlots: number
-  studyMaterials: number
-  materialFolders: number
-  feeStructures: number
-  feeReceipts: number
-  lectures: number
-  tests: number
-  doubts: number
-  youtubeVideos: number
-  notes: number
+  sheets: number
   attendances: number
+  doubts: number
+  feeReceipts: number
+  feeStructures: number
+  lectures: number
+  materialFolders: number
+  notes: number
+  qrAttendanceTokens: number
+  students: number
+  studyMaterials: number
+  tests: number
+  youtubeVideos: number
+  leads: number
 }
 
 export type BatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  students?: boolean | BatchCountOutputTypeCountStudentsArgs
-  sheets?: boolean | BatchCountOutputTypeCountSheetsArgs
-  qrAttendanceTokens?: boolean | BatchCountOutputTypeCountQrAttendanceTokensArgs
   assignmentSlots?: boolean | BatchCountOutputTypeCountAssignmentSlotsArgs
-  studyMaterials?: boolean | BatchCountOutputTypeCountStudyMaterialsArgs
-  materialFolders?: boolean | BatchCountOutputTypeCountMaterialFoldersArgs
-  feeStructures?: boolean | BatchCountOutputTypeCountFeeStructuresArgs
-  feeReceipts?: boolean | BatchCountOutputTypeCountFeeReceiptsArgs
-  lectures?: boolean | BatchCountOutputTypeCountLecturesArgs
-  tests?: boolean | BatchCountOutputTypeCountTestsArgs
-  doubts?: boolean | BatchCountOutputTypeCountDoubtsArgs
-  youtubeVideos?: boolean | BatchCountOutputTypeCountYoutubeVideosArgs
-  notes?: boolean | BatchCountOutputTypeCountNotesArgs
+  sheets?: boolean | BatchCountOutputTypeCountSheetsArgs
   attendances?: boolean | BatchCountOutputTypeCountAttendancesArgs
+  doubts?: boolean | BatchCountOutputTypeCountDoubtsArgs
+  feeReceipts?: boolean | BatchCountOutputTypeCountFeeReceiptsArgs
+  feeStructures?: boolean | BatchCountOutputTypeCountFeeStructuresArgs
+  lectures?: boolean | BatchCountOutputTypeCountLecturesArgs
+  materialFolders?: boolean | BatchCountOutputTypeCountMaterialFoldersArgs
+  notes?: boolean | BatchCountOutputTypeCountNotesArgs
+  qrAttendanceTokens?: boolean | BatchCountOutputTypeCountQrAttendanceTokensArgs
+  students?: boolean | BatchCountOutputTypeCountStudentsArgs
+  studyMaterials?: boolean | BatchCountOutputTypeCountStudyMaterialsArgs
+  tests?: boolean | BatchCountOutputTypeCountTestsArgs
+  youtubeVideos?: boolean | BatchCountOutputTypeCountYoutubeVideosArgs
+  leads?: boolean | BatchCountOutputTypeCountLeadsArgs
 }
 
 /**
@@ -2298,8 +2690,8 @@ export type BatchCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
 /**
  * BatchCountOutputType without action
  */
-export type BatchCountOutputTypeCountStudentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.StudentWhereInput
+export type BatchCountOutputTypeCountAssignmentSlotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssignmentSlotWhereInput
 }
 
 /**
@@ -2312,57 +2704,8 @@ export type BatchCountOutputTypeCountSheetsArgs<ExtArgs extends runtime.Types.Ex
 /**
  * BatchCountOutputType without action
  */
-export type BatchCountOutputTypeCountQrAttendanceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.QRAttendanceTokenWhereInput
-}
-
-/**
- * BatchCountOutputType without action
- */
-export type BatchCountOutputTypeCountAssignmentSlotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AssignmentSlotWhereInput
-}
-
-/**
- * BatchCountOutputType without action
- */
-export type BatchCountOutputTypeCountStudyMaterialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.StudyMaterialWhereInput
-}
-
-/**
- * BatchCountOutputType without action
- */
-export type BatchCountOutputTypeCountMaterialFoldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MaterialFolderWhereInput
-}
-
-/**
- * BatchCountOutputType without action
- */
-export type BatchCountOutputTypeCountFeeStructuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FeeStructureWhereInput
-}
-
-/**
- * BatchCountOutputType without action
- */
-export type BatchCountOutputTypeCountFeeReceiptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FeeReceiptWhereInput
-}
-
-/**
- * BatchCountOutputType without action
- */
-export type BatchCountOutputTypeCountLecturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.LectureWhereInput
-}
-
-/**
- * BatchCountOutputType without action
- */
-export type BatchCountOutputTypeCountTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TestWhereInput
+export type BatchCountOutputTypeCountAttendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceWhereInput
 }
 
 /**
@@ -2375,8 +2718,29 @@ export type BatchCountOutputTypeCountDoubtsArgs<ExtArgs extends runtime.Types.Ex
 /**
  * BatchCountOutputType without action
  */
-export type BatchCountOutputTypeCountYoutubeVideosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.YoutubeVideoWhereInput
+export type BatchCountOutputTypeCountFeeReceiptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FeeReceiptWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountFeeStructuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FeeStructureWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountLecturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LectureWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountMaterialFoldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MaterialFolderWhereInput
 }
 
 /**
@@ -2389,86 +2753,125 @@ export type BatchCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.Ext
 /**
  * BatchCountOutputType without action
  */
-export type BatchCountOutputTypeCountAttendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AttendanceWhereInput
+export type BatchCountOutputTypeCountQrAttendanceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QRAttendanceTokenWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountStudentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StudentWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountStudyMaterialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StudyMaterialWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TestWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountYoutubeVideosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.YoutubeVideoWhereInput
+}
+
+/**
+ * BatchCountOutputType without action
+ */
+export type BatchCountOutputTypeCountLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadWhereInput
 }
 
 
 export type BatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  totalStudents?: boolean
   timings?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
-  students?: boolean | Prisma.Batch$studentsArgs<ExtArgs>
-  sheets?: boolean | Prisma.Batch$sheetsArgs<ExtArgs>
-  qrAttendanceTokens?: boolean | Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>
+  totalStudents?: boolean
   assignmentSlots?: boolean | Prisma.Batch$assignmentSlotsArgs<ExtArgs>
-  studyMaterials?: boolean | Prisma.Batch$studyMaterialsArgs<ExtArgs>
-  materialFolders?: boolean | Prisma.Batch$materialFoldersArgs<ExtArgs>
-  feeStructures?: boolean | Prisma.Batch$feeStructuresArgs<ExtArgs>
-  feeReceipts?: boolean | Prisma.Batch$feeReceiptsArgs<ExtArgs>
-  lectures?: boolean | Prisma.Batch$lecturesArgs<ExtArgs>
-  tests?: boolean | Prisma.Batch$testsArgs<ExtArgs>
-  doubts?: boolean | Prisma.Batch$doubtsArgs<ExtArgs>
-  youtubeVideos?: boolean | Prisma.Batch$youtubeVideosArgs<ExtArgs>
-  notes?: boolean | Prisma.Batch$notesArgs<ExtArgs>
+  sheets?: boolean | Prisma.Batch$sheetsArgs<ExtArgs>
   attendances?: boolean | Prisma.Batch$attendancesArgs<ExtArgs>
+  doubts?: boolean | Prisma.Batch$doubtsArgs<ExtArgs>
+  feeReceipts?: boolean | Prisma.Batch$feeReceiptsArgs<ExtArgs>
+  feeStructures?: boolean | Prisma.Batch$feeStructuresArgs<ExtArgs>
+  lectures?: boolean | Prisma.Batch$lecturesArgs<ExtArgs>
+  materialFolders?: boolean | Prisma.Batch$materialFoldersArgs<ExtArgs>
+  notes?: boolean | Prisma.Batch$notesArgs<ExtArgs>
+  qrAttendanceTokens?: boolean | Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>
+  students?: boolean | Prisma.Batch$studentsArgs<ExtArgs>
+  studyMaterials?: boolean | Prisma.Batch$studyMaterialsArgs<ExtArgs>
+  tests?: boolean | Prisma.Batch$testsArgs<ExtArgs>
+  youtubeVideos?: boolean | Prisma.Batch$youtubeVideosArgs<ExtArgs>
+  landingPage?: boolean | Prisma.Batch$landingPageArgs<ExtArgs>
+  leads?: boolean | Prisma.Batch$leadsArgs<ExtArgs>
   _count?: boolean | Prisma.BatchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["batch"]>
 
 export type BatchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  totalStudents?: boolean
   timings?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  totalStudents?: boolean
 }, ExtArgs["result"]["batch"]>
 
 export type BatchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  totalStudents?: boolean
   timings?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  totalStudents?: boolean
 }, ExtArgs["result"]["batch"]>
 
 export type BatchSelectScalar = {
   id?: boolean
   name?: boolean
-  totalStudents?: boolean
   timings?: boolean
   isDeleted?: boolean
   deletedBy?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  totalStudents?: boolean
 }
 
-export type BatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "totalStudents" | "timings" | "isDeleted" | "deletedBy" | "updatedAt" | "createdAt", ExtArgs["result"]["batch"]>
+export type BatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "timings" | "isDeleted" | "deletedBy" | "updatedAt" | "createdAt" | "totalStudents", ExtArgs["result"]["batch"]>
 export type BatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  students?: boolean | Prisma.Batch$studentsArgs<ExtArgs>
-  sheets?: boolean | Prisma.Batch$sheetsArgs<ExtArgs>
-  qrAttendanceTokens?: boolean | Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>
   assignmentSlots?: boolean | Prisma.Batch$assignmentSlotsArgs<ExtArgs>
-  studyMaterials?: boolean | Prisma.Batch$studyMaterialsArgs<ExtArgs>
-  materialFolders?: boolean | Prisma.Batch$materialFoldersArgs<ExtArgs>
-  feeStructures?: boolean | Prisma.Batch$feeStructuresArgs<ExtArgs>
-  feeReceipts?: boolean | Prisma.Batch$feeReceiptsArgs<ExtArgs>
-  lectures?: boolean | Prisma.Batch$lecturesArgs<ExtArgs>
-  tests?: boolean | Prisma.Batch$testsArgs<ExtArgs>
-  doubts?: boolean | Prisma.Batch$doubtsArgs<ExtArgs>
-  youtubeVideos?: boolean | Prisma.Batch$youtubeVideosArgs<ExtArgs>
-  notes?: boolean | Prisma.Batch$notesArgs<ExtArgs>
+  sheets?: boolean | Prisma.Batch$sheetsArgs<ExtArgs>
   attendances?: boolean | Prisma.Batch$attendancesArgs<ExtArgs>
+  doubts?: boolean | Prisma.Batch$doubtsArgs<ExtArgs>
+  feeReceipts?: boolean | Prisma.Batch$feeReceiptsArgs<ExtArgs>
+  feeStructures?: boolean | Prisma.Batch$feeStructuresArgs<ExtArgs>
+  lectures?: boolean | Prisma.Batch$lecturesArgs<ExtArgs>
+  materialFolders?: boolean | Prisma.Batch$materialFoldersArgs<ExtArgs>
+  notes?: boolean | Prisma.Batch$notesArgs<ExtArgs>
+  qrAttendanceTokens?: boolean | Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>
+  students?: boolean | Prisma.Batch$studentsArgs<ExtArgs>
+  studyMaterials?: boolean | Prisma.Batch$studyMaterialsArgs<ExtArgs>
+  tests?: boolean | Prisma.Batch$testsArgs<ExtArgs>
+  youtubeVideos?: boolean | Prisma.Batch$youtubeVideosArgs<ExtArgs>
+  landingPage?: boolean | Prisma.Batch$landingPageArgs<ExtArgs>
+  leads?: boolean | Prisma.Batch$leadsArgs<ExtArgs>
   _count?: boolean | Prisma.BatchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BatchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2477,30 +2880,32 @@ export type BatchIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 export type $BatchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Batch"
   objects: {
-    students: Prisma.$StudentPayload<ExtArgs>[]
-    sheets: Prisma.$AttendanceSheetPayload<ExtArgs>[]
-    qrAttendanceTokens: Prisma.$QRAttendanceTokenPayload<ExtArgs>[]
     assignmentSlots: Prisma.$AssignmentSlotPayload<ExtArgs>[]
-    studyMaterials: Prisma.$StudyMaterialPayload<ExtArgs>[]
-    materialFolders: Prisma.$MaterialFolderPayload<ExtArgs>[]
-    feeStructures: Prisma.$FeeStructurePayload<ExtArgs>[]
-    feeReceipts: Prisma.$FeeReceiptPayload<ExtArgs>[]
-    lectures: Prisma.$LecturePayload<ExtArgs>[]
-    tests: Prisma.$TestPayload<ExtArgs>[]
-    doubts: Prisma.$DoubtPayload<ExtArgs>[]
-    youtubeVideos: Prisma.$YoutubeVideoPayload<ExtArgs>[]
-    notes: Prisma.$NotePayload<ExtArgs>[]
+    sheets: Prisma.$AttendanceSheetPayload<ExtArgs>[]
     attendances: Prisma.$AttendancePayload<ExtArgs>[]
+    doubts: Prisma.$DoubtPayload<ExtArgs>[]
+    feeReceipts: Prisma.$FeeReceiptPayload<ExtArgs>[]
+    feeStructures: Prisma.$FeeStructurePayload<ExtArgs>[]
+    lectures: Prisma.$LecturePayload<ExtArgs>[]
+    materialFolders: Prisma.$MaterialFolderPayload<ExtArgs>[]
+    notes: Prisma.$NotePayload<ExtArgs>[]
+    qrAttendanceTokens: Prisma.$QRAttendanceTokenPayload<ExtArgs>[]
+    students: Prisma.$StudentPayload<ExtArgs>[]
+    studyMaterials: Prisma.$StudyMaterialPayload<ExtArgs>[]
+    tests: Prisma.$TestPayload<ExtArgs>[]
+    youtubeVideos: Prisma.$YoutubeVideoPayload<ExtArgs>[]
+    landingPage: Prisma.$LandingPagePayload<ExtArgs> | null
+    leads: Prisma.$LeadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
-    totalStudents: runtime.JsonValue | null
     timings: runtime.JsonValue | null
     isDeleted: boolean | null
     deletedBy: string | null
     updatedAt: Date | null
     createdAt: Date | null
+    totalStudents: runtime.JsonValue | null
   }, ExtArgs["result"]["batch"]>
   composites: {}
 }
@@ -2895,20 +3300,22 @@ readonly fields: BatchFieldRefs;
  */
 export interface Prisma__BatchClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  students<T extends Prisma.Batch$studentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$studentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  sheets<T extends Prisma.Batch$sheetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$sheetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceSheetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  qrAttendanceTokens<T extends Prisma.Batch$qrAttendanceTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QRAttendanceTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignmentSlots<T extends Prisma.Batch$assignmentSlotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$assignmentSlotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  studyMaterials<T extends Prisma.Batch$studyMaterialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$studyMaterialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyMaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  materialFolders<T extends Prisma.Batch$materialFoldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$materialFoldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaterialFolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  feeStructures<T extends Prisma.Batch$feeStructuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$feeStructuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeeStructurePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  feeReceipts<T extends Prisma.Batch$feeReceiptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$feeReceiptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeeReceiptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  lectures<T extends Prisma.Batch$lecturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$lecturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LecturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  tests<T extends Prisma.Batch$testsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$testsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  doubts<T extends Prisma.Batch$doubtsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$doubtsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DoubtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  youtubeVideos<T extends Prisma.Batch$youtubeVideosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$youtubeVideosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$YoutubeVideoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  notes<T extends Prisma.Batch$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sheets<T extends Prisma.Batch$sheetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$sheetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceSheetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendances<T extends Prisma.Batch$attendancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$attendancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  doubts<T extends Prisma.Batch$doubtsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$doubtsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DoubtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  feeReceipts<T extends Prisma.Batch$feeReceiptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$feeReceiptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeeReceiptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  feeStructures<T extends Prisma.Batch$feeStructuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$feeStructuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FeeStructurePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  lectures<T extends Prisma.Batch$lecturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$lecturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LecturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  materialFolders<T extends Prisma.Batch$materialFoldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$materialFoldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaterialFolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notes<T extends Prisma.Batch$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  qrAttendanceTokens<T extends Prisma.Batch$qrAttendanceTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$qrAttendanceTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QRAttendanceTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  students<T extends Prisma.Batch$studentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$studentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  studyMaterials<T extends Prisma.Batch$studyMaterialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$studyMaterialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyMaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tests<T extends Prisma.Batch$testsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$testsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  youtubeVideos<T extends Prisma.Batch$youtubeVideosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$youtubeVideosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$YoutubeVideoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  landingPage<T extends Prisma.Batch$landingPageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$landingPageArgs<ExtArgs>>): Prisma.Prisma__LandingPageClient<runtime.Types.Result.GetResult<Prisma.$LandingPagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  leads<T extends Prisma.Batch$leadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Batch$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2940,12 +3347,12 @@ export interface Prisma__BatchClient<T, Null = never, ExtArgs extends runtime.Ty
 export interface BatchFieldRefs {
   readonly id: Prisma.FieldRef<"Batch", 'Int'>
   readonly name: Prisma.FieldRef<"Batch", 'String'>
-  readonly totalStudents: Prisma.FieldRef<"Batch", 'Json'>
   readonly timings: Prisma.FieldRef<"Batch", 'Json'>
   readonly isDeleted: Prisma.FieldRef<"Batch", 'Boolean'>
   readonly deletedBy: Prisma.FieldRef<"Batch", 'String'>
   readonly updatedAt: Prisma.FieldRef<"Batch", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Batch", 'DateTime'>
+  readonly totalStudents: Prisma.FieldRef<"Batch", 'Json'>
 }
     
 
@@ -3334,27 +3741,27 @@ export type BatchDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 /**
- * Batch.students
+ * Batch.assignmentSlots
  */
-export type Batch$studentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Batch$assignmentSlotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Student
+   * Select specific fields to fetch from the AssignmentSlot
    */
-  select?: Prisma.StudentSelect<ExtArgs> | null
+  select?: Prisma.AssignmentSlotSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Student
+   * Omit specific fields from the AssignmentSlot
    */
-  omit?: Prisma.StudentOmit<ExtArgs> | null
+  omit?: Prisma.AssignmentSlotOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.StudentInclude<ExtArgs> | null
-  where?: Prisma.StudentWhereInput
-  orderBy?: Prisma.StudentOrderByWithRelationInput | Prisma.StudentOrderByWithRelationInput[]
-  cursor?: Prisma.StudentWhereUniqueInput
+  include?: Prisma.AssignmentSlotInclude<ExtArgs> | null
+  where?: Prisma.AssignmentSlotWhereInput
+  orderBy?: Prisma.AssignmentSlotOrderByWithRelationInput | Prisma.AssignmentSlotOrderByWithRelationInput[]
+  cursor?: Prisma.AssignmentSlotWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.StudentScalarFieldEnum | Prisma.StudentScalarFieldEnum[]
+  distinct?: Prisma.AssignmentSlotScalarFieldEnum | Prisma.AssignmentSlotScalarFieldEnum[]
 }
 
 /**
@@ -3382,195 +3789,27 @@ export type Batch$sheetsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 /**
- * Batch.qrAttendanceTokens
+ * Batch.attendances
  */
-export type Batch$qrAttendanceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Batch$attendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the QRAttendanceToken
+   * Select specific fields to fetch from the Attendance
    */
-  select?: Prisma.QRAttendanceTokenSelect<ExtArgs> | null
+  select?: Prisma.AttendanceSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the QRAttendanceToken
+   * Omit specific fields from the Attendance
    */
-  omit?: Prisma.QRAttendanceTokenOmit<ExtArgs> | null
+  omit?: Prisma.AttendanceOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.QRAttendanceTokenInclude<ExtArgs> | null
-  where?: Prisma.QRAttendanceTokenWhereInput
-  orderBy?: Prisma.QRAttendanceTokenOrderByWithRelationInput | Prisma.QRAttendanceTokenOrderByWithRelationInput[]
-  cursor?: Prisma.QRAttendanceTokenWhereUniqueInput
+  include?: Prisma.AttendanceInclude<ExtArgs> | null
+  where?: Prisma.AttendanceWhereInput
+  orderBy?: Prisma.AttendanceOrderByWithRelationInput | Prisma.AttendanceOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.QRAttendanceTokenScalarFieldEnum | Prisma.QRAttendanceTokenScalarFieldEnum[]
-}
-
-/**
- * Batch.assignmentSlots
- */
-export type Batch$assignmentSlotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the AssignmentSlot
-   */
-  select?: Prisma.AssignmentSlotSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the AssignmentSlot
-   */
-  omit?: Prisma.AssignmentSlotOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AssignmentSlotInclude<ExtArgs> | null
-  where?: Prisma.AssignmentSlotWhereInput
-  orderBy?: Prisma.AssignmentSlotOrderByWithRelationInput | Prisma.AssignmentSlotOrderByWithRelationInput[]
-  cursor?: Prisma.AssignmentSlotWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.AssignmentSlotScalarFieldEnum | Prisma.AssignmentSlotScalarFieldEnum[]
-}
-
-/**
- * Batch.studyMaterials
- */
-export type Batch$studyMaterialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the StudyMaterial
-   */
-  select?: Prisma.StudyMaterialSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the StudyMaterial
-   */
-  omit?: Prisma.StudyMaterialOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.StudyMaterialInclude<ExtArgs> | null
-  where?: Prisma.StudyMaterialWhereInput
-  orderBy?: Prisma.StudyMaterialOrderByWithRelationInput | Prisma.StudyMaterialOrderByWithRelationInput[]
-  cursor?: Prisma.StudyMaterialWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.StudyMaterialScalarFieldEnum | Prisma.StudyMaterialScalarFieldEnum[]
-}
-
-/**
- * Batch.materialFolders
- */
-export type Batch$materialFoldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the MaterialFolder
-   */
-  select?: Prisma.MaterialFolderSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the MaterialFolder
-   */
-  omit?: Prisma.MaterialFolderOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MaterialFolderInclude<ExtArgs> | null
-  where?: Prisma.MaterialFolderWhereInput
-  orderBy?: Prisma.MaterialFolderOrderByWithRelationInput | Prisma.MaterialFolderOrderByWithRelationInput[]
-  cursor?: Prisma.MaterialFolderWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.MaterialFolderScalarFieldEnum | Prisma.MaterialFolderScalarFieldEnum[]
-}
-
-/**
- * Batch.feeStructures
- */
-export type Batch$feeStructuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the FeeStructure
-   */
-  select?: Prisma.FeeStructureSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the FeeStructure
-   */
-  omit?: Prisma.FeeStructureOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FeeStructureInclude<ExtArgs> | null
-  where?: Prisma.FeeStructureWhereInput
-  orderBy?: Prisma.FeeStructureOrderByWithRelationInput | Prisma.FeeStructureOrderByWithRelationInput[]
-  cursor?: Prisma.FeeStructureWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.FeeStructureScalarFieldEnum | Prisma.FeeStructureScalarFieldEnum[]
-}
-
-/**
- * Batch.feeReceipts
- */
-export type Batch$feeReceiptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the FeeReceipt
-   */
-  select?: Prisma.FeeReceiptSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the FeeReceipt
-   */
-  omit?: Prisma.FeeReceiptOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FeeReceiptInclude<ExtArgs> | null
-  where?: Prisma.FeeReceiptWhereInput
-  orderBy?: Prisma.FeeReceiptOrderByWithRelationInput | Prisma.FeeReceiptOrderByWithRelationInput[]
-  cursor?: Prisma.FeeReceiptWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.FeeReceiptScalarFieldEnum | Prisma.FeeReceiptScalarFieldEnum[]
-}
-
-/**
- * Batch.lectures
- */
-export type Batch$lecturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Lecture
-   */
-  select?: Prisma.LectureSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Lecture
-   */
-  omit?: Prisma.LectureOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.LectureInclude<ExtArgs> | null
-  where?: Prisma.LectureWhereInput
-  orderBy?: Prisma.LectureOrderByWithRelationInput | Prisma.LectureOrderByWithRelationInput[]
-  cursor?: Prisma.LectureWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.LectureScalarFieldEnum | Prisma.LectureScalarFieldEnum[]
-}
-
-/**
- * Batch.tests
- */
-export type Batch$testsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Test
-   */
-  select?: Prisma.TestSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Test
-   */
-  omit?: Prisma.TestOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TestInclude<ExtArgs> | null
-  where?: Prisma.TestWhereInput
-  orderBy?: Prisma.TestOrderByWithRelationInput | Prisma.TestOrderByWithRelationInput[]
-  cursor?: Prisma.TestWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TestScalarFieldEnum | Prisma.TestScalarFieldEnum[]
+  distinct?: Prisma.AttendanceScalarFieldEnum | Prisma.AttendanceScalarFieldEnum[]
 }
 
 /**
@@ -3598,27 +3837,99 @@ export type Batch$doubtsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 /**
- * Batch.youtubeVideos
+ * Batch.feeReceipts
  */
-export type Batch$youtubeVideosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Batch$feeReceiptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the YoutubeVideo
+   * Select specific fields to fetch from the FeeReceipt
    */
-  select?: Prisma.YoutubeVideoSelect<ExtArgs> | null
+  select?: Prisma.FeeReceiptSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the YoutubeVideo
+   * Omit specific fields from the FeeReceipt
    */
-  omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
+  omit?: Prisma.FeeReceiptOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
-  where?: Prisma.YoutubeVideoWhereInput
-  orderBy?: Prisma.YoutubeVideoOrderByWithRelationInput | Prisma.YoutubeVideoOrderByWithRelationInput[]
-  cursor?: Prisma.YoutubeVideoWhereUniqueInput
+  include?: Prisma.FeeReceiptInclude<ExtArgs> | null
+  where?: Prisma.FeeReceiptWhereInput
+  orderBy?: Prisma.FeeReceiptOrderByWithRelationInput | Prisma.FeeReceiptOrderByWithRelationInput[]
+  cursor?: Prisma.FeeReceiptWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.YoutubeVideoScalarFieldEnum | Prisma.YoutubeVideoScalarFieldEnum[]
+  distinct?: Prisma.FeeReceiptScalarFieldEnum | Prisma.FeeReceiptScalarFieldEnum[]
+}
+
+/**
+ * Batch.feeStructures
+ */
+export type Batch$feeStructuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FeeStructure
+   */
+  select?: Prisma.FeeStructureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FeeStructure
+   */
+  omit?: Prisma.FeeStructureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeeStructureInclude<ExtArgs> | null
+  where?: Prisma.FeeStructureWhereInput
+  orderBy?: Prisma.FeeStructureOrderByWithRelationInput | Prisma.FeeStructureOrderByWithRelationInput[]
+  cursor?: Prisma.FeeStructureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FeeStructureScalarFieldEnum | Prisma.FeeStructureScalarFieldEnum[]
+}
+
+/**
+ * Batch.lectures
+ */
+export type Batch$lecturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lecture
+   */
+  select?: Prisma.LectureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lecture
+   */
+  omit?: Prisma.LectureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LectureInclude<ExtArgs> | null
+  where?: Prisma.LectureWhereInput
+  orderBy?: Prisma.LectureOrderByWithRelationInput | Prisma.LectureOrderByWithRelationInput[]
+  cursor?: Prisma.LectureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LectureScalarFieldEnum | Prisma.LectureScalarFieldEnum[]
+}
+
+/**
+ * Batch.materialFolders
+ */
+export type Batch$materialFoldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MaterialFolder
+   */
+  select?: Prisma.MaterialFolderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MaterialFolder
+   */
+  omit?: Prisma.MaterialFolderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MaterialFolderInclude<ExtArgs> | null
+  where?: Prisma.MaterialFolderWhereInput
+  orderBy?: Prisma.MaterialFolderOrderByWithRelationInput | Prisma.MaterialFolderOrderByWithRelationInput[]
+  cursor?: Prisma.MaterialFolderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MaterialFolderScalarFieldEnum | Prisma.MaterialFolderScalarFieldEnum[]
 }
 
 /**
@@ -3646,27 +3957,166 @@ export type Batch$notesArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 }
 
 /**
- * Batch.attendances
+ * Batch.qrAttendanceTokens
  */
-export type Batch$attendancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Batch$qrAttendanceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Attendance
+   * Select specific fields to fetch from the QRAttendanceToken
    */
-  select?: Prisma.AttendanceSelect<ExtArgs> | null
+  select?: Prisma.QRAttendanceTokenSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Attendance
+   * Omit specific fields from the QRAttendanceToken
    */
-  omit?: Prisma.AttendanceOmit<ExtArgs> | null
+  omit?: Prisma.QRAttendanceTokenOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.AttendanceInclude<ExtArgs> | null
-  where?: Prisma.AttendanceWhereInput
-  orderBy?: Prisma.AttendanceOrderByWithRelationInput | Prisma.AttendanceOrderByWithRelationInput[]
-  cursor?: Prisma.AttendanceWhereUniqueInput
+  include?: Prisma.QRAttendanceTokenInclude<ExtArgs> | null
+  where?: Prisma.QRAttendanceTokenWhereInput
+  orderBy?: Prisma.QRAttendanceTokenOrderByWithRelationInput | Prisma.QRAttendanceTokenOrderByWithRelationInput[]
+  cursor?: Prisma.QRAttendanceTokenWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.AttendanceScalarFieldEnum | Prisma.AttendanceScalarFieldEnum[]
+  distinct?: Prisma.QRAttendanceTokenScalarFieldEnum | Prisma.QRAttendanceTokenScalarFieldEnum[]
+}
+
+/**
+ * Batch.students
+ */
+export type Batch$studentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Student
+   */
+  select?: Prisma.StudentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Student
+   */
+  omit?: Prisma.StudentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StudentInclude<ExtArgs> | null
+  where?: Prisma.StudentWhereInput
+  orderBy?: Prisma.StudentOrderByWithRelationInput | Prisma.StudentOrderByWithRelationInput[]
+  cursor?: Prisma.StudentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StudentScalarFieldEnum | Prisma.StudentScalarFieldEnum[]
+}
+
+/**
+ * Batch.studyMaterials
+ */
+export type Batch$studyMaterialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StudyMaterial
+   */
+  select?: Prisma.StudyMaterialSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StudyMaterial
+   */
+  omit?: Prisma.StudyMaterialOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StudyMaterialInclude<ExtArgs> | null
+  where?: Prisma.StudyMaterialWhereInput
+  orderBy?: Prisma.StudyMaterialOrderByWithRelationInput | Prisma.StudyMaterialOrderByWithRelationInput[]
+  cursor?: Prisma.StudyMaterialWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StudyMaterialScalarFieldEnum | Prisma.StudyMaterialScalarFieldEnum[]
+}
+
+/**
+ * Batch.tests
+ */
+export type Batch$testsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Test
+   */
+  select?: Prisma.TestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Test
+   */
+  omit?: Prisma.TestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TestInclude<ExtArgs> | null
+  where?: Prisma.TestWhereInput
+  orderBy?: Prisma.TestOrderByWithRelationInput | Prisma.TestOrderByWithRelationInput[]
+  cursor?: Prisma.TestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TestScalarFieldEnum | Prisma.TestScalarFieldEnum[]
+}
+
+/**
+ * Batch.youtubeVideos
+ */
+export type Batch$youtubeVideosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the YoutubeVideo
+   */
+  select?: Prisma.YoutubeVideoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the YoutubeVideo
+   */
+  omit?: Prisma.YoutubeVideoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.YoutubeVideoInclude<ExtArgs> | null
+  where?: Prisma.YoutubeVideoWhereInput
+  orderBy?: Prisma.YoutubeVideoOrderByWithRelationInput | Prisma.YoutubeVideoOrderByWithRelationInput[]
+  cursor?: Prisma.YoutubeVideoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.YoutubeVideoScalarFieldEnum | Prisma.YoutubeVideoScalarFieldEnum[]
+}
+
+/**
+ * Batch.landingPage
+ */
+export type Batch$landingPageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LandingPage
+   */
+  select?: Prisma.LandingPageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LandingPage
+   */
+  omit?: Prisma.LandingPageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LandingPageInclude<ExtArgs> | null
+  where?: Prisma.LandingPageWhereInput
+}
+
+/**
+ * Batch.leads
+ */
+export type Batch$leadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+  orderBy?: Prisma.LeadOrderByWithRelationInput | Prisma.LeadOrderByWithRelationInput[]
+  cursor?: Prisma.LeadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
 }
 
 /**

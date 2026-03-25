@@ -7,13 +7,13 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { Zap, Trash2, Database, Users, Activity, Shield, Timer, Loader2, Copy, Check, CheckCircle2, Calendar, Receipt, BookOpen, ClipboardCheck, FileText, AlertTriangle } from "lucide-react"
+import { Zap, Trash2, Database, Users, Activity, Shield, Timer, Loader2, Copy, Check, CheckCircle2, Calendar, Receipt, BookOpen, ClipboardCheck, FileText, AlertTriangle, Bell, Send, Radio } from "lucide-react"
 import { toast } from "sonner"
 import {
   useMaintenanceStatusQuery, useMaintenanceSeedDataQuery, useMaintenanceSeedMutation,
   useMaintenanceCleanupMutation, useMaintenanceApiHealthMutation, useMaintenanceValidationMutation,
   useMaintenanceSecurityMutation, useMaintenanceDbIntegrityQuery, useMaintenanceLoadTestMutation,
-  useMaintenanceEndpointsQuery,
+  useMaintenanceEndpointsQuery, useMaintenanceTestNotificationMutation,
   type HealthResult, type ValidationResult, type SecurityResult, type LoadTestResult,
 } from "@/redux/slices/maintenance/maintenanceApi"
 import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
@@ -256,6 +256,134 @@ export function CleanupPanel({ password }: { password: string }) {
             <AlertDialogTrigger asChild><Button variant="destructive" disabled={isLoading} size="sm">{isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}Delete All ({total})</Button></AlertDialogTrigger>
             <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Confirm Cleanup</AlertDialogTitle><AlertDialogDescription>This will permanently delete {total} seed records.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={go} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Confirm Delete</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
           </AlertDialog>
+        </Card>
+      )}
+    </div>
+  )
+}
+
+// ── Push Notification Test ─────────────────────────────────
+export function PushNotificationPanel() {
+  const [sendNotif, { isLoading }] = useMaintenanceTestNotificationMutation()
+  const [mode, setMode] = useState<"user" | "broadcast">("user")
+  const [userId, setUserId] = useState("")
+  const [title, setTitle] = useState("")
+  const [body, setBody] = useState("")
+  const [jsonData, setJsonData] = useState("")
+  const [result, setResult] = useState<any>(null)
+
+  const send = async () => {
+    if (!title.trim() || !body.trim()) { toast.error("Title and body are required"); return }
+    if (mode === "user" && !userId.trim()) { toast.error("User ID is required"); return }
+
+    let parsedData: Record<string, unknown> | undefined
+    if (jsonData.trim()) {
+      try { parsedData = JSON.parse(jsonData) } catch { toast.error("Invalid JSON in data field"); return }
+    }
+
+    try {
+      const payload: any = { title: title.trim(), body: body.trim() }
+      if (parsedData) payload.data = parsedData
+      if (mode === "broadcast") { payload.sendToAll = true } else { payload.userId = parseInt(userId) }
+
+      const res = await sendNotif(payload).unwrap()
+      setResult(res)
+      toast.success(res.message || "Notification sent!")
+    } catch (e: any) {
+      setResult(e.data || { error: e.message })
+      toast.error(e.data?.message || "Send failed")
+    }
+  }
+
+  const presets = [
+    { label: "📚 New Lecture", title: "New Class Scheduled", body: "Mathematics class tomorrow at 10:00 AM", data: '{"type":"LECTURE"}' },
+    { label: "📢 Announcement", title: "School Announcement", body: "Parent-teacher meeting on Saturday", data: '{"type":"ANNOUNCEMENT","id":1}' },
+    { label: "📝 Test Scheduled", title: "New Test: Physics", body: "Chapter 5 test on Monday at 2:00 PM", data: '{"type":"TEST","testId":1}' },
+    { label: "📊 Results Published", title: "Results Out!", body: "Physics test results have been published", data: '{"type":"RESULT","testId":1}' },
+    { label: "💰 Fee Reminder", title: "Fee Payment Due", body: "Your monthly fee is pending. Please pay at the earliest.", data: '{"type":"FEE"}' },
+    { label: "❓ Doubt Reply", title: "Your doubt was answered", body: "Your teacher replied to your question.", data: '{"type":"DOUBT_REPLY","doubtId":1}' },
+  ]
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2"><Bell className="h-5 w-5 text-primary" />Push Notification Tester</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">Send test notifications via OneSignal to debug the push flow.</p>
+      </div>
+
+      {/* Mode Toggle */}
+      <Card className="p-4">
+        <div className="flex gap-2 mb-4">
+          <Button variant={mode === "user" ? "default" : "outline"} size="sm" onClick={() => setMode("user")} className="flex-1">
+            <Send className="h-3.5 w-3.5 mr-2" />Send to User
+          </Button>
+          <Button variant={mode === "broadcast" ? "default" : "outline"} size="sm" onClick={() => setMode("broadcast")} className="flex-1">
+            <Radio className="h-3.5 w-3.5 mr-2" />Broadcast All
+          </Button>
+        </div>
+
+        <div className="space-y-3">
+          {mode === "user" && (
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">User ID (database ID)</label>
+              <Input type="number" value={userId} onChange={e => setUserId(e.target.value)} placeholder="e.g. 1" className="h-10" />
+            </div>
+          )}
+          {mode === "broadcast" && (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+              <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
+              <p className="text-xs text-amber-700 dark:text-amber-400">This will send to <strong>ALL</strong> subscribed users on OneSignal.</p>
+            </div>
+          )}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Title</label>
+            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Notification title" className="h-10" />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Body</label>
+            <Input value={body} onChange={e => setBody(e.target.value)} placeholder="Notification body text" className="h-10" />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Data Payload (JSON, optional)</label>
+            <Input value={jsonData} onChange={e => setJsonData(e.target.value)} placeholder='{"type":"LECTURE","batchId":1}' className="h-10 font-mono text-xs" />
+          </div>
+          <Button onClick={send} disabled={isLoading} className="w-full h-10">
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+            {isLoading ? "Sending..." : mode === "broadcast" ? "Broadcast to All Users" : "Send Test Notification"}
+          </Button>
+        </div>
+      </Card>
+
+      {/* Presets */}
+      <div>
+        <p className="text-xs font-medium text-muted-foreground mb-2">Quick Presets</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          {presets.map(p => (
+            <button
+              key={p.label}
+              onClick={() => { setTitle(p.title); setBody(p.body); setJsonData(p.data) }}
+              className="text-left p-2.5 rounded-lg border border-border/60 hover:bg-secondary/60 hover:border-primary/30 transition-all text-xs space-y-0.5"
+            >
+              <p className="font-medium">{p.label}</p>
+              <p className="text-muted-foreground truncate">{p.body}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Response Debug */}
+      {result && (
+        <Card className="overflow-hidden">
+          <div className="px-4 py-2.5 border-b bg-secondary/20 flex items-center justify-between">
+            <span className="text-xs font-semibold">OneSignal API Response</span>
+            <Badge variant={result.success ? "default" : "destructive"} className="text-[10px]">{result.success ? "✅ Success" : "❌ Failed"}</Badge>
+          </div>
+          <div className="p-4">
+            {result.message && <p className="text-sm font-medium mb-2">{result.message}</p>}
+            <pre className="text-[11px] text-muted-foreground bg-secondary/30 rounded-lg p-3 overflow-x-auto max-h-[300px] overflow-y-auto font-mono leading-relaxed">
+              {JSON.stringify(result.data || result, null, 2)}
+            </pre>
+          </div>
         </Card>
       )}
     </div>

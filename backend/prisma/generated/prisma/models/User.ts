@@ -42,11 +42,11 @@ export type UserMinAggregateOutputType = {
   email: string | null
   password: string | null
   role: $Enums.UserRoles | null
-  isPasswordSet: boolean | null
-  failedLoginAttempts: number | null
-  lockedUntil: Date | null
   updatedAt: Date | null
   createdAt: Date | null
+  failedLoginAttempts: number | null
+  lockedUntil: Date | null
+  isPasswordSet: boolean | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -55,11 +55,11 @@ export type UserMaxAggregateOutputType = {
   email: string | null
   password: string | null
   role: $Enums.UserRoles | null
-  isPasswordSet: boolean | null
-  failedLoginAttempts: number | null
-  lockedUntil: Date | null
   updatedAt: Date | null
   createdAt: Date | null
+  failedLoginAttempts: number | null
+  lockedUntil: Date | null
+  isPasswordSet: boolean | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -68,11 +68,11 @@ export type UserCountAggregateOutputType = {
   email: number
   password: number
   role: number
-  isPasswordSet: number
-  failedLoginAttempts: number
-  lockedUntil: number
   updatedAt: number
   createdAt: number
+  failedLoginAttempts: number
+  lockedUntil: number
+  isPasswordSet: number
   _all: number
 }
 
@@ -93,11 +93,11 @@ export type UserMinAggregateInputType = {
   email?: true
   password?: true
   role?: true
-  isPasswordSet?: true
-  failedLoginAttempts?: true
-  lockedUntil?: true
   updatedAt?: true
   createdAt?: true
+  failedLoginAttempts?: true
+  lockedUntil?: true
+  isPasswordSet?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -106,11 +106,11 @@ export type UserMaxAggregateInputType = {
   email?: true
   password?: true
   role?: true
-  isPasswordSet?: true
-  failedLoginAttempts?: true
-  lockedUntil?: true
   updatedAt?: true
   createdAt?: true
+  failedLoginAttempts?: true
+  lockedUntil?: true
+  isPasswordSet?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -119,11 +119,11 @@ export type UserCountAggregateInputType = {
   email?: true
   password?: true
   role?: true
-  isPasswordSet?: true
-  failedLoginAttempts?: true
-  lockedUntil?: true
   updatedAt?: true
   createdAt?: true
+  failedLoginAttempts?: true
+  lockedUntil?: true
+  isPasswordSet?: true
   _all?: true
 }
 
@@ -219,11 +219,11 @@ export type UserGroupByOutputType = {
   email: string
   password: string | null
   role: $Enums.UserRoles
-  isPasswordSet: boolean
-  failedLoginAttempts: number
-  lockedUntil: Date | null
   updatedAt: Date | null
   createdAt: Date | null
+  failedLoginAttempts: number
+  lockedUntil: Date | null
+  isPasswordSet: boolean
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -255,22 +255,22 @@ export type UserWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   password?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumUserRolesFilter<"User"> | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFilter<"User"> | boolean
-  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
-  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  isPasswordSet?: Prisma.BoolFilter<"User"> | boolean
+  teacherAssignments?: Prisma.AssignmentSlotListRelationFilter
+  deviceTokens?: Prisma.DeviceTokenListRelationFilter
+  doubtReplies?: Prisma.DoubtReplyListRelationFilter
+  instagramAccount?: Prisma.XOR<Prisma.InstagramAccountNullableScalarRelationFilter, Prisma.InstagramAccountWhereInput> | null
+  lectures?: Prisma.LectureListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
   student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
-  teacherProfile?: Prisma.XOR<Prisma.TeacherProfileNullableScalarRelationFilter, Prisma.TeacherProfileWhereInput> | null
-  lectures?: Prisma.LectureListRelationFilter
-  teacherAssignments?: Prisma.AssignmentSlotListRelationFilter
   teacherMaterials?: Prisma.StudyMaterialListRelationFilter
+  teacherProfile?: Prisma.XOR<Prisma.TeacherProfileNullableScalarRelationFilter, Prisma.TeacherProfileWhereInput> | null
   teacherTests?: Prisma.TestListRelationFilter
-  doubtReplies?: Prisma.DoubtReplyListRelationFilter
-  deviceTokens?: Prisma.DeviceTokenListRelationFilter
-  instagramAccount?: Prisma.XOR<Prisma.InstagramAccountNullableScalarRelationFilter, Prisma.InstagramAccountWhereInput> | null
-  notifications?: Prisma.NotificationListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -279,22 +279,22 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
-  isPasswordSet?: Prisma.SortOrder
-  failedLoginAttempts?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPasswordSet?: Prisma.SortOrder
+  teacherAssignments?: Prisma.AssignmentSlotOrderByRelationAggregateInput
+  deviceTokens?: Prisma.DeviceTokenOrderByRelationAggregateInput
+  doubtReplies?: Prisma.DoubtReplyOrderByRelationAggregateInput
+  instagramAccount?: Prisma.InstagramAccountOrderByWithRelationInput
+  lectures?: Prisma.LectureOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
   passwordResetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput
   student?: Prisma.StudentOrderByWithRelationInput
-  teacherProfile?: Prisma.TeacherProfileOrderByWithRelationInput
-  lectures?: Prisma.LectureOrderByRelationAggregateInput
-  teacherAssignments?: Prisma.AssignmentSlotOrderByRelationAggregateInput
   teacherMaterials?: Prisma.StudyMaterialOrderByRelationAggregateInput
+  teacherProfile?: Prisma.TeacherProfileOrderByWithRelationInput
   teacherTests?: Prisma.TestOrderByRelationAggregateInput
-  doubtReplies?: Prisma.DoubtReplyOrderByRelationAggregateInput
-  deviceTokens?: Prisma.DeviceTokenOrderByRelationAggregateInput
-  instagramAccount?: Prisma.InstagramAccountOrderByWithRelationInput
-  notifications?: Prisma.NotificationOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -306,22 +306,22 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"User"> | string
   password?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumUserRolesFilter<"User"> | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFilter<"User"> | boolean
-  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
-  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   updatedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  isPasswordSet?: Prisma.BoolFilter<"User"> | boolean
+  teacherAssignments?: Prisma.AssignmentSlotListRelationFilter
+  deviceTokens?: Prisma.DeviceTokenListRelationFilter
+  doubtReplies?: Prisma.DoubtReplyListRelationFilter
+  instagramAccount?: Prisma.XOR<Prisma.InstagramAccountNullableScalarRelationFilter, Prisma.InstagramAccountWhereInput> | null
+  lectures?: Prisma.LectureListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
   student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
-  teacherProfile?: Prisma.XOR<Prisma.TeacherProfileNullableScalarRelationFilter, Prisma.TeacherProfileWhereInput> | null
-  lectures?: Prisma.LectureListRelationFilter
-  teacherAssignments?: Prisma.AssignmentSlotListRelationFilter
   teacherMaterials?: Prisma.StudyMaterialListRelationFilter
+  teacherProfile?: Prisma.XOR<Prisma.TeacherProfileNullableScalarRelationFilter, Prisma.TeacherProfileWhereInput> | null
   teacherTests?: Prisma.TestListRelationFilter
-  doubtReplies?: Prisma.DoubtReplyListRelationFilter
-  deviceTokens?: Prisma.DeviceTokenListRelationFilter
-  instagramAccount?: Prisma.XOR<Prisma.InstagramAccountNullableScalarRelationFilter, Prisma.InstagramAccountWhereInput> | null
-  notifications?: Prisma.NotificationListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -330,11 +330,11 @@ export type UserOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
-  isPasswordSet?: Prisma.SortOrder
-  failedLoginAttempts?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  isPasswordSet?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -351,11 +351,11 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   password?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   role?: Prisma.EnumUserRolesWithAggregatesFilter<"User"> | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
-  failedLoginAttempts?: Prisma.IntWithAggregatesFilter<"User"> | number
-  lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  failedLoginAttempts?: Prisma.IntWithAggregatesFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  isPasswordSet?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
 }
 
 export type UserCreateInput = {
@@ -363,22 +363,22 @@ export type UserCreateInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
   teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -387,22 +387,22 @@ export type UserUncheckedCreateInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -410,22 +410,22 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
   teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -434,22 +434,22 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -458,11 +458,11 @@ export type UserCreateManyInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
 }
 
 export type UserUpdateManyMutationInput = {
@@ -470,11 +470,11 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -483,11 +483,11 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -496,11 +496,11 @@ export type UserCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  isPasswordSet?: Prisma.SortOrder
-  failedLoginAttempts?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  isPasswordSet?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
@@ -514,11 +514,11 @@ export type UserMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  isPasswordSet?: Prisma.SortOrder
-  failedLoginAttempts?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  isPasswordSet?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -527,11 +527,11 @@ export type UserMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
-  isPasswordSet?: Prisma.SortOrder
-  failedLoginAttempts?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  isPasswordSet?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
@@ -561,8 +561,8 @@ export type EnumUserRolesFieldUpdateOperationsInput = {
   set?: $Enums.UserRoles
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -573,8 +573,8 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type UserCreateNestedOneWithoutStudentInput = {
@@ -746,21 +746,21 @@ export type UserCreateWithoutStudentInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
 }
 
 export type UserUncheckedCreateWithoutStudentInput = {
@@ -769,21 +769,21 @@ export type UserUncheckedCreateWithoutStudentInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type UserCreateOrConnectWithoutStudentInput = {
@@ -807,21 +807,21 @@ export type UserUpdateWithoutStudentInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStudentInput = {
@@ -830,21 +830,21 @@ export type UserUncheckedUpdateWithoutStudentInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserCreateWithoutTeacherAssignmentsInput = {
@@ -852,21 +852,21 @@ export type UserCreateWithoutTeacherAssignmentsInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
   teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTeacherAssignmentsInput = {
@@ -875,21 +875,21 @@ export type UserUncheckedCreateWithoutTeacherAssignmentsInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTeacherAssignmentsInput = {
@@ -913,21 +913,21 @@ export type UserUpdateWithoutTeacherAssignmentsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
   teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTeacherAssignmentsInput = {
@@ -936,21 +936,21 @@ export type UserUncheckedUpdateWithoutTeacherAssignmentsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTeacherMaterialsInput = {
@@ -958,21 +958,21 @@ export type UserCreateWithoutTeacherMaterialsInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
   teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
   teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTeacherMaterialsInput = {
@@ -981,21 +981,21 @@ export type UserUncheckedCreateWithoutTeacherMaterialsInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
   teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
   teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTeacherMaterialsInput = {
@@ -1019,21 +1019,21 @@ export type UserUpdateWithoutTeacherMaterialsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
   teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
   teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTeacherMaterialsInput = {
@@ -1042,21 +1042,21 @@ export type UserUncheckedUpdateWithoutTeacherMaterialsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
   teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
   teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPasswordResetTokensInput = {
@@ -1064,21 +1064,21 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  student?: Prisma.StudentCreateNestedOneWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -1087,21 +1087,21 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -1125,21 +1125,21 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -1148,21 +1148,21 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserCreateWithoutLecturesInput = {
@@ -1170,21 +1170,21 @@ export type UserCreateWithoutLecturesInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
-  student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  student?: Prisma.StudentCreateNestedOneWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
 }
 
 export type UserUncheckedCreateWithoutLecturesInput = {
@@ -1193,21 +1193,21 @@ export type UserUncheckedCreateWithoutLecturesInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
-  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
   deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type UserCreateOrConnectWithoutLecturesInput = {
@@ -1231,21 +1231,21 @@ export type UserUpdateWithoutLecturesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
-  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLecturesInput = {
@@ -1254,21 +1254,21 @@ export type UserUncheckedUpdateWithoutLecturesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
-  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
   deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserCreateWithoutTeacherTestsInput = {
@@ -1276,21 +1276,21 @@ export type UserCreateWithoutTeacherTestsInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTeacherTestsInput = {
@@ -1299,21 +1299,21 @@ export type UserUncheckedCreateWithoutTeacherTestsInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTeacherTestsInput = {
@@ -1337,21 +1337,21 @@ export type UserUpdateWithoutTeacherTestsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTeacherTestsInput = {
@@ -1360,21 +1360,21 @@ export type UserUncheckedUpdateWithoutTeacherTestsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutInstagramAccountInput = {
@@ -1382,21 +1382,21 @@ export type UserCreateWithoutInstagramAccountInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
   teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInstagramAccountInput = {
@@ -1405,21 +1405,21 @@ export type UserUncheckedCreateWithoutInstagramAccountInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInstagramAccountInput = {
@@ -1443,21 +1443,21 @@ export type UserUpdateWithoutInstagramAccountInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
   teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInstagramAccountInput = {
@@ -1466,21 +1466,21 @@ export type UserUncheckedUpdateWithoutInstagramAccountInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTeacherProfileInput = {
@@ -1488,21 +1488,21 @@ export type UserCreateWithoutTeacherProfileInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
   teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTeacherProfileInput = {
@@ -1511,21 +1511,21 @@ export type UserUncheckedCreateWithoutTeacherProfileInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
   teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTeacherProfileInput = {
@@ -1549,21 +1549,21 @@ export type UserUpdateWithoutTeacherProfileInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
   teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTeacherProfileInput = {
@@ -1572,21 +1572,21 @@ export type UserUncheckedUpdateWithoutTeacherProfileInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
   teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDoubtRepliesInput = {
@@ -1594,21 +1594,21 @@ export type UserCreateWithoutDoubtRepliesInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
-  student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
   deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  student?: Prisma.StudentCreateNestedOneWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
 }
 
 export type UserUncheckedCreateWithoutDoubtRepliesInput = {
@@ -1617,21 +1617,21 @@ export type UserUncheckedCreateWithoutDoubtRepliesInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
-  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
   deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type UserCreateOrConnectWithoutDoubtRepliesInput = {
@@ -1655,21 +1655,21 @@ export type UserUpdateWithoutDoubtRepliesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
-  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
   deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDoubtRepliesInput = {
@@ -1678,21 +1678,21 @@ export type UserUncheckedUpdateWithoutDoubtRepliesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
-  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
   deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserCreateWithoutDeviceTokensInput = {
@@ -1700,21 +1700,21 @@ export type UserCreateWithoutDeviceTokensInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
-  student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
   doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  student?: Prisma.StudentCreateNestedOneWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
 }
 
 export type UserUncheckedCreateWithoutDeviceTokensInput = {
@@ -1723,21 +1723,21 @@ export type UserUncheckedCreateWithoutDeviceTokensInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
-  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
-  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
   doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
   instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+  teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type UserCreateOrConnectWithoutDeviceTokensInput = {
@@ -1761,21 +1761,21 @@ export type UserUpdateWithoutDeviceTokensInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
-  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
   doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  student?: Prisma.StudentUpdateOneWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeviceTokensInput = {
@@ -1784,21 +1784,21 @@ export type UserUncheckedUpdateWithoutDeviceTokensInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
-  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
   teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
   doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
   instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
+  teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+  teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1806,21 +1806,21 @@ export type UserCreateWithoutNotificationsInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   student?: Prisma.StudentCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileCreateNestedOneWithoutUserInput
   teacherTests?: Prisma.TestCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1829,21 +1829,21 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   email: string
   password?: string | null
   role?: $Enums.UserRoles
-  isPasswordSet?: boolean
-  failedLoginAttempts?: number
-  lockedUntil?: Date | string | null
   updatedAt?: Date | string | null
   createdAt?: Date | string | null
+  failedLoginAttempts?: number
+  lockedUntil?: Date | string | null
+  isPasswordSet?: boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
+  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutUserInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-  lectures?: Prisma.LectureUncheckedCreateNestedManyWithoutTeacherInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedCreateNestedManyWithoutTeacherInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedCreateNestedManyWithoutTeacherInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   teacherTests?: Prisma.TestUncheckedCreateNestedManyWithoutTeacherInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedCreateNestedManyWithoutUserInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedCreateNestedManyWithoutUserInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1867,21 +1867,21 @@ export type UserUpdateWithoutNotificationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUpdateOneWithoutUserNestedInput
   teacherTests?: Prisma.TestUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1890,21 +1890,21 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumUserRolesFieldUpdateOperationsInput | $Enums.UserRoles
-  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPasswordSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
+  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
+  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
+  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   student?: Prisma.StudentUncheckedUpdateOneWithoutUserNestedInput
-  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-  lectures?: Prisma.LectureUncheckedUpdateManyWithoutTeacherNestedInput
-  teacherAssignments?: Prisma.AssignmentSlotUncheckedUpdateManyWithoutTeacherNestedInput
   teacherMaterials?: Prisma.StudyMaterialUncheckedUpdateManyWithoutTeacherNestedInput
+  teacherProfile?: Prisma.TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   teacherTests?: Prisma.TestUncheckedUpdateManyWithoutTeacherNestedInput
-  doubtReplies?: Prisma.DoubtReplyUncheckedUpdateManyWithoutUserNestedInput
-  deviceTokens?: Prisma.DeviceTokenUncheckedUpdateManyWithoutUserNestedInput
-  instagramAccount?: Prisma.InstagramAccountUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -1913,25 +1913,25 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
  */
 
 export type UserCountOutputType = {
-  passwordResetTokens: number
-  lectures: number
   teacherAssignments: number
+  deviceTokens: number
+  doubtReplies: number
+  lectures: number
+  notifications: number
+  passwordResetTokens: number
   teacherMaterials: number
   teacherTests: number
-  doubtReplies: number
-  deviceTokens: number
-  notifications: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
-  lectures?: boolean | UserCountOutputTypeCountLecturesArgs
   teacherAssignments?: boolean | UserCountOutputTypeCountTeacherAssignmentsArgs
+  deviceTokens?: boolean | UserCountOutputTypeCountDeviceTokensArgs
+  doubtReplies?: boolean | UserCountOutputTypeCountDoubtRepliesArgs
+  lectures?: boolean | UserCountOutputTypeCountLecturesArgs
+  notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+  passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
   teacherMaterials?: boolean | UserCountOutputTypeCountTeacherMaterialsArgs
   teacherTests?: boolean | UserCountOutputTypeCountTeacherTestsArgs
-  doubtReplies?: boolean | UserCountOutputTypeCountDoubtRepliesArgs
-  deviceTokens?: boolean | UserCountOutputTypeCountDeviceTokensArgs
-  notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
 }
 
 /**
@@ -1947,8 +1947,22 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountPasswordResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PasswordResetTokenWhereInput
+export type UserCountOutputTypeCountTeacherAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssignmentSlotWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeviceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DeviceTokenWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDoubtRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DoubtReplyWhereInput
 }
 
 /**
@@ -1961,8 +1975,15 @@ export type UserCountOutputTypeCountLecturesArgs<ExtArgs extends runtime.Types.E
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountTeacherAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AssignmentSlotWhereInput
+export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPasswordResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PasswordResetTokenWhereInput
 }
 
 /**
@@ -1979,27 +2000,6 @@ export type UserCountOutputTypeCountTeacherTestsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.TestWhereInput
 }
 
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountDoubtRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.DoubtReplyWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountDeviceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.DeviceTokenWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NotificationWhereInput
-}
-
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2007,22 +2007,22 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   password?: boolean
   role?: boolean
-  isPasswordSet?: boolean
-  failedLoginAttempts?: boolean
-  lockedUntil?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  failedLoginAttempts?: boolean
+  lockedUntil?: boolean
+  isPasswordSet?: boolean
+  teacherAssignments?: boolean | Prisma.User$teacherAssignmentsArgs<ExtArgs>
+  deviceTokens?: boolean | Prisma.User$deviceTokensArgs<ExtArgs>
+  doubtReplies?: boolean | Prisma.User$doubtRepliesArgs<ExtArgs>
+  instagramAccount?: boolean | Prisma.User$instagramAccountArgs<ExtArgs>
+  lectures?: boolean | Prisma.User$lecturesArgs<ExtArgs>
+  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
   student?: boolean | Prisma.User$studentArgs<ExtArgs>
-  teacherProfile?: boolean | Prisma.User$teacherProfileArgs<ExtArgs>
-  lectures?: boolean | Prisma.User$lecturesArgs<ExtArgs>
-  teacherAssignments?: boolean | Prisma.User$teacherAssignmentsArgs<ExtArgs>
   teacherMaterials?: boolean | Prisma.User$teacherMaterialsArgs<ExtArgs>
+  teacherProfile?: boolean | Prisma.User$teacherProfileArgs<ExtArgs>
   teacherTests?: boolean | Prisma.User$teacherTestsArgs<ExtArgs>
-  doubtReplies?: boolean | Prisma.User$doubtRepliesArgs<ExtArgs>
-  deviceTokens?: boolean | Prisma.User$deviceTokensArgs<ExtArgs>
-  instagramAccount?: boolean | Prisma.User$instagramAccountArgs<ExtArgs>
-  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2032,11 +2032,11 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   password?: boolean
   role?: boolean
-  isPasswordSet?: boolean
-  failedLoginAttempts?: boolean
-  lockedUntil?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  failedLoginAttempts?: boolean
+  lockedUntil?: boolean
+  isPasswordSet?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2045,11 +2045,11 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   password?: boolean
   role?: boolean
-  isPasswordSet?: boolean
-  failedLoginAttempts?: boolean
-  lockedUntil?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  failedLoginAttempts?: boolean
+  lockedUntil?: boolean
+  isPasswordSet?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -2058,26 +2058,26 @@ export type UserSelectScalar = {
   email?: boolean
   password?: boolean
   role?: boolean
-  isPasswordSet?: boolean
-  failedLoginAttempts?: boolean
-  lockedUntil?: boolean
   updatedAt?: boolean
   createdAt?: boolean
+  failedLoginAttempts?: boolean
+  lockedUntil?: boolean
+  isPasswordSet?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "isPasswordSet" | "failedLoginAttempts" | "lockedUntil" | "updatedAt" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "updatedAt" | "createdAt" | "failedLoginAttempts" | "lockedUntil" | "isPasswordSet", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  teacherAssignments?: boolean | Prisma.User$teacherAssignmentsArgs<ExtArgs>
+  deviceTokens?: boolean | Prisma.User$deviceTokensArgs<ExtArgs>
+  doubtReplies?: boolean | Prisma.User$doubtRepliesArgs<ExtArgs>
+  instagramAccount?: boolean | Prisma.User$instagramAccountArgs<ExtArgs>
+  lectures?: boolean | Prisma.User$lecturesArgs<ExtArgs>
+  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
   student?: boolean | Prisma.User$studentArgs<ExtArgs>
-  teacherProfile?: boolean | Prisma.User$teacherProfileArgs<ExtArgs>
-  lectures?: boolean | Prisma.User$lecturesArgs<ExtArgs>
-  teacherAssignments?: boolean | Prisma.User$teacherAssignmentsArgs<ExtArgs>
   teacherMaterials?: boolean | Prisma.User$teacherMaterialsArgs<ExtArgs>
+  teacherProfile?: boolean | Prisma.User$teacherProfileArgs<ExtArgs>
   teacherTests?: boolean | Prisma.User$teacherTestsArgs<ExtArgs>
-  doubtReplies?: boolean | Prisma.User$doubtRepliesArgs<ExtArgs>
-  deviceTokens?: boolean | Prisma.User$deviceTokensArgs<ExtArgs>
-  instagramAccount?: boolean | Prisma.User$instagramAccountArgs<ExtArgs>
-  notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2086,17 +2086,17 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    teacherAssignments: Prisma.$AssignmentSlotPayload<ExtArgs>[]
+    deviceTokens: Prisma.$DeviceTokenPayload<ExtArgs>[]
+    doubtReplies: Prisma.$DoubtReplyPayload<ExtArgs>[]
+    instagramAccount: Prisma.$InstagramAccountPayload<ExtArgs> | null
+    lectures: Prisma.$LecturePayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
     passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
     student: Prisma.$StudentPayload<ExtArgs> | null
-    teacherProfile: Prisma.$TeacherProfilePayload<ExtArgs> | null
-    lectures: Prisma.$LecturePayload<ExtArgs>[]
-    teacherAssignments: Prisma.$AssignmentSlotPayload<ExtArgs>[]
     teacherMaterials: Prisma.$StudyMaterialPayload<ExtArgs>[]
+    teacherProfile: Prisma.$TeacherProfilePayload<ExtArgs> | null
     teacherTests: Prisma.$TestPayload<ExtArgs>[]
-    doubtReplies: Prisma.$DoubtReplyPayload<ExtArgs>[]
-    deviceTokens: Prisma.$DeviceTokenPayload<ExtArgs>[]
-    instagramAccount: Prisma.$InstagramAccountPayload<ExtArgs> | null
-    notifications: Prisma.$NotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2104,11 +2104,11 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string
     password: string | null
     role: $Enums.UserRoles
-    isPasswordSet: boolean
-    failedLoginAttempts: number
-    lockedUntil: Date | null
     updatedAt: Date | null
     createdAt: Date | null
+    failedLoginAttempts: number
+    lockedUntil: Date | null
+    isPasswordSet: boolean
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -2503,17 +2503,17 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  teacherAssignments<T extends Prisma.User$teacherAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teacherAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deviceTokens<T extends Prisma.User$deviceTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deviceTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeviceTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  doubtReplies<T extends Prisma.User$doubtRepliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$doubtRepliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DoubtReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  instagramAccount<T extends Prisma.User$instagramAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$instagramAccountArgs<ExtArgs>>): Prisma.Prisma__InstagramAccountClient<runtime.Types.Result.GetResult<Prisma.$InstagramAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  lectures<T extends Prisma.User$lecturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lecturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LecturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   passwordResetTokens<T extends Prisma.User$passwordResetTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   student<T extends Prisma.User$studentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$studentArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  teacherProfile<T extends Prisma.User$teacherProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teacherProfileArgs<ExtArgs>>): Prisma.Prisma__TeacherProfileClient<runtime.Types.Result.GetResult<Prisma.$TeacherProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  lectures<T extends Prisma.User$lecturesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lecturesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LecturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  teacherAssignments<T extends Prisma.User$teacherAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teacherAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   teacherMaterials<T extends Prisma.User$teacherMaterialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teacherMaterialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyMaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  teacherProfile<T extends Prisma.User$teacherProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teacherProfileArgs<ExtArgs>>): Prisma.Prisma__TeacherProfileClient<runtime.Types.Result.GetResult<Prisma.$TeacherProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   teacherTests<T extends Prisma.User$teacherTestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teacherTestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  doubtReplies<T extends Prisma.User$doubtRepliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$doubtRepliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DoubtReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  deviceTokens<T extends Prisma.User$deviceTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deviceTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeviceTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  instagramAccount<T extends Prisma.User$instagramAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$instagramAccountArgs<ExtArgs>>): Prisma.Prisma__InstagramAccountClient<runtime.Types.Result.GetResult<Prisma.$InstagramAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2548,11 +2548,11 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'UserRoles'>
-  readonly isPasswordSet: Prisma.FieldRef<"User", 'Boolean'>
-  readonly failedLoginAttempts: Prisma.FieldRef<"User", 'Int'>
-  readonly lockedUntil: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly failedLoginAttempts: Prisma.FieldRef<"User", 'Int'>
+  readonly lockedUntil: Prisma.FieldRef<"User", 'DateTime'>
+  readonly isPasswordSet: Prisma.FieldRef<"User", 'Boolean'>
 }
     
 
@@ -2941,6 +2941,145 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * User.teacherAssignments
+ */
+export type User$teacherAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssignmentSlot
+   */
+  select?: Prisma.AssignmentSlotSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssignmentSlot
+   */
+  omit?: Prisma.AssignmentSlotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssignmentSlotInclude<ExtArgs> | null
+  where?: Prisma.AssignmentSlotWhereInput
+  orderBy?: Prisma.AssignmentSlotOrderByWithRelationInput | Prisma.AssignmentSlotOrderByWithRelationInput[]
+  cursor?: Prisma.AssignmentSlotWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssignmentSlotScalarFieldEnum | Prisma.AssignmentSlotScalarFieldEnum[]
+}
+
+/**
+ * User.deviceTokens
+ */
+export type User$deviceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeviceToken
+   */
+  select?: Prisma.DeviceTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeviceToken
+   */
+  omit?: Prisma.DeviceTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeviceTokenInclude<ExtArgs> | null
+  where?: Prisma.DeviceTokenWhereInput
+  orderBy?: Prisma.DeviceTokenOrderByWithRelationInput | Prisma.DeviceTokenOrderByWithRelationInput[]
+  cursor?: Prisma.DeviceTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DeviceTokenScalarFieldEnum | Prisma.DeviceTokenScalarFieldEnum[]
+}
+
+/**
+ * User.doubtReplies
+ */
+export type User$doubtRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DoubtReply
+   */
+  select?: Prisma.DoubtReplySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DoubtReply
+   */
+  omit?: Prisma.DoubtReplyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DoubtReplyInclude<ExtArgs> | null
+  where?: Prisma.DoubtReplyWhereInput
+  orderBy?: Prisma.DoubtReplyOrderByWithRelationInput | Prisma.DoubtReplyOrderByWithRelationInput[]
+  cursor?: Prisma.DoubtReplyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DoubtReplyScalarFieldEnum | Prisma.DoubtReplyScalarFieldEnum[]
+}
+
+/**
+ * User.instagramAccount
+ */
+export type User$instagramAccountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InstagramAccount
+   */
+  select?: Prisma.InstagramAccountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InstagramAccount
+   */
+  omit?: Prisma.InstagramAccountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InstagramAccountInclude<ExtArgs> | null
+  where?: Prisma.InstagramAccountWhereInput
+}
+
+/**
+ * User.lectures
+ */
+export type User$lecturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lecture
+   */
+  select?: Prisma.LectureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lecture
+   */
+  omit?: Prisma.LectureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LectureInclude<ExtArgs> | null
+  where?: Prisma.LectureWhereInput
+  orderBy?: Prisma.LectureOrderByWithRelationInput | Prisma.LectureOrderByWithRelationInput[]
+  cursor?: Prisma.LectureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LectureScalarFieldEnum | Prisma.LectureScalarFieldEnum[]
+}
+
+/**
+ * User.notifications
+ */
+export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
  * User.passwordResetTokens
  */
 export type User$passwordResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2984,73 +3123,6 @@ export type User$studentArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 /**
- * User.teacherProfile
- */
-export type User$teacherProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TeacherProfile
-   */
-  select?: Prisma.TeacherProfileSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the TeacherProfile
-   */
-  omit?: Prisma.TeacherProfileOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TeacherProfileInclude<ExtArgs> | null
-  where?: Prisma.TeacherProfileWhereInput
-}
-
-/**
- * User.lectures
- */
-export type User$lecturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Lecture
-   */
-  select?: Prisma.LectureSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Lecture
-   */
-  omit?: Prisma.LectureOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.LectureInclude<ExtArgs> | null
-  where?: Prisma.LectureWhereInput
-  orderBy?: Prisma.LectureOrderByWithRelationInput | Prisma.LectureOrderByWithRelationInput[]
-  cursor?: Prisma.LectureWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.LectureScalarFieldEnum | Prisma.LectureScalarFieldEnum[]
-}
-
-/**
- * User.teacherAssignments
- */
-export type User$teacherAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the AssignmentSlot
-   */
-  select?: Prisma.AssignmentSlotSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the AssignmentSlot
-   */
-  omit?: Prisma.AssignmentSlotOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AssignmentSlotInclude<ExtArgs> | null
-  where?: Prisma.AssignmentSlotWhereInput
-  orderBy?: Prisma.AssignmentSlotOrderByWithRelationInput | Prisma.AssignmentSlotOrderByWithRelationInput[]
-  cursor?: Prisma.AssignmentSlotWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.AssignmentSlotScalarFieldEnum | Prisma.AssignmentSlotScalarFieldEnum[]
-}
-
-/**
  * User.teacherMaterials
  */
 export type User$teacherMaterialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3075,6 +3147,25 @@ export type User$teacherMaterialsArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
+ * User.teacherProfile
+ */
+export type User$teacherProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TeacherProfile
+   */
+  select?: Prisma.TeacherProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TeacherProfile
+   */
+  omit?: Prisma.TeacherProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeacherProfileInclude<ExtArgs> | null
+  where?: Prisma.TeacherProfileWhereInput
+}
+
+/**
  * User.teacherTests
  */
 export type User$teacherTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3096,97 +3187,6 @@ export type User$teacherTestsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.TestScalarFieldEnum | Prisma.TestScalarFieldEnum[]
-}
-
-/**
- * User.doubtReplies
- */
-export type User$doubtRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the DoubtReply
-   */
-  select?: Prisma.DoubtReplySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the DoubtReply
-   */
-  omit?: Prisma.DoubtReplyOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.DoubtReplyInclude<ExtArgs> | null
-  where?: Prisma.DoubtReplyWhereInput
-  orderBy?: Prisma.DoubtReplyOrderByWithRelationInput | Prisma.DoubtReplyOrderByWithRelationInput[]
-  cursor?: Prisma.DoubtReplyWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.DoubtReplyScalarFieldEnum | Prisma.DoubtReplyScalarFieldEnum[]
-}
-
-/**
- * User.deviceTokens
- */
-export type User$deviceTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the DeviceToken
-   */
-  select?: Prisma.DeviceTokenSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the DeviceToken
-   */
-  omit?: Prisma.DeviceTokenOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.DeviceTokenInclude<ExtArgs> | null
-  where?: Prisma.DeviceTokenWhereInput
-  orderBy?: Prisma.DeviceTokenOrderByWithRelationInput | Prisma.DeviceTokenOrderByWithRelationInput[]
-  cursor?: Prisma.DeviceTokenWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.DeviceTokenScalarFieldEnum | Prisma.DeviceTokenScalarFieldEnum[]
-}
-
-/**
- * User.instagramAccount
- */
-export type User$instagramAccountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the InstagramAccount
-   */
-  select?: Prisma.InstagramAccountSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the InstagramAccount
-   */
-  omit?: Prisma.InstagramAccountOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.InstagramAccountInclude<ExtArgs> | null
-  where?: Prisma.InstagramAccountWhereInput
-}
-
-/**
- * User.notifications
- */
-export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Notification
-   */
-  select?: Prisma.NotificationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Notification
-   */
-  omit?: Prisma.NotificationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.NotificationInclude<ExtArgs> | null
-  where?: Prisma.NotificationWhereInput
-  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
-  cursor?: Prisma.NotificationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

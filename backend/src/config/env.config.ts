@@ -83,4 +83,8 @@ export const config = {
   MAINTENANCE: {
     PASSWORD_HASH: process.env.MAINTENANCE_PASSWORD_HASH || "",
   },
+  ONESIGNAL: {
+    APP_ID: process.env.ONESIGNAL_APP_ID || "",
+    REST_API_KEY: process.env.ONESIGNAL_REST_API_KEY || "",
+  },
 } as const;

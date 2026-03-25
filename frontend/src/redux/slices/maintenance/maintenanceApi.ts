@@ -106,6 +106,12 @@ export const maintenanceApi = api.injectEndpoints({
             query: () => '/dashboard/maintenance/endpoints',
             transformResponse: (r: { data: EndpointInfo[] }) => r.data,
         }),
+        maintenanceTestNotification: builder.mutation<
+            { success: boolean; message: string; data?: any },
+            { userId?: number; title: string; body: string; data?: Record<string, unknown>; sendToAll?: boolean }
+        >({
+            query: (body) => ({ url: '/dashboard/maintenance/test-notification', method: 'POST', body }),
+        }),
     }),
 });
 
@@ -122,4 +128,6 @@ export const {
     useMaintenanceLoadTestMutation,
     useMaintenancePlaygroundMutation,
     useMaintenanceEndpointsQuery,
+    useMaintenanceTestNotificationMutation,
 } = maintenanceApi;
+

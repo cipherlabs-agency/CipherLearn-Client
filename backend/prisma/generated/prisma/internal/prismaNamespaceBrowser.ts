@@ -54,6 +54,8 @@ export const ModelName = {
   User: 'User',
   Student: 'Student',
   Batch: 'Batch',
+  LandingPage: 'LandingPage',
+  Lead: 'Lead',
   QRAttendanceToken: 'QRAttendanceToken',
   AttendanceSheet: 'AttendanceSheet',
   Attendance: 'Attendance',
@@ -108,11 +110,11 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
-  isPasswordSet: 'isPasswordSet',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt',
   failedLoginAttempts: 'failedLoginAttempts',
   lockedUntil: 'lockedUntil',
-  updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  isPasswordSet: 'isPasswordSet'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -127,17 +129,17 @@ export const StudentScalarFieldEnum = {
   email: 'email',
   dob: 'dob',
   batchId: 'batchId',
-  userId: 'userId',
   address: 'address',
-  phone: 'phone',
-  parentName: 'parentName',
-  grade: 'grade',
-  instituteId: 'instituteId',
-  avatarUrl: 'avatarUrl',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  userId: 'userId',
+  grade: 'grade',
+  instituteId: 'instituteId',
+  parentName: 'parentName',
+  phone: 'phone',
+  avatarUrl: 'avatarUrl'
 } as const
 
 export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
@@ -146,15 +148,44 @@ export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeo
 export const BatchScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  totalStudents: 'totalStudents',
   timings: 'timings',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  totalStudents: 'totalStudents'
 } as const
 
 export type BatchScalarFieldEnum = (typeof BatchScalarFieldEnum)[keyof typeof BatchScalarFieldEnum]
+
+
+export const LandingPageScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  slug: 'slug',
+  config: 'config',
+  theme: 'theme',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LandingPageScalarFieldEnum = (typeof LandingPageScalarFieldEnum)[keyof typeof LandingPageScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  batchId: 'batchId',
+  message: 'message',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
 
 
 export const QRAttendanceTokenScalarFieldEnum = {
@@ -164,8 +195,8 @@ export const QRAttendanceTokenScalarFieldEnum = {
   date: 'date',
   expiresAt: 'expiresAt',
   isActive: 'isActive',
-  updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type QRAttendanceTokenScalarFieldEnum = (typeof QRAttendanceTokenScalarFieldEnum)[keyof typeof QRAttendanceTokenScalarFieldEnum]
@@ -193,12 +224,12 @@ export const AttendanceScalarFieldEnum = {
   markedById: 'markedById',
   method: 'method',
   status: 'status',
-  reason: 'reason',
-  subject: 'subject',
-  lectureId: 'lectureId',
   attendanceSheetId: 'attendanceSheetId',
   updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  lectureId: 'lectureId',
+  reason: 'reason',
+  subject: 'subject'
 } as const
 
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
@@ -211,14 +242,14 @@ export const YoutubeVideoScalarFieldEnum = {
   url: 'url',
   visibility: 'visibility',
   category: 'category',
-  subject: 'subject',
   batchId: 'batchId',
-  visibleBatchIds: 'visibleBatchIds',
-  scheduledAt: 'scheduledAt',
   isDeleted: 'isDeleted',
   deletedBy: 'deletedBy',
   updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  scheduledAt: 'scheduledAt',
+  subject: 'subject',
+  visibleBatchIds: 'visibleBatchIds'
 } as const
 
 export type YoutubeVideoScalarFieldEnum = (typeof YoutubeVideoScalarFieldEnum)[keyof typeof YoutubeVideoScalarFieldEnum]
@@ -245,20 +276,20 @@ export const AssignmentSlotScalarFieldEnum = {
   title: 'title',
   subject: 'subject',
   description: 'description',
-  attachments: 'attachments',
   batchId: 'batchId',
-  teacherId: 'teacherId',
-  groupId: 'groupId',
-  submissionType: 'submissionType',
-  assignmentStatus: 'assignmentStatus',
-  allowLateSubmissions: 'allowLateSubmissions',
-  plagiarismCheck: 'plagiarismCheck',
   dueDate: 'dueDate',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   isDeleted: 'isDeleted',
-  deletedBy: 'deletedBy'
+  attachments: 'attachments',
+  allowLateSubmissions: 'allowLateSubmissions',
+  assignmentStatus: 'assignmentStatus',
+  deletedBy: 'deletedBy',
+  groupId: 'groupId',
+  plagiarismCheck: 'plagiarismCheck',
+  submissionType: 'submissionType',
+  teacherId: 'teacherId'
 } as const
 
 export type AssignmentSlotScalarFieldEnum = (typeof AssignmentSlotScalarFieldEnum)[keyof typeof AssignmentSlotScalarFieldEnum]
@@ -269,13 +300,13 @@ export const StudentSubmissionScalarFieldEnum = {
   slotId: 'slotId',
   studentId: 'studentId',
   files: 'files',
-  note: 'note',
   status: 'status',
   feedback: 'feedback',
   reviewedBy: 'reviewedBy',
   reviewedAt: 'reviewedAt',
   submittedAt: 'submittedAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  note: 'note'
 } as const
 
 export type StudentSubmissionScalarFieldEnum = (typeof StudentSubmissionScalarFieldEnum)[keyof typeof StudentSubmissionScalarFieldEnum]
@@ -285,23 +316,23 @@ export const AnnouncementScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  body: 'body',
   imageUrl: 'imageUrl',
   date: 'date',
-  category: 'category',
   priority: 'priority',
-  department: 'department',
-  attachments: 'attachments',
-  metadata: 'metadata',
   isActive: 'isActive',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  attachments: 'attachments',
+  body: 'body',
+  category: 'category',
+  department: 'department',
+  metadata: 'metadata',
+  createdById: 'createdById',
+  pinned: 'pinned',
   isDraft: 'isDraft',
   scheduledAt: 'scheduledAt',
-  targetBatchIds: 'targetBatchIds',
-  pinned: 'pinned',
-  createdBy: 'createdBy',
-  createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  targetBatchIds: 'targetBatchIds'
 } as const
 
 export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
@@ -326,20 +357,20 @@ export const StudyMaterialScalarFieldEnum = {
   description: 'description',
   files: 'files',
   batchId: 'batchId',
-  teacherId: 'teacherId',
-  folderId: 'folderId',
   category: 'category',
-  subject: 'subject',
-  chapter: 'chapter',
-  materialType: 'materialType',
-  materialStatus: 'materialStatus',
-  scheduledAt: 'scheduledAt',
-  visibleBatchIds: 'visibleBatchIds',
   createdBy: 'createdBy',
   isDeleted: 'isDeleted',
-  deletedBy: 'deletedBy',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  chapter: 'chapter',
+  deletedBy: 'deletedBy',
+  materialStatus: 'materialStatus',
+  materialType: 'materialType',
+  scheduledAt: 'scheduledAt',
+  subject: 'subject',
+  teacherId: 'teacherId',
+  visibleBatchIds: 'visibleBatchIds',
+  folderId: 'folderId'
 } as const
 
 export type StudyMaterialScalarFieldEnum = (typeof StudyMaterialScalarFieldEnum)[keyof typeof StudyMaterialScalarFieldEnum]
@@ -467,14 +498,14 @@ export const LectureScalarFieldEnum = {
   duration: 'duration',
   status: 'status',
   notes: 'notes',
-  isOnline: 'isOnline',
-  meetingLink: 'meetingLink',
-  attachments: 'attachments',
   recurrenceId: 'recurrenceId',
   createdBy: 'createdBy',
   isDeleted: 'isDeleted',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  attachments: 'attachments',
+  isOnline: 'isOnline',
+  meetingLink: 'meetingLink'
 } as const
 
 export type LectureScalarFieldEnum = (typeof LectureScalarFieldEnum)[keyof typeof LectureScalarFieldEnum]
@@ -496,13 +527,13 @@ export const TestScalarFieldEnum = {
   syllabus: 'syllabus',
   instructions: 'instructions',
   status: 'status',
-  publishedAt: 'publishedAt',
-  scoresLocked: 'scoresLocked',
-  teacherId: 'teacherId',
   createdBy: 'createdBy',
   isDeleted: 'isDeleted',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  publishedAt: 'publishedAt',
+  scoresLocked: 'scoresLocked',
+  teacherId: 'teacherId'
 } as const
 
 export type TestScalarFieldEnum = (typeof TestScalarFieldEnum)[keyof typeof TestScalarFieldEnum]
@@ -604,9 +635,9 @@ export const TeacherProfileScalarFieldEnum = {
   primarySubjects: 'primarySubjects',
   secondarySubjects: 'secondarySubjects',
   bio: 'bio',
-  avatarUrl: 'avatarUrl',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  avatarUrl: 'avatarUrl'
 } as const
 
 export type TeacherProfileScalarFieldEnum = (typeof TeacherProfileScalarFieldEnum)[keyof typeof TeacherProfileScalarFieldEnum]
@@ -664,13 +695,13 @@ export type DeviceTokenScalarFieldEnum = (typeof DeviceTokenScalarFieldEnum)[key
 
 export const AppSettingsScalarFieldEnum = {
   id: 'id',
-  className: 'className',
-  classEmail: 'classEmail',
-  classPhone: 'classPhone',
-  classAddress: 'classAddress',
-  classWebsite: 'classWebsite',
   teacherPermissions: 'teacherPermissions',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  classAddress: 'classAddress',
+  classEmail: 'classEmail',
+  className: 'className',
+  classPhone: 'classPhone',
+  classWebsite: 'classWebsite'
 } as const
 
 export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]

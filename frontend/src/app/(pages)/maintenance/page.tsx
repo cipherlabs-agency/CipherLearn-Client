@@ -8,14 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import {
   Lock, Shield, Loader2, ArrowLeft, PanelLeftClose, PanelLeftOpen,
-  LayoutDashboard, Users, Activity, CheckCircle2, Database, Timer, Code2, Trash2
+  LayoutDashboard, Users, Activity, CheckCircle2, Database, Timer, Code2, Trash2, Bell
 } from "lucide-react"
 import { toast } from "sonner"
 import { useMaintenanceAuthMutation } from "@/redux/slices/maintenance/maintenanceApi"
-import { OverviewPanel, SeedPanel, ApiHealthPanel, ValidationPanel, SecurityPanel, DbIntegrityPanel, LoadTestPanel, CleanupPanel } from "./_components/Panels"
+import { OverviewPanel, SeedPanel, ApiHealthPanel, ValidationPanel, SecurityPanel, DbIntegrityPanel, LoadTestPanel, CleanupPanel, PushNotificationPanel } from "./_components/Panels"
 import PlaygroundPanel from "./_components/PlaygroundPanel"
 
-type Panel = "overview" | "seed" | "api-health" | "validation" | "security" | "db-integrity" | "load-test" | "playground" | "cleanup"
+type Panel = "overview" | "seed" | "api-health" | "validation" | "security" | "db-integrity" | "load-test" | "playground" | "push-test" | "cleanup"
 
 const NAV: { id: Panel; label: string; icon: any; section: string }[] = [
   { id: "overview",     label: "Overview",       icon: LayoutDashboard, section: "General" },
@@ -26,6 +26,7 @@ const NAV: { id: Panel; label: string; icon: any; section: string }[] = [
   { id: "db-integrity", label: "DB Integrity",   icon: Database,        section: "Testing" },
   { id: "load-test",    label: "Load Test",      icon: Timer,           section: "Testing" },
   { id: "playground",   label: "API Playground", icon: Code2,           section: "Testing" },
+  { id: "push-test",    label: "Push Test",      icon: Bell,            section: "Testing" },
   { id: "cleanup",      label: "Cleanup",        icon: Trash2,          section: "Danger" },
 ]
 
@@ -130,6 +131,7 @@ export default function MaintenancePage() {
           {active === "db-integrity" && <DbIntegrityPanel />}
           {active === "load-test"    && <LoadTestPanel token={authToken || ""} />}
           {active === "playground"   && <PlaygroundPanel token={authToken || ""} />}
+          {active === "push-test"    && <PushNotificationPanel />}
           {active === "cleanup"      && <CleanupPanel password={password} />}
         </main>
       </div>

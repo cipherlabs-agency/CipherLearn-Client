@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { Prisma, User } from "../../../../prisma/generated/prisma/client";
 import BatchService from "./service";
 import logger from "../../../utils/logger";
+import { prisma } from "../../../config/db.config";
 import { log } from "../../../utils/logtail";
 
 const batchService = new BatchService();
@@ -144,6 +145,120 @@ export default class BatchController {
       return res
         .status(500)
         .json({ success: false, message: `Draft failed: ${error}` });
+    }
+  }
+
+  public async getLandingContext(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const batchId = Number(id);
+
+      const batch = await prisma.batch.findUnique({
+        where: { id: batchId, isDeleted: false },
+        include: {
+          feeStructures: {
+            where: { isActive: true }
+          },
+          lectures: {
+            where: { isDeleted: false, status: { not: "CANCELLED" } },
+            orderBy: { date: 'asc' },
+            include: {
+              teacher: {
+                include: { teacherProfile: true }
+              }
+            }
+          }
+        }
+      });
+
+      if (!batch) {
+        return res.status(404).json({ success: false, message: "Batch not found" });
+      }
+
+      // Aggregate distinct teachers
+      const teacherMap = new Map();
+      batch.lectures.forEach((l: any) => {
+        if (l.teacher?.teacherProfile) {
+          teacherMap.set(l.teacher.id, {
+            name: l.teacher.name,
+            ...l.teacher.teacherProfile
+          });
+        }
+      });
+      const teachers = Array.from(teacherMap.values());
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          batch: {
+            id: batch.id,
+            name: batch.name,
+            timings: batch.timings
+          },
+          fees: batch.feeStructures,
+          lectures: batch.lectures.map((l: any) => ({
+            id: l.id,
+            title: l.title,
+            description: l.description,
+            duration: l.duration
+          })),
+          teachers
+        }
+      });
+    } catch (error) {
+      log("error", "dashboard.batches.landingContext failed", { err: error instanceof Error ? error.message : String(error) });
+      logger.error("Batch.getLandingContext error:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: `Get landing context failed: ${error}` });
+    }
+  }
+
+  public async saveLandingPage(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { config, theme, slug, isPublished } = req.body;
+
+      const landingPage = await prisma.landingPage.upsert({
+        where: { batchId: Number(id) },
+        update: {
+          config,
+          theme,
+          slug,
+          isPublished: isPublished ?? true,
+        },
+        create: {
+          batchId: Number(id),
+          config,
+          theme,
+          slug: slug || `batch-${id}`,
+          isPublished: isPublished ?? true,
+        },
+      });
+
+      return res.status(200).json({ success: true, data: landingPage });
+    } catch (error) {
+      logger.error("Batch.saveLandingPage error:", error);
+      return res.status(500).json({ success: false, message: "Failed to save landing page" });
+    }
+  }
+
+  public async getLandingPage(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const landingPage = await prisma.landingPage.findUnique({
+        where: { batchId: Number(id) }
+      });
+
+      if (!landingPage) {
+        return res.status(404).json({ success: false, message: "Landing page not found" });
+      }
+
+      return res.status(200).json({ success: true, data: landingPage });
+    } catch (error) {
+      logger.error("Batch.getLandingPage error:", error);
+      return res.status(500).json({ success: false, message: "Failed to fetch landing page" });
     }
   }
 
