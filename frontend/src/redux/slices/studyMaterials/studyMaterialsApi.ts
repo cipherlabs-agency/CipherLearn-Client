@@ -6,11 +6,19 @@ export interface BatchInfo {
     name: string;
 }
 
+export interface MaterialFile {
+    url: string;
+    originalFilename?: string;
+    publicId?: string;
+    mimeType?: string;
+    size?: number;
+}
+
 export interface StudyMaterial {
     id: number;
     title: string;
     description: string | null;
-    files: string[];
+    files: (string | MaterialFile)[];
     batchId: number;
     batch: BatchInfo;
     category: string | null;

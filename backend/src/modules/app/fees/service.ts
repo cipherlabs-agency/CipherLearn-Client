@@ -38,7 +38,7 @@ class FeesService {
       paymentDate: r.paymentDate?.toISOString() || null,
       paymentMode: r.paymentMode,
       feeName: r.feeStructure?.name || null,
-      pdfUrl: (r as any).pdfUrl ?? null,
+      pdfUrl: r.pdfUrl ?? null,
     }));
   }
 
@@ -251,7 +251,7 @@ class FeesService {
       paymentDate: updated.paymentDate?.toISOString() ?? null,
       paymentMode: updated.paymentMode,
       feeName: updated.feeStructure?.name ?? null,
-      pdfUrl: (updated as any).pdfUrl ?? null,
+      pdfUrl: updated.pdfUrl ?? null,
     };
   }
 
@@ -370,7 +370,7 @@ class FeesService {
     // Persist the URL so future calls to getFeeReceipts() return it directly
     await prisma.feeReceipt.update({
       where: { id: receiptId },
-      data: { pdfUrl } as any,
+      data: { pdfUrl },
     });
 
     return { pdfUrl };

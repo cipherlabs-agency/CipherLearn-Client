@@ -24,7 +24,7 @@ function normalizeSubmissionFiles(raw: unknown): Array<{ url: string; [key: stri
     if (typeof item === "string") {
       return { url: item, original_filename: item.split("/").pop() ?? "file" };
     }
-    return item as Record<string, unknown>;
+    return item as { url: string; [key: string]: unknown };
   });
 }
 
