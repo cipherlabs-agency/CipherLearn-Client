@@ -47,20 +47,33 @@ export default class TeacherService {
   /**
    * Get all teachers
    */
-  public async getAll(): Promise<TeacherResponse[]> {
-    const teachers = await prisma.user.findMany({
-      where: { role: UserRoles.TEACHER },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        isPasswordSet: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+  public async getAll(page = 1, limit = 20, search?: string): Promise<{ teachers: TeacherResponse[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
+    const where = {
+      role: UserRoles.TEACHER,
+      ...(search ? { name: { contains: search, mode: "insensitive" as const } } : {}),
+    };
 
-    return teachers;
+    const [total, teachers] = await Promise.all([
+      prisma.user.count({ where }),
+      prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          isPasswordSet: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ]);
+
+    return {
+      teachers,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   /**

@@ -1,16 +1,15 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
-import { 
-    FileText, 
-    Download, 
-    Trash2, 
-    Loader2, 
-    ExternalLink, 
+import {
+    FileText,
+    Download,
+    Trash2,
+    Loader2,
     Eye,
-    Calendar 
+    ChevronLeft,
+    ChevronRight
 } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useGetNotesQuery, useDeleteNoteMutation } from "@/redux/slices/notes/notesApi"
@@ -19,6 +18,9 @@ import type { Note, Batch } from "@/types"
 import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AddNoteDialog } from "./AddNoteDialog"
+import { useState } from "react"
+
+const LIMIT = 20
 
 interface NotesListProps {
     batchId?: number
@@ -26,8 +28,10 @@ interface NotesListProps {
 }
 
 export function NotesList({ batchId, isAdmin = true }: NotesListProps) {
-    const { data: notesData, isLoading } = useGetNotesQuery({ batchId })
+    const [page, setPage] = useState(1)
+    const { data: notesData, isLoading, isFetching } = useGetNotesQuery({ batchId, page, limit: LIMIT })
     const notes = notesData?.notes || []
+    const pagination = notesData?.pagination
 
     const { data: batchesData } = useGetAllBatchesQuery()
     const batches = batchesData || []
@@ -99,83 +103,117 @@ export function NotesList({ batchId, isAdmin = true }: NotesListProps) {
     }
 
     return (
-        <Table>
-            <TableHeader className="bg-muted/5">
-                <TableRow className="hover:bg-transparent border-border/60">
-                    <TableHead className="w-[350px] text-[13px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Resource</TableHead>
-                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Node Group</TableHead>
-                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
-                    <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Deployed</TableHead>
-                    <TableHead className="text-right text-[13px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Access</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {notes.map((note: Note) => (
-                    <TableRow key={note.id} className="group border-border/40 hover:bg-muted/10 transition-colors">
-                        <TableCell className="py-5 pl-8">
-                            <div className="flex items-center gap-4">
-                                <div className="h-8 w-8 rounded border border-border/60 bg-muted/30 flex items-center justify-center text-muted-foreground group-hover:bg-foreground group-hover:text-background transition-colors">
-                                    <FileText className="h-3.5 w-3.5" />
+        <>
+            <Table>
+                <TableHeader className="bg-muted/5">
+                    <TableRow className="hover:bg-transparent border-border/60">
+                        <TableHead className="w-[350px] text-[13px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Resource</TableHead>
+                        <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Node Group</TableHead>
+                        <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
+                        <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Deployed</TableHead>
+                        <TableHead className="text-right text-[13px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Access</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {notes.map((note: Note) => (
+                        <TableRow key={note.id} className="group border-border/40 hover:bg-muted/10 transition-colors">
+                            <TableCell className="py-5 pl-8">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-8 w-8 rounded border border-border/60 bg-muted/30 flex items-center justify-center text-muted-foreground group-hover:bg-foreground group-hover:text-background transition-colors">
+                                        <FileText className="h-3.5 w-3.5" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{note.title}</span>
+                                        <span className="text-[12.5px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-60">MDX • {note.category || "General"}</span>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{note.title}</span>
-                                    <span className="text-[12.5px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-60">MDX • {note.category || "General"}</span>
+                            </TableCell>
+                            <TableCell>
+                                <div className="text-[13px] font-semibold px-2 py-0.5 rounded border border-border bg-muted/30 w-fit uppercase tracking-tighter text-muted-foreground">
+                                    {getBatchName(note.batchId)}
                                 </div>
-                            </div>
-                        </TableCell>
-                        <TableCell>
-                            <div className="text-[13px] font-semibold px-2 py-0.5 rounded border border-border bg-muted/30 w-fit uppercase tracking-tighter text-muted-foreground">
-                                {getBatchName(note.batchId)}
-                            </div>
-                        </TableCell>
-                        <TableCell>
-                            <div className="flex items-center gap-1.5 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
-                                <div className="h-1 w-1 rounded-full bg-emerald-500" />
-                                <span className="text-[13px] font-semibold uppercase tracking-widest">Available</span>
-                            </div>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground font-medium text-xs lowercase tracking-tighter tabular-nums">
-                            {new Date(note.createdAt).toLocaleDateString("en-US", {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric'
-                            })}
-                        </TableCell>
-                        <TableCell className="text-right pr-10">
-                            <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all duration-150">
-                                {note.content && note.content.length > 0 && (
-                                    <Button 
-                                        variant="ghost" 
-                                        size="icon" 
-                                        onClick={() => handleDownload(note)}
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex items-center gap-1.5 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
+                                    <div className="h-1 w-1 rounded-full bg-emerald-500" />
+                                    <span className="text-[13px] font-semibold uppercase tracking-widest">Available</span>
+                                </div>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground font-medium text-xs lowercase tracking-tighter tabular-nums">
+                                {new Date(note.createdAt).toLocaleDateString("en-US", {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}
+                            </TableCell>
+                            <TableCell className="text-right pr-10">
+                                <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all duration-150">
+                                    {note.content && note.content.length > 0 && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleDownload(note)}
+                                            className="h-8 w-8 rounded-md hover:bg-muted/50 hover:text-foreground"
+                                        >
+                                            <Download className="h-3.5 w-3.5" />
+                                        </Button>
+                                    )}
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
                                         className="h-8 w-8 rounded-md hover:bg-muted/50 hover:text-foreground"
                                     >
-                                        <Download className="h-3.5 w-3.5" />
+                                        <Eye className="h-3.5 w-3.5" />
                                     </Button>
-                                )}
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-8 w-8 rounded-md hover:bg-muted/50 hover:text-foreground"
-                                >
-                                    <Eye className="h-3.5 w-3.5" />
-                                </Button>
-                                {isAdmin && (
-                                    <Button 
-                                        variant="ghost" 
-                                        size="icon" 
-                                        onClick={() => handleDelete(note.id)} 
-                                        disabled={isDeleting}
-                                        className="h-8 w-8 rounded-md hover:bg-rose-500/5 hover:text-rose-500"
-                                    >
-                                        {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                                    </Button>
-                                )}
-                            </div>
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                                    {isAdmin && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => handleDelete(note.id)}
+                                            disabled={isDeleting}
+                                            className="h-8 w-8 rounded-md hover:bg-rose-500/5 hover:text-rose-500"
+                                        >
+                                            {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                                        </Button>
+                                    )}
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+
+            {pagination && pagination.totalPages > 1 && (
+                <div className="flex items-center justify-between px-8 py-3 border-t border-border/60 bg-muted/5">
+                    <p className="text-[11px] text-muted-foreground tabular-nums">
+                        Page {pagination.page} of {pagination.totalPages}
+                        <span className="ml-2 text-muted-foreground/60">
+                            ({(pagination.page - 1) * pagination.limit + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total})
+                        </span>
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                        {isFetching && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground mr-1" />}
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-7 w-7"
+                            disabled={pagination.page <= 1 || isFetching}
+                            onClick={() => setPage(p => p - 1)}
+                        >
+                            <ChevronLeft className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-7 w-7"
+                            disabled={pagination.page >= pagination.totalPages || isFetching}
+                            onClick={() => setPage(p => p + 1)}
+                        >
+                            <ChevronRight className="h-3.5 w-3.5" />
+                        </Button>
+                    </div>
+                </div>
+            )}
+        </>
     )
 }

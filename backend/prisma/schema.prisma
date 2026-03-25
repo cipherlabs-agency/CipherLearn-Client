@@ -65,8 +65,8 @@ model Student {
 
   @@index([batchId])
   @@index([userId])
-  @@index([batchId, isDeleted])
-  @@index([isDeleted, createdAt])
+  @@index([batchId, isDeleted])   // Paginated student list: WHERE batchId=? AND isDeleted=false
+  @@index([isDeleted, createdAt]) // Deleted list sorted by recency
   @@map("students")
 }
 
@@ -207,7 +207,7 @@ model YoutubeVideo {
   batch           Batch                   @relation(fields: [batchId], references: [id])
 
   @@index([batchId])
-  @@index([batchId, isDeleted])
+  @@index([batchId, isDeleted])   // Dashboard list: WHERE batchId=? AND isDeleted=false
   @@map("youtube_videos")
 }
 
@@ -225,7 +225,7 @@ model Note {
   batch     Batch     @relation(fields: [batchId], references: [id])
 
   @@index([batchId])
-  @@index([batchId, isDeleted])
+  @@index([batchId, isDeleted])   // Dashboard list: WHERE batchId=? AND isDeleted=false
   @@map("notes")
 }
 

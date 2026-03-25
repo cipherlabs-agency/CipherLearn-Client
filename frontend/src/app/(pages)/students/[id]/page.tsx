@@ -55,10 +55,10 @@ import { useGetStudentByIdQuery, useDeleteStudentMutation } from "@/redux/slices
 import { useGetBatchByIdQuery } from "@/redux/slices/batches/batchesApi"
 import { useGetStudentAttendanceMatrixQuery, useGetStudentAttendanceHistoryQuery } from "@/redux/slices/attendance/attendanceApi"
 import { useGetStudentFeesSummaryQuery, useGetFeeReceiptsQuery } from "@/redux/slices/fees/feesApi"
-import { useGetTestsQuery, useGetTestByIdQuery } from "@/redux/slices/tests/testsApi"
+import { useGetTestsQuery, useGetTestScoresQuery } from "@/redux/slices/tests/testsApi"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
-import type { FeeReceipt, AttendanceRecord, Test, TestWithScores, TestScore } from "@/types"
+import type { FeeReceipt, AttendanceRecord, Test, TestScore } from "@/types"
 
 // ─── Helpers ──────────────────────────────────────────────
 
@@ -672,8 +672,9 @@ export default function StudentDetailPage() {
 // ─── Test Score Row (fetches individual test) ─────────────
 
 function TestScoreRow({ test, studentId, compact }: { test: Test; studentId: number; compact?: boolean }) {
-    const { data: testWithScores } = useGetTestByIdQuery(test.id)
-    const score = testWithScores?.scores?.find((s: TestScore) => s.studentId === studentId)
+    // Fetch all scores for this test (coaching class batches are small, limit=200 covers all students)
+    const { data: scoresData } = useGetTestScoresQuery({ id: test.id, page: 1, limit: 200 })
+    const score = scoresData?.scores?.find((s: TestScore) => s.studentId === studentId)
 
     const pad = compact ? "px-0 py-2" : "px-5 py-3.5"
 

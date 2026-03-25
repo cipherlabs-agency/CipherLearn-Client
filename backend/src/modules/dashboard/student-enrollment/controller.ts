@@ -145,15 +145,23 @@ export default class StudentEnrollmentController {
   }
 
   /**
-   * Get all students (optionally by batch)
-   * GET /student-enrollment/students/:id?
+   * Get all students (optionally by batch) with pagination
+   * GET /student-enrollment/students?page=1&limit=20
+   * GET /student-enrollment/students/:id?page=1&limit=20  (filter by batchId)
    */
   public async getAll(req: Request, res: Response) {
     try {
       const batchId = req.params.id ? Number(req.params.id) : undefined;
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const limit = req.query.limit ? Math.min(Number(req.query.limit), 100) : 20;
+      const search = req.query.search ? String(req.query.search).trim() : undefined;
 
-      const students = await studentEnrollmentService.getAll(batchId);
-      return res.status(200).json({ success: true, data: students });
+      const result = await studentEnrollmentService.getAll(batchId, page, limit, search);
+      return res.status(200).json({
+        success: true,
+        data: result.students,
+        pagination: result.pagination,
+      });
     } catch (error) {
       log("error", "dashboard.student-enrollment.status failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("StudentEnrollment.getAll error:", error);

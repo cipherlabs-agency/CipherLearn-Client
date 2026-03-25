@@ -9,8 +9,10 @@ import { Textarea } from "@/components/ui/textarea"
 import {
     Dialog,
     DialogContent,
+    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useCreateAnnouncementMutation, AnnouncementPriority } from "@/redux/slices/announcements/announcementsApi"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -120,6 +122,7 @@ export function AddAnnouncementDialog() {
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[850px] p-0 gap-0 overflow-hidden bg-card border-border/40 shadow-xl">
+                <VisuallyHidden><DialogTitle>Add Announcement</DialogTitle></VisuallyHidden>
                 <form onSubmit={handleSubmit} className="flex flex-col h-[720px]">
                     {/* Header */}
                     <div className="px-8 pt-8 pb-6 border-b border-border/50 bg-primary/5 shrink-0">

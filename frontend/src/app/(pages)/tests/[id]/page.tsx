@@ -1,6 +1,6 @@
 "use client"
 
-import { use } from "react"
+import { use, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,13 +12,15 @@ import {
     TableRow
 } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ArrowLeft, Send, Loader2 } from "lucide-react"
+import { ArrowLeft, Send, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
-import { useGetTestByIdQuery, useGetTestStatsQuery, usePublishTestMutation } from "@/redux/slices/tests/testsApi"
+import { useGetTestByIdQuery, useGetTestScoresQuery, useGetTestStatsQuery, usePublishTestMutation } from "@/redux/slices/tests/testsApi"
 import { ScoreUploadDialog } from "@/components/tests/ScoreUploadDialog"
 import { BulkScoreUploadDialog } from "@/components/tests/BulkScoreUploadDialog"
 import { toast } from "sonner"
 import { ScoreStatus, TestType, TestStatus } from "@/types"
+
+const SCORES_PER_PAGE = 50
 
 const TYPE_LABELS: Record<TestType, string> = {
     UNIT_TEST: "Unit Test",
@@ -45,9 +47,18 @@ const SCORE_STATUS_STYLES: Record<ScoreStatus, { label: string; className: strin
 export default function TestDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params)
     const testId = Number(id)
+    const [scorePage, setScorePage] = useState(1)
+
     const { data: test, isLoading, isError } = useGetTestByIdQuery(testId)
+    const { data: scoresData, isLoading: scoresLoading, isFetching: scoresFetching } = useGetTestScoresQuery(
+        { id: testId, page: scorePage, limit: SCORES_PER_PAGE },
+        { skip: !test }
+    )
     const { data: stats } = useGetTestStatsQuery(testId)
     const [publishTest, { isLoading: isPublishing }] = usePublishTestMutation()
+
+    const scores = scoresData?.scores ?? []
+    const pagination = scoresData?.pagination
 
     const handlePublish = async () => {
         try {
@@ -183,53 +194,115 @@ export default function TestDetailPage({ params }: { params: Promise<{ id: strin
 
             {/* Scores Table */}
             <Card className="!p-0 overflow-hidden border-border/60 shadow-sm">
-                {test.scores.length === 0 ? (
+                {/* Table header row with score count */}
+                <div className="flex items-center justify-between px-6 py-3 border-b border-border/60 bg-muted/5">
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                        Scores
+                        {pagination && (
+                            <span className="ml-2 font-normal normal-case tracking-normal text-muted-foreground/70">
+                                — {pagination.total} total
+                            </span>
+                        )}
+                    </p>
+                    {scoresLoading || scoresFetching ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                    ) : null}
+                </div>
+
+                {scoresLoading ? (
+                    <div className="divide-y divide-border/40">
+                        {[1, 2, 3, 4, 5].map((row) => (
+                            <div key={row} className="px-6 py-4 flex items-center gap-4">
+                                <Skeleton className="h-4 w-32" />
+                                <Skeleton className="h-4 w-16" />
+                                <Skeleton className="h-4 w-12" />
+                                <Skeleton className="h-4 w-8" />
+                                <Skeleton className="h-5 w-12 rounded-md" />
+                                <Skeleton className="h-3 w-24" />
+                            </div>
+                        ))}
+                    </div>
+                ) : scores.length === 0 ? (
                     <div className="text-center py-16">
                         <h3 className="text-sm font-semibold tracking-tight uppercase opacity-80">No Scores Yet</h3>
                         <p className="text-[11px] text-muted-foreground mt-2">Upload scores using the buttons above.</p>
                     </div>
                 ) : (
-                    <Table>
-                        <TableHeader className="bg-muted/5">
-                            <TableRow className="hover:bg-transparent border-border/60">
-                                <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Student</TableHead>
-                                <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Marks</TableHead>
-                                <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Percentage</TableHead>
-                                <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Grade</TableHead>
-                                <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
-                                <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Remarks</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {test.scores.map((score) => {
-                                const scoreStyle = SCORE_STATUS_STYLES[score.status]
-                                return (
-                                    <TableRow key={score.id} className="border-border/40 hover:bg-muted/10 transition-colors">
-                                        <TableCell className="py-3 pl-8">
-                                            <span className="font-semibold text-sm tracking-tight text-foreground">{score.student.fullname}</span>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className="text-[13px] font-semibold tabular-nums">{score.marksObtained}/{test.totalMarks}</span>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className="text-[13px] font-medium tabular-nums">{score.percentage}%</span>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className="text-[13px] font-bold">{score.grade || "-"}</span>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className={`text-[10px] font-semibold px-2 py-0.5 rounded border w-fit uppercase tracking-tighter ${scoreStyle.className}`}>
-                                                {scoreStyle.label}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className="text-[11px] text-muted-foreground">{score.remarks || "-"}</span>
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            })}
-                        </TableBody>
-                    </Table>
+                    <>
+                        <Table>
+                            <TableHeader className="bg-muted/5">
+                                <TableRow className="hover:bg-transparent border-border/60">
+                                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Student</TableHead>
+                                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Marks</TableHead>
+                                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Percentage</TableHead>
+                                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Grade</TableHead>
+                                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
+                                    <TableHead className="text-[10px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Remarks</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {scores.map((score) => {
+                                    const scoreStyle = SCORE_STATUS_STYLES[score.status]
+                                    return (
+                                        <TableRow key={score.id} className="border-border/40 hover:bg-muted/10 transition-colors">
+                                            <TableCell className="py-3 pl-8">
+                                                <span className="font-semibold text-sm tracking-tight text-foreground">{score.student.fullname}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-[13px] font-semibold tabular-nums">{score.marksObtained}/{test.totalMarks}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-[13px] font-medium tabular-nums">{score.percentage}%</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-[13px] font-bold">{score.grade || "-"}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className={`text-[10px] font-semibold px-2 py-0.5 rounded border w-fit uppercase tracking-tighter ${scoreStyle.className}`}>
+                                                    {scoreStyle.label}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-[11px] text-muted-foreground">{score.remarks || "-"}</span>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+
+                        {/* Pagination */}
+                        {pagination && pagination.totalPages > 1 && (
+                            <div className="flex items-center justify-between px-6 py-3 border-t border-border/60 bg-muted/5">
+                                <p className="text-[11px] text-muted-foreground tabular-nums">
+                                    Page {pagination.page} of {pagination.totalPages}
+                                    <span className="ml-2 text-muted-foreground/60">
+                                        ({(pagination.page - 1) * pagination.limit + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total})
+                                    </span>
+                                </p>
+                                <div className="flex items-center gap-1.5">
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="h-7 w-7"
+                                        disabled={pagination.page <= 1 || scoresFetching}
+                                        onClick={() => setScorePage(p => p - 1)}
+                                    >
+                                        <ChevronLeft className="h-3.5 w-3.5" />
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="h-7 w-7"
+                                        disabled={pagination.page >= pagination.totalPages || scoresFetching}
+                                        onClick={() => setScorePage(p => p + 1)}
+                                    >
+                                        <ChevronRight className="h-3.5 w-3.5" />
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </Card>
         </div>

@@ -9,8 +9,10 @@ import { Textarea } from "@/components/ui/textarea"
 import {
     Dialog,
     DialogContent,
+    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useUploadVideoMutation } from "@/redux/slices/videos/videosApi"
 import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
 import { toast } from "sonner"
@@ -94,6 +96,7 @@ export function AddVideoDialog() {
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[900px] p-0 gap-0 overflow-hidden bg-card border-border/40 shadow-xl">
+                <VisuallyHidden><DialogTitle>Add Video</DialogTitle></VisuallyHidden>
                 <form onSubmit={handleSubmit} className="flex flex-col h-[750px]">
                     {/* Header */}
                     <div className="px-8 pt-8 pb-6 border-b border-border/50 bg-red-500/5 shrink-0">

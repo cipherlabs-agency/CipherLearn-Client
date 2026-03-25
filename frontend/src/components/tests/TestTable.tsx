@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
-import { Trash2, Loader2, Eye, Send } from "lucide-react"
+import { Trash2, Loader2, Eye, Send, ChevronLeft, ChevronRight } from "lucide-react"
 import { AddTestDialog } from "./AddTestDialog"
 import { FC, useState } from "react"
 import { useGetTestsQuery, useDeleteTestMutation, usePublishTestMutation } from "@/redux/slices/tests/testsApi"
@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/select"
 import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
 import Link from "next/link"
+
+const LIMIT = 20
 
 const STATUS_STYLES: Record<TestStatus, { label: string; className: string }> = {
     DRAFT: { label: "Draft", className: "border-zinc-500/30 bg-zinc-500/10 text-zinc-600 dark:text-zinc-400" },
@@ -44,21 +46,25 @@ const TYPE_LABELS: Record<TestType, string> = {
 }
 
 export const TestTable: FC = () => {
+    const [page, setPage] = useState(1)
     const [batchFilter, setBatchFilter] = useState<string>("")
     const [statusFilter, setStatusFilter] = useState<string>("")
     const { data: batches } = useGetAllBatchesQuery()
 
-    const queryParams: Record<string, unknown> = {}
-    if (batchFilter && batchFilter !== "all") queryParams.batchId = Number(batchFilter)
-    if (statusFilter && statusFilter !== "all") queryParams.status = statusFilter
+    const handleBatchFilter = (val: string) => { setBatchFilter(val); setPage(1) }
+    const handleStatusFilter = (val: string) => { setStatusFilter(val); setPage(1) }
 
-    const { data, isLoading, isError } = useGetTestsQuery(
-        Object.keys(queryParams).length > 0 ? queryParams as { batchId?: number; status?: string } : undefined
-    )
+    const { data, isLoading, isError, isFetching } = useGetTestsQuery({
+        ...(batchFilter && batchFilter !== "all" ? { batchId: Number(batchFilter) } : {}),
+        ...(statusFilter && statusFilter !== "all" ? { status: statusFilter } : {}),
+        page,
+        limit: LIMIT,
+    })
     const [deleteTest, { isLoading: isDeleting }] = useDeleteTestMutation()
     const [publishTest, { isLoading: isPublishing }] = usePublishTestMutation()
 
     const tests = data?.tests ?? []
+    const pagination = data?.pagination
 
     const handleDelete = async (id: number): Promise<void> => {
         try {
@@ -128,7 +134,7 @@ export const TestTable: FC = () => {
     return (
         <div>
             <div className="px-6 py-3 border-b border-border/60 flex items-center gap-3">
-                <Select value={batchFilter} onValueChange={setBatchFilter}>
+                <Select value={batchFilter} onValueChange={handleBatchFilter}>
                     <SelectTrigger className="h-8 w-[180px] text-[12px]">
                         <SelectValue placeholder="All Batches" />
                     </SelectTrigger>
@@ -139,7 +145,7 @@ export const TestTable: FC = () => {
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select value={statusFilter} onValueChange={handleStatusFilter}>
                     <SelectTrigger className="h-8 w-[140px] text-[12px]">
                         <SelectValue placeholder="All Status" />
                     </SelectTrigger>
@@ -161,91 +167,125 @@ export const TestTable: FC = () => {
                     </div>
                 </Card>
             ) : (
-                <Table>
-                    <TableHeader className="bg-muted/5">
-                        <TableRow className="hover:bg-transparent border-border/60">
-                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Title</TableHead>
-                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Type</TableHead>
-                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Batch</TableHead>
-                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Date</TableHead>
-                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Marks</TableHead>
-                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
-                            <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Scores</TableHead>
-                            <TableHead className="text-right text-[13px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {tests.map((test: Test) => {
-                            const statusStyle = STATUS_STYLES[test.status]
-                            return (
-                                <TableRow key={test.id} className="group border-border/40 hover:bg-muted/30 transition-colors">
-                                    <TableCell className="py-4 pl-8">
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{test.title}</span>
-                                            <span className="text-[13px] text-muted-foreground mt-1">{test.subject}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span className="text-[13px] font-semibold px-1.5 py-0.5 rounded border border-border bg-muted/50 uppercase tracking-tighter">
-                                            {TYPE_LABELS[test.testType]}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span className="text-[13.5px] font-medium text-foreground/80">{test.batch.name}</span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">
-                                            {new Date(test.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">{test.totalMarks}</span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className={`text-[13px] font-semibold px-2 py-0.5 rounded border w-fit uppercase tracking-tighter ${statusStyle.className}`}>
-                                            {statusStyle.label}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">
-                                            {test._count?.scores ?? 0}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell className="text-right pr-10">
-                                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all duration-150">
-                                            <Link href={`/tests/${test.id}`}>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md hover:bg-blue-500/5 hover:text-blue-500">
-                                                    <Eye className="h-3.5 w-3.5" />
-                                                </Button>
-                                            </Link>
-                                            {test.status !== "PUBLISHED" && (
+                <>
+                    <Table>
+                        <TableHeader className="bg-muted/5">
+                            <TableRow className="hover:bg-transparent border-border/60">
+                                <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 pl-8 text-muted-foreground">Title</TableHead>
+                                <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Type</TableHead>
+                                <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Batch</TableHead>
+                                <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Date</TableHead>
+                                <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Marks</TableHead>
+                                <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Status</TableHead>
+                                <TableHead className="text-[13px] font-semibold uppercase tracking-widest py-4 text-muted-foreground">Scores</TableHead>
+                                <TableHead className="text-right text-[13px] font-semibold uppercase tracking-widest py-4 pr-10 text-muted-foreground">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {tests.map((test: Test) => {
+                                const statusStyle = STATUS_STYLES[test.status]
+                                return (
+                                    <TableRow key={test.id} className="group border-border/40 hover:bg-muted/30 transition-colors">
+                                        <TableCell className="py-4 pl-8">
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold text-sm tracking-tight leading-none text-foreground">{test.title}</span>
+                                                <span className="text-[13px] text-muted-foreground mt-1">{test.subject}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-[13px] font-semibold px-1.5 py-0.5 rounded border border-border bg-muted/50 uppercase tracking-tighter">
+                                                {TYPE_LABELS[test.testType]}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-[13.5px] font-medium text-foreground/80">{test.batch.name}</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">
+                                                {new Date(test.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">{test.totalMarks}</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className={`text-[13px] font-semibold px-2 py-0.5 rounded border w-fit uppercase tracking-tighter ${statusStyle.className}`}>
+                                                {statusStyle.label}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-[13.5px] font-medium tabular-nums text-foreground/80">
+                                                {test._count?.scores ?? 0}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="text-right pr-10">
+                                            <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all duration-150">
+                                                <Link href={`/tests/${test.id}`}>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md hover:bg-blue-500/5 hover:text-blue-500">
+                                                        <Eye className="h-3.5 w-3.5" />
+                                                    </Button>
+                                                </Link>
+                                                {test.status !== "PUBLISHED" && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 rounded-md hover:bg-emerald-500/5 hover:text-emerald-500"
+                                                        onClick={() => handlePublish(test.id)}
+                                                        disabled={isPublishing}
+                                                        title="Publish scores"
+                                                    >
+                                                        {isPublishing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                                                    </Button>
+                                                )}
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="h-8 w-8 rounded-md hover:bg-emerald-500/5 hover:text-emerald-500"
-                                                    onClick={() => handlePublish(test.id)}
-                                                    disabled={isPublishing}
-                                                    title="Publish scores"
+                                                    className="h-8 w-8 rounded-md hover:bg-rose-500/5 hover:text-rose-500"
+                                                    onClick={() => handleDelete(test.id)}
+                                                    disabled={isDeleting}
                                                 >
-                                                    {isPublishing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                                                    {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                                                 </Button>
-                                            )}
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 rounded-md hover:bg-rose-500/5 hover:text-rose-500"
-                                                onClick={() => handleDelete(test.id)}
-                                                disabled={isDeleting}
-                                            >
-                                                {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+
+                    {pagination && pagination.totalPages > 1 && (
+                        <div className="flex items-center justify-between px-6 py-3 border-t border-border/60 bg-muted/5">
+                            <p className="text-[11px] text-muted-foreground tabular-nums">
+                                Page {pagination.page} of {pagination.totalPages}
+                                <span className="ml-2 text-muted-foreground/60">
+                                    ({(pagination.page - 1) * pagination.limit + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total})
+                                </span>
+                            </p>
+                            <div className="flex items-center gap-1.5">
+                                {isFetching && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground mr-1" />}
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    disabled={pagination.page <= 1 || isFetching}
+                                    onClick={() => setPage(p => p - 1)}
+                                >
+                                    <ChevronLeft className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    disabled={pagination.page >= pagination.totalPages || isFetching}
+                                    onClick={() => setPage(p => p + 1)}
+                                >
+                                    <ChevronRight className="h-3.5 w-3.5" />
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     )

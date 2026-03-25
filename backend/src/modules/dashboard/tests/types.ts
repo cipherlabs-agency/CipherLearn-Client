@@ -88,6 +88,11 @@ export interface GetTestsQuery {
   limit?: number;
 }
 
+export interface GetScoresQuery {
+  page?: number;
+  limit?: number;
+}
+
 export interface TestStatsResponse {
   testId: number;
   title: string;

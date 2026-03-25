@@ -237,6 +237,8 @@ export default class AttendanceController {
         batchId,
         startDate: startDate as string,
         endDate: endDate as string,
+        page: req.query.page ? Number(req.query.page) : 1,
+        limit: req.query.limit ? Math.min(Number(req.query.limit), 200) : 50,
       };
 
       const report = await attendanceService.generateAttendanceReport(query);

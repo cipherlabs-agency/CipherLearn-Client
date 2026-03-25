@@ -49,7 +49,7 @@ function getInitials(name: string): string {
 
 interface StudentTableProps {
     students: Student[]
-    allStudents: Student[]
+    totalInDatabase: number | undefined
     batchNameMap: Record<number, string>
     isLoading: boolean
     search: string
@@ -59,7 +59,7 @@ interface StudentTableProps {
 
 export const StudentTable: FC<StudentTableProps> = ({
     students,
-    allStudents,
+    totalInDatabase,
     batchNameMap,
     isLoading,
     search,
@@ -109,7 +109,7 @@ export const StudentTable: FC<StudentTableProps> = ({
 
     // ─── Error ────────────────────────────────────────────
 
-    if (!allStudents || allStudents.length === 0) {
+    if (totalInDatabase === 0 && !search) {
         return (
             <Card className="text-center py-16 border-dashed border-border/60 bg-muted/5 m-5 flex flex-col items-center">
                 <GraduationCap className="h-8 w-8 text-foreground/20 mb-3" />

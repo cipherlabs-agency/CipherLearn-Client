@@ -45,7 +45,8 @@ const INITIAL_FORM: FormState = {
 export function ScoreUploadDialog({ testId, batchId }: ScoreUploadDialogProps) {
     const [open, setOpen] = useState(false)
     const [uploadScore, { isLoading }] = useUploadScoreMutation()
-    const { data: students } = useGetStudentsQuery(batchId)
+    const { data: studentsData } = useGetStudentsQuery({ batchId, limit: 500 })
+    const students = studentsData?.students ?? []
     const [formData, setFormData] = useState<FormState>(INITIAL_FORM)
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -100,7 +101,7 @@ export function ScoreUploadDialog({ testId, batchId }: ScoreUploadDialogProps) {
                                     <SelectValue placeholder="Select student" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {students?.map((s) => (
+                                    {students.map((s) => (
                                         <SelectItem key={s.id} value={String(s.id)}>{s.fullname}</SelectItem>
                                     ))}
                                 </SelectContent>

@@ -1,5 +1,8 @@
 import { Prisma } from "../../../../prisma/generated/prisma/client";
 import { prisma } from "../../../config/db.config";
+import { cacheService } from "../../../cache";
+import { DashboardKeys, InvalidationPatterns } from "../../../cache/keys";
+import * as TTL from "../../../cache/ttl";
 
 export interface TeacherPermissions {
   canManageLectures: boolean;
@@ -37,15 +40,20 @@ export const DEFAULT_TEACHER_PERMISSIONS: TeacherPermissions = {
 export class SettingsService {
   /** Get current settings (creates defaults if not yet saved) */
   async getSettings() {
-    return prisma.appSettings.upsert({
-      where: { id: 1 },
-      update: {},
-      create: { id: 1 },
-    });
+    return cacheService.getOrSet(
+      DashboardKeys.settings(),
+      async () => {
+        const existing = await prisma.appSettings.findUnique({ where: { id: 1 } });
+        if (existing) return existing;
+        return prisma.appSettings.create({ data: { id: 1 } });
+      },
+      TTL.SETTINGS
+    );
   }
 
   /** Update settings (partial update) */
   async updateSettings(data: UpdateSettingsInput) {
+    cacheService.delByPrefix(InvalidationPatterns.dashSettings);
     return prisma.appSettings.upsert({
       where: { id: 1 },
       update: {

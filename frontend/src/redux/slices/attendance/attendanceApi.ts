@@ -102,8 +102,15 @@ export const attendanceApi = api.injectEndpoints({
 
         // Generate attendance report (Admin/Teacher)
         getAttendanceReport: builder.query<AttendanceReport, AttendanceReportParams>({
-            query: ({ batchId, startDate, endDate }) =>
-                `/dashboard/attendance/report/${batchId}?startDate=${startDate}&endDate=${endDate}`,
+            query: ({ batchId, startDate, endDate, page = 1, limit = 50 }) => {
+                const params = new URLSearchParams({
+                    startDate,
+                    endDate,
+                    page: String(page),
+                    limit: String(limit),
+                });
+                return `/dashboard/attendance/report/${batchId}?${params.toString()}`;
+            },
             transformResponse: (response: ApiResponse<AttendanceReport>) => response.data!,
             providesTags: ['Attendance'],
         }),

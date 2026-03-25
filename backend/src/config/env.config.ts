@@ -7,6 +7,7 @@ export const config = {
     PORT: process.env.APP_PORT || 3000,
     HOST: process.env.APP_HOST || "localhost",
     ENV: process.env.NODE_ENV || "development",
+    URL: process.env.API_URL || "",          // Public URL of this backend (Render service URL)
     CLIENT_URL: process.env.CLIENT_URL || "",
     SALT: Number(process.env.SALT) || 10,
     ADMIN_EMAILS: process.env.ADMIN_EMAILS,

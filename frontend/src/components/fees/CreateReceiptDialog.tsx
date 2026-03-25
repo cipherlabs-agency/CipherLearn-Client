@@ -9,8 +9,10 @@ import { Textarea } from "@/components/ui/textarea"
 import {
     Dialog,
     DialogContent,
+    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import {
     Select,
     SelectContent,
@@ -150,9 +152,11 @@ export function CreateReceiptDialog({ onSuccess }: CreateReceiptDialogProps) {
     const [searchTerm, setSearchTerm] = useState("")
 
     const { data: batches = [] } = useGetAllBatchesQuery()
-    const { data: students = [] } = useGetStudentsQuery(selectedBatchId ? Number(selectedBatchId) : undefined, {
-        skip: !selectedBatchId
-    })
+    const { data: studentsPageData } = useGetStudentsQuery(
+        selectedBatchId ? { batchId: Number(selectedBatchId), limit: 500 } : undefined,
+        { skip: !selectedBatchId }
+    )
+    const students = studentsPageData?.students ?? []
     const { data: feeStructures = [] } = useGetFeeStructuresByBatchQuery(
         selectedBatchId ? Number(selectedBatchId) : 0,
         { skip: !selectedBatchId }
@@ -319,6 +323,7 @@ export function CreateReceiptDialog({ onSuccess }: CreateReceiptDialogProps) {
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[700px] p-0 gap-0 overflow-hidden bg-card border-border/40 shadow-xl">
+                <VisuallyHidden><DialogTitle>Create Receipt</DialogTitle></VisuallyHidden>
                 <div className="flex flex-col md:flex-row h-[560px]">
                     <StepBar 
                         step={step} 

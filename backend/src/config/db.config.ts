@@ -20,18 +20,18 @@ export class Database {
       connectionTimeoutMillis: 5_000,
     };
     this.adapter = new PrismaPg(poolConfig);
+    const isDev = process.env.NODE_ENV !== "production";
     this.prisma = new PrismaClient({
       adapter: this.adapter,
-      log: [
-        { level: "query", emit: "event" },
-        { level: "error", emit: "stdout" },
-        { level: "info", emit: "stdout" },
-        { level: "warn", emit: "stdout" },
-      ],
+      log: isDev
+        ? [{ level: "query", emit: "event" }, { level: "error", emit: "stdout" }, { level: "warn", emit: "stdout" }]
+        : [{ level: "error", emit: "stdout" }, { level: "warn", emit: "stdout" }],
     });
 
-    // @ts-ignore
-    this.prisma.$on("query", this.defaultQueryLogger);
+    if (isDev) {
+      // @ts-ignore
+      this.prisma.$on("query", this.defaultQueryLogger);
+    }
   }
 
   private defaultQueryLogger = (e: Prisma.QueryEvent): void => {

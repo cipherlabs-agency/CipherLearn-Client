@@ -121,7 +121,7 @@ export default class YoutubeVideoService {
   /**
    * Get videos for a specific batch
    */
-  async getByBatch(batchId: number) {
+  async getByBatch(batchId: number, page = 1, limit = 20) {
     try {
       const batch = await prisma.batch.findUnique({
         where: { id: batchId },
@@ -130,6 +130,8 @@ export default class YoutubeVideoService {
       if (!batch) {
         throw new Error("Batch not found");
       }
+
+      const where = { isDeleted: false, batchId };
 
       const select: Prisma.YoutubeVideoSelect = {
         id: true,
@@ -142,13 +144,21 @@ export default class YoutubeVideoService {
         createdAt: true,
       };
 
-      const youtubeVideos = await prisma.youtubeVideo.findMany({
-        where: { isDeleted: false, batchId: batchId },
-        select: select,
-        orderBy: { createdAt: "desc" },
-      });
+      const [total, youtubeVideos] = await Promise.all([
+        prisma.youtubeVideo.count({ where }),
+        prisma.youtubeVideo.findMany({
+          where,
+          select,
+          orderBy: { createdAt: "desc" },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+      ]);
 
-      return youtubeVideos;
+      return {
+        videos: youtubeVideos,
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      };
     } catch (error) {
       log("error", "dashboard.youtube-videos.findMany failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;

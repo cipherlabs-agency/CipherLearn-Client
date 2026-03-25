@@ -46,8 +46,14 @@ const getQuery = Joi.object({
   search: Joi.string().optional(),
 });
 
+const batchQuery = Joi.object({
+  page: Joi.number().min(1).default(1),
+  limit: Joi.number().min(1).max(100).default(20),
+});
+
 export const YoutubeVideoValidations = {
   upload,
   update,
   getQuery,
+  batchQuery,
 };

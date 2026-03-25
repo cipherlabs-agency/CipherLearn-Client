@@ -59,6 +59,8 @@ export interface AttendanceReportQuery {
   batchId: number;
   startDate: string;
   endDate: string;
+  page?: number;
+  limit?: number;
 }
 
 /**
@@ -72,6 +74,7 @@ export interface AttendanceReport {
   totalStudents: number;
   overallAttendancePercentage: number;
   studentStats: StudentAttendanceStats[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
 }
 
 export interface StudentAttendanceStats {

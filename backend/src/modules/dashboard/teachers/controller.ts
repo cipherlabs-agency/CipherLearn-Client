@@ -52,11 +52,16 @@ export default class TeacherController {
    */
   public async getAll(req: Request, res: Response) {
     try {
-      const teachers = await teacherService.getAll();
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const limit = req.query.limit ? Number(req.query.limit) : 20;
+      const search = req.query.search as string | undefined;
+
+      const result = await teacherService.getAll(page, limit, search);
 
       return res.status(200).json({
         success: true,
-        data: teachers,
+        data: result.teachers,
+        pagination: result.pagination,
       });
     } catch (error: any) {
       log("error", "dashboard.teachers.status failed", { err: error instanceof Error ? error.message : String(error) });

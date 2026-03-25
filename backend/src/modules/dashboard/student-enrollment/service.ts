@@ -357,9 +357,17 @@ export default class StudentEnrollmentService {
   }
 
   /**
-   * Get all students (optionally filtered by batch)
+   * Get all students (optionally filtered by batch) with pagination
    */
-  public async getAll(batchId?: number): Promise<Student[]> {
+  public async getAll(
+    batchId?: number,
+    page: number = 1,
+    limit: number = 20,
+    search?: string
+  ): Promise<{
+    students: Student[];
+    pagination: { page: number; limit: number; total: number; totalPages: number };
+  }> {
     if (batchId) {
       const batch = await prisma.batch.findUnique({
         where: { id: batchId },
@@ -370,45 +378,64 @@ export default class StudentEnrollmentService {
       }
     }
 
-    return cacheService.getOrSet(
-      DashboardKeys.studentList(batchId),
-      async () => {
-        const select: Prisma.StudentSelect = {
-          id: true,
-          firstname: true,
-          middlename: true,
-          lastname: true,
-          fullname: true,
-          email: true,
-          dob: true,
-          address: true,
-          phone: true,
-          parentName: true,
-          grade: true,
-          instituteId: true,
-          batchId: true,
-          createdAt: true,
-          updatedAt: true,
-        };
+    const select: Prisma.StudentSelect = {
+      id: true,
+      firstname: true,
+      middlename: true,
+      lastname: true,
+      fullname: true,
+      email: true,
+      dob: true,
+      address: true,
+      phone: true,
+      parentName: true,
+      grade: true,
+      instituteId: true,
+      batchId: true,
+      createdAt: true,
+      updatedAt: true,
+    };
 
-        const where: Prisma.StudentWhereInput = {
-          isDeleted: false,
-        };
+    const where: Prisma.StudentWhereInput = { isDeleted: false };
+    if (batchId) where.batchId = batchId;
+    if (search) {
+      where.OR = [
+        { fullname: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { phone: { contains: search, mode: "insensitive" } },
+        { parentName: { contains: search, mode: "insensitive" } },
+      ];
+    }
 
-        if (batchId) {
-          where.batchId = batchId;
-        }
+    const skip = (page - 1) * limit;
 
-        const students = await prisma.student.findMany({
+    const fetcher = async () => {
+      const [students, total] = await Promise.all([
+        prisma.student.findMany({
           where,
           select,
           orderBy: { createdAt: "desc" },
-        });
+          skip,
+          take: limit,
+        }),
+        prisma.student.count({ where }),
+      ]);
+      return {
+        students: students as unknown as Student[],
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      };
+    };
 
-        return students;
-      },
-      TTL.STUDENT_LIST
-    );
+    // Cache only the first page with no search filter
+    if (page === 1 && !search) {
+      return cacheService.getOrSet(
+        DashboardKeys.studentList(batchId),
+        fetcher,
+        TTL.STUDENT_LIST
+      );
+    }
+
+    return fetcher();
   }
 
   /**
@@ -555,17 +582,16 @@ export default class StudentEnrollmentService {
    * Get all soft-deleted students
    */
   public async getDeleted(): Promise<Student[]> {
-    const students = await prisma.student.findMany({
-      where: { isDeleted: true },
-      include: {
-        batch: {
-          select: { id: true, name: true },
-        },
-      },
-      orderBy: { updatedAt: "desc" },
-    });
-
-    return students;
+    return cacheService.getOrSet(
+      DashboardKeys.studentDeletedList(),
+      () =>
+        prisma.student.findMany({
+          where: { isDeleted: true },
+          include: { batch: { select: { id: true, name: true } } },
+          orderBy: { updatedAt: "desc" },
+        }),
+      TTL.STUDENT_DELETED_LIST
+    ) as Promise<Student[]>;
   }
 
   /**

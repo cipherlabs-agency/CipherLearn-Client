@@ -2,11 +2,28 @@ import { api, ApiResponse } from '../../api/api';
 import {
     Student,
     StudentProfile,
-    StudentsApiResponse,
     EnrollStudentInput,
     CSVPreviewData,
     CSVImportResult
 } from '@/types';
+
+export interface GetStudentsParams {
+    batchId?: number;
+    page?: number;
+    limit?: number;
+    search?: string;
+}
+
+interface StudentsListResponse {
+    success: boolean;
+    data: Student[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
 
 // Local types for update input if not in central types
 export interface UpdateStudentInput {
@@ -21,30 +38,28 @@ export interface UpdateStudentInput {
 
 export const studentsApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        // Get all students (optionally by batch)
-        getStudents: builder.query<Student[], number | void>({
-            query: (batchId) => {
-                if (batchId) {
-                    return `/dashboard/student-enrollment/students/${batchId}`;
-                }
-                return '/dashboard/student-enrollment/students';
+        // Get students with server-side pagination, filtering, and search
+        getStudents: builder.query<{ students: Student[]; pagination: StudentsListResponse['pagination'] }, GetStudentsParams | void>({
+            query: (params) => {
+                const p = params ?? {};
+                const qs = new URLSearchParams();
+                if (p.page) qs.set('page', String(p.page));
+                if (p.limit) qs.set('limit', String(p.limit));
+                if (p.search) qs.set('search', p.search);
+                const queryString = qs.toString();
+                const base = p.batchId
+                    ? `/dashboard/student-enrollment/students/${p.batchId}`
+                    : '/dashboard/student-enrollment/students';
+                return queryString ? `${base}?${queryString}` : base;
             },
-            transformResponse: (response: StudentsApiResponse | { students?: Student[] } | Student[]): Student[] => {
-                if (Array.isArray(response)) {
-                    return response;
-                }
-                if ('data' in response && Array.isArray(response.data)) {
-                    return response.data;
-                }
-                if ('students' in response && Array.isArray(response.students)) {
-                    return response.students;
-                }
-                return [];
-            },
+            transformResponse: (response: StudentsListResponse) => ({
+                students: response.data,
+                pagination: response.pagination,
+            }),
             providesTags: (result) =>
                 result
                     ? [
-                        ...result.map(({ id }) => ({ type: 'Students' as const, id })),
+                        ...result.students.map(({ id }) => ({ type: 'Students' as const, id })),
                         { type: 'Students', id: 'LIST' }
                     ]
                     : [{ type: 'Students', id: 'LIST' }],
@@ -72,61 +87,25 @@ export const studentsApi = api.injectEndpoints({
             invalidatesTags: [{ type: 'Students', id: 'LIST' }, 'Dashboard', 'Batches'],
         }),
 
-        // Update student with optimistic update
+        // Update student
         updateStudent: builder.mutation<ApiResponse<Student>, { id: number; data: UpdateStudentInput }>({
             query: ({ id, data }) => ({
                 url: `/dashboard/student-enrollment/student/${id}`,
                 method: 'PUT',
                 body: data,
             }),
-            async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
-                // Optimistic update for the list
-                const patchResult = dispatch(
-                    studentsApi.util.updateQueryData('getStudents', undefined, (draft) => {
-                        const student = draft.find(s => s.id === id);
-                        if (student) {
-                            Object.assign(student, {
-                                firstname: data.firstname ?? student.firstname,
-                                lastname: data.lastname ?? student.lastname,
-                                middlename: data.middlename ?? student.middlename,
-                                email: data.email ?? student.email,
-                            });
-                        }
-                    })
-                );
-                try {
-                    await queryFulfilled;
-                } catch {
-                    patchResult.undo();
-                }
-            },
             invalidatesTags: (_result, _error, { id }) => [
                 { type: 'Students', id },
                 { type: 'Students', id: 'LIST' }
             ],
         }),
 
-        // Delete student with optimistic update
+        // Delete student
         deleteStudent: builder.mutation<ApiResponse<void>, number>({
             query: (id) => ({
                 url: `/dashboard/student-enrollment/student/${id}`,
                 method: 'DELETE',
             }),
-            async onQueryStarted(id, { dispatch, queryFulfilled }) {
-                const patchResult = dispatch(
-                    studentsApi.util.updateQueryData('getStudents', undefined, (draft) => {
-                        const index = draft.findIndex(s => s.id === id);
-                        if (index !== -1) {
-                            draft.splice(index, 1);
-                        }
-                    })
-                );
-                try {
-                    await queryFulfilled;
-                } catch {
-                    patchResult.undo();
-                }
-            },
             invalidatesTags: (_result, _error, id) => [
                 { type: 'Students', id },
                 { type: 'Students', id: 'LIST' },

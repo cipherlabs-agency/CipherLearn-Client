@@ -36,3 +36,9 @@ export const APP_ATTENDANCE_CALENDAR = 120;
 
 // App starred resources (student bookmarks)
 export const APP_STARRED_RESOURCES = 300;
+
+// Dashboard — additional entries
+export const STUDENT_DELETED_LIST = 120;   // 2 min — deleted list refreshes after restore/delete
+export const BATCH_DRAFTS = 120;           // 2 min
+export const SETTINGS = 300;              // 5 min — settings rarely change
+export const FEE_RECEIPTS_SUMMARY = 120;  // 2 min — summary may change with payments

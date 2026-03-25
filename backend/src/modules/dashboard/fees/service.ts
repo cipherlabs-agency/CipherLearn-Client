@@ -1,6 +1,9 @@
 import { Prisma, PaymentStatus, FeeStructure, FeeReceipt } from "../../../../prisma/generated/prisma/client";
 import { prisma } from "../../../config/db.config";
 import { invalidateAfterFeesMutation } from "../../../cache/invalidation";
+import { cacheService } from "../../../cache";
+import { DashboardKeys } from "../../../cache/keys";
+import * as TTL from "../../../cache/ttl";
 import {
   CreateFeeStructureInput,
   UpdateFeeStructureInput,
@@ -528,89 +531,75 @@ export default class FeesService {
   // ============================================
 
   /**
-   * Get receipts summary with statistics
+   * Get receipts summary with statistics — uses SQL aggregation for performance
    */
   async getReceiptsSummary(filters: FeeReceiptFilters): Promise<FeeReceiptSummary> {
     const where: Prisma.FeeReceiptWhereInput = {};
-
     if (filters.batchId) where.batchId = filters.batchId;
     if (filters.studentId) where.studentId = filters.studentId;
     if (filters.academicYear) where.academicYear = filters.academicYear;
 
-    const receipts = await prisma.feeReceipt.findMany({
-      where,
-      select: {
-        totalAmount: true,
-        paidAmount: true,
-        remainingAmount: true,
-        status: true,
-        academicMonth: true,
-        academicYear: true,
+    const cacheKey = DashboardKeys.feeReceiptsSummary(filters.batchId, filters.studentId, filters.academicYear);
+
+    return cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        // Run all aggregations in parallel via SQL — avoids loading every row into JS memory
+        const [totals, byStatusRaw, byMonthRaw] = await Promise.all([
+          prisma.feeReceipt.aggregate({
+            where,
+            _count: { id: true },
+            _sum: { totalAmount: true, paidAmount: true, remainingAmount: true },
+          }),
+          prisma.feeReceipt.groupBy({
+            by: ["status"],
+            where,
+            _count: { status: true },
+            _sum: { remainingAmount: true },
+          }),
+          prisma.feeReceipt.groupBy({
+            by: ["academicYear", "academicMonth"],
+            where,
+            _sum: { totalAmount: true, paidAmount: true, remainingAmount: true },
+            orderBy: [{ academicYear: "asc" }, { academicMonth: "asc" }],
+          }),
+        ]);
+
+        const byStatus = { paid: 0, partial: 0, pending: 0, overdue: 0 };
+        let pendingAmount = 0;
+        let overdueAmount = 0;
+
+        for (const row of byStatusRaw) {
+          const count = row._count.status;
+          const remaining = row._sum.remainingAmount ?? 0;
+          switch (row.status) {
+            case "PAID":    byStatus.paid    = count; break;
+            case "PARTIAL": byStatus.partial = count; pendingAmount += remaining; break;
+            case "PENDING": byStatus.pending = count; pendingAmount += remaining; break;
+            case "OVERDUE": byStatus.overdue = count; overdueAmount += remaining; break;
+          }
+        }
+
+        const byMonth = byMonthRaw.map((row) => ({
+          month: row.academicMonth,
+          year: row.academicYear,
+          totalAmount: row._sum.totalAmount ?? 0,
+          collectedAmount: row._sum.paidAmount ?? 0,
+          pendingAmount: row._sum.remainingAmount ?? 0,
+        }));
+
+        return {
+          totalReceipts: totals._count.id,
+          totalAmount: totals._sum.totalAmount ?? 0,
+          paidAmount: totals._sum.paidAmount ?? 0,
+          pendingAmount,
+          overdueAmount,
+          byStatus,
+          byMonth,
+        };
       },
-    });
-
-    const summary: FeeReceiptSummary = {
-      totalReceipts: receipts.length,
-      totalAmount: 0,
-      paidAmount: 0,
-      pendingAmount: 0,
-      overdueAmount: 0,
-      byStatus: {
-        paid: 0,
-        partial: 0,
-        pending: 0,
-        overdue: 0,
-      },
-      byMonth: [],
-    };
-
-    const monthlyData = new Map<string, { totalAmount: number; collectedAmount: number; pendingAmount: number }>();
-
-    for (const receipt of receipts) {
-      summary.totalAmount += receipt.totalAmount;
-      summary.paidAmount += receipt.paidAmount;
-
-      switch (receipt.status) {
-        case "PAID":
-          summary.byStatus.paid++;
-          break;
-        case "PARTIAL":
-          summary.byStatus.partial++;
-          summary.pendingAmount += receipt.remainingAmount;
-          break;
-        case "PENDING":
-          summary.byStatus.pending++;
-          summary.pendingAmount += receipt.remainingAmount;
-          break;
-        case "OVERDUE":
-          summary.byStatus.overdue++;
-          summary.overdueAmount += receipt.remainingAmount;
-          break;
-      }
-
-      // Aggregate by month
-      const monthKey = `${receipt.academicYear}-${receipt.academicMonth}`;
-      const existingMonth = monthlyData.get(monthKey) || { totalAmount: 0, collectedAmount: 0, pendingAmount: 0 };
-      existingMonth.totalAmount += receipt.totalAmount;
-      existingMonth.collectedAmount += receipt.paidAmount;
-      existingMonth.pendingAmount += receipt.remainingAmount;
-      monthlyData.set(monthKey, existingMonth);
-    }
-
-    // Convert monthly data to array
-    summary.byMonth = Array.from(monthlyData.entries()).map(([key, data]) => {
-      const [year, month] = key.split("-").map(Number);
-      return {
-        month,
-        year,
-        ...data,
-      };
-    }).sort((a, b) => {
-      if (a.year !== b.year) return a.year - b.year;
-      return a.month - b.month;
-    });
-
-    return summary;
+      TTL.FEE_RECEIPTS_SUMMARY
+    );
   }
 
   /**

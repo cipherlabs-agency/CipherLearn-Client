@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
+    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Plus, Loader2, CheckCircle2, ChevronRight, Users, GraduationCap, MapPin, ChevronLeft, Calendar } from "lucide-react"
@@ -238,6 +240,7 @@ export function AddStudentDialog() {
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[700px] p-0 gap-0 overflow-hidden bg-card border-border/40 shadow-xl">
+                <VisuallyHidden><DialogTitle>Add Student</DialogTitle></VisuallyHidden>
                 <div className="flex flex-col md:flex-row h-[500px]">
                     <StepBar step={step} formData={formData} batches={batches} />
 

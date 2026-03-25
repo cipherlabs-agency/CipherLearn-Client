@@ -53,10 +53,21 @@ const updateStatus = joi.object({
   notes: joi.string().max(1000).optional().allow("", null),
 });
 
+const list = joi.object({
+  batchId: joi.number().integer().positive().optional(),
+  teacherId: joi.number().integer().positive().optional(),
+  status: joi.string().valid("SCHEDULED", "IN_PROGRESS", "COMPLETED", "CANCELLED").optional(),
+  startDate: joi.string().isoDate().optional(),
+  endDate: joi.string().isoDate().optional(),
+  page: joi.number().integer().min(1).default(1),
+  limit: joi.number().integer().min(1).max(100).default(20),
+});
+
 export const LectureValidations = {
   create,
   createBulk,
   update,
   assign,
   updateStatus,
+  list,
 };

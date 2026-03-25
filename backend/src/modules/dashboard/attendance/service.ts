@@ -348,97 +348,95 @@ export default class AttendanceService {
   }
 
   /**
-   * Generate attendance report for a batch
+   * Generate attendance report for a batch (paginated, SQL-aggregated)
    */
   async generateAttendanceReport(
     query: AttendanceReportQuery
   ): Promise<AttendanceReport> {
     try {
-      const { batchId, startDate, endDate } = query;
+      const { batchId, startDate, endDate, page = 1, limit = 50 } = query;
+      const skip = (page - 1) * limit;
 
       const batch = await prisma.batch.findUnique({
         where: { id: batchId },
-        include: {
-          students: {
-            where: { isDeleted: false },
-            select: { id: true, fullname: true, email: true },
-          },
-        },
+        select: { id: true, name: true },
       });
 
-      if (!batch) {
-        throw new Error("Batch not found");
-      }
+      if (!batch) throw new Error("Batch not found");
 
       const start = new Date(startDate);
       const end = new Date(endDate);
+      const dateWhere = { batchId, date: { gte: start, lte: end } };
 
-      // Get all attendance records in date range
-      const attendances = await prisma.attendance.findMany({
-        where: {
-          batchId,
-          date: {
-            gte: start,
-            lte: end,
-          },
-        },
-        include: {
-          student: {
-            select: { id: true, fullname: true },
-          },
-        },
-      });
+      // Fetch total student count, paginated students, and overall attendance stats in parallel
+      const [totalStudents, pagedStudents, overallGroups] = await Promise.all([
+        prisma.student.count({ where: { batchId, isDeleted: false } }),
+        prisma.student.findMany({
+          where: { batchId, isDeleted: false },
+          select: { id: true, fullname: true, email: true },
+          orderBy: { fullname: "asc" },
+          skip,
+          take: limit,
+        }),
+        // Group by status across ALL students for overall percentage
+        prisma.attendance.groupBy({
+          by: ["status"],
+          where: dateWhere,
+          _count: { status: true },
+        }),
+      ]);
 
-      // Calculate statistics per student
-      const studentStats = batch.students.map((student) => {
-        const studentAttendances = attendances.filter(
-          (a) => a.studentId === student.id
-        );
-        const presentCount = studentAttendances.filter(
-          (a) => a.status === AttendanceStatus.PRESENT
-        ).length;
-        const lateCount = studentAttendances.filter(
-          (a) => a.status === AttendanceStatus.LATE
-        ).length;
-        const absentCount = studentAttendances.filter(
-          (a) => a.status === AttendanceStatus.ABSENT
-        ).length;
-        const totalDays = presentCount + lateCount + absentCount;
-        const percentage =
-          totalDays > 0 ? Math.round(((presentCount + lateCount) / totalDays) * 100) : 0;
+      // Fetch per-student attendance grouped by (studentId, status) for just this page
+      const pageStudentIds = pagedStudents.map((s) => s.id);
+      const pageGroups = pageStudentIds.length > 0
+        ? await prisma.attendance.groupBy({
+            by: ["studentId", "status"],
+            where: { ...dateWhere, studentId: { in: pageStudentIds } },
+            _count: { status: true },
+          })
+        : [];
 
+      // Build per-student stats from groupBy result
+      const statsMap = new Map<number, { PRESENT: number; LATE: number; ABSENT: number }>();
+      for (const g of pageGroups) {
+        const entry = statsMap.get(g.studentId) ?? { PRESENT: 0, LATE: 0, ABSENT: 0 };
+        entry[g.status as keyof typeof entry] = g._count.status;
+        statsMap.set(g.studentId, entry);
+      }
+
+      const studentStats = pagedStudents.map((student) => {
+        const counts = statsMap.get(student.id) ?? { PRESENT: 0, LATE: 0, ABSENT: 0 };
+        const presentDays = counts.PRESENT + counts.LATE;
+        const absentDays = counts.ABSENT;
+        const totalDays = presentDays + absentDays;
+        const percentage = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
         return {
           studentId: student.id,
           studentName: student.fullname,
           email: student.email,
-          presentDays: presentCount + lateCount,
-          absentDays: absentCount,
+          presentDays,
+          absentDays,
           totalDays,
           percentage,
         };
       });
 
-      // Overall batch statistics
-      const totalPresent = studentStats.reduce(
-        (sum, s) => sum + s.presentDays,
-        0
-      );
-      const totalAbsent = studentStats.reduce(
-        (sum, s) => sum + s.absentDays,
-        0
-      );
-      const totalRecords = totalPresent + totalAbsent;
-      const overallPercentage =
-        totalRecords > 0 ? Math.round((totalPresent / totalRecords) * 100) : 0;
+      // Compute overall percentage from all-student groups
+      const presentTotal = overallGroups.find((g) => g.status === AttendanceStatus.PRESENT)?._count.status ?? 0;
+      const lateTotal = overallGroups.find((g) => g.status === AttendanceStatus.LATE)?._count.status ?? 0;
+      const absentTotal = overallGroups.find((g) => g.status === AttendanceStatus.ABSENT)?._count.status ?? 0;
+      const totalRecords = presentTotal + lateTotal + absentTotal;
+      const overallPercentage = totalRecords > 0 ? Math.round(((presentTotal + lateTotal) / totalRecords) * 100) : 0;
 
       return {
         batchId,
         batchName: batch.name,
-        startDate: startDate,
-        endDate: endDate,
-        totalStudents: batch.students.length,
+        startDate,
+        endDate,
+        totalStudents,
         overallAttendancePercentage: overallPercentage,
         studentStats,
+        pagination: { page, limit, total: totalStudents, totalPages: Math.ceil(totalStudents / limit) },
       };
     } catch (error) {
       log("error", "dashboard.attendance.round failed", { err: error instanceof Error ? error.message : String(error) });

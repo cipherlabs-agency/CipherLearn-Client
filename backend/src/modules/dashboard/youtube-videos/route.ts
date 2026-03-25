@@ -21,7 +21,7 @@ router.get(
 );
 
 // Get videos for a specific batch
-router.get("/batch/:batchId", controller.getByBatch.bind(controller));
+router.get("/batch/:batchId", validateQuery(YoutubeVideoValidations.batchQuery), controller.getByBatch.bind(controller));
 
 // Get a single video by ID
 router.get("/:id", controller.getById.bind(controller));

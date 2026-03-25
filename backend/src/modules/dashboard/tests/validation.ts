@@ -46,9 +46,25 @@ const updateScore = joi.object({
   status: joi.string().valid("PASS", "FAIL", "ABSENT").optional(),
 });
 
+const list = joi.object({
+  page: joi.number().integer().min(1).default(1),
+  limit: joi.number().integer().min(1).max(100).default(20),
+  batchId: joi.number().integer().positive().optional(),
+  subject: joi.string().max(100).optional(),
+  status: joi.string().valid("DRAFT", "SCHEDULED", "ONGOING", "COMPLETED", "PUBLISHED").optional(),
+  testType: joi.string().valid("UNIT_TEST", "MIDTERM", "FINAL", "QUIZ", "PRACTICE").optional(),
+});
+
+const scoresQuery = joi.object({
+  page: joi.number().integer().min(1).default(1),
+  limit: joi.number().integer().min(1).max(100).default(50),
+});
+
 export const TestValidations = {
   create,
   update,
   uploadScore,
   updateScore,
+  list,
+  scoresQuery,
 };

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validateRequest } from "../../auth/validations.auth";
+import { validateRequest, validateQuery } from "../../auth/validations.auth";
 import { TeacherValidations } from "./validation";
 import TeacherController from "./controller";
 import { isAdmin } from "../../auth/middleware";
@@ -18,7 +18,7 @@ router.post(
 );
 
 // Get all teachers
-router.get("/", controller.getAll.bind(controller));
+router.get("/", validateQuery(TeacherValidations.list), controller.getAll.bind(controller));
 
 // Get a single teacher by ID
 router.get("/:id", controller.getById.bind(controller));

@@ -23,8 +23,10 @@ import { Textarea } from "@/components/ui/textarea"
 import {
     Dialog,
     DialogContent,
+    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import {
     Select,
     SelectContent,
@@ -216,6 +218,7 @@ export function AddAssignmentDialog({ onSuccess }: AddAssignmentDialogProps) {
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[700px] p-0 gap-0 overflow-hidden bg-card border-border/40 shadow-xl">
+                <VisuallyHidden><DialogTitle>Add Assignment</DialogTitle></VisuallyHidden>
                 <div className="flex flex-col md:flex-row h-[520px]">
                     <StepBar step={step} />
 

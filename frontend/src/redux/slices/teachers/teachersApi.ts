@@ -1,5 +1,22 @@
-import { api, ApiResponse } from '../../api/api';
+import { api } from '../../api/api';
 import { Teacher } from '@/types';
+
+interface TeachersListResponse {
+    success: boolean;
+    data: Teacher[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
+
+export interface GetTeachersParams {
+    page?: number;
+    limit?: number;
+    search?: string;
+}
 
 export interface CreateTeacherInput {
     name: string;
@@ -13,21 +30,31 @@ export interface UpdateTeacherInput {
 
 export const teachersApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        getTeachers: builder.query<Teacher[], void>({
-            query: () => '/dashboard/teachers',
-            transformResponse: (response: ApiResponse<Teacher[]>): Teacher[] => {
-                return response.data || [];
+        getTeachers: builder.query<{ teachers: Teacher[]; pagination: TeachersListResponse['pagination'] }, GetTeachersParams | void>({
+            query: (params) => {
+                const searchParams = new URLSearchParams();
+                if (params) {
+                    if (params.page) searchParams.set('page', String(params.page));
+                    if (params.limit) searchParams.set('limit', String(params.limit));
+                    if (params.search) searchParams.set('search', params.search);
+                }
+                const qs = searchParams.toString();
+                return `/dashboard/teachers${qs ? `?${qs}` : ''}`;
             },
+            transformResponse: (response: TeachersListResponse) => ({
+                teachers: response.data,
+                pagination: response.pagination,
+            }),
             providesTags: (result) =>
                 result
                     ? [
-                        ...result.map(({ id }) => ({ type: 'Teachers' as const, id })),
+                        ...result.teachers.map(({ id }) => ({ type: 'Teachers' as const, id })),
                         { type: 'Teachers', id: 'LIST' }
                     ]
                     : [{ type: 'Teachers', id: 'LIST' }],
         }),
 
-        createTeacher: builder.mutation<ApiResponse<Teacher>, CreateTeacherInput>({
+        createTeacher: builder.mutation<{ success: boolean; data: Teacher }, CreateTeacherInput>({
             query: (data) => ({
                 url: '/dashboard/teachers',
                 method: 'POST',
@@ -36,7 +63,7 @@ export const teachersApi = api.injectEndpoints({
             invalidatesTags: [{ type: 'Teachers', id: 'LIST' }],
         }),
 
-        updateTeacher: builder.mutation<ApiResponse<Teacher>, { id: number; data: UpdateTeacherInput }>({
+        updateTeacher: builder.mutation<{ success: boolean; data: Teacher }, { id: number; data: UpdateTeacherInput }>({
             query: ({ id, data }) => ({
                 url: `/dashboard/teachers/${id}`,
                 method: 'PUT',
@@ -48,7 +75,7 @@ export const teachersApi = api.injectEndpoints({
             ],
         }),
 
-        deleteTeacher: builder.mutation<ApiResponse<void>, number>({
+        deleteTeacher: builder.mutation<{ success: boolean }, number>({
             query: (id) => ({
                 url: `/dashboard/teachers/${id}`,
                 method: 'DELETE',

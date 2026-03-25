@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import TestService from "./service";
 import logger from "../../../utils/logger";
-import { CreateTestInput, UpdateTestInput, UploadScoreInput, GetTestsQuery } from "./types";
+import { CreateTestInput, UpdateTestInput, UploadScoreInput, GetTestsQuery, GetScoresQuery } from "./types";
 import { TestStatus, TestType, ScoreStatus } from "../../../../prisma/generated/prisma/enums";
 import { log } from "../../../utils/logtail";
 
@@ -294,6 +294,33 @@ export default class TestController {
       return res.status(500).json({
         success: false,
         message: `Failed to update score: ${error.message}`,
+      });
+    }
+  }
+
+  public async getScores(req: Request, res: Response) {
+    try {
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const limit = req.query.limit ? Math.min(Number(req.query.limit), 100) : 50;
+
+      const result = await testService.getScores(Number(req.params.id), page, limit);
+
+      return res.status(200).json({
+        success: true,
+        data: result.scores,
+        pagination: result.pagination,
+      });
+    } catch (error: any) {
+      log("error", "dashboard.tests.status failed", { err: error instanceof Error ? error.message : String(error) });
+      logger.error("TestController.getScores error:", error);
+
+      if (error.message === "Test not found") {
+        return res.status(404).json({ success: false, message: error.message });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: `Failed to fetch scores: ${error.message}`,
       });
     }
   }

@@ -1,7 +1,6 @@
 import { api, ApiResponse } from '../../api/api';
 import {
     Test,
-    TestWithScores,
     TestScore,
     CreateTestInput,
     UpdateTestInput,
@@ -9,6 +8,17 @@ import {
     TestStats,
     BulkScoreResult,
 } from '@/types';
+
+interface TestScoresResponse {
+    success: boolean;
+    data: TestScore[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
 
 interface TestsListResponse {
     success: boolean;
@@ -59,11 +69,20 @@ export const testsApi = api.injectEndpoints({
                     : [{ type: 'Tests', id: 'LIST' }],
         }),
 
-        getTestById: builder.query<TestWithScores, number>({
+        getTestById: builder.query<Test, number>({
             query: (id) => `/dashboard/tests/${id}`,
-            transformResponse: (response: ApiResponse<TestWithScores>) => response.data!,
-            providesTags: (_result, _error, id) => [
-                { type: 'Tests', id },
+            transformResponse: (response: ApiResponse<Test>) => response.data!,
+            providesTags: (_result, _error, id) => [{ type: 'Tests', id }],
+        }),
+
+        getTestScores: builder.query<{ scores: TestScore[]; pagination: TestScoresResponse['pagination'] }, { id: number; page?: number; limit?: number }>({
+            query: ({ id, page = 1, limit = 50 }) =>
+                `/dashboard/tests/${id}/scores?page=${page}&limit=${limit}`,
+            transformResponse: (response: TestScoresResponse) => ({
+                scores: response.data,
+                pagination: response.pagination,
+            }),
+            providesTags: (_result, _error, { id }) => [
                 { type: 'TestScores', id: `test-${id}` },
             ],
         }),
@@ -155,6 +174,7 @@ export const testsApi = api.injectEndpoints({
 export const {
     useGetTestsQuery,
     useGetTestByIdQuery,
+    useGetTestScoresQuery,
     useCreateTestMutation,
     useUpdateTestMutation,
     useDeleteTestMutation,

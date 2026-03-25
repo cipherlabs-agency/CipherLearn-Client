@@ -66,10 +66,11 @@ export function AttendanceMarker() {
     }, [batches, selectedBatchId, dispatch])
 
     // Fetch students for selected batch
-    const { data: students, isLoading: loadingStudents } = useGetStudentsQuery(
-        selectedBatchId || undefined,
+    const { data: studentsPageData, isLoading: loadingStudents } = useGetStudentsQuery(
+        selectedBatchId ? { batchId: selectedBatchId, limit: 500 } : undefined,
         { skip: !selectedBatchId }
     )
+    const students = studentsPageData?.students ?? []
 
     // Fetch existing attendance for the selected date
     const { data: existingAttendance, isLoading: loadingAttendance } = useGetBatchAttendanceByDateQuery(

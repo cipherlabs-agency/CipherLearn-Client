@@ -66,6 +66,22 @@ export const DashboardKeys = {
 
   studentList: (batchId?: number) =>
     buildKey("dash", "students", "list", batchId != null ? sanitizeId(batchId) : "all"),
+
+  studentDeletedList: () => buildKey("dash", "students", "deleted"),
+
+  batchDrafts: () => buildKey("dash", "batches", "drafts"),
+
+  settings: () => buildKey("dash", "settings"),
+
+  feeReceiptsSummary: (batchId?: number, studentId?: number, academicYear?: number) =>
+    buildKey(
+      "dash",
+      "fees",
+      "summary",
+      batchId != null ? sanitizeId(batchId) : "all",
+      studentId != null ? sanitizeId(studentId) : "all",
+      academicYear != null ? sanitizeId(academicYear) : "all"
+    ),
 };
 
 // ========================
@@ -127,6 +143,8 @@ export const InvalidationPatterns = {
   dashAnalytics: "dash:analytics:",
   dashBatches: "dash:batches:",
   dashStudents: "dash:students:",
+  dashFees: "dash:fees:",
+  dashSettings: "dash:settings",
   appResources: "app:resources:",
   appAnnouncements: "app:ann:",
   appFees: "app:fees:",

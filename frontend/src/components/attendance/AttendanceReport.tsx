@@ -12,10 +12,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
-import { FileDown, Loader2, BarChart3, Users, TrendingUp, Calendar } from "lucide-react"
+import { FileDown, Loader2, BarChart3, Users, TrendingUp, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 import { useGetAttendanceReportQuery } from "@/redux/slices/attendance/attendanceApi"
 import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
 import { Batch } from "@/types"
+
+const STUDENTS_PER_PAGE = 50
 
 export function AttendanceReport() {
     const [selectedBatchId, setSelectedBatchId] = useState<number | null>(null)
@@ -25,14 +27,29 @@ export function AttendanceReport() {
     const [endDate, setEndDate] = useState<string>(
         new Date().toISOString().split('T')[0]
     )
+    const [page, setPage] = useState(1)
 
     const { data: batchesData } = useGetAllBatchesQuery()
     const batches = batchesData || []
 
     const { data: report, isLoading, isFetching } = useGetAttendanceReportQuery(
-        { batchId: selectedBatchId!, startDate, endDate },
+        { batchId: selectedBatchId!, startDate, endDate, page, limit: STUDENTS_PER_PAGE },
         { skip: !selectedBatchId }
     )
+
+    // Reset to page 1 when filters change
+    const handleBatchChange = (v: string) => {
+        setSelectedBatchId(Number(v) || null)
+        setPage(1)
+    }
+    const handleStartDateChange = (v: string) => {
+        setStartDate(v)
+        setPage(1)
+    }
+    const handleEndDateChange = (v: string) => {
+        setEndDate(v)
+        setPage(1)
+    }
 
     const handleExportCSV = () => {
         if (!report) return
@@ -57,6 +74,7 @@ export function AttendanceReport() {
     }
 
     const loading = isLoading || isFetching
+    const pagination = report?.pagination
 
     return (
         <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-400">
@@ -68,7 +86,7 @@ export function AttendanceReport() {
                     </label>
                     <Select
                         value={String(selectedBatchId || "")}
-                        onValueChange={(v) => setSelectedBatchId(Number(v) || null)}
+                        onValueChange={handleBatchChange}
                     >
                         <SelectTrigger className="h-10 text-[13px] font-medium rounded-xl border-border/60">
                             <SelectValue placeholder="Select a batch…" />
@@ -90,7 +108,7 @@ export function AttendanceReport() {
                         type="date"
                         className="h-10 text-[13px] font-medium rounded-xl border-border/60"
                         value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
+                        onChange={(e) => handleStartDateChange(e.target.value)}
                     />
                 </div>
                 <div>
@@ -101,13 +119,13 @@ export function AttendanceReport() {
                         type="date"
                         className="h-10 text-[13px] font-medium rounded-xl border-border/60"
                         value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
+                        onChange={(e) => handleEndDateChange(e.target.value)}
                     />
                 </div>
                 <div className="flex items-end">
                     <Button
                         onClick={handleExportCSV}
-                        disabled={!report}
+                        disabled={!report || isFetching}
                         variant="outline"
                         className="w-full h-10 rounded-xl text-[12px] font-bold gap-1.5"
                     >
@@ -182,12 +200,16 @@ export function AttendanceReport() {
 
                     {/* ─── Student Rows ─── */}
                     <div className="space-y-1.5">
-                        <div className="grid grid-cols-12 gap-3 px-4 py-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                            <div className="col-span-4">Student</div>
-                            <div className="col-span-2 text-center">Present</div>
-                            <div className="col-span-2 text-center">Absent</div>
-                            <div className="col-span-1 text-center">Total</div>
-                            <div className="col-span-3 text-right">Attendance</div>
+                        {/* Column header */}
+                        <div className="flex items-center justify-between mb-1">
+                            <div className="grid grid-cols-12 gap-3 px-4 py-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex-1">
+                                <div className="col-span-4">Student</div>
+                                <div className="col-span-2 text-center">Present</div>
+                                <div className="col-span-2 text-center">Absent</div>
+                                <div className="col-span-1 text-center">Total</div>
+                                <div className="col-span-3 text-right">Attendance</div>
+                            </div>
+                            {isFetching && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground ml-2 flex-shrink-0" />}
                         </div>
 
                         {report.studentStats.map((student) => {
@@ -229,6 +251,38 @@ export function AttendanceReport() {
                                 </div>
                             )
                         })}
+
+                        {/* ─── Pagination ─── */}
+                        {pagination && pagination.totalPages > 1 && (
+                            <div className="flex items-center justify-between pt-3 pb-1 px-1">
+                                <p className="text-[11px] text-muted-foreground tabular-nums">
+                                    Page {pagination.page} of {pagination.totalPages}
+                                    <span className="ml-2 text-muted-foreground/60">
+                                        ({(pagination.page - 1) * pagination.limit + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} students)
+                                    </span>
+                                </p>
+                                <div className="flex items-center gap-1.5">
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="h-7 w-7 rounded-lg"
+                                        disabled={pagination.page <= 1 || isFetching}
+                                        onClick={() => setPage(p => p - 1)}
+                                    >
+                                        <ChevronLeft className="h-3.5 w-3.5" />
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="h-7 w-7 rounded-lg"
+                                        disabled={pagination.page >= pagination.totalPages || isFetching}
+                                        onClick={() => setPage(p => p + 1)}
+                                    >
+                                        <ChevronRight className="h-3.5 w-3.5" />
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </>
             ) : (

@@ -1,7 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Input } from "@/components/ui/input"
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -183,7 +184,8 @@ export function AddLectureDialog({ defaultDate, open: extOpen, onOpenChange: ext
     const [createLecture, { isLoading: isC }] = useCreateLectureMutation()
     const [createBulk, { isLoading: isCB }] = useCreateBulkLecturesMutation()
     const { data: batches } = useGetAllBatchesQuery()
-    const { data: teachers } = useGetTeachersQuery()
+    const { data: teachersData } = useGetTeachersQuery()
+    const teachers = teachersData?.teachers ?? []
     const isLoading = isC || isCB
 
     // ── State ──────────────────────────────────────────────────────────────────
@@ -276,6 +278,7 @@ export function AddLectureDialog({ defaultDate, open: extOpen, onOpenChange: ext
     // ── Dialog Content ─────────────────────────────────────────────────────────
     const dialogContent = (
         <DialogContent className="w-full max-w-[700px] md:w-[700px] p-0 gap-0 overflow-hidden">
+            <VisuallyHidden><DialogTitle>Schedule a Class</DialogTitle></VisuallyHidden>
             {/* Header */}
             <div className="px-8 pt-7 pb-0">
                 <div className="flex items-center justify-between mb-1">

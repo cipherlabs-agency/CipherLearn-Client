@@ -104,7 +104,8 @@ export default function BatchDetailPage() {
 
     // Data
     const { data: batch, isLoading: batchLoading, isError: batchError } = useGetBatchByIdQuery(batchId)
-    const { data: students = [], isLoading: studentsLoading } = useGetStudentsQuery(batchId)
+    const { data: studentsPageData, isLoading: studentsLoading } = useGetStudentsQuery({ batchId, limit: 500 })
+    const students = studentsPageData?.students ?? []
 
     const today = new Date()
     const thirtyDaysAgo = new Date(today)

@@ -108,13 +108,11 @@ export default class BatchService {
 
   async getDrafts() {
     try {
-      const drafts = await prisma.batch.findMany({
-        where: {
-          isDeleted: true,
-        },
-      });
-
-      return drafts;
+      return cacheService.getOrSet(
+        DashboardKeys.batchDrafts(),
+        () => prisma.batch.findMany({ where: { isDeleted: true } }),
+        TTL.BATCH_DRAFTS
+      );
     } catch (error) {
       log("error", "dashboard.batches.findMany failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;

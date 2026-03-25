@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { validateRequest } from "../../auth/validations.auth";
+import { validateRequest, validateQuery } from "../../auth/validations.auth";
 import { TestValidations } from "./validation";
 import TestController from "./controller";
 import { isAdmin, isAdminOrTeacher } from "../../auth/middleware";
@@ -18,12 +18,15 @@ router.post(
 );
 
 // Get all tests (Admin or Teacher)
-router.get("/", isAdminOrTeacher, controller.getAll.bind(controller));
+router.get("/", isAdminOrTeacher, validateQuery(TestValidations.list), controller.getAll.bind(controller));
 
 // Get test statistics (Admin or Teacher) - must be before /:id
 router.get("/:id/stats", isAdminOrTeacher, controller.getStats.bind(controller));
 
-// Get test by ID with scores (Admin or Teacher)
+// Get paginated test scores - must be before /:id
+router.get("/:id/scores", isAdminOrTeacher, validateQuery(TestValidations.scoresQuery), controller.getScores.bind(controller));
+
+// Get test by ID (Admin or Teacher)
 router.get("/:id", isAdminOrTeacher, controller.getById.bind(controller));
 
 // Update test (Admin or Teacher)

@@ -2,8 +2,13 @@ import { Router } from "express";
 import { assignmentController } from "./controller";
 import { isAdmin, isAdminOrTeacher, isAuthenticated } from "../../auth/middleware";
 import { assignmentUpload, submissionUpload } from "../../../config/multer.config";
+import { validateQuery } from "../../auth/validations.auth";
+import { AssignmentValidations } from "./validation";
 
 const router = Router();
+
+// All routes require authentication — ensures 401 (not 404) for unauthenticated requests
+router.use(isAuthenticated);
 
 // ==================== ASSIGNMENT SLOTS (Admin/Teacher) ====================
 
@@ -19,6 +24,7 @@ router.post(
 router.get(
   "/slots",
   isAuthenticated,
+  validateQuery(AssignmentValidations.slotsQuery),
   assignmentController.getSlots.bind(assignmentController)
 );
 
@@ -65,6 +71,7 @@ router.post(
 router.get(
   "/submissions",
   isAdminOrTeacher,
+  validateQuery(AssignmentValidations.submissionsQuery),
   assignmentController.getSubmissions.bind(assignmentController)
 );
 

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import FeesController from "./controller";
 import { isAdmin, isAdminOrTeacher, isAuthenticated } from "../../auth/middleware";
+import { validateQuery } from "../../auth/validations.auth";
+import { feeReceiptFiltersSchema } from "./validation";
 
 const router = Router();
 const controller = new FeesController();
@@ -21,7 +23,7 @@ router.delete("/structures/:id", isAdminOrTeacher, controller.deleteFeeStructure
 // =====================
 router.post("/receipts", isAdminOrTeacher, controller.createReceipt.bind(controller));
 router.post("/receipts/bulk", isAdminOrTeacher, controller.bulkCreateReceipts.bind(controller));
-router.get("/receipts", isAdminOrTeacher, controller.getReceipts.bind(controller));
+router.get("/receipts", isAdminOrTeacher, validateQuery(feeReceiptFiltersSchema), controller.getReceipts.bind(controller));
 router.get("/receipts/summary", isAdminOrTeacher, controller.getReceiptsSummary.bind(controller));
 router.get("/receipts/:id", isAdminOrTeacher, controller.getReceiptById.bind(controller));
 router.get("/receipts/:id/pdf", isAdminOrTeacher, controller.downloadReceiptPDF.bind(controller));

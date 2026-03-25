@@ -1,15 +1,16 @@
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { Request, Response } from "express";
 import { config } from "../config/env.config";
 
 /**
  * Key generator that uses authenticated user ID when available,
- * falling back to IP address. This prevents a single heavy user
- * from triggering limits for other users sharing the same NAT/proxy IP.
+ * falling back to a normalized IP address (handles IPv6 correctly).
+ * This prevents a single heavy user from triggering limits for
+ * other users sharing the same NAT/proxy IP.
  */
 const userOrIpKey = (req: Request): string => {
   const userId = (req as any).user?.id;
-  return userId ? `uid:${userId}` : (req.ip ?? "unknown");
+  return userId ? `uid:${userId}` : ipKeyGenerator(req.ip ?? "unknown");
 };
 
 /**

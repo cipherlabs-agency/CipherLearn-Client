@@ -10,7 +10,14 @@ const update = joi.object({
   email: joi.string().email().optional(),
 });
 
+const list = joi.object({
+  page: joi.number().integer().min(1).default(1),
+  limit: joi.number().integer().min(1).max(100).default(20),
+  search: joi.string().max(100).optional(),
+});
+
 export const TeacherValidations = {
   create,
   update,
+  list,
 };

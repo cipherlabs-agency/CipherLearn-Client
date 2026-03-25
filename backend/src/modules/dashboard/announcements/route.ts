@@ -2,6 +2,8 @@ import { Router } from "express";
 import { announcementController } from "./controller";
 import { isAdmin, isAdminOrTeacher, isAuthenticated } from "../../auth/middleware";
 import upload from "../../../config/multer.config";
+import { validateRequest, validateQuery } from "../../auth/validations.auth";
+import { AnnouncementValidations } from "./validation";
 
 const router = Router();
 
@@ -17,12 +19,14 @@ router.post(
   "/",
   isAdminOrTeacher,
   upload.single("image"),
+  validateRequest(AnnouncementValidations.create),
   announcementController.create.bind(announcementController)
 );
 
 router.get(
   "/",
   isAdminOrTeacher,
+  validateQuery(AnnouncementValidations.listQuery),
   announcementController.getAll.bind(announcementController)
 );
 

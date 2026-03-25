@@ -72,4 +72,6 @@ export function invalidateAfterFeesMutation(batchId?: number): void {
   } else {
     cacheService.delByPrefix(InvalidationPatterns.appFees);
   }
+  // Always clear dashboard fee summary cache (summary changes with any payment)
+  cacheService.delByPrefix(InvalidationPatterns.dashFees);
 }

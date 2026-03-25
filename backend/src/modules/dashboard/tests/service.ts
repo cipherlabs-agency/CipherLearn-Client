@@ -6,7 +6,6 @@ import {
   UpdateTestInput,
   UploadScoreInput,
   TestResponse,
-  TestWithScoresResponse,
   ScoreResponse,
   GetTestsQuery,
   TestStatsResponse,
@@ -115,20 +114,43 @@ export default class TestService {
     };
   }
 
-  public async getById(id: number): Promise<TestWithScoresResponse> {
+  public async getById(id: number): Promise<TestResponse> {
     const test = await prisma.test.findFirst({
       where: { id, isDeleted: false },
-      include: {
-        ...TEST_INCLUDE,
-        scores: {
-          include: SCORE_INCLUDE,
-          orderBy: { marksObtained: "desc" },
-        },
-      },
+      include: TEST_INCLUDE,
     });
 
     if (!test) throw new Error("Test not found");
-    return test as unknown as TestWithScoresResponse;
+    return test as unknown as TestResponse;
+  }
+
+  public async getScores(
+    testId: number,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<{ scores: ScoreResponse[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
+    const test = await prisma.test.findFirst({
+      where: { id: testId, isDeleted: false },
+      select: { id: true },
+    });
+    if (!test) throw new Error("Test not found");
+
+    const skip = (page - 1) * limit;
+    const [scores, total] = await Promise.all([
+      prisma.testScore.findMany({
+        where: { testId },
+        include: SCORE_INCLUDE,
+        orderBy: { marksObtained: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.testScore.count({ where: { testId } }),
+    ]);
+
+    return {
+      scores: scores as unknown as ScoreResponse[],
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   public async update(id: number, data: UpdateTestInput): Promise<TestResponse> {

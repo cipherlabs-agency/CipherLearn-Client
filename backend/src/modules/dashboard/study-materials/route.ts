@@ -2,6 +2,8 @@ import { Router } from "express";
 import { studyMaterialController } from "./controller";
 import { isAdminOrTeacher, isAuthenticated } from "../../auth/middleware";
 import { materialUpload as upload } from "../../../config/multer.config";
+import { validateQuery } from "../../auth/validations.auth";
+import { StudyMaterialValidations } from "./validation";
 
 const router = Router();
 
@@ -23,6 +25,7 @@ router.post(
 router.get(
   "/",
   isAuthenticated,
+  validateQuery(StudyMaterialValidations.list),
   studyMaterialController.getAll.bind(studyMaterialController)
 );
 

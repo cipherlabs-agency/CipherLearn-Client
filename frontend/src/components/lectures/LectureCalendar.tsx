@@ -20,7 +20,9 @@ import { useState } from "react"
 import {
     Dialog,
     DialogContent,
+    DialogTitle,
 } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { AddLectureDialog } from "./AddLectureDialog"
 import { cn } from "@/lib/utils"
 
@@ -197,6 +199,7 @@ export function LectureCalendar() {
             {/* Lecture detail dialog */}
             <Dialog open={!!selectedLecture} onOpenChange={(open) => !open && setSelectedLecture(null)}>
                 <DialogContent className="sm:max-w-[420px] p-0 gap-0 overflow-hidden">
+                    <VisuallyHidden><DialogTitle>Lecture Details</DialogTitle></VisuallyHidden>
                     {selectedLecture && (
                         <>
                             {/* Colored top strip */}

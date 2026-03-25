@@ -82,11 +82,11 @@ export default class YoutubeVideoController {
   async getByBatch(req: Request, res: Response) {
     try {
       const { batchId } = req.params;
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const limit = req.query.limit ? Number(req.query.limit) : 20;
 
-      const youtubeVideos = await youtubeVideoService.getByBatch(
-        Number(batchId)
-      );
-      return res.status(200).json({ success: true, data: youtubeVideos });
+      const result = await youtubeVideoService.getByBatch(Number(batchId), page, limit);
+      return res.status(200).json({ success: true, data: result.videos, pagination: result.pagination });
     } catch (error: any) {
       log("error", "dashboard.youtube-videos.status failed", { err: error instanceof Error ? error.message : String(error) });
       if (error.message === "Batch not found") {

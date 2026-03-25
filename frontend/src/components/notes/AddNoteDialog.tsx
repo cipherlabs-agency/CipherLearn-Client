@@ -9,8 +9,10 @@ import { FileUpload } from "@/components/ui/file-upload"
 import {
     Dialog,
     DialogContent,
+    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { useUploadNoteMutation } from "@/redux/slices/notes/notesApi"
 import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
 import { toast } from "sonner"
@@ -73,6 +75,7 @@ export function AddNoteDialog() {
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[800px] p-0 gap-0 overflow-hidden bg-card border-border/40 shadow-xl">
+                <VisuallyHidden><DialogTitle>Add Note</DialogTitle></VisuallyHidden>
                 <form onSubmit={handleSubmit} className="flex flex-col h-[700px]">
                     {/* Header */}
                     <div className="px-8 pt-8 pb-6 border-b border-border/50 bg-muted/10 shrink-0">

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { isStudent, isAppUser, isTeacher } from "../auth/middleware";
+import { isStudent, isAppUser, isTeacher, isAdminOrTeacher } from "../auth/middleware";
 import profileRoutes from "./profile/route";
 import dashboardRoutes from "./dashboard/route";
 import attendanceRoutes from "./attendance/route";
@@ -54,6 +54,36 @@ router.get("/settings", async (_req: Request, res: Response) => {
   } catch (error) {
     log("error", "app.json failed", { err: error instanceof Error ? error.message : String(error) });
     const message = error instanceof Error ? error.message : "Failed to fetch settings";
+    res.status(500).json({ success: false, message });
+  }
+});
+
+// App Onboarding QR — admin/teacher generates QR for new student/teacher onboarding
+// React Native app scans → stores api URL → calls GET /api/app/settings for full config
+router.get("/onboarding-qr", isAdminOrTeacher, async (req: Request, res: Response) => {
+  try {
+    const QRCode = await import("qrcode");
+    const protocol = (req.get("x-forwarded-proto") as string | undefined) ?? req.protocol;
+    const apiUrl = config.APP.URL || `${protocol}://${req.get("host") ?? "localhost"}`;
+
+    const payload = {
+      v: 1,
+      api: apiUrl,
+      name: config.CLASS.NAME,
+      primary: config.CLASS.PRIMARY_COLOR,
+      accent: config.CLASS.ACCENT_COLOR,
+      ...(config.CLASS.LOGO_URL ? { logo: config.CLASS.LOGO_URL } : {}),
+    };
+
+    const qrDataUrl: string = await QRCode.toDataURL(JSON.stringify(payload), {
+      width: 400,
+      margin: 2,
+      color: { dark: "#000000", light: "#ffffff" },
+    });
+
+    res.json({ success: true, data: { payload, qrDataUrl } });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to generate QR code";
     res.status(500).json({ success: false, message });
   }
 });

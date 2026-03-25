@@ -31,7 +31,15 @@ export const validate = (
     }
 
     // Replace the target with the cleaned/coerced value
-    (req as any)[target] = value;
+    // Express v5: req.query is a read-only getter — must mutate in place
+    if (target === "query") {
+      for (const key of Object.keys(req.query)) {
+        delete (req.query as any)[key];
+      }
+      Object.assign(req.query, value);
+    } else {
+      (req as any)[target] = value;
+    }
     next();
   };
 };

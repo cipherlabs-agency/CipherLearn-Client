@@ -45,7 +45,13 @@ router.post(
 // SINGLE STUDENT OPERATIONS
 // =====================
 
-// Enroll a single student (Admin only)
+// Enroll a single student (Admin only) — POST / or POST /enroll both accepted
+router.post(
+  "/",
+  isAdmin,
+  validateRequest(StudentValidations.enroll),
+  controller.enrollSingle.bind(controller)
+);
 router.post(
   "/enroll",
   isAdmin,
