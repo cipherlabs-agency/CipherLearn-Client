@@ -1,6 +1,7 @@
 import { prisma } from "../../../config/db.config";
 import { TestStatus, ScoreStatus, TestType } from "../../../../prisma/generated/prisma/enums";
 import { sendToBatchStudents } from "../../../utils/pushNotifications";
+import logger from "../../../utils/logger";
 import {
   CreateTestInput,
   UpdateTestInput,
@@ -74,15 +75,37 @@ export default class TestService {
       include: TEST_INCLUDE,
     });
 
-    // Notify students about the new test (fire-and-forget)
+    // 1. Generate in-app database notifications for batch students
     const testDate = new Date(data.date).toLocaleDateString("en-IN", { dateStyle: "medium" });
+    try {
+      const batchStudents = await prisma.user.findMany({
+        where: { role: "STUDENT", student: { batchId: data.batchId } },
+        select: { id: true },
+      });
+
+      if (batchStudents.length > 0) {
+        await prisma.notification.createMany({
+          data: batchStudents.map(s => ({
+            userId: s.id,
+            title: "Test Scheduled",
+            message: `${data.subject} test on ${testDate}`,
+            type: "INFO",
+            link: "/tests",
+          })),
+        });
+      }
+    } catch (error) {
+      logger.error("Failed to generate in-app notifications for test:", error);
+    }
+
+    // 2. Push notification (fire-and-forget)
     sendToBatchStudents(
       data.batchId,
       "newTestScheduled",
       "Test Scheduled",
       `${data.subject} test on ${testDate}`,
       { type: "test_scheduled", testId: test.id }
-    ).catch(() => {});
+    ).catch((e) => logger.error("[Push] test notification failed:", e));
 
     return test as unknown as TestResponse;
   }
@@ -219,14 +242,36 @@ export default class TestService {
       include: TEST_INCLUDE,
     });
 
-    // Notify students that results are published (fire-and-forget)
+    // 1. Generate in-app database notifications for result publishing
+    try {
+      const batchStudents = await prisma.user.findMany({
+        where: { role: "STUDENT", student: { batchId: test.batchId } },
+        select: { id: true },
+      });
+
+      if (batchStudents.length > 0) {
+        await prisma.notification.createMany({
+          data: batchStudents.map(s => ({
+            userId: s.id,
+            title: "Results Published",
+            message: `${test.subject} test results are now available`,
+            type: "INFO",
+            link: "/tests",
+          })),
+        });
+      }
+    } catch (error) {
+      logger.error("Failed to generate in-app notifications for result:", error);
+    }
+
+    // 2. Push notification (fire-and-forget)
     sendToBatchStudents(
       test.batchId,
       "resultPublished",
       "Results Published",
       `${test.subject} test results are now available`,
       { type: "result_published", testId: id }
-    ).catch(() => {});
+    ).catch((e) => logger.error("[Push] result published notification failed:", e));
 
     return updated as unknown as TestResponse;
   }

@@ -1,6 +1,7 @@
 import { prisma } from "../../../config/db.config";
 import { UserRoles, LectureStatus } from "../../../../prisma/generated/prisma/enums";
 import { sendToBatchStudents, sendToUser } from "../../../utils/pushNotifications";
+import logger from "../../../utils/logger";
 import {
   CreateLectureInput,
   CreateBulkLecturesInput,
@@ -72,15 +73,38 @@ export default class LectureService {
       include: LECTURE_INCLUDE,
     });
 
-    // Notify students in the batch about the new lecture (fire-and-forget)
     const dateStr = new Date(data.date).toLocaleDateString("en-IN", { dateStyle: "medium" });
+
+    // 1. Generate in-app database notifications for batch students
+    try {
+      const batchStudents = await prisma.user.findMany({
+        where: { role: "STUDENT", student: { batchId: data.batchId } },
+        select: { id: true },
+      });
+
+      if (batchStudents.length > 0) {
+        await prisma.notification.createMany({
+          data: batchStudents.map(s => ({
+            userId: s.id,
+            title: "New Class Scheduled",
+            message: `${data.subject} on ${dateStr} at ${data.startTime}`,
+            type: "INFO",
+            link: "/lectures",
+          })),
+        });
+      }
+    } catch (error) {
+      logger.error("Failed to generate in-app notifications for lecture:", error);
+    }
+
+    // 2. Push notification (fire-and-forget)
     sendToBatchStudents(
       data.batchId,
       "timetableChanges",
       "New Class Scheduled",
       `${data.subject} on ${dateStr} at ${data.startTime}`,
       { type: "lecture_scheduled", lectureId: lecture.id }
-    ).catch(() => {});
+    ).catch((e) => logger.error("[Push] lecture notification failed:", e));
 
     // Notify the assigned teacher
     if (teacherId) {
@@ -89,7 +113,7 @@ export default class LectureService {
         "New Class Assigned",
         `You have been assigned to teach ${data.subject} on ${dateStr} at ${data.startTime}`,
         { type: "lecture_assigned", lectureId: lecture.id }
-      ).catch(() => {});
+      ).catch((e) => logger.error("[Push] teacher lecture notification failed:", e));
     }
 
     return lecture as LectureResponse;

@@ -1,6 +1,7 @@
 import { prisma } from "../../../config/db.config";
 import { invalidateAfterResourceMutation } from "../../../cache/invalidation";
 import { sendToBatchStudents } from "../../../utils/pushNotifications";
+import logger from "../../../utils/logger";
 
 export interface CreateStudyMaterialInput {
   title: string;
@@ -42,14 +43,36 @@ export class StudyMaterialService {
     });
     invalidateAfterResourceMutation();
 
-    // Notify students in the batch about the new material (fire-and-forget)
+    // 1. Generate in-app database notifications for batch students
+    try {
+      const batchStudents = await prisma.user.findMany({
+        where: { role: "STUDENT", student: { batchId: data.batchId } },
+        select: { id: true },
+      });
+
+      if (batchStudents.length > 0) {
+        await prisma.notification.createMany({
+          data: batchStudents.map(s => ({
+            userId: s.id,
+            title: "New Study Material",
+            message: `${material.title} has been added`,
+            type: "INFO",
+            link: "/resources",
+          })),
+        });
+      }
+    } catch (error) {
+      logger.error("Failed to generate in-app notifications for study material:", error);
+    }
+
+    // 2. Push notification (fire-and-forget)
     sendToBatchStudents(
       material.batchId,
       "newStudyMaterial",
       "New Study Material",
       `${material.title} has been added`,
       { type: "study_material", materialId: material.id }
-    ).catch(() => {});
+    ).catch((e) => logger.error("[Push] study material notification failed:", e));
 
     return material;
   }

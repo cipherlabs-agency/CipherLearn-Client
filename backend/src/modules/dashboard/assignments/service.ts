@@ -80,7 +80,7 @@ export class AssignmentService {
       "New Assignment Posted",
       `${data.subject}: ${data.title}${dueStr}`,
       { type: "assignment", assignmentId: slot.id }
-    ).catch(() => {});
+    ).catch((e) => logger.error("[Push] assignment notification failed:", e));
 
     return slot;
   }

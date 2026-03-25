@@ -76,7 +76,7 @@ export class AnnouncementService {
       announcement.title,
       announcement.description,
       { type: "announcement", announcementId: announcement.id }
-    ).catch(() => {});
+    ).catch((e) => logger.error("[Push] announcement notification failed:", e));
 
     return announcement;
   }
