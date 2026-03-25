@@ -8,7 +8,9 @@ export class DoubtsController {
   // ─── Student: GET /app/doubts ────────────────────────────────────────────────
   async getMyDoubts(req: Request, res: Response): Promise<Response> {
     try {
-      const studentId = (req as any).user.studentId as number;
+      const student = req.student;
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
+      const studentId = student.id;
       const page = parseInt(req.query.page as string) || 1;
       const limit = Math.min(parseInt(req.query.limit as string) || 20, 50);
 
@@ -24,7 +26,8 @@ export class DoubtsController {
   // ─── Student: POST /app/doubts ────────────────────────────────────────────────
   async postDoubt(req: Request, res: Response): Promise<Response> {
     try {
-      const user = (req as any).user;
+      const student = req.student;
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
       const { title, description, subject } = req.body;
 
       if (!title?.trim() || !description?.trim()) {
@@ -36,11 +39,11 @@ export class DoubtsController {
       if (description.length > 2000) {
         return res.status(400).json({ success: false, message: "Description too long (max 2000 chars)" });
       }
-      if (!user.batchId) {
+      if (!student.batchId) {
         return res.status(400).json({ success: false, message: "You are not enrolled in a batch" });
       }
 
-      const doubt = await doubtsService.postDoubt(user.studentId, user.batchId, {
+      const doubt = await doubtsService.postDoubt(student.id, student.batchId, {
         title,
         description,
         subject,
@@ -56,7 +59,9 @@ export class DoubtsController {
   // ─── Student: GET /app/doubts/:id ────────────────────────────────────────────
   async getDoubtThread(req: Request, res: Response): Promise<Response> {
     try {
-      const studentId = (req as any).user.studentId as number;
+      const student = req.student;
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
+      const studentId = student.id;
       const doubtId = parseInt(req.params.id);
       if (isNaN(doubtId)) {
         return res.status(400).json({ success: false, message: "Invalid doubt ID" });

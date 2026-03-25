@@ -12,12 +12,7 @@ class AttendanceController {
   async getAttendance(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const attendance = await attendanceService.getAttendancePerformance(
         student.id,
@@ -45,12 +40,7 @@ class AttendanceController {
   async getHistory(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const query: AttendanceHistoryQuery = {
         month: req.query.month ? Number(req.query.month) : undefined,
@@ -86,12 +76,7 @@ class AttendanceController {
   async getCalendar(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const month = Number(req.query.month);
       const year = Number(req.query.year);

@@ -22,7 +22,8 @@ export default class AppTestController {
         return res.status(200).json({ success: true, data: tests });
       }
 
-      return res.status(403).json({ success: false, message: "Use /batch/:batchId for teacher access" });
+      // Teacher/Admin: direct listing not available here, use /batch/:batchId
+      return res.status(200).json({ success: true, data: [] });
     } catch (error: any) {
       log("error", "app.tests.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppTestController.getTests error:", error);
@@ -67,9 +68,7 @@ export default class AppTestController {
   public async getPerformance(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(400).json({ success: false, message: "Student profile not found" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const performance = await testService.getStudentPerformance(student.id);
 
@@ -87,7 +86,7 @@ export default class AppTestController {
   public async getBatchTests(req: Request, res: Response) {
     try {
       const user = req.user!;
-      if (user.role !== UserRoles.TEACHER) {
+      if (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
         return res.status(403).json({ success: false, message: "Only teachers can view batch tests" });
       }
 
@@ -107,7 +106,7 @@ export default class AppTestController {
   public async getTestScores(req: Request, res: Response) {
     try {
       const user = req.user!;
-      if (user.role !== UserRoles.TEACHER) {
+      if (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
         return res.status(403).json({ success: false, message: "Only teachers can view all scores" });
       }
 

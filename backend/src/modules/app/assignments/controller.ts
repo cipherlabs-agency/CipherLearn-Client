@@ -174,12 +174,7 @@ class AssignmentsController {
       const student = req.student;
       const slotId = Number(req.params.id);
 
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       if (isNaN(slotId)) {
         return res.status(400).json({
@@ -268,12 +263,7 @@ class AssignmentsController {
       const student = req.student;
       const slotId = Number(req.params.id);
 
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       if (isNaN(slotId)) {
         return res.status(400).json({
@@ -309,12 +299,7 @@ class AssignmentsController {
     try {
       const student = req.student;
 
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const stats = await assignmentsService.getStudentStats(student.id);
 
@@ -495,7 +480,7 @@ class AssignmentsController {
   async createAssignment(req: Request, res: Response) {
     try {
       const user = req.user;
-      if (!user || user.role !== UserRoles.TEACHER) {
+      if (!user || (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN)) {
         return res.status(403).json({ success: false, message: "Access denied" });
       }
 
@@ -625,7 +610,7 @@ class AssignmentsController {
   async getTeacherAssignments(req: Request, res: Response) {
     try {
       const user = req.user;
-      if (!user || user.role !== UserRoles.TEACHER) {
+      if (!user || (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN)) {
         return res.status(403).json({ success: false, message: "Access denied" });
       }
 
@@ -662,7 +647,7 @@ class AssignmentsController {
       const user = req.user;
       const slotId = Number(req.params.id);
 
-      if (!user || user.role !== UserRoles.TEACHER) {
+      if (!user || (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN)) {
         return res.status(403).json({ success: false, message: "Access denied" });
       }
       if (isNaN(slotId)) {
@@ -700,7 +685,7 @@ class AssignmentsController {
       const user = req.user;
       const slotId = Number(req.params.id);
 
-      if (!user || user.role !== UserRoles.TEACHER) {
+      if (!user || (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN)) {
         return res.status(403).json({ success: false, message: "Access denied" });
       }
       if (isNaN(slotId)) {
@@ -731,7 +716,7 @@ class AssignmentsController {
       const user = req.user;
       const slotId = Number(req.params.id);
 
-      if (!user || user.role !== UserRoles.TEACHER) {
+      if (!user || (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN)) {
         return res.status(403).json({ success: false, message: "Access denied" });
       }
       if (isNaN(slotId)) {

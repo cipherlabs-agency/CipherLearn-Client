@@ -11,9 +11,7 @@ class ProfileController {
   async getProfile(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({ success: false, message: "Student not authenticated" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const profile = await profileService.getProfile(student.id);
       return res.status(200).json({ success: true, data: profile });
@@ -31,9 +29,7 @@ class ProfileController {
   async updateProfile(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({ success: false, message: "Student not authenticated" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const { phone, address, parentName } = req.body;
       const updated = await profileService.updateStudentProfile(student.id, { phone, address, parentName });
@@ -103,9 +99,7 @@ class ProfileController {
   async uploadAvatar(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({ success: false, message: "Student not authenticated" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
       const file = (req as any).file as Express.Multer.File | undefined;
       if (!file) {
         return res.status(400).json({ success: false, message: "No image file uploaded" });
@@ -146,9 +140,7 @@ class ProfileController {
   async getMyTeacher(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({ success: false, message: "Student not authenticated" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
       if (!student.batchId) {
         return res.status(400).json({ success: false, message: "Student not assigned to a batch" });
       }

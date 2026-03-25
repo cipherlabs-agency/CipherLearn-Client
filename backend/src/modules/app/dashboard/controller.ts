@@ -11,12 +11,7 @@ class DashboardController {
   async getDashboard(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const dashboard = await dashboardService.getDashboard(student.id, student.batchId, req.user?.id);
 
@@ -41,12 +36,7 @@ class DashboardController {
   async getTodayLectures(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const { lectures, nextClass } = await dashboardService.getTodayLectures(student.batchId);
 
@@ -71,12 +61,7 @@ class DashboardController {
   async getQuickAccess(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const counts = await dashboardService.getQuickAccessCounts(student.id, student.batchId);
 

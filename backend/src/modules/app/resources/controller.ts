@@ -26,12 +26,7 @@ class ResourcesController {
   async getVideos(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
       const query = this.parseResourceQuery(req);
@@ -58,12 +53,7 @@ class ResourcesController {
   async getNotes(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
       const query = this.parseResourceQuery(req);
@@ -90,12 +80,7 @@ class ResourcesController {
   async getStudyMaterials(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
       const query = this.parseResourceQuery(req);
@@ -559,9 +544,7 @@ class ResourcesController {
   async starResource(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({ success: false, message: "Student not authenticated" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const { resourceType, resourceId } = req.body;
       if (!resourceType || !resourceId) {
@@ -591,9 +574,7 @@ class ResourcesController {
   async unstarResource(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({ success: false, message: "Student not authenticated" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const { resourceType, resourceId } = req.body;
       if (!resourceType || !resourceId) {
@@ -617,9 +598,7 @@ class ResourcesController {
   async getStarredResources(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({ success: false, message: "Student not authenticated" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const result = await resourcesService.getStarredResources(student.id, student.batchId);
 

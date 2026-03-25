@@ -13,12 +13,7 @@ class FeesController {
   async getFeeReceipts(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const receipts = await feesService.getFeeReceipts(student.id);
 
@@ -43,12 +38,7 @@ class FeesController {
   async getFeesSummary(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       const summary = await feesService.getFeesSummary(student.id);
 
@@ -72,12 +62,7 @@ class FeesController {
   async getFeeStructures(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: "Student not authenticated",
-        });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
 
       if (!student.batchId) {
         return res.status(400).json({
@@ -191,9 +176,7 @@ class FeesController {
   async getReceiptPdf(req: Request, res: Response) {
     try {
       const student = req.student;
-      if (!student) {
-        return res.status(401).json({ success: false, message: "Student not authenticated" });
-      }
+      if (!student) return res.status(400).json({ success: false, message: "Admin accounts do not have a student profile" });
       const receiptId = Number(req.params.id);
       if (isNaN(receiptId)) return res.status(400).json({ success: false, message: "Invalid receipt ID" });
 

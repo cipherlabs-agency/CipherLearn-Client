@@ -469,7 +469,8 @@ export const isStudent = async (
       });
     }
 
-    if (user.role !== UserRoles.STUDENT) {
+    // ADMIN is allowed — they can access student routes (without a student profile)
+    if (user.role !== UserRoles.STUDENT && user.role !== UserRoles.ADMIN) {
       log("warn", "isStudent role denied", { userId: user.id, role: user.role, path: req.path });
       return res.status(403).json({
         success: false,
@@ -477,28 +478,34 @@ export const isStudent = async (
       });
     }
 
-    let student = await prisma.student.findFirst({
-      where: { userId: user.id, isDeleted: false },
-      include: { batch: true },
-    });
+    req.user = user;
 
-    if (!student) {
-      student = await prisma.student.findFirst({
-        where: { email: user.email, isDeleted: false },
+    // Only load student profile for STUDENT role — ADMIN has no student profile
+    if (user.role === UserRoles.STUDENT) {
+      let student = await prisma.student.findFirst({
+        where: { userId: user.id, isDeleted: false },
         include: { batch: true },
       });
-    }
 
-    if (!student) {
-      log("warn", "isStudent profile not found", { userId: user.id, email: user.email, path: req.path });
-      return res.status(404).json({
-        success: false,
-        message: "Student profile not found",
-      });
-    }
+      if (!student) {
+        student = await prisma.student.findFirst({
+          where: { email: user.email, isDeleted: false },
+          include: { batch: true },
+        });
+      }
 
-    req.user = user;
-    req.student = student;
+      if (!student) {
+        log("warn", "isStudent profile not found", { userId: user.id, email: user.email, path: req.path });
+        return res.status(404).json({
+          success: false,
+          message: "Student profile not found",
+        });
+      }
+
+      req.student = student;
+    }
+    // ADMIN: req.student remains undefined — each controller returns empty data for this case
+
     next();
   } catch (error) {
     log("error", "isStudent middleware failed", { err: error instanceof Error ? error.message : String(error), path: req.path });

@@ -32,7 +32,9 @@ export default class AppLectureController {
         return res.status(200).json({ success: true, data: schedule });
       }
 
-      return res.status(403).json({ success: false, message: "Access denied" });
+      // Admin: use teacher path
+      const schedule = await lectureService.getTeacherSchedule(user.id, date);
+      return res.status(200).json({ success: true, data: schedule });
     } catch (error: any) {
       log("error", "app.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
       logger.error("AppLectureController.getMySchedule error:", error);
@@ -69,7 +71,7 @@ export default class AppLectureController {
   public async addNotes(req: Request, res: Response) {
     try {
       const user = req.user!;
-      if (user.role !== UserRoles.TEACHER) {
+      if (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
         return res.status(403).json({ success: false, message: "Only teachers can add notes" });
       }
 
@@ -219,7 +221,7 @@ export default class AppLectureController {
   public async markComplete(req: Request, res: Response) {
     try {
       const user = req.user!;
-      if (user.role !== UserRoles.TEACHER) {
+      if (user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
         return res.status(403).json({ success: false, message: "Only teachers can mark lectures as complete" });
       }
 
