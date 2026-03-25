@@ -7,6 +7,7 @@ import {
     useGetStudyMaterialsQuery,
     useDeleteStudyMaterialMutation,
     StudyMaterial,
+    type MaterialFile,
 } from "@/redux/slices/studyMaterials/studyMaterialsApi"
 import { EditStudyMaterialDialog } from "./EditStudyMaterialDialog"
 
@@ -16,6 +17,16 @@ interface StudyMaterialsListProps {
     isAdmin: boolean
 }
 
+function resolveFile(file: string | MaterialFile): { url: string; name: string } {
+    if (typeof file === 'string') {
+        return { url: file, name: file.split('/').pop() || file }
+    }
+    return {
+        url: file.url,
+        name: file.originalFilename || file.url.split('/').pop() || 'file',
+    }
+}
+
 const getFileIcon = (filename: string) => {
     const ext = filename.split('.').pop()?.toLowerCase()
     if (ext === 'pdf') return <FileText className="w-5 h-5 text-red-500" />
@@ -23,10 +34,6 @@ const getFileIcon = (filename: string) => {
     if (['ppt', 'pptx'].includes(ext || '')) return <FileText className="w-5 h-5 text-orange-500" />
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '')) return <FileText className="w-5 h-5 text-green-500" />
     return <FileText className="w-5 h-5 text-gray-500" />
-}
-
-const getFileName = (filepath: string) => {
-    return filepath.split('/').pop() || filepath
 }
 
 export function StudyMaterialsList({ batchId, category, isAdmin }: StudyMaterialsListProps) {
@@ -122,19 +129,22 @@ export function StudyMaterialsList({ batchId, category, isAdmin }: StudyMaterial
                                 )}
 
                                 <div className="flex flex-wrap gap-2 mb-4">
-                                    {(material.files as string[]).map((file, index) => (
-                                        <a
-                                            key={index}
-                                            href={getFileUrl(file)}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 px-3 py-2 bg-muted/50 border border-border/40 rounded-lg text-xs font-medium hover:bg-muted transition-colors group"
-                                        >
-                                            {getFileIcon(file)}
-                                            <span className="truncate max-w-[150px]">{getFileName(file)}</span>
-                                            <ExternalLink className="w-3 h-3 opacity-50 group-hover:opacity-100" />
-                                        </a>
-                                    ))}
+                                    {material.files.map((rawFile, index) => {
+                                        const { url, name } = resolveFile(rawFile)
+                                        return (
+                                            <a
+                                                key={index}
+                                                href={getFileUrl(url)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-3 py-2 bg-muted/50 border border-border/40 rounded-lg text-xs font-medium hover:bg-muted transition-colors group"
+                                            >
+                                                {getFileIcon(name)}
+                                                <span className="truncate max-w-[150px]">{name}</span>
+                                                <ExternalLink className="w-3 h-3 opacity-50 group-hover:opacity-100" />
+                                            </a>
+                                        )
+                                    })}
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
@@ -148,7 +158,7 @@ export function StudyMaterialsList({ batchId, category, isAdmin }: StudyMaterial
                                     </span>
                                     <span className="flex items-center gap-1">
                                         <FileText className="w-3 h-3" />
-                                        {(material.files as string[]).length} file(s)
+                                        {material.files.length} file(s)
                                     </span>
                                 </div>
                             </div>
