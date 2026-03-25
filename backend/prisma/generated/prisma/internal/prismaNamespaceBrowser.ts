@@ -415,6 +415,7 @@ export const FeeReceiptScalarFieldEnum = {
   status: 'status',
   dueDate: 'dueDate',
   paymentDate: 'paymentDate',
+  pdfUrl: 'pdfUrl',
   generatedBy: 'generatedBy',
   generatedById: 'generatedById',
   modifiedBy: 'modifiedBy',

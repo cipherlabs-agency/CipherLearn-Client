@@ -112,6 +112,12 @@ export const maintenanceApi = api.injectEndpoints({
         >({
             query: (body) => ({ url: '/dashboard/maintenance/test-notification', method: 'POST', body }),
         }),
+        maintenancePurgeNotifications: builder.mutation<
+            { success: boolean; message: string; data: { before: number; after: number; deleted: number } },
+            void
+        >({
+            query: () => ({ url: '/dashboard/maintenance/purge-notifications', method: 'POST' }),
+        }),
     }),
 });
 
@@ -129,5 +135,6 @@ export const {
     useMaintenancePlaygroundMutation,
     useMaintenanceEndpointsQuery,
     useMaintenanceTestNotificationMutation,
+    useMaintenancePurgeNotificationsMutation,
 } = maintenanceApi;
 

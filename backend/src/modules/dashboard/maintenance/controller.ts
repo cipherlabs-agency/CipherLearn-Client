@@ -286,4 +286,43 @@ export default class MaintenanceController {
       });
     }
   }
+
+  /**
+   * POST /dashboard/maintenance/purge-notifications
+   * Manually trigger notification cleanup.
+   */
+  async purgeNotifications(_req: Request, res: Response): Promise<Response> {
+    try {
+      const before = await prisma.notification.count();
+
+      // Import and run the cleanup
+      const { cleanupNotifications } = await import("../../../utils/notificationScheduler");
+      await cleanupNotifications();
+
+      const after = await prisma.notification.count();
+      const deleted = before - after;
+
+      logger.info(`[Maintenance] Notification purge: ${before} → ${after} (${deleted} deleted)`);
+
+      return res.status(200).json({
+        success: true,
+        message: `Purged ${deleted} notifications`,
+        data: {
+          before,
+          after,
+          deleted,
+          rules: {
+            maxPerUser: 100,
+            deleteReadOlderThanDays: 30,
+          },
+        },
+      });
+    } catch (error: any) {
+      logger.error("[Maintenance] Purge notifications failed:", error);
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }

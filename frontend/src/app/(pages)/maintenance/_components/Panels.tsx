@@ -13,7 +13,7 @@ import {
   useMaintenanceStatusQuery, useMaintenanceSeedDataQuery, useMaintenanceSeedMutation,
   useMaintenanceCleanupMutation, useMaintenanceApiHealthMutation, useMaintenanceValidationMutation,
   useMaintenanceSecurityMutation, useMaintenanceDbIntegrityQuery, useMaintenanceLoadTestMutation,
-  useMaintenanceEndpointsQuery, useMaintenanceTestNotificationMutation,
+  useMaintenanceEndpointsQuery, useMaintenanceTestNotificationMutation, useMaintenancePurgeNotificationsMutation,
   type HealthResult, type ValidationResult, type SecurityResult, type LoadTestResult,
 } from "@/redux/slices/maintenance/maintenanceApi"
 import { useGetAllBatchesQuery } from "@/redux/slices/batches/batchesApi"
@@ -265,12 +265,14 @@ export function CleanupPanel({ password }: { password: string }) {
 // ── Push Notification Test ─────────────────────────────────
 export function PushNotificationPanel() {
   const [sendNotif, { isLoading }] = useMaintenanceTestNotificationMutation()
+  const [purgeNotifs, { isLoading: isPurging }] = useMaintenancePurgeNotificationsMutation()
   const [mode, setMode] = useState<"user" | "broadcast">("user")
   const [userId, setUserId] = useState("")
   const [title, setTitle] = useState("")
   const [body, setBody] = useState("")
   const [jsonData, setJsonData] = useState("")
   const [result, setResult] = useState<any>(null)
+  const [purgeResult, setPurgeResult] = useState<any>(null)
 
   const send = async () => {
     if (!title.trim() || !body.trim()) { toast.error("Title and body are required"); return }
@@ -386,6 +388,49 @@ export function PushNotificationPanel() {
           </div>
         </Card>
       )}
+
+      {/* DB Notification Cleanup */}
+      <Card className="p-4 border-amber-500/20">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-sm font-semibold flex items-center gap-2"><Trash2 className="h-4 w-4 text-amber-500" />DB Notification Cleanup</h3>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Auto-runs every 6h. Rules: read &gt;30 days → delete, max 100 per user.</p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isPurging}
+            onClick={async () => {
+              try {
+                const res = await purgeNotifs().unwrap()
+                setPurgeResult(res)
+                toast.success(res.message)
+              } catch (e: any) {
+                toast.error(e.data?.message || "Purge failed")
+              }
+            }}
+          >
+            {isPurging ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : <Trash2 className="h-3.5 w-3.5 mr-2" />}
+            {isPurging ? "Purging..." : "Purge Now"}
+          </Button>
+        </div>
+        {purgeResult && (
+          <div className="grid grid-cols-3 gap-2 mt-2">
+            <div className="p-2.5 rounded-lg bg-secondary/40 text-center">
+              <p className="text-lg font-bold tabular-nums">{purgeResult.data?.before?.toLocaleString()}</p>
+              <p className="text-[10px] text-muted-foreground font-medium">Before</p>
+            </div>
+            <div className="p-2.5 rounded-lg bg-secondary/40 text-center">
+              <p className="text-lg font-bold tabular-nums text-red-500">{purgeResult.data?.deleted?.toLocaleString()}</p>
+              <p className="text-[10px] text-muted-foreground font-medium">Deleted</p>
+            </div>
+            <div className="p-2.5 rounded-lg bg-secondary/40 text-center">
+              <p className="text-lg font-bold tabular-nums text-emerald-500">{purgeResult.data?.after?.toLocaleString()}</p>
+              <p className="text-[10px] text-muted-foreground font-medium">After</p>
+            </div>
+          </div>
+        )}
+      </Card>
     </div>
   )
 }
