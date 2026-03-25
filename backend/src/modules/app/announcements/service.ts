@@ -24,6 +24,7 @@ class AnnouncementsService {
     priority: import("../../../../prisma/generated/prisma/enums").AnnouncementPriority;
     department: string | null;
     date: Date | null;
+    imageUrl: string | null;
     attachments: unknown;
     createdAt: Date;
   }): AppAnnouncementListItem {
@@ -36,6 +37,7 @@ class AnnouncementsService {
       priority: a.priority,
       department: a.department,
       date: a.date?.toISOString() ?? null,
+      imageUrl: a.imageUrl,
       hasAttachments: Array.isArray(attachments) && attachments.length > 0,
       createdAt: a.createdAt.toISOString(),
     };
@@ -132,6 +134,7 @@ class AnnouncementsService {
             priority: true,
             department: true,
             date: true,
+            imageUrl: true,
             attachments: true,
             createdAt: true,
             targetBatchIds: true,

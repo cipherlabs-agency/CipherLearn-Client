@@ -146,6 +146,7 @@ export interface TeacherAssignmentListItem {
   title: string;
   subject: string;
   description: string | null;
+  attachments: SubmissionFile[];
   dueDate: string | null;
   submissionType: SubmissionType;
   assignmentStatus: AssignmentStatus;
@@ -171,6 +172,9 @@ export interface ReviewPageStudent {
   submittedAt: string | null;
   submissionId: number | null;
   submissionStatus: SubmissionStatus | null;
+  files: SubmissionFile[];
+  note: string | null;
+  feedback: string | null;
 }
 
 export interface AssignmentReviewPage {

@@ -12,6 +12,22 @@ import {
   SubmissionFile,
 } from "./types";
 
+/**
+ * Normalize the files field from the DB:
+ * - Dashboard uploads store string[] (just URLs)
+ * - App uploads store SubmissionFile objects
+ * Always returns an array of objects with at least a `url` field.
+ */
+function normalizeSubmissionFiles(raw: unknown): Array<{ url: string; [key: string]: unknown }> {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item) => {
+    if (typeof item === "string") {
+      return { url: item, original_filename: item.split("/").pop() ?? "file" };
+    }
+    return item as Record<string, unknown>;
+  });
+}
+
 export class AssignmentService {
   // ==================== ASSIGNMENT SLOTS ====================
 
@@ -129,7 +145,16 @@ export class AssignmentService {
         },
       },
     });
-    return slot;
+    if (!slot) return null;
+
+    // Normalize submission files so both string[] and object[] formats are consistent
+    return {
+      ...slot,
+      submissions: slot.submissions.map((sub) => ({
+        ...sub,
+        files: normalizeSubmissionFiles(sub.files),
+      })),
+    };
   }
 
   async updateSlot(id: number, data: UpdateAssignmentSlotInput) {
@@ -240,7 +265,10 @@ export class AssignmentService {
     ]);
 
     return {
-      submissions,
+      submissions: submissions.map((s) => ({
+        ...s,
+        files: normalizeSubmissionFiles(s.files),
+      })),
       pagination: {
         page,
         limit,

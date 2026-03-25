@@ -21,6 +21,7 @@ export interface AppAnnouncementListItem {
   priority: AnnouncementPriority;
   department: string | null;
   date: string | null;
+  imageUrl: string | null;
   hasAttachments: boolean;
   createdAt: string;
 }

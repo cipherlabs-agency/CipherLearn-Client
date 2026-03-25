@@ -45,6 +45,22 @@ import type {
   GetTeacherAssignmentsQuery,
 } from "./types";
 
+/**
+ * Normalize the `attachments` / `files` JSON field from the DB.
+ * Dashboard stores plain URL strings; App stores SubmissionFile objects.
+ * Always returns SubmissionFile[].
+ */
+function normalizeFiles(raw: unknown): SubmissionFile[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item) => {
+    if (typeof item === "string") {
+      const filename = item.split("/").pop() ?? "file";
+      return { url: item, publicId: "", originalFilename: filename, size: 0, mimeType: "" };
+    }
+    return item as SubmissionFile;
+  });
+}
+
 class AssignmentsService {
   // ==================== STUDENT METHODS ====================
 
@@ -88,7 +104,7 @@ class AssignmentsService {
         title: a.title,
         subject: a.subject,
         description: a.description,
-        attachments: (a.attachments as unknown as SubmissionFile[]) || [],
+        attachments: normalizeFiles(a.attachments),
         dueDate: a.dueDate?.toISOString() || null,
         isOverdue,
         daysRemaining,
@@ -97,7 +113,7 @@ class AssignmentsService {
         submission: submission
           ? {
               id: submission.id,
-              files: (submission.files as unknown as SubmissionFile[]) || [],
+              files: normalizeFiles(submission.files),
               note: submission.note ?? null,
               status: submission.status,
               feedback: submission.feedback,
@@ -168,7 +184,7 @@ class AssignmentsService {
       submission: submission
         ? {
             id: submission.id,
-            files: (submission.files as unknown as SubmissionFile[]) || [],
+            files: normalizeFiles(submission.files),
             note: submission.note ?? null,
             status: submission.status,
             feedback: submission.feedback,
@@ -261,7 +277,7 @@ class AssignmentsService {
 
     return {
       id: submission.id,
-      files: (submission.files as unknown as SubmissionFile[]) || [],
+      files: normalizeFiles(submission.files),
       note: submission.note ?? null,
       status: submission.status,
       feedback: submission.feedback,
@@ -326,7 +342,7 @@ class AssignmentsService {
         title: slot.title,
         subject: slot.subject,
         description: slot.description,
-        attachments: (slot.attachments as unknown as SubmissionFile[]) || [],
+        attachments: normalizeFiles(slot.attachments),
         dueDate: slot.dueDate?.toISOString() || null,
         createdAt: slot.createdAt.toISOString(),
         createdBy: slot.createdBy,
@@ -424,7 +440,7 @@ class AssignmentsService {
 
     return {
       id: submission.id,
-      files: (submission.files as unknown as SubmissionFile[]) || [],
+      files: normalizeFiles(submission.files),
       note: submission.note ?? null,
       status: submission.status,
       feedback: submission.feedback,
@@ -460,7 +476,7 @@ class AssignmentsService {
 
     return {
       id: submission.id,
-      files: (submission.files as unknown as SubmissionFile[]) || [],
+      files: normalizeFiles(submission.files),
       note: submission.note ?? null,
       status: submission.status,
       feedback: submission.feedback,
@@ -688,6 +704,7 @@ class AssignmentsService {
         title: slot.title,
         subject: slot.subject,
         description: slot.description,
+        attachments: normalizeFiles(slot.attachments),
         dueDate: slot.dueDate?.toISOString() || null,
         submissionType: slot.submissionType,
         assignmentStatus: slot.assignmentStatus,
@@ -741,6 +758,9 @@ class AssignmentsService {
           studentId: true,
           submittedAt: true,
           status: true,
+          files: true,
+          note: true,
+          feedback: true,
         },
       }),
     ]);
@@ -760,6 +780,9 @@ class AssignmentsService {
           submittedAt: null,
           submissionId: null,
           submissionStatus: null,
+          files: [],
+          note: null,
+          feedback: null,
         };
       }
       const isLate = dueDate ? sub.submittedAt > dueDate : false;
@@ -770,6 +793,9 @@ class AssignmentsService {
         submittedAt: sub.submittedAt.toISOString(),
         submissionId: sub.id,
         submissionStatus: sub.status,
+        files: normalizeFiles(sub.files),
+        note: sub.note ?? null,
+        feedback: sub.feedback ?? null,
       };
     });
 

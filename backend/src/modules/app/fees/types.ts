@@ -39,6 +39,7 @@ export interface AppFeeReceipt {
   paymentDate: string | null;
   paymentMode: PaymentMode | null;
   feeName: string | null;
+  pdfUrl: string | null;
 }
 
 export interface AppFeesSummary {

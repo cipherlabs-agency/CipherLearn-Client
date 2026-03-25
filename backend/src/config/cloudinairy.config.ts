@@ -79,11 +79,23 @@ export default class CloudinaryService {
         const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
         const publicId = `${timestamp}-${sanitizedName}`;
 
+        // Determine resource_type: images stay "image", videos stay "video",
+        // everything else (PDF, DOC, DOCX, PPT, etc.) must use "raw" so
+        // Cloudinary returns a proper download URL instead of trying to
+        // render the file as an image (which breaks PDFs).
+        const mimeType = file.mimetype;
+        const resourceType: "image" | "video" | "raw" =
+          mimeType.startsWith("image/")
+            ? "image"
+            : mimeType.startsWith("video/")
+            ? "video"
+            : "raw";
+
         const stream = cloudinary.uploader.upload_stream(
           {
             folder,
             public_id: publicId,
-            resource_type: "auto", // Auto-detect: image, raw, or video
+            resource_type: resourceType,
             use_filename: true,
             unique_filename: true,
             overwrite: false,

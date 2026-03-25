@@ -511,6 +511,9 @@ model FeeReceipt {
   dueDate         DateTime
   paymentDate     DateTime?
 
+  // Generated PDF
+  pdfUrl          String?       // Cloudinary URL, stored after first generation
+
   // Audit
   generatedBy     String        // Admin who generated
   generatedById   Int?

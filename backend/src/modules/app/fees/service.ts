@@ -38,6 +38,7 @@ class FeesService {
       paymentDate: r.paymentDate?.toISOString() || null,
       paymentMode: r.paymentMode,
       feeName: r.feeStructure?.name || null,
+      pdfUrl: (r as any).pdfUrl ?? null,
     }));
   }
 
@@ -250,6 +251,7 @@ class FeesService {
       paymentDate: updated.paymentDate?.toISOString() ?? null,
       paymentMode: updated.paymentMode,
       feeName: updated.feeStructure?.name ?? null,
+      pdfUrl: (updated as any).pdfUrl ?? null,
     };
   }
 
@@ -363,7 +365,15 @@ class FeesService {
       stream.end(pdfBuffer);
     });
 
-    return { pdfUrl: uploadResult.secure_url };
+    const pdfUrl = uploadResult.secure_url;
+
+    // Persist the URL so future calls to getFeeReceipts() return it directly
+    await prisma.feeReceipt.update({
+      where: { id: receiptId },
+      data: { pdfUrl } as any,
+    });
+
+    return { pdfUrl };
   }
 }
 
