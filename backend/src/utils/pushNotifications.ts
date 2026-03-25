@@ -1,18 +1,22 @@
 /**
- * Push Notification Utility — Expo Push API
+ * Push Notification Utility — OneSignal REST API
  *
- * Sends push notifications via Expo's notification service.
+ * Sends push notifications via OneSignal's REST API.
  * Respects student notification preferences and quiet hours.
  *
- * Device tokens are stored in the DeviceToken table.
- * Token format: ExponentPushToken[xxxxxxxx]
+ * Uses OneSignal's `include_external_user_ids` to target users.
+ * The React Native app must call `OneSignal.setExternalUserId(userId)` after login.
+ *
+ * Migration note: Replaced Expo Push API (ExpoPushToken) with OneSignal.
+ * All public function signatures remain identical for backward compatibility.
  */
 
 import { prisma } from "../config/db.config";
+import { config } from "../config/env.config";
 import logger from "./logger";
 import { log } from "./logtail";
 
-const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
+const ONESIGNAL_API_URL = "https://api.onesignal.com/notifications";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -26,14 +30,24 @@ export type StudentPrefKey =
   | "schoolAnnouncements"
   | "doubtResponses";
 
-interface ExpoPushMessage {
-  to: string;
-  title: string;
-  body: string;
+interface OneSignalPayload {
+  app_id: string;
+  include_external_user_ids: string[];
+  contents: { en: string };
+  headings: { en: string };
   data?: Record<string, unknown>;
-  sound?: "default" | null;
-  badge?: number;
-  priority?: "default" | "normal" | "high";
+  priority?: number; // 10 = high
+  // Android-specific
+  android_channel_id?: string;
+  small_icon?: string;
+  // iOS-specific
+  ios_sound?: string;
+}
+
+export interface OneSignalResponse {
+  id: string;
+  recipients: number;
+  errors?: string[];
 }
 
 // ─── Quiet hours check ────────────────────────────────────────────────────────
@@ -56,36 +70,95 @@ function isInQuietHours(enabled: boolean, from: string, to: string): boolean {
   return currentMinutes >= fromMinutes && currentMinutes < toMinutes;
 }
 
-// ─── Core send function ───────────────────────────────────────────────────────
+// ─── Core OneSignal send function ─────────────────────────────────────────────
 
-async function sendExpoPushMessages(messages: ExpoPushMessage[]): Promise<void> {
-  if (messages.length === 0) return;
+async function sendOneSignalNotification(
+  externalUserIds: string[],
+  title: string,
+  body: string,
+  data?: Record<string, unknown>
+): Promise<OneSignalResponse | null> {
+  if (externalUserIds.length === 0) {
+    logger.warn("[OneSignal] No external user IDs provided, skipping send");
+    return null;
+  }
+
+  const appId = config.ONESIGNAL.APP_ID;
+  const apiKey = config.ONESIGNAL.REST_API_KEY;
+
+  if (!appId || !apiKey) {
+    logger.error("[OneSignal] Missing ONESIGNAL_APP_ID or ONESIGNAL_REST_API_KEY in env");
+    log("error", "onesignal.missing_config", { appId: !!appId, apiKey: !!apiKey });
+    return null;
+  }
+
+  const payload: OneSignalPayload = {
+    app_id: appId,
+    include_external_user_ids: externalUserIds,
+    headings: { en: title },
+    contents: { en: body },
+    data: data || {},
+    priority: 10,
+  };
+
+  logger.info(`[OneSignal] Sending notification to ${externalUserIds.length} user(s)`, {
+    title,
+    body,
+    userIds: externalUserIds.slice(0, 10), // Log first 10 for debugging
+    totalRecipients: externalUserIds.length,
+  });
 
   try {
-    const response = await fetch(EXPO_PUSH_URL, {
+    const response = await fetch(ONESIGNAL_API_URL, {
       method: "POST",
       headers: {
-        Accept: "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Content-Type": "application/json",
+        Authorization: `Basic ${apiKey}`,
       },
-      body: JSON.stringify(messages),
+      body: JSON.stringify(payload),
     });
 
+    const result = await response.json() as any;
+
     if (!response.ok) {
-      const text = await response.text();
-      logger.error("Expo push API error:", { status: response.status, body: text });
-      return;
+      logger.error("[OneSignal] API error response", {
+        status: response.status,
+        statusText: response.statusText,
+        errors: result.errors,
+        body: JSON.stringify(result).slice(0, 500),
+      });
+      log("error", "onesignal.api_error", {
+        status: response.status,
+        errors: result.errors,
+      });
+      return null;
     }
 
-    const result = await response.json() as { data: Array<{ status: string; message?: string }> };
-    const failures = result.data?.filter((r) => r.status === "error") ?? [];
-    if (failures.length > 0) {
-      logger.warn(`Push notification failures: ${failures.length}/${messages.length}`, failures);
-    }
+    logger.info("[OneSignal] Notification sent successfully", {
+      notificationId: result.id,
+      recipients: result.recipients,
+    });
+
+    log("warn", "onesignal.sent", {
+      notificationId: result.id,
+      recipients: result.recipients,
+      title,
+    });
+
+    return {
+      id: result.id,
+      recipients: result.recipients,
+      errors: result.errors,
+    };
   } catch (error) {
-    log("error", "warn.warn failed", { err: error instanceof Error ? error.message : String(error) });
-    logger.error("Failed to send push notifications:", error);
+    logger.error("[OneSignal] Network/fetch error", {
+      err: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    log("error", "onesignal.network_error", {
+      err: error instanceof Error ? error.message : String(error),
+    });
+    return null;
   }
 }
 
@@ -101,23 +174,8 @@ export async function sendToUser(
   body: string,
   data?: Record<string, unknown>
 ): Promise<void> {
-  const tokens = await prisma.deviceToken.findMany({
-    where: { userId },
-    select: { token: true },
-  });
-
-  if (tokens.length === 0) return;
-
-  const messages: ExpoPushMessage[] = (tokens as { token: string }[]).map((t) => ({
-    to: t.token,
-    title,
-    body,
-    data,
-    sound: "default",
-    priority: "high",
-  }));
-
-  await sendExpoPushMessages(messages);
+  logger.info(`[OneSignal] sendToUser: userId=${userId}`, { title });
+  await sendOneSignalNotification([String(userId)], title, body, data);
 }
 
 /**
@@ -132,29 +190,22 @@ export async function sendToBatchStudents(
   body: string,
   data?: Record<string, unknown>
 ): Promise<void> {
-  const rows = await prisma.deviceToken.findMany({
-    where: {
-      user: {
-        student: { batchId, isDeleted: false },
-      },
-    },
-    include: {
-      user: {
-        select: {
-          student: {
-            select: {
-              notificationPreference: true,
-            },
-          },
-        },
-      },
+  logger.info(`[OneSignal] sendToBatchStudents: batchId=${batchId}, prefKey=${prefKey}`, { title });
+
+  const students = await prisma.student.findMany({
+    where: { batchId, isDeleted: false },
+    select: {
+      userId: true,
+      notificationPreference: true,
     },
   });
 
-  const messages: ExpoPushMessage[] = [];
+  const eligibleUserIds: string[] = [];
 
-  for (const row of rows) {
-    const pref = row.user.student?.notificationPreference;
+  for (const student of students) {
+    if (!student.userId) continue;
+
+    const pref = student.notificationPreference;
 
     // Default: send if no preference record
     const prefValue = pref ? (pref as Record<string, unknown>)[prefKey] as boolean : true;
@@ -163,19 +214,22 @@ export async function sendToBatchStudents(
     // Quiet hours check
     if (
       pref &&
-      isInQuietHours(
-        pref.quietHoursEnabled,
-        pref.quietHoursFrom,
-        pref.quietHoursTo
-      )
+      isInQuietHours(pref.quietHoursEnabled, pref.quietHoursFrom, pref.quietHoursTo)
     ) {
       continue;
     }
 
-    messages.push({ to: row.token, title, body, data, sound: "default", priority: "high" });
+    eligibleUserIds.push(String(student.userId));
   }
 
-  await sendExpoPushMessages(messages);
+  logger.info(`[OneSignal] sendToBatchStudents: ${eligibleUserIds.length}/${students.length} eligible`, {
+    batchId,
+    prefKey,
+  });
+
+  if (eligibleUserIds.length > 0) {
+    await sendOneSignalNotification(eligibleUserIds, title, body, data);
+  }
 }
 
 /**
@@ -187,13 +241,18 @@ export async function sendToTeacherOfBatch(
   body: string,
   data?: Record<string, unknown>
 ): Promise<void> {
+  logger.info(`[OneSignal] sendToTeacherOfBatch: batchId=${batchId}`, { title });
+
   const lecture = await prisma.lecture.findFirst({
     where: { batchId, isDeleted: false, teacherId: { not: null } },
     orderBy: { date: "desc" },
     select: { teacherId: true },
   });
 
-  if (!lecture?.teacherId) return;
+  if (!lecture?.teacherId) {
+    logger.warn(`[OneSignal] sendToTeacherOfBatch: no teacher found for batchId=${batchId}`);
+    return;
+  }
 
   await sendToUser(lecture.teacherId, title, body, data);
 }
@@ -208,29 +267,22 @@ export async function sendToAllActiveStudents(
   body: string,
   data?: Record<string, unknown>
 ): Promise<void> {
-  const rows = await prisma.deviceToken.findMany({
-    where: {
-      user: {
-        student: { isDeleted: false },
-      },
-    },
-    include: {
-      user: {
-        select: {
-          student: {
-            select: {
-              notificationPreference: true,
-            },
-          },
-        },
-      },
+  logger.info(`[OneSignal] sendToAllActiveStudents: prefKey=${prefKey}`, { title });
+
+  const students = await prisma.student.findMany({
+    where: { isDeleted: false, userId: { not: null } },
+    select: {
+      userId: true,
+      notificationPreference: true,
     },
   });
 
-  const messages: ExpoPushMessage[] = [];
+  const eligibleUserIds: string[] = [];
 
-  for (const row of rows) {
-    const pref = row.user.student?.notificationPreference;
+  for (const student of students) {
+    if (!student.userId) continue;
+
+    const pref = student.notificationPreference;
     const prefValue = pref ? (pref as Record<string, unknown>)[prefKey] as boolean : true;
     if (prefValue === false) continue;
 
@@ -238,10 +290,14 @@ export async function sendToAllActiveStudents(
       continue;
     }
 
-    messages.push({ to: row.token, title, body, data, sound: "default", priority: "high" });
+    eligibleUserIds.push(String(student.userId));
   }
 
-  await sendExpoPushMessages(messages);
+  logger.info(`[OneSignal] sendToAllActiveStudents: ${eligibleUserIds.length}/${students.length} eligible`);
+
+  if (eligibleUserIds.length > 0) {
+    await sendOneSignalNotification(eligibleUserIds, title, body, data);
+  }
 }
 
 /**
@@ -253,15 +309,37 @@ export async function sendToAllTeachersOfBatch(
   body: string,
   data?: Record<string, unknown>
 ): Promise<void> {
+  logger.info(`[OneSignal] sendToAllTeachersOfBatch: batchId=${batchId}`, { title });
+
   const lectures = await prisma.lecture.findMany({
     where: { batchId, isDeleted: false, teacherId: { not: null } },
     select: { teacherId: true },
     distinct: ["teacherId"],
   });
 
-  for (const l of lectures) {
-    if (l.teacherId) {
-      await sendToUser(l.teacherId, title, body, data);
-    }
+  const teacherIds = lectures
+    .filter((l) => l.teacherId !== null)
+    .map((l) => String(l.teacherId));
+
+  if (teacherIds.length > 0) {
+    await sendOneSignalNotification(teacherIds, title, body, data);
   }
+}
+
+/**
+ * Debug utility: send a raw OneSignal notification to specific external user IDs.
+ * Used by the Maintenance Mode test endpoint.
+ */
+export async function sendTestNotification(
+  externalUserIds: string[],
+  title: string,
+  body: string,
+  data?: Record<string, unknown>
+): Promise<OneSignalResponse | null> {
+  logger.info("[OneSignal] sendTestNotification (debug)", {
+    externalUserIds,
+    title,
+    body,
+  });
+  return sendOneSignalNotification(externalUserIds, title, body, data);
 }

@@ -1,6 +1,10 @@
 import type { Request, Response } from "express";
 import MaintenanceService from "./service";
 import { log } from "../../../utils/logtail";
+import logger from "../../../utils/logger";
+import { sendToUser, sendTestNotification } from "../../../utils/pushNotifications";
+import { config } from "../../../config/env.config";
+import { prisma } from "../../../config/db.config";
 
 const service = new MaintenanceService();
 
@@ -143,6 +147,142 @@ export default class MaintenanceController {
       return res.status(200).json({ success: true, data: endpoints });
     } catch (error: any) {
       return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
+  /**
+   * POST /dashboard/maintenance/test-notification
+   * Send a test push notification via OneSignal for debugging.
+   *
+   * Body: {
+   *   userId?: number       — Send to a specific user (by DB user ID)
+   *   title: string         — Notification title
+   *   body: string          — Notification body text
+   *   data?: object         — Optional custom data payload
+   *   sendToAll?: boolean   — If true, sends to ALL subscribed OneSignal users
+   * }
+   *
+   * Returns: OneSignal API response with notification ID, recipient count, and debug info.
+   */
+  async testNotification(req: Request, res: Response): Promise<Response> {
+    try {
+      const { userId, title, body, data, sendToAll } = req.body;
+
+      if (!title || !body) {
+        return res.status(400).json({
+          success: false,
+          message: "title and body are required",
+        });
+      }
+
+      // Check OneSignal config
+      const appId = config.ONESIGNAL.APP_ID;
+      const apiKey = config.ONESIGNAL.REST_API_KEY;
+
+      if (!appId || !apiKey) {
+        return res.status(400).json({
+          success: false,
+          message: "OneSignal not configured. Set ONESIGNAL_APP_ID and ONESIGNAL_REST_API_KEY in .env",
+          debug: {
+            ONESIGNAL_APP_ID: appId ? "✅ Set" : "❌ Missing",
+            ONESIGNAL_REST_API_KEY: apiKey ? "✅ Set" : "❌ Missing",
+          },
+        });
+      }
+
+      logger.info("[Maintenance] Test notification requested", {
+        userId,
+        title,
+        body,
+        sendToAll,
+      });
+
+      let result;
+
+      if (sendToAll) {
+        // Send to all subscribed users via OneSignal "included_segments"
+        const response = await fetch("https://api.onesignal.com/notifications", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${apiKey}`,
+          },
+          body: JSON.stringify({
+            app_id: appId,
+            included_segments: ["Subscribed Users"],
+            headings: { en: title },
+            contents: { en: body },
+            data: data || {},
+          }),
+        });
+        result = await response.json();
+      } else if (userId) {
+        // Verify user exists
+        const user = await prisma.user.findUnique({
+          where: { id: Number(userId) },
+          select: { id: true, name: true, email: true, role: true },
+        });
+
+        if (!user) {
+          return res.status(404).json({
+            success: false,
+            message: `User with ID ${userId} not found`,
+          });
+        }
+
+        result = await sendTestNotification(
+          [String(userId)],
+          title,
+          body,
+          data
+        );
+
+        return res.status(200).json({
+          success: true,
+          message: `Test notification sent to ${user.name} (${user.email})`,
+          data: {
+            targetUser: user,
+            onesignalResponse: result,
+            debug: {
+              externalUserId: String(userId),
+              timestamp: new Date().toISOString(),
+            },
+          },
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Provide either userId (number) or sendToAll: true",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: sendToAll
+          ? "Test notification sent to all subscribed users"
+          : "Test notification sent",
+        data: {
+          onesignalResponse: result,
+          debug: {
+            timestamp: new Date().toISOString(),
+            configStatus: {
+              ONESIGNAL_APP_ID: "✅ Set",
+              ONESIGNAL_REST_API_KEY: "✅ Set",
+            },
+          },
+        },
+      });
+    } catch (error: any) {
+      logger.error("[Maintenance] Test notification failed", {
+        err: error.message,
+        stack: error.stack,
+      });
+      log("error", "maintenance.testNotification", { err: error.message });
+      return res.status(500).json({
+        success: false,
+        message: `Test notification failed: ${error.message}`,
+        debug: { stack: error.stack },
+      });
     }
   }
 }

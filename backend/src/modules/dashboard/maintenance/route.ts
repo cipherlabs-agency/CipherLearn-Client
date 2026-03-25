@@ -19,5 +19,6 @@ router.get("/db-integrity", controller.dbIntegrity.bind(controller));
 router.post("/load-test", controller.loadTest.bind(controller));
 router.post("/playground", controller.playground.bind(controller));
 router.get("/endpoints", controller.getEndpoints.bind(controller));
+router.post("/test-notification", controller.testNotification.bind(controller));
 
 export default router;
