@@ -321,6 +321,60 @@ export default class AppTestController {
     }
   }
 
+  // ==================== TEACHER TEST CRUD ====================
+
+  /**
+   * POST /app/tests/teacher
+   * Teacher: create a new test
+   */
+  public async createTest(req: Request, res: Response) {
+    try {
+      const user = req.user!;
+      const test = await testService.createTest(req.body, user.id);
+      return res.status(201).json({ success: true, data: test });
+    } catch (error: any) {
+      logger.error("AppTestController.createTest error:", error);
+      if (error.message.includes("not found")) return res.status(404).json({ success: false, message: error.message });
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
+  /**
+   * PUT /app/tests/teacher/:id
+   * Teacher: update their own test
+   */
+  public async updateTest(req: Request, res: Response) {
+    try {
+      const user = req.user!;
+      const testId = Number(req.params.id);
+      if (isNaN(testId)) return res.status(400).json({ success: false, message: "Invalid test ID" });
+      const test = await testService.updateTest(testId, user.id, req.body);
+      return res.status(200).json({ success: true, data: test });
+    } catch (error: any) {
+      logger.error("AppTestController.updateTest error:", error);
+      if (error.message.includes("not found")) return res.status(404).json({ success: false, message: error.message });
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
+  /**
+   * DELETE /app/tests/teacher/:id
+   * Teacher: soft-delete their own test
+   */
+  public async deleteTest(req: Request, res: Response) {
+    try {
+      const user = req.user!;
+      const testId = Number(req.params.id);
+      if (isNaN(testId)) return res.status(400).json({ success: false, message: "Invalid test ID" });
+      await testService.deleteTest(testId, user.id);
+      return res.status(200).json({ success: true, message: "Test deleted" });
+    } catch (error: any) {
+      logger.error("AppTestController.deleteTest error:", error);
+      if (error.message.includes("not found")) return res.status(404).json({ success: false, message: error.message });
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
   // ==================== TEST REMINDERS ====================
 
   /**

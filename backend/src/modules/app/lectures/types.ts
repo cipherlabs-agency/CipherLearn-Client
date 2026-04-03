@@ -1,5 +1,13 @@
 import { LectureStatus } from "../../../../prisma/generated/prisma/enums";
 
+export interface LectureAttachment {
+  url: string;
+  publicId: string;
+  originalFilename: string;
+  mimeType: string;
+  size: number;
+}
+
 export interface AppLectureResponse {
   id: number;
   title: string;
@@ -14,7 +22,7 @@ export interface AppLectureResponse {
   notes: string | null;
   isOnline?: boolean;
   meetingLink?: string | null;
-  attachments?: unknown;
+  attachments: LectureAttachment[];
   teacher: { id: number; name: string } | null;
   batch: { id: number; name: string };
 }

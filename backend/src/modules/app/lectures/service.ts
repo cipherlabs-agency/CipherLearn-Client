@@ -1,11 +1,22 @@
 import { prisma } from "../../../config/db.config";
 import { LectureStatus } from "../../../../prisma/generated/prisma/enums";
-import { AppLectureResponse, DailyScheduleResponse } from "./types";
+import { AppLectureResponse, DailyScheduleResponse, LectureAttachment } from "./types";
 
 const LECTURE_INCLUDE = {
   batch: { select: { id: true, name: true } },
   teacher: { select: { id: true, name: true } },
 } as const;
+
+function normalizeAttachments(raw: unknown): LectureAttachment[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item) => {
+    if (typeof item === "string") {
+      const filename = item.split("/").pop() ?? "file";
+      return { url: item, publicId: "", originalFilename: filename, mimeType: "", size: 0 };
+    }
+    return item as LectureAttachment;
+  });
+}
 
 function computeStatus(lecture: { date: Date; startTime: string; endTime: string; status: string }): LectureStatus {
   if (lecture.status === "CANCELLED" || lecture.status === "COMPLETED") {
@@ -79,6 +90,7 @@ export default class AppLectureService {
       status: computeStatus(l),
       teacher: l.teacher,
       batch: l.batch,
+      attachments: normalizeAttachments(l.attachments),
     }));
 
     return {
@@ -111,6 +123,7 @@ export default class AppLectureService {
       status: computeStatus(l),
       teacher: l.teacher,
       batch: l.batch,
+      attachments: normalizeAttachments(l.attachments),
     }));
 
     return {
@@ -134,6 +147,7 @@ export default class AppLectureService {
       status: computeStatus(lecture),
       teacher: lecture.teacher,
       batch: lecture.batch,
+      attachments: normalizeAttachments(lecture.attachments),
     };
   }
 
@@ -154,6 +168,7 @@ export default class AppLectureService {
       status: computeStatus(updated),
       teacher: updated.teacher,
       batch: updated.batch,
+      attachments: normalizeAttachments(updated.attachments),
     };
   }
 
@@ -176,6 +191,7 @@ export default class AppLectureService {
       ...updated,
       teacher: updated.teacher,
       batch: updated.batch,
+      attachments: normalizeAttachments(updated.attachments),
     };
   }
 
@@ -227,6 +243,7 @@ export default class AppLectureService {
       status: computeStatus(lecture),
       teacher: lecture.teacher,
       batch: lecture.batch,
+      attachments: normalizeAttachments(lecture.attachments),
     };
   }
 
@@ -272,6 +289,7 @@ export default class AppLectureService {
       status: computeStatus(updated),
       teacher: updated.teacher,
       batch: updated.batch,
+      attachments: normalizeAttachments(updated.attachments),
     };
   }
 

@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "cipherlearn-app-api-v1.0.11",
-    "name": "CipherLearn App API v1.0.11",
-    "version": "1.0.12",
-    "description": "Complete API collection for CipherLearn Mobile App (Student + Teacher single app).\n\n**Auth Flow:**\n1. Admin creates student/teacher accounts from dashboard → registration email sent\n2. User opens app → enters registered email\n3. First time: set password (POST /app/auth/setup-password)\n4. Login (POST /app/auth/login) → JWT returned with role\n5. Role-based dashboard: STUDENT or TEACHER\n\n**Endpoints by role:**\n\nStudent-only:\n- Profile, Fees, Notifications (preferences)\n- Attendance: self-view (summary, history, calendar, QR mark)\n- Assignments: browse, submit, view submission\n- Tests: upcoming, results, performance analytics\n- Resources: videos, notes, study materials\n\nTeacher (requires TEACHER role JWT):\n- Attendance: get batch students, bulk mark, reports, date detail\n- Assignments: create/update/delete, review per-student status\n- Tests: manage grading (score sheet, bulk save scores, publish results, summary)\n- Resources: upload/manage study materials (PDF, video, etc.)\n\nShared (both roles):\n- Auth, Dashboard, Lectures/Timetable, Announcements\n- Notifications: device token registration\n\n**Lecture creation is admin-only (via dashboard).** Teachers and students can only VIEW lectures, add notes, and mark complete.\n\n**Security Headers on all requests:**\n- Authorization: Bearer {{appToken}}\n- Content-Type: application/json (or multipart/form-data for uploads)\n\n**Rate Limits:**\n- Auth: 5 req/15min (login), 3 req/hr (password reset)\n- File uploads: 10 uploads/5min per IP\n- General reads: 120 req/min per IP\n- Token refresh: 10 req/min per IP\n\n**File Upload Limits:**\n- Assignment submission: 25 MB/file, 5 files (PDF, Word, Excel, PPT, images, ZIP)\n- Assignment attachments (teacher): 50 MB/file, 5 files\n- Study materials (teacher): 100 MB/file, 5 files (includes video: MP4, MOV, AVI)\n- All uploads: memory storage → Cloudinary, magic number validated\n\n**Caching:**\n- Announcement list: 3 min | detail: 5 min\n- Notification preferences: 10 min per student\n- Fee structures: 60 min per batch\n- Attendance: 2 min\n\n**Setup:**\n1. Import into Postman\n2. Create environment: baseUrl = http://localhost:5000/api\n3. Run 'App Login' → appToken auto-saved\n4. Use STUDENT email for student routes, TEACHER email for teacher routes\n\n**Base URL:** http://localhost:5000/api",
+    "_postman_id": "cipherlearn-app-api-v1.0.14",
+    "name": "CipherLearn App API v1.0.14",
+    "version": "1.0.14",
+    "description": "Complete API collection for CipherLearn Mobile App (Student + Teacher single app).\n\n**Auth Flow:**\n1. Admin creates student/teacher accounts from dashboard → registration email sent\n2. User opens app → enters registered email\n3. First time: set password (POST /app/auth/setup-password)\n4. Login (POST /app/auth/login) → JWT returned with role\n5. Role-based dashboard: STUDENT or TEACHER\n\n**Endpoints by role:**\n\nStudent-only:\n- Profile, Fees, Notifications (preferences)\n- Attendance: self-view (summary, history, calendar, QR mark)\n- Assignments: browse, submit, view submission\n- Tests: upcoming, results, performance analytics\n- Resources: videos, notes, study materials\n\nTeacher (requires TEACHER role JWT):\n- Attendance: get batch students, bulk mark, reports, date detail\n- Assignments: create/update/delete, review per-student status\n- Tests: manage grading (score sheet, bulk save scores, publish results, summary)\n- Resources: upload/manage study materials (PDF, video, etc.)\n\nShared (both roles):\n- Auth, Dashboard, Lectures/Timetable, Announcements\n- Notifications: device token registration\n\n**Lecture creation is admin-only (via dashboard).** Teachers and students can only VIEW lectures, add notes, and mark complete.\n\n**Security Headers on all requests:**\n- Authorization: Bearer {{appToken}}\n- Content-Type: application/json (or multipart/form-data for uploads)\n\n**Rate Limits:**\n- Auth: 5 req/15min (login), 3 req/hr (password reset)\n- File uploads: 10 uploads/5min per IP\n- General reads: 120 req/min per IP\n- Token refresh: 10 req/min per IP\n\n**File Upload Limits:**\n- Assignment submission: 25 MB/file, 5 files (PDF, Word, Excel, PPT, images, ZIP)\n- Assignment attachments (teacher): 50 MB/file, 5 files\n- Study materials (teacher): 100 MB/file, 5 files (includes video: MP4, MOV, AVI)\n- All uploads: memory storage → Cloudinary, magic number validated\n\n**Caching:**\n- Announcement list: 3 min | detail: 5 min\n- Notification preferences: 10 min per student\n- Fee structures: 60 min per batch\n- Attendance: 2 min\n\n**Setup:**\n1. Import into Postman\n2. Create environment: baseUrl = http://localhost:5000/api\n3. Run 'App Login' → appToken auto-saved\n4. Use STUDENT email for student routes, TEACHER email for teacher routes\n\n**Base URL:** http://localhost:5000/api\n\n**v1.0.13 Changes:**\n- Fee receipts now include pdfUrl field (Cloudinary URL, stored after first PDF generation)\n- Announcement list items now include imageUrl field\n- Teacher assignment list now includes attachments array per slot\n- Teacher assignment review page now includes files, note, feedback inline per student submission\n- Cloudinary PDF/document URLs fixed: use raw resource_type for non-image/video files\n\n**v1.0.14 Changes:**\n- Lecture detail now returns properly typed attachments[] (LectureAttachment[])\n- Teacher: Create/Update/Delete Test added (POST/PUT/DELETE /app/tests/teacher/:id)\n- Admin Management module added: /app/admin/batches, /app/admin/students, /app/admin/teachers, /app/admin/fee-structures\n  - All routes require ADMIN token; teacher tokens get 403\n  - Admin can enroll students, create teachers, manage batches, manage fee structures from the mobile app",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -1178,6 +1178,106 @@
           "response": []
         },
         {
+          "name": "Teacher: Create Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Unit Test 1\",\n  \"subject\": \"Mathematics\",\n  \"testType\": \"UNIT_TEST\",\n  \"batchId\": 1,\n  \"totalMarks\": 100,\n  \"passingMarks\": 40,\n  \"date\": \"2026-04-20\",\n  \"time\": \"10:00\",\n  \"duration\": 90,\n  \"hall\": \"Hall A\",\n  \"syllabus\": \"Chapter 1-5\",\n  \"instructions\": \"No calculator allowed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Teacher: Create a new test. Notifies batch students via push notification.\n\nFields: title*, subject*, batchId*, totalMarks*, date ISO*, testType (UNIT_TEST/MIDTERM/FINAL/QUIZ/PRACTICE), passingMarks, time (HH:MM), duration (min), hall, syllabus, instructions"
+          }
+        },
+        {
+          "name": "Teacher: Update Test",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"totalMarks\": 120,\n  \"passingMarks\": 50,\n  \"hall\": \"Main Hall\",\n  \"status\": \"SCHEDULED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Teacher: Update their own test. Admin can update any test. Pass only changed fields."
+          }
+        },
+        {
+          "name": "Teacher: Delete Test",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{appToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/app/tests/teacher/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "app",
+                "tests",
+                "teacher",
+                "1"
+              ]
+            },
+            "description": "Teacher: Soft-delete their own test (isDeleted=true). Admin can delete any test."
+          }
+        },
+        {
           "name": "Teacher: Get My Tests",
           "request": {
             "method": "GET",
@@ -2175,7 +2275,8 @@
             },
             "description": "Teacher: list their own assignments with tab filters.\n\nTabs:\n- active: PUBLISHED + future dueDate (or no dueDate)\n- drafts: DRAFT status\n- graded: assignments with at least one ACCEPTED/REJECTED submission\n\nResponse: { assignments: [{ id, title, subject, batchId, batchName, dueDate, submissionType, assignmentStatus, totalStudents, submitted, pending, accepted }], pagination }\n\nAuth: TEACHER role required."
           },
-          "response": []
+          "response": [],
+          "description": " Each assignment now includes attachments[] array."
         },
         {
           "name": "Teacher: Create Assignment",
@@ -2294,7 +2395,8 @@
             },
             "description": "Teacher: per-student status page for an assignment.\n\nResponse: { assignment: { title, subject, dueDate, batchName, totalStudents }, students: [{ studentId, name, status: SUBMITTED|LATE|MISSING, submittedAt?, submissionId? }] }\n\nstatus filter:\n- submitted: has a PENDING/ACCEPTED/REJECTED submission submitted on time\n- late: submitted after dueDate\n- not_submitted: no submission (MISSING)\n\nAuth: TEACHER role (must own the assignment)."
           },
-          "response": []
+          "response": [],
+          "description": " Each student submission now includes files[], note, and feedback inline."
         },
         {
           "name": "Teacher: Update Assignment",
@@ -2394,7 +2496,8 @@
             },
             "description": "Paginated list of active announcements, sorted by priority then date.\n\nResponse: { announcements: [...], pagination: { page, limit, total, totalPages } }\n\nEach item: id, title, description (preview), category, priority, department, date, hasAttachments, createdAt\n\nCache: 3 min (category/search/page scoped)"
           },
-          "response": []
+          "response": [],
+          "description": " Each item now includes imageUrl field."
         },
         {
           "name": "Get Announcements — Exams Tab",
@@ -2433,7 +2536,8 @@
             },
             "description": "Filter to EXAM category (Exams tab in UI)."
           },
-          "response": []
+          "response": [],
+          "description": " Each item now includes imageUrl field."
         },
         {
           "name": "Get Announcements — Holiday Tab",
@@ -2471,7 +2575,8 @@
             },
             "description": "Filter to HOLIDAY category."
           },
-          "response": []
+          "response": [],
+          "description": " Each item now includes imageUrl field."
         },
         {
           "name": "Get Announcements — General Tab",
@@ -2509,7 +2614,8 @@
             },
             "description": "Filter to GENERAL category."
           },
-          "response": []
+          "response": [],
+          "description": " Each item now includes imageUrl field."
         },
         {
           "name": "Search Announcements",
@@ -3610,7 +3716,8 @@
             },
             "description": "All fee receipts for the authenticated student."
           },
-          "response": []
+          "response": [],
+          "description": "Returns paginated fee receipts. Each receipt now includes pdfUrl (Cloudinary URL) if PDF was previously generated."
         },
         {
           "name": "Get My Fees Summary",
@@ -3821,7 +3928,8 @@
                 "pdf"
               ]
             }
-          }
+          },
+          "description": "Generates PDF via pdfkit, uploads to Cloudinary (raw resource type), stores pdfUrl on receipt, returns { pdfUrl }. Subsequent calls to Get My Receipts will include the cached pdfUrl."
         }
       ]
     },
@@ -4218,6 +4326,635 @@
             }
           },
           "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin Management",
+      "description": "Admin-only endpoints for managing batches, students, teachers, and fee structures from the App.\n\nAll routes require ADMIN JWT. Teachers are blocked with 403.\n\nPermission rule: Admin can act as teacher on all other app routes, but ONLY admin can access /app/admin/* routes.",
+      "item": [
+        {
+          "name": "Batches",
+          "item": [
+            {
+              "name": "List Batches",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/batches",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "batches"
+                  ]
+                },
+                "description": "List all active batches with student count."
+              }
+            },
+            {
+              "name": "Get Batch Detail",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/batches/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "batches",
+                    "1"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Batch",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/batches",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "batches"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"JEE 2026 Batch\",\n  \"timings\": {\n    \"mon\": \"10:00-12:00\",\n    \"wed\": \"10:00-12:00\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Update Batch",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/batches/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "batches",
+                    "1"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"JEE 2026 Advanced\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Batch",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/batches/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "batches",
+                    "1"
+                  ]
+                },
+                "description": "Soft-delete (isDeleted=true)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Students",
+          "item": [
+            {
+              "name": "List Students",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/students?page=1&limit=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "students"
+                  ],
+                  "query": [
+                    {
+                      "key": "batchId",
+                      "value": "1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                },
+                "description": "Optional filters: batchId, search (fullname contains), page, limit."
+              }
+            },
+            {
+              "name": "Get Student Detail",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/students/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "students",
+                    "1"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Enroll Student",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/students",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "students"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"student@example.com\",\n  \"firstname\": \"Riya\",\n  \"middlename\": \"\",\n  \"lastname\": \"Sharma\",\n  \"dob\": \"2008-05-14\",\n  \"batchId\": 1,\n  \"address\": \"123 Main St, Mumbai\",\n  \"phone\": \"9876543210\",\n  \"parentName\": \"Priya Sharma\",\n  \"grade\": \"11\",\n  \"instituteId\": \"STU001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Creates User (STUDENT role, isPasswordSet=false) + Student in a DB transaction. Sends registration email. Student sets password on first app login."
+              }
+            },
+            {
+              "name": "Update Student",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/students/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "students",
+                    "1"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"batchId\": 2,\n  \"grade\": \"12\",\n  \"phone\": \"9123456789\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Delete Student",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/students/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "students",
+                    "1"
+                  ]
+                },
+                "description": "Soft-delete (isDeleted=true)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Teachers",
+          "item": [
+            {
+              "name": "List Teachers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/teachers?page=1&limit=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "teachers"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Teacher Detail",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/teachers/2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "teachers",
+                    "2"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Teacher",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/teachers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "teachers"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Priya Joshi\",\n  \"email\": \"priya@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "Creates User with TEACHER role, isPasswordSet=false. Sends registration email. Teacher sets password on first app login."
+              }
+            },
+            {
+              "name": "Update Teacher",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/teachers/2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "teachers",
+                    "2"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Priya Joshi Gupta\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Deactivate Teacher",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/teachers/2",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "teachers",
+                    "2"
+                  ]
+                },
+                "description": "Locks the teacher account (lockedUntil=2099-12-31). Teacher cannot log in. Does not hard-delete."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fee Structures",
+          "item": [
+            {
+              "name": "List Fee Structures",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/fee-structures?batchId=1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "fee-structures"
+                  ],
+                  "query": [
+                    {
+                      "key": "batchId",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "description": "batchId query param is required."
+              }
+            },
+            {
+              "name": "Create Fee Structure",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/fee-structures",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "fee-structures"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Monthly Tuition\",\n  \"amount\": 3000,\n  \"frequency\": \"MONTHLY\",\n  \"batchId\": 1,\n  \"dueDay\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "description": "frequency: MONTHLY | QUARTERLY | SEMI_ANNUAL | ANNUAL | ONE_TIME. dueDay: 1-31 (day of month fee is due)."
+              }
+            },
+            {
+              "name": "Update Fee Structure",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/fee-structures/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "fee-structures",
+                    "1"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 3500,\n  \"dueDay\": 5\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Deactivate Fee Structure",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{appToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/app/admin/fee-structures/1",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "app",
+                    "admin",
+                    "fee-structures",
+                    "1"
+                  ]
+                },
+                "description": "Sets isActive=false. Existing receipts remain intact."
+              }
+            }
+          ]
         }
       ]
     }

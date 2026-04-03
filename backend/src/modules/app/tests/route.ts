@@ -11,6 +11,40 @@ const controller = new AppTestController();
 // ==================== TEACHER ROUTES (before /:id) ====================
 
 /**
+ * POST /app/tests/teacher
+ * Teacher: create a new test
+ */
+router.post(
+  "/teacher",
+  isTeacher,
+  appWriteRateLimiter,
+  validate(TestsValidations.createTest),
+  controller.createTest.bind(controller)
+);
+
+/**
+ * PUT /app/tests/teacher/:id
+ * Teacher: update their own test
+ */
+router.put(
+  "/teacher/:id",
+  isTeacher,
+  appWriteRateLimiter,
+  validate(TestsValidations.updateTest),
+  controller.updateTest.bind(controller)
+);
+
+/**
+ * DELETE /app/tests/teacher/:id
+ * Teacher: soft-delete their own test
+ */
+router.delete(
+  "/teacher/:id",
+  isTeacher,
+  controller.deleteTest.bind(controller)
+);
+
+/**
  * GET /app/tests/teacher
  * Teacher: list their tests with grading status
  *   ?batchId=&subject=&status=&page=&limit=

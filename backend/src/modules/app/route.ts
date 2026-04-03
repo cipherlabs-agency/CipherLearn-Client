@@ -11,6 +11,7 @@ import feesRoutes from "./fees/route";
 import appLecturesRoutes from "./lectures/route";
 import appTestsRoutes from "./tests/route";
 import doubtsRoutes from "./doubts/route";
+import adminRoutes from "./admin/route";
 import { profileController } from "./profile/controller";
 import { settingsService } from "../dashboard/settings/service";
 import { config } from "../../config/env.config";
@@ -152,5 +153,9 @@ router.use("/tests", appTestsRoutes);
 
 // Doubts - student ask, teacher reply
 router.use("/doubts", doubtsRoutes);
+
+// Admin management — batch, student, teacher, fee-structure CRUD
+// Strict isAdmin guard is applied inside the module; teachers cannot access these
+router.use("/admin", adminRoutes);
 
 export default router;

@@ -2,6 +2,7 @@ import { prisma } from "../../../config/db.config";
 import {
   TestStatus,
   ScoreStatus,
+  TestType,
 } from "../../../../prisma/generated/prisma/enums";
 import type { Prisma } from "../../../../prisma/generated/prisma/client";
 import type {
@@ -14,7 +15,11 @@ import type {
   BulkSaveScoreInput,
   TestSummary,
   GetTeacherTestsQuery,
+  CreateTestInput,
+  UpdateTestInput,
 } from "./types";
+import { sendToBatchStudents } from "../../../utils/pushNotifications";
+import logger from "../../../utils/logger";
 
 function getDaysUntil(testDate: Date): number | null {
   const now = new Date();
@@ -642,5 +647,99 @@ export default class AppTestService {
 
   public async removeReminder(testId: number, userId: number): Promise<void> {
     await (prisma as any).testReminder.deleteMany({ where: { testId, userId } });
+  }
+
+  // ==================== TEACHER TEST CRUD ====================
+
+  public async createTest(data: CreateTestInput, createdBy: number): Promise<AppTestDetailResponse> {
+    const batch = await prisma.batch.findFirst({ where: { id: data.batchId, isDeleted: false } });
+    if (!batch) throw new Error("Batch not found");
+
+    if (data.passingMarks !== undefined && data.passingMarks !== null && data.passingMarks > data.totalMarks) {
+      throw new Error("Passing marks cannot exceed total marks");
+    }
+
+    const test = await prisma.test.create({
+      data: {
+        title: data.title,
+        subject: data.subject,
+        description: data.description ?? null,
+        testType: (data.testType as TestType) ?? TestType.UNIT_TEST,
+        batchId: data.batchId,
+        totalMarks: data.totalMarks,
+        passingMarks: data.passingMarks ?? null,
+        date: new Date(data.date),
+        time: data.time ?? null,
+        duration: data.duration ?? null,
+        hall: data.hall ?? null,
+        syllabus: data.syllabus ?? null,
+        instructions: data.instructions ?? null,
+        createdBy,
+        teacherId: createdBy,
+      },
+      include: { batch: { select: { id: true, name: true } } },
+    });
+
+    // Notify batch students (fire-and-forget)
+    const testDate = new Date(data.date).toLocaleDateString("en-IN", { dateStyle: "medium" });
+    sendToBatchStudents(
+      data.batchId, "newTestScheduled",
+      "Test Scheduled",
+      `${data.subject} test on ${testDate}`,
+      { type: "test_scheduled", testId: test.id }
+    ).catch((e) => logger.error("[Push] test notification failed:", e));
+
+    return { ...test, daysUntil: null, myScore: null };
+  }
+
+  public async updateTest(testId: number, teacherId: number, data: UpdateTestInput): Promise<AppTestDetailResponse> {
+    const test = await prisma.test.findFirst({
+      where: { id: testId, isDeleted: false },
+    });
+    if (!test) throw new Error("Test not found");
+
+    // Admin can update any test; teacher can only update their own
+    if (test.teacherId !== null && test.teacherId !== teacherId) {
+      throw new Error("You can only edit your own tests");
+    }
+
+    const totalMarks = data.totalMarks ?? test.totalMarks;
+    if (data.passingMarks !== undefined && data.passingMarks !== null && data.passingMarks > totalMarks) {
+      throw new Error("Passing marks cannot exceed total marks");
+    }
+
+    const updated = await prisma.test.update({
+      where: { id: testId },
+      data: {
+        ...(data.title !== undefined && { title: data.title }),
+        ...(data.subject !== undefined && { subject: data.subject }),
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.testType !== undefined && { testType: data.testType as TestType }),
+        ...(data.batchId !== undefined && { batchId: data.batchId }),
+        ...(data.totalMarks !== undefined && { totalMarks: data.totalMarks }),
+        ...(data.passingMarks !== undefined && { passingMarks: data.passingMarks }),
+        ...(data.date !== undefined && { date: new Date(data.date) }),
+        ...(data.time !== undefined && { time: data.time }),
+        ...(data.duration !== undefined && { duration: data.duration }),
+        ...(data.hall !== undefined && { hall: data.hall }),
+        ...(data.syllabus !== undefined && { syllabus: data.syllabus }),
+        ...(data.instructions !== undefined && { instructions: data.instructions }),
+        ...(data.status !== undefined && { status: data.status }),
+      },
+      include: { batch: { select: { id: true, name: true } } },
+    });
+
+    return { ...updated, daysUntil: null, myScore: null };
+  }
+
+  public async deleteTest(testId: number, teacherId: number): Promise<void> {
+    const test = await prisma.test.findFirst({ where: { id: testId, isDeleted: false } });
+    if (!test) throw new Error("Test not found");
+
+    if (test.teacherId !== null && test.teacherId !== teacherId) {
+      throw new Error("You can only delete your own tests");
+    }
+
+    await prisma.test.update({ where: { id: testId }, data: { isDeleted: true } });
   }
 }

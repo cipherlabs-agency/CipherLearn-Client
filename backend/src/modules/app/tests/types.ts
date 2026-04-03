@@ -106,3 +106,36 @@ export interface GetTeacherTestsQuery {
   page?: number;
   limit?: number;
 }
+
+export interface CreateTestInput {
+  title: string;
+  subject: string;
+  description?: string;
+  testType?: string;
+  batchId: number;
+  totalMarks: number;
+  passingMarks?: number | null;
+  date: string;
+  time?: string;
+  duration?: number;
+  hall?: string;
+  syllabus?: string;
+  instructions?: string;
+}
+
+export interface UpdateTestInput {
+  title?: string;
+  subject?: string;
+  description?: string;
+  testType?: string;
+  batchId?: number;
+  totalMarks?: number;
+  passingMarks?: number | null;
+  date?: string;
+  time?: string;
+  duration?: number;
+  hall?: string;
+  syllabus?: string;
+  instructions?: string;
+  status?: TestStatus;
+}
