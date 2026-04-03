@@ -171,14 +171,16 @@ class ResourcesService {
    */
   async getTeacherMaterials(
     teacherId: number,
-    query: GetTeacherMaterialsQuery
+    query: GetTeacherMaterialsQuery,
+    isAdmin = false
   ): Promise<{ materials: TeacherMaterialListItem[]; pagination: object }> {
     const { tab = "published", subject, batchId, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
     const now = new Date();
 
+    // Admin sees all materials across all teachers; teacher only sees their own
     const where: Prisma.StudyMaterialWhereInput = {
-      teacherId,
+      ...(isAdmin ? {} : { teacherId }),
       isDeleted: false,
     };
 
@@ -286,10 +288,11 @@ class ResourcesService {
   async updateTeacherMaterial(
     materialId: number,
     teacherId: number,
-    input: UpdateMaterialInput
+    input: UpdateMaterialInput,
+    isAdmin = false
   ): Promise<TeacherMaterialListItem> {
     const existing = await prisma.studyMaterial.findFirst({
-      where: { id: materialId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: materialId, isDeleted: false } : { id: materialId, teacherId, isDeleted: false },
     });
 
     if (!existing) {
@@ -348,10 +351,11 @@ class ResourcesService {
   async deleteTeacherMaterial(
     materialId: number,
     teacherId: number,
-    teacherName: string
+    teacherName: string,
+    isAdmin = false
   ): Promise<void> {
     const existing = await prisma.studyMaterial.findFirst({
-      where: { id: materialId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: materialId, isDeleted: false } : { id: materialId, teacherId, isDeleted: false },
     });
 
     if (!existing) {
@@ -476,10 +480,11 @@ class ResourcesService {
    */
   async publishTeacherMaterial(
     materialId: number,
-    teacherId: number
+    teacherId: number,
+    isAdmin = false
   ): Promise<TeacherMaterialListItem> {
     const existing = await prisma.studyMaterial.findFirst({
-      where: { id: materialId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: materialId, isDeleted: false } : { id: materialId, teacherId, isDeleted: false },
     });
 
     if (!existing) {
@@ -492,7 +497,7 @@ class ResourcesService {
     return this.updateTeacherMaterial(materialId, teacherId, {
       materialStatus: "PUBLISHED",
       scheduledAt: null,
-    });
+    }, isAdmin);
   }
 
   // ==================== TEACHER VIDEO (YOUTUBE) MANAGEMENT ====================

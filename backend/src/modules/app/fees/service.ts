@@ -116,20 +116,29 @@ class FeesService {
    */
   async getTeacherStudents(
     teacherId: number,
-    opts?: { batchId?: number; status?: PaymentStatus }
+    opts?: { batchId?: number; status?: PaymentStatus },
+    isAdmin = false
   ): Promise<TeacherStudentFeeItem[]> {
-    // Get all batches where this teacher has lectures
-    const batchIds = await prisma.lecture.findMany({
-      where: { teacherId, isDeleted: false },
-      select: { batchId: true },
-      distinct: ["batchId"],
-    });
+    let batchFilter: { batchId?: { in: number[] } | number } = {};
 
-    const ids = batchIds.map((b) => b.batchId);
-    const filteredIds = opts?.batchId ? ids.filter((id) => id === opts.batchId) : ids;
+    if (isAdmin) {
+      // Admin sees all students; optionally filtered by a specific batch
+      if (opts?.batchId) batchFilter = { batchId: opts.batchId };
+      // else no batchId filter → return all students
+    } else {
+      // Get all batches where this teacher has lectures
+      const batchIds = await prisma.lecture.findMany({
+        where: { teacherId, isDeleted: false },
+        select: { batchId: true },
+        distinct: ["batchId"],
+      });
+      const ids = batchIds.map((b) => b.batchId);
+      const filteredIds = opts?.batchId ? ids.filter((id) => id === opts.batchId) : ids;
+      batchFilter = { batchId: { in: filteredIds } };
+    }
 
     const students = await prisma.student.findMany({
-      where: { batchId: { in: filteredIds }, isDeleted: false },
+      where: { ...batchFilter, isDeleted: false },
       include: {
         batch: { select: { id: true, name: true } },
         feeReceipts: {
@@ -164,7 +173,7 @@ class FeesService {
   /**
    * Get full fee detail for a single student (teacher use)
    */
-  async getStudentFeeDetail(studentId: number, teacherId: number): Promise<TeacherStudentFeeDetail> {
+  async getStudentFeeDetail(studentId: number, teacherId: number, isAdmin = false): Promise<TeacherStudentFeeDetail> {
     // Verify teacher has access (teaches in the student's batch)
     const student = await prisma.student.findFirst({
       where: { id: studentId, isDeleted: false },
@@ -172,7 +181,7 @@ class FeesService {
     });
     if (!student) throw new Error("Student not found");
 
-    if (student.batchId) {
+    if (!isAdmin && student.batchId) {
       const hasAccess = await prisma.lecture.findFirst({
         where: { teacherId, batchId: student.batchId, isDeleted: false },
       });
@@ -204,16 +213,19 @@ class FeesService {
   async recordPayment(
     receiptId: number,
     teacherId: number,
-    data: { paidAmount: number; paymentMode: PaymentMode; transactionId?: string; chequeNumber?: string; notes?: string; teacherName: string }
+    data: { paidAmount: number; paymentMode: PaymentMode; transactionId?: string; chequeNumber?: string; notes?: string; teacherName: string },
+    isAdmin = false
   ): Promise<AppFeeReceipt> {
     const receipt = await prisma.feeReceipt.findFirst({ where: { id: receiptId } });
     if (!receipt) throw new Error("Fee receipt not found");
 
-    // Verify teacher has access to this batch
-    const hasAccess = await prisma.lecture.findFirst({
-      where: { teacherId, batchId: receipt.batchId, isDeleted: false },
-    });
-    if (!hasAccess) throw new Error("You do not have access to this student's batch");
+    // Verify teacher has access to this batch (admin bypasses this check)
+    if (!isAdmin) {
+      const hasAccess = await prisma.lecture.findFirst({
+        where: { teacherId, batchId: receipt.batchId, isDeleted: false },
+      });
+      if (!hasAccess) throw new Error("You do not have access to this student's batch");
+    }
 
     const newPaid = receipt.paidAmount + data.paidAmount;
     const newRemaining = Math.max(0, receipt.totalAmount + receipt.lateFeeAmount - receipt.discountAmount - newPaid);

@@ -564,10 +564,11 @@ class AssignmentsService {
   async updateTeacherAssignment(
     slotId: number,
     teacherId: number,
-    input: UpdateAssignmentInput
+    input: UpdateAssignmentInput,
+    isAdmin = false
   ) {
     const slot = await prisma.assignmentSlot.findFirst({
-      where: { id: slotId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: slotId, isDeleted: false } : { id: slotId, teacherId, isDeleted: false },
     });
 
     if (!slot) {
@@ -610,10 +611,11 @@ class AssignmentsService {
   async deleteTeacherAssignment(
     slotId: number,
     teacherId: number,
-    teacherName: string
+    teacherName: string,
+    isAdmin = false
   ): Promise<void> {
     const slot = await prisma.assignmentSlot.findFirst({
-      where: { id: slotId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: slotId, isDeleted: false } : { id: slotId, teacherId, isDeleted: false },
     });
 
     if (!slot) {
@@ -634,7 +636,8 @@ class AssignmentsService {
    */
   async getTeacherAssignments(
     teacherId: number,
-    query: GetTeacherAssignmentsQuery
+    query: GetTeacherAssignmentsQuery,
+    isAdmin = false
   ): Promise<{
     assignments: TeacherAssignmentListItem[];
     pagination: object;
@@ -643,8 +646,9 @@ class AssignmentsService {
     const skip = (page - 1) * limit;
     const now = new Date();
 
+    // Admin sees all assignments; teacher only sees their own
     const where: Prisma.AssignmentSlotWhereInput = {
-      teacherId,
+      ...(isAdmin ? {} : { teacherId }),
       isDeleted: false,
     };
 
@@ -736,10 +740,11 @@ class AssignmentsService {
   async getAssignmentReviewPage(
     slotId: number,
     teacherId: number,
-    statusFilter?: string
+    statusFilter?: string,
+    isAdmin = false
   ): Promise<AssignmentReviewPage | null> {
     const slot = await prisma.assignmentSlot.findFirst({
-      where: { id: slotId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: slotId, isDeleted: false } : { id: slotId, teacherId, isDeleted: false },
       include: { batch: { select: { id: true, name: true } } },
     });
 
@@ -836,31 +841,22 @@ class AssignmentsService {
   /**
    * Teacher assignment quick stats: due today + pending submissions to review
    */
-  async getTeacherStats(teacherId: number): Promise<{ dueToday: number; toReview: number }> {
+  async getTeacherStats(teacherId: number, isAdmin = false): Promise<{ dueToday: number; toReview: number }> {
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
+    // Admin sees stats across all teachers; teacher only sees their own
+    const slotWhere = isAdmin
+      ? { isDeleted: false, assignmentStatus: AssignmentStatus.PUBLISHED }
+      : { teacherId, isDeleted: false, assignmentStatus: AssignmentStatus.PUBLISHED };
+
     const [dueToday, toReview] = await Promise.all([
-      // Assignments with due date falling today
       prisma.assignmentSlot.count({
-        where: {
-          teacherId,
-          isDeleted: false,
-          assignmentStatus: AssignmentStatus.PUBLISHED,
-          dueDate: { gte: startOfDay, lte: endOfDay },
-        },
+        where: { ...slotWhere, dueDate: { gte: startOfDay, lte: endOfDay } },
       }),
-      // Pending (unreviewed) submissions across teacher's published assignments
       prisma.studentSubmission.count({
-        where: {
-          status: "PENDING",
-          slot: {
-            teacherId,
-            isDeleted: false,
-            assignmentStatus: AssignmentStatus.PUBLISHED,
-          },
-        },
+        where: { status: "PENDING", slot: slotWhere },
       }),
     ]);
 

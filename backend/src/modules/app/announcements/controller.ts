@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { announcementsService } from "./service";
 import logger from "../../../utils/logger";
-import { AnnouncementCategory } from "../../../../prisma/generated/prisma/enums";
+import { AnnouncementCategory, UserRoles } from "../../../../prisma/generated/prisma/enums";
 import type { GetAnnouncementsQuery } from "./types";
 import CloudinaryService from "../../../config/cloudinairy.config";
 import { log } from "../../../utils/logtail";
@@ -171,13 +171,18 @@ class AnnouncementsController {
         ? JSON.parse(targetBatchIds)
         : undefined;
 
-      const announcement = await announcementsService.updateTeacherAnnouncement(id, user.id, {
-        title, description, body, category, department,
-        pinned: pinned !== undefined ? (pinned === "true" || pinned === true) : undefined,
-        isDraft: isDraft !== undefined ? (isDraft === "true" || isDraft === true) : undefined,
-        scheduledAt: scheduledAt !== undefined ? scheduledAt || null : undefined,
-        targetBatchIds: parsedTargetBatchIds,
-      });
+      const announcement = await announcementsService.updateTeacherAnnouncement(
+        id,
+        user.id,
+        {
+          title, description, body, category, department,
+          pinned: pinned !== undefined ? (pinned === "true" || pinned === true) : undefined,
+          isDraft: isDraft !== undefined ? (isDraft === "true" || isDraft === true) : undefined,
+          scheduledAt: scheduledAt !== undefined ? scheduledAt || null : undefined,
+          targetBatchIds: parsedTargetBatchIds,
+        },
+        user.role === UserRoles.ADMIN
+      );
       return res.json({ success: true, data: announcement });
     } catch (error: any) {
       log("error", "app.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
@@ -196,7 +201,7 @@ class AnnouncementsController {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) return res.status(400).json({ success: false, message: "Invalid ID" });
 
-      await announcementsService.deleteTeacherAnnouncement(id, user.id);
+      await announcementsService.deleteTeacherAnnouncement(id, user.id, user.role === UserRoles.ADMIN);
       return res.json({ success: true, message: "Announcement deleted" });
     } catch (error: any) {
       log("error", "app.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });
@@ -215,7 +220,7 @@ class AnnouncementsController {
       const id = parseInt(req.params.id, 10);
       if (isNaN(id)) return res.status(400).json({ success: false, message: "Invalid ID" });
 
-      const result = await announcementsService.togglePinAnnouncement(id, user.id);
+      const result = await announcementsService.togglePinAnnouncement(id, user.id, user.role === UserRoles.ADMIN);
       return res.json({ success: true, data: result });
     } catch (error: any) {
       log("error", "app.announcements.json failed", { err: error instanceof Error ? error.message : String(error) });

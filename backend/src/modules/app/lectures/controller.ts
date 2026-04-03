@@ -16,7 +16,7 @@ export default class AppLectureController {
       const date = req.query.date as string | undefined;
 
       if (user.role === UserRoles.TEACHER) {
-        const schedule = await lectureService.getTeacherSchedule(user.id, date);
+        const schedule = await lectureService.getTeacherSchedule(user.id, date, false);
         return res.status(200).json({ success: true, data: schedule });
       }
 
@@ -32,8 +32,8 @@ export default class AppLectureController {
         return res.status(200).json({ success: true, data: schedule });
       }
 
-      // Admin: use teacher path
-      const schedule = await lectureService.getTeacherSchedule(user.id, date);
+      // Admin: sees all lectures for the day
+      const schedule = await lectureService.getTeacherSchedule(user.id, date, true);
       return res.status(200).json({ success: true, data: schedule });
     } catch (error: any) {
       log("error", "app.lectures.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
@@ -80,7 +80,7 @@ export default class AppLectureController {
         return res.status(400).json({ success: false, message: "Notes are required" });
       }
 
-      const lecture = await lectureService.addNotes(Number(req.params.id), user.id, notes);
+      const lecture = await lectureService.addNotes(Number(req.params.id), user.id, notes, user.role === UserRoles.ADMIN);
 
       return res.status(200).json({
         success: true,
@@ -179,20 +179,25 @@ export default class AppLectureController {
         }));
       }
 
-      const lecture = await lectureService.updateLecture(lectureId, user.id, {
-        ...(title !== undefined && { title }),
-        ...(subject !== undefined && { subject }),
-        ...(batchId !== undefined && { batchId: Number(batchId) }),
-        ...(date !== undefined && { date: new Date(date) }),
-        ...(startTime !== undefined && { startTime }),
-        ...(endTime !== undefined && { endTime }),
-        ...(room !== undefined && { room }),
-        ...(description !== undefined && { description }),
-        ...(isOnline !== undefined && { isOnline: isOnline === true || isOnline === "true" }),
-        ...(meetingLink !== undefined && { meetingLink }),
-        ...(status !== undefined && { status }),
-        ...(attachments !== undefined && { attachments }),
-      });
+      const lecture = await lectureService.updateLecture(
+        lectureId,
+        user.id,
+        {
+          ...(title !== undefined && { title }),
+          ...(subject !== undefined && { subject }),
+          ...(batchId !== undefined && { batchId: Number(batchId) }),
+          ...(date !== undefined && { date: new Date(date) }),
+          ...(startTime !== undefined && { startTime }),
+          ...(endTime !== undefined && { endTime }),
+          ...(room !== undefined && { room }),
+          ...(description !== undefined && { description }),
+          ...(isOnline !== undefined && { isOnline: isOnline === true || isOnline === "true" }),
+          ...(meetingLink !== undefined && { meetingLink }),
+          ...(status !== undefined && { status }),
+          ...(attachments !== undefined && { attachments }),
+        },
+        user.role === UserRoles.ADMIN
+      );
 
       return res.status(200).json({ success: true, message: "Lecture updated", data: lecture });
     } catch (error: any) {
@@ -208,7 +213,7 @@ export default class AppLectureController {
       const lectureId = Number(req.params.id);
       if (isNaN(lectureId)) return res.status(400).json({ success: false, message: "Invalid lecture ID" });
 
-      await lectureService.deleteLecture(lectureId, user.id);
+      await lectureService.deleteLecture(lectureId, user.id, user.role === UserRoles.ADMIN);
 
       return res.status(200).json({ success: true, message: "Lecture deleted" });
     } catch (error: any) {
@@ -226,7 +231,7 @@ export default class AppLectureController {
       }
 
       const { notes } = req.body;
-      const lecture = await lectureService.markComplete(Number(req.params.id), user.id, notes);
+      const lecture = await lectureService.markComplete(Number(req.params.id), user.id, notes, user.role === UserRoles.ADMIN);
 
       logger.info(`Lecture completed: "${lecture.title}" by ${user.name}`);
 

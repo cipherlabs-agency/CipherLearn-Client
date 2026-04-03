@@ -619,12 +619,11 @@ class AssignmentsController {
       const page = req.query.page ? Number(req.query.page) : 1;
       const limit = Math.min(req.query.limit ? Number(req.query.limit) : 20, 50);
 
-      const result = await assignmentsService.getTeacherAssignments(user.id, {
-        tab,
-        batchId,
-        page,
-        limit,
-      });
+      const result = await assignmentsService.getTeacherAssignments(
+        user.id,
+        { tab, batchId, page, limit },
+        user.role === UserRoles.ADMIN
+      );
 
       return res.status(200).json({
         success: true,
@@ -659,7 +658,8 @@ class AssignmentsController {
       const updated = await assignmentsService.updateTeacherAssignment(
         slotId,
         user.id,
-        input
+        input,
+        user.role === UserRoles.ADMIN
       );
 
       return res.status(200).json({
@@ -692,7 +692,7 @@ class AssignmentsController {
         return res.status(400).json({ success: false, message: "Invalid assignment ID" });
       }
 
-      await assignmentsService.deleteTeacherAssignment(slotId, user.id, user.name);
+      await assignmentsService.deleteTeacherAssignment(slotId, user.id, user.name, user.role === UserRoles.ADMIN);
 
       return res.status(200).json({
         success: true,
@@ -735,7 +735,8 @@ class AssignmentsController {
       const reviewPage = await assignmentsService.getAssignmentReviewPage(
         slotId,
         user.id,
-        statusFilter
+        statusFilter,
+        user.role === UserRoles.ADMIN
       );
 
       if (!reviewPage) {
@@ -766,7 +767,7 @@ class AssignmentsController {
       if (!user) {
         return res.status(401).json({ success: false, message: "Not authenticated" });
       }
-      const stats = await assignmentsService.getTeacherStats(user.id);
+      const stats = await assignmentsService.getTeacherStats(user.id, user.role === UserRoles.ADMIN);
       return res.status(200).json({ success: true, data: stats });
     } catch (error) {
       log("error", "app.assignments.status failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });

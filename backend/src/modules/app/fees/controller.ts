@@ -4,6 +4,7 @@ import { prisma } from "../../../config/db.config";
 import logger from "../../../utils/logger";
 import { log } from "../../../utils/logtail";
 import { PaymentMode } from "../../../../prisma/generated/prisma/client";
+import { UserRoles } from "../../../../prisma/generated/prisma/enums";
 
 class FeesController {
   /**
@@ -98,10 +99,11 @@ class FeesController {
       const user = req.user!;
       const batchId = req.query.batchId ? Number(req.query.batchId) : undefined;
       const status = req.query.status as PaymentMode | undefined;
-      const students = await feesService.getTeacherStudents(user.id, {
-        batchId: batchId && !isNaN(batchId) ? batchId : undefined,
-        status: status as any,
-      });
+      const students = await feesService.getTeacherStudents(
+        user.id,
+        { batchId: batchId && !isNaN(batchId) ? batchId : undefined, status: status as any },
+        user.role === UserRoles.ADMIN
+      );
       return res.status(200).json({ success: true, data: students });
     } catch (error) {
       log("error", "app.fees.teacher.students failed", { err: error instanceof Error ? error.message : String(error) });
@@ -120,7 +122,7 @@ class FeesController {
       const studentId = Number(req.params.studentId);
       if (isNaN(studentId)) return res.status(400).json({ success: false, message: "Invalid student ID" });
 
-      const detail = await feesService.getStudentFeeDetail(studentId, user.id);
+      const detail = await feesService.getStudentFeeDetail(studentId, user.id, user.role === UserRoles.ADMIN);
       return res.status(200).json({ success: true, data: detail });
     } catch (error: any) {
       log("error", "app.fees.teacher.student-detail failed", { err: error instanceof Error ? error.message : String(error) });
@@ -149,14 +151,12 @@ class FeesController {
         return res.status(400).json({ success: false, message: `paymentMode must be one of: ${Object.values(PaymentMode).join(", ")}` });
       }
 
-      const receipt = await feesService.recordPayment(receiptId, user.id, {
-        paidAmount: Number(paidAmount),
-        paymentMode: paymentMode as PaymentMode,
-        transactionId,
-        chequeNumber,
-        notes,
-        teacherName: user.name,
-      });
+      const receipt = await feesService.recordPayment(
+        receiptId,
+        user.id,
+        { paidAmount: Number(paidAmount), paymentMode: paymentMode as PaymentMode, transactionId, chequeNumber, notes, teacherName: user.name },
+        user.role === UserRoles.ADMIN
+      );
 
       return res.status(200).json({ success: true, message: "Payment recorded", data: receipt });
     } catch (error: any) {

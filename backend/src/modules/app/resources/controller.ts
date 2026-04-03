@@ -5,6 +5,7 @@ import CloudinaryService from "../../../config/cloudinairy.config";
 import { validateMagicNumber } from "../../../config/multer.config";
 import type { AppResourceQuery, AppResourceFile, CreateMaterialInput, UpdateMaterialInput, StarResourceType } from "./types";
 import { log } from "../../../utils/logtail";
+import { UserRoles } from "../../../../prisma/generated/prisma/enums";
 
 const cloudinaryService = new CloudinaryService();
 
@@ -120,13 +121,11 @@ class ResourcesController {
       const page = req.query.page ? Number(req.query.page) : 1;
       const limit = Math.min(req.query.limit ? Number(req.query.limit) : 20, 50);
 
-      const result = await resourcesService.getTeacherMaterials(user.id, {
-        tab,
-        subject,
-        batchId,
-        page,
-        limit,
-      });
+      const result = await resourcesService.getTeacherMaterials(
+        user.id,
+        { tab, subject, batchId, page, limit },
+        user.role === UserRoles.ADMIN
+      );
 
       return res.status(200).json({
         success: true,
@@ -294,7 +293,8 @@ class ResourcesController {
       const material = await resourcesService.updateTeacherMaterial(
         materialId,
         user.id,
-        input
+        input,
+        user.role === UserRoles.ADMIN
       );
 
       return res.status(200).json({
@@ -327,7 +327,7 @@ class ResourcesController {
         return res.status(400).json({ success: false, message: "Invalid material ID" });
       }
 
-      await resourcesService.deleteTeacherMaterial(materialId, user.id, user.name);
+      await resourcesService.deleteTeacherMaterial(materialId, user.id, user.name, user.role === UserRoles.ADMIN);
 
       return res.status(200).json({ success: true, message: "Material deleted" });
     } catch (error) {
@@ -628,7 +628,8 @@ class ResourcesController {
 
       const material = await resourcesService.publishTeacherMaterial(
         materialId,
-        user.id
+        user.id,
+        user.role === UserRoles.ADMIN
       );
 
       return res.status(200).json({

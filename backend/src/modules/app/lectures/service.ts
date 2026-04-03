@@ -69,15 +69,16 @@ function getNextClass(lectures: AppLectureResponse[]): DailyScheduleResponse["ne
 }
 
 export default class AppLectureService {
-  public async getTeacherSchedule(teacherId: number, date?: string): Promise<DailyScheduleResponse> {
+  public async getTeacherSchedule(teacherId: number, date?: string, isAdmin = false): Promise<DailyScheduleResponse> {
     const targetDate = date ? new Date(date) : new Date();
     const startOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
     const endOfDay = new Date(startOfDay);
     endOfDay.setDate(endOfDay.getDate() + 1);
 
+    // Admin sees all lectures for the day; teacher sees only their own
     const lectures = await prisma.lecture.findMany({
       where: {
-        teacherId,
+        ...(isAdmin ? {} : { teacherId }),
         date: { gte: startOfDay, lt: endOfDay },
         isDeleted: false,
       },
@@ -151,9 +152,9 @@ export default class AppLectureService {
     };
   }
 
-  public async addNotes(lectureId: number, teacherId: number, notes: string): Promise<AppLectureResponse> {
+  public async addNotes(lectureId: number, teacherId: number, notes: string, isAdmin = false): Promise<AppLectureResponse> {
     const lecture = await prisma.lecture.findFirst({
-      where: { id: lectureId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: lectureId, isDeleted: false } : { id: lectureId, teacherId, isDeleted: false },
     });
     if (!lecture) throw new Error("Lecture not found or not assigned to you");
 
@@ -172,9 +173,9 @@ export default class AppLectureService {
     };
   }
 
-  public async markComplete(lectureId: number, teacherId: number, notes?: string): Promise<AppLectureResponse> {
+  public async markComplete(lectureId: number, teacherId: number, notes?: string, isAdmin = false): Promise<AppLectureResponse> {
     const lecture = await prisma.lecture.findFirst({
-      where: { id: lectureId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: lectureId, isDeleted: false } : { id: lectureId, teacherId, isDeleted: false },
     });
     if (!lecture) throw new Error("Lecture not found or not assigned to you");
 
@@ -263,10 +264,11 @@ export default class AppLectureService {
       meetingLink?: string;
       status?: LectureStatus;
       attachments?: unknown;
-    }
+    },
+    isAdmin = false
   ): Promise<AppLectureResponse> {
     const lecture = await prisma.lecture.findFirst({
-      where: { id: lectureId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: lectureId, isDeleted: false } : { id: lectureId, teacherId, isDeleted: false },
     });
     if (!lecture) throw new Error("Lecture not found or not assigned to you");
 
@@ -293,9 +295,9 @@ export default class AppLectureService {
     };
   }
 
-  public async deleteLecture(lectureId: number, teacherId: number): Promise<void> {
+  public async deleteLecture(lectureId: number, teacherId: number, isAdmin = false): Promise<void> {
     const lecture = await prisma.lecture.findFirst({
-      where: { id: lectureId, teacherId, isDeleted: false },
+      where: isAdmin ? { id: lectureId, isDeleted: false } : { id: lectureId, teacherId, isDeleted: false },
     });
     if (!lecture) throw new Error("Lecture not found or not assigned to you");
 

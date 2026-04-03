@@ -259,10 +259,13 @@ class AnnouncementsService {
       isDraft?: boolean;
       scheduledAt?: string | null;
       targetBatchIds?: number[];
-    }
+    },
+    isAdmin = false
   ) {
     const existing = await prisma.announcement.findFirst({
-      where: { id: announcementId, createdById: teacherId, isActive: true },
+      where: isAdmin
+        ? { id: announcementId, isActive: true }
+        : { id: announcementId, createdById: teacherId, isActive: true },
     });
     if (!existing) throw new Error("Announcement not found or not authored by you");
 
@@ -287,9 +290,11 @@ class AnnouncementsService {
   /**
    * Teacher: soft-delete (deactivate) their own announcement
    */
-  async deleteTeacherAnnouncement(announcementId: number, teacherId: number): Promise<void> {
+  async deleteTeacherAnnouncement(announcementId: number, teacherId: number, isAdmin = false): Promise<void> {
     const existing = await prisma.announcement.findFirst({
-      where: { id: announcementId, createdById: teacherId, isActive: true },
+      where: isAdmin
+        ? { id: announcementId, isActive: true }
+        : { id: announcementId, createdById: teacherId, isActive: true },
     });
     if (!existing) throw new Error("Announcement not found or not authored by you");
 
@@ -303,9 +308,11 @@ class AnnouncementsService {
   /**
    * Teacher: toggle pin on their own announcement
    */
-  async togglePinAnnouncement(announcementId: number, teacherId: number) {
+  async togglePinAnnouncement(announcementId: number, teacherId: number, isAdmin = false) {
     const existing = await prisma.announcement.findFirst({
-      where: { id: announcementId, createdById: teacherId, isActive: true },
+      where: isAdmin
+        ? { id: announcementId, isActive: true }
+        : { id: announcementId, createdById: teacherId, isActive: true },
     });
     if (!existing) throw new Error("Announcement not found or not authored by you");
 
