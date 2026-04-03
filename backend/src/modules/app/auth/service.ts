@@ -93,8 +93,8 @@ export const setupPassword = async (
     where: { email: normalizedEmail },
   });
 
-  // Check if user exists and has app role (STUDENT or TEACHER)
-  if (!user || (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER)) {
+  // Check if user exists and has app role (STUDENT, TEACHER, or ADMIN)
+  if (!user || (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN)) {
     await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return { success: false, message: "Email is not registered in our system" };
   }
@@ -153,8 +153,8 @@ export const login = async (
     return { success: false, message: "Invalid email or password" };
   }
 
-  // Check if user has app role (STUDENT or TEACHER)
-  if (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER) {
+  // Check if user has app role (STUDENT, TEACHER, or ADMIN)
+  if (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
     await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return { success: false, message: "Access denied" };
   }
@@ -212,7 +212,7 @@ export const login = async (
     },
   };
 
-  // Add student profile data if STUDENT role
+  // Add student profile data if STUDENT role (TEACHER and ADMIN get no student profile)
   if (user.role === UserRoles.STUDENT) {
     const student = await prisma.student.findFirst({
       where: { userId: user.id, isDeleted: false },
@@ -338,7 +338,7 @@ export const forgotPassword = async (
   });
 
   // Always return success to prevent email enumeration
-  if (!user || (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER)) {
+  if (!user || (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN)) {
     logger.info(`Password reset requested for non-existent email: ${normalizedEmail}`);
     return {
       success: true,

@@ -96,6 +96,11 @@ export default class CloudinaryService {
             folder,
             public_id: publicId,
             resource_type: resourceType,
+            // "upload" type + access_mode "public" = publicly accessible URL
+            // This is critical for raw files (PDFs, DOCX, etc.) — without it Cloudinary
+            // returns 401 on delivery even though the upload succeeds.
+            type: "upload",
+            access_mode: "public",
             use_filename: true,
             unique_filename: true,
             overwrite: false,

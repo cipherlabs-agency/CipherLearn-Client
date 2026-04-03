@@ -80,21 +80,29 @@ export function verifyQRPayload(payload: QRPayload): QRVerificationResult {
 }
 
 /**
- * Encode payload to base64 for QR code content
+ * Encode payload to JSON string for QR code content.
+ * Raw JSON means the mobile app reads a JSON string when scanning — no decoding step needed.
  */
 export function encodeQRPayload(payload: QRPayload): string {
-  return Buffer.from(JSON.stringify(payload)).toString("base64");
+  return JSON.stringify(payload);
 }
 
 /**
- * Decode base64 QR content to payload
+ * Decode QR content (JSON string) to payload.
+ * Also handles legacy base64-encoded payloads for backward compatibility.
  */
 export function decodeQRPayload(encoded: string): QRPayload | null {
   try {
-    const decoded = Buffer.from(encoded, "base64").toString("utf-8");
-    return JSON.parse(decoded) as QRPayload;
+    // Try direct JSON parse first (new format)
+    return JSON.parse(encoded) as QRPayload;
   } catch {
-    return null;
+    // Fall back to base64 decode for old QR codes still in the wild
+    try {
+      const decoded = Buffer.from(encoded, "base64").toString("utf-8");
+      return JSON.parse(decoded) as QRPayload;
+    } catch {
+      return null;
+    }
   }
 }
 

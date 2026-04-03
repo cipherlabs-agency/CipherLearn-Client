@@ -353,6 +353,8 @@ class FeesService {
         {
           folder: "fee_receipts",
           resource_type: "raw",
+          type: "upload",
+          access_mode: "public",
           format: "pdf",
           public_id: `receipt-${receipt.receiptNumber}-${Date.now()}`,
         },
