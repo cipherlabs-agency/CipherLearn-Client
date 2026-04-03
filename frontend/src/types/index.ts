@@ -100,6 +100,7 @@ export interface CreateLectureInput {
     date: string;
     startTime: string;
     endTime: string;
+    files?: File[];
 }
 
 export interface CreateBulkLecturesInput {

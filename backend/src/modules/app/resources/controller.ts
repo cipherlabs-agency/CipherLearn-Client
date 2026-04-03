@@ -3,7 +3,7 @@ import { resourcesService } from "./service";
 import logger from "../../../utils/logger";
 import CloudinaryService from "../../../config/cloudinairy.config";
 import { validateMagicNumber } from "../../../config/multer.config";
-import type { AppResourceQuery, AppResourceFile, CreateMaterialInput, UpdateMaterialInput, StarResourceType } from "./types";
+import type { AppResourceQuery, AppResourceFile, CreateMaterialInput, UpdateMaterialInput, StarResourceType, CreateNoteInput, UpdateNoteInput } from "./types";
 import { log } from "../../../utils/logtail";
 import { UserRoles } from "../../../../prisma/generated/prisma/enums";
 
@@ -643,6 +643,151 @@ class ResourcesController {
       const message =
         error instanceof Error ? error.message : "Failed to publish material";
       return res.status(400).json({ success: false, message });
+    }
+  }
+  // ==================== TEACHER NOTE CRUD ====================
+
+  /**
+   * GET /app/resources/teacher/notes
+   * Teacher/Admin: list notes with pagination and search
+   */
+  async getTeacherNotes(req: Request, res: Response) {
+    try {
+      const user = req.user!;
+      const batchId = req.query.batchId ? Number(req.query.batchId) : undefined;
+      const search = req.query.search as string | undefined;
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const limit = Math.min(100, req.query.limit ? Number(req.query.limit) : 20);
+
+      const result = await resourcesService.getTeacherNotes(
+        user.id,
+        { batchId: batchId && !isNaN(batchId) ? batchId : undefined, search, page, limit },
+        user.role === UserRoles.ADMIN
+      );
+
+      return res.status(200).json({ success: true, data: result.data, pagination: result.pagination });
+    } catch (error) {
+      log("error", "app.resources.notes failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
+      logger.error("ResourcesController.getTeacherNotes error:", error);
+      return res.status(500).json({ success: false, message: `Failed to get notes: ${error}` });
+    }
+  }
+
+  /**
+   * POST /app/resources/teacher/note
+   * Teacher/Admin: create a note (multipart, optional files[])
+   */
+  async createTeacherNote(req: Request, res: Response) {
+    try {
+      const { title, category, batchId, content } = req.body;
+      if (!title?.trim() || !batchId) {
+        return res.status(400).json({ success: false, message: "title and batchId are required" });
+      }
+
+      const files = (req.files as Express.Multer.File[]) ?? [];
+      let uploadedFiles: AppResourceFile[] = [];
+      if (files.length > 0) {
+        for (const f of files) {
+          if (!validateMagicNumber(f.buffer, f.mimetype)) {
+            return res.status(400).json({ success: false, message: `File ${f.originalname} failed security validation` });
+          }
+        }
+        const uploaded = await cloudinaryService.uploadDocuments(files, "notes");
+        uploadedFiles = uploaded.map((u) => ({
+          url: u.url,
+          publicId: u.public_id,
+          filename: u.original_filename,
+          size: u.bytes,
+        }));
+      }
+
+      const parsedContent: string[] = content
+        ? (typeof content === "string" ? JSON.parse(content) : content)
+        : [];
+
+      const data: CreateNoteInput = {
+        title: title.trim(),
+        content: parsedContent,
+        category: category || undefined,
+        batchId: Number(batchId),
+      };
+
+      const note = await resourcesService.createTeacherNote(data, uploadedFiles);
+      return res.status(201).json({ success: true, message: "Note created", data: note });
+    } catch (error) {
+      log("error", "app.resources.notes failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
+      logger.error("ResourcesController.createTeacherNote error:", error);
+      return res.status(400).json({ success: false, message: error instanceof Error ? error.message : "Failed to create note" });
+    }
+  }
+
+  /**
+   * PUT /app/resources/teacher/note/:id
+   * Teacher/Admin: update a note
+   */
+  async updateTeacherNote(req: Request, res: Response) {
+    try {
+      const user = req.user!;
+      const noteId = Number(req.params.id);
+      if (isNaN(noteId)) return res.status(400).json({ success: false, message: "Invalid note ID" });
+
+      const files = (req.files as Express.Multer.File[]) ?? [];
+      let uploadedFiles: AppResourceFile[] = [];
+      if (files.length > 0) {
+        for (const f of files) {
+          if (!validateMagicNumber(f.buffer, f.mimetype)) {
+            return res.status(400).json({ success: false, message: `File ${f.originalname} failed security validation` });
+          }
+        }
+        const uploaded = await cloudinaryService.uploadDocuments(files, "notes");
+        uploadedFiles = uploaded.map((u) => ({
+          url: u.url,
+          publicId: u.public_id,
+          filename: u.original_filename,
+          size: u.bytes,
+        }));
+      }
+
+      const { title, category, content } = req.body;
+      const parsedContent: string[] | undefined = content
+        ? (typeof content === "string" ? JSON.parse(content) : content)
+        : undefined;
+
+      const data: UpdateNoteInput = {
+        ...(title !== undefined && { title: title.trim() }),
+        ...(category !== undefined && { category }),
+        ...(parsedContent !== undefined && { content: parsedContent }),
+      };
+
+      const note = await resourcesService.updateTeacherNote(
+        noteId, user.id, data, uploadedFiles, user.role === UserRoles.ADMIN
+      );
+      return res.status(200).json({ success: true, message: "Note updated", data: note });
+    } catch (error) {
+      log("error", "app.resources.notes failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
+      logger.error("ResourcesController.updateTeacherNote error:", error);
+      const msg = error instanceof Error ? error.message : "Failed to update note";
+      return res.status(msg.includes("not found") || msg.includes("access") ? 404 : 400).json({ success: false, message: msg });
+    }
+  }
+
+  /**
+   * DELETE /app/resources/teacher/note/:id
+   * Teacher/Admin: soft-delete a note
+   */
+  async deleteTeacherNote(req: Request, res: Response) {
+    try {
+      const user = req.user!;
+      const noteId = Number(req.params.id);
+      if (isNaN(noteId)) return res.status(400).json({ success: false, message: "Invalid note ID" });
+
+      await resourcesService.deleteTeacherNote(noteId, user.id, user.role === UserRoles.ADMIN);
+      return res.status(200).json({ success: true, message: "Note deleted" });
+    } catch (error) {
+      log("error", "app.resources.notes failed", { err: error instanceof Error ? error.message : String(error), userId: req.user?.id });
+      logger.error("ResourcesController.deleteTeacherNote error:", error);
+      const msg = error instanceof Error ? error.message : "Failed to delete note";
+      return res.status(msg.includes("not found") || msg.includes("access") ? 404 : 400).json({ success: false, message: msg });
     }
   }
 }

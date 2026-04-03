@@ -3,14 +3,18 @@ import { validateRequest, validateQuery } from "../../auth/validations.auth";
 import { LectureValidations } from "./validation";
 import LectureController from "./controller";
 import { isAdmin, isAdminOrTeacher } from "../../auth/middleware";
+import { lectureAttachmentUpload } from "../../../config/multer.config";
+import { fileUploadRateLimiter } from "../../../middleware/rateLimiter";
 
 const router = Router();
 const controller = new LectureController();
 
-// Create lecture (Admin only)
+// Create lecture (Admin only) — multipart/form-data to support optional file attachments
 router.post(
   "/",
   isAdmin,
+  fileUploadRateLimiter,
+  lectureAttachmentUpload.array("files", 5),
   validateRequest(LectureValidations.create),
   controller.create.bind(controller)
 );

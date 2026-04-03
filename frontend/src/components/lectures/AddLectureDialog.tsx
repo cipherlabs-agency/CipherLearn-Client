@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select"
 import {
     Plus, Loader2, ChevronLeft, ChevronRight, BookOpen, Users,
-    Calendar, Clock, Repeat, CheckCircle2, Sparkles
+    Calendar, Clock, Repeat, CheckCircle2, Sparkles, Paperclip, X
 } from "lucide-react"
 import { useState, useMemo } from "react"
 import { useCreateLectureMutation, useCreateBulkLecturesMutation } from "@/redux/slices/lectures/lecturesApi"
@@ -202,6 +202,7 @@ export function AddLectureDialog({ defaultDate, open: extOpen, onOpenChange: ext
     const [recurEnd, setRecurEnd] = useState("")
     const [room, setRoom] = useState("")
     const [description, setDescription] = useState("")
+    const [attachedFiles, setAttachedFiles] = useState<File[]>([])
     const [showRecurEnd, setShowRecurEnd] = useState(false)
 
     const endTime = useMemo(() => addMin(startTime, duration), [startTime, duration])
@@ -212,7 +213,7 @@ export function AddLectureDialog({ defaultDate, open: extOpen, onOpenChange: ext
         setBatchId(lsGet(LAST_BATCH)); setTeacherSelection(lsGet(LAST_TEACHER))
         setDate(defaultDate || todayISO()); setStartTime("09:00"); setDuration(60)
         setRecurring(false); setRecurDays([]); setRecurEnd(""); setRoom(""); setDescription("")
-        setShowRecurEnd(false)
+        setAttachedFiles([]); setShowRecurEnd(false)
     }
 
     const toggleDay = (key: string) => setRecurDays(p => p.includes(key) ? p.filter(d => d !== key) : [...p, key])
@@ -262,6 +263,7 @@ export function AddLectureDialog({ defaultDate, open: extOpen, onOpenChange: ext
                     title: finalSubject, subject: finalSubject, batchId: Number(batchId),
                     teacherId, autoAssign: isAuto, date, startTime, endTime, room: room || undefined,
                     description: description || undefined,
+                    files: attachedFiles.length > 0 ? attachedFiles : undefined,
                 }
                 await createLecture(p).unwrap()
                 toast.success("Class scheduled! ✓")
@@ -373,6 +375,42 @@ export function AddLectureDialog({ defaultDate, open: extOpen, onOpenChange: ext
                                 rows={2}
                                 className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-[13px] shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none placeholder:text-muted-foreground"
                             />
+                        </div>
+                        <div>
+                            <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                                Attachments <span className="font-normal normal-case text-muted-foreground/60">(optional, max 5)</span>
+                            </p>
+                            <label className={cn(
+                                "flex items-center gap-2 px-4 py-3 rounded-xl border cursor-pointer transition-all",
+                                "border-dashed border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+                            )}>
+                                <Paperclip className="h-4 w-4 shrink-0" />
+                                <span className="text-[13px]">Click to attach files (PDF, images, docs)</span>
+                                <input
+                                    type="file"
+                                    multiple
+                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
+                                    className="hidden"
+                                    onChange={e => {
+                                        const selected = Array.from(e.target.files ?? [])
+                                        setAttachedFiles(prev => [...prev, ...selected].slice(0, 5))
+                                        e.target.value = ""
+                                    }}
+                                />
+                            </label>
+                            {attachedFiles.length > 0 && (
+                                <div className="mt-2 space-y-1.5">
+                                    {attachedFiles.map((f, i) => (
+                                        <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/50 border border-border/50">
+                                            <span className="text-[12px] truncate max-w-[80%]">{f.name}</span>
+                                            <button type="button" onClick={() => setAttachedFiles(p => p.filter((_, idx) => idx !== i))}
+                                                className="p-0.5 rounded text-muted-foreground hover:text-destructive transition-colors">
+                                                <X className="h-3.5 w-3.5" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

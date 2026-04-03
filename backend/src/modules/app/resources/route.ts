@@ -103,6 +103,33 @@ router.put("/teacher/folder/:id", isTeacher, appWriteRateLimiter, validate(Resou
  */
 router.delete("/teacher/folder/:id", isTeacher, resourcesController.deleteFolder.bind(resourcesController));
 
+// ==================== TEACHER NOTE ROUTES ====================
+
+/**
+ * GET /app/resources/teacher/notes
+ * Teacher/Admin: list notes with pagination + search
+ *   ?batchId=&search=&page=&limit=
+ */
+router.get("/teacher/notes", isTeacher, appReadRateLimiter, resourcesController.getTeacherNotes.bind(resourcesController));
+
+/**
+ * POST /app/resources/teacher/note
+ * Teacher/Admin: create a note (multipart/form-data: title, batchId, category?, content? (JSON array), files[])
+ */
+router.post("/teacher/note", isTeacher, fileUploadRateLimiter, materialUpload.array("files", 5), resourcesController.createTeacherNote.bind(resourcesController));
+
+/**
+ * PUT /app/resources/teacher/note/:id
+ * Teacher/Admin: update a note
+ */
+router.put("/teacher/note/:id", isTeacher, appWriteRateLimiter, materialUpload.array("files", 5), resourcesController.updateTeacherNote.bind(resourcesController));
+
+/**
+ * DELETE /app/resources/teacher/note/:id
+ * Teacher/Admin: soft-delete a note
+ */
+router.delete("/teacher/note/:id", isTeacher, resourcesController.deleteTeacherNote.bind(resourcesController));
+
 // ==================== TEACHER VIDEO ROUTES ====================
 
 /**

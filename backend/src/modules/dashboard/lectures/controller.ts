@@ -4,6 +4,9 @@ import logger from "../../../utils/logger";
 import { CreateLectureInput, CreateBulkLecturesInput, UpdateLectureInput, GetLecturesQuery } from "./types";
 import { LectureStatus } from "../../../../prisma/generated/prisma/enums";
 import { log } from "../../../utils/logtail";
+import CloudinaryService from "../../../config/cloudinairy.config";
+
+const cloudinaryService = new CloudinaryService();
 
 const lectureService = new LectureService();
 
@@ -12,6 +15,19 @@ export default class LectureController {
     try {
       const data: CreateLectureInput = req.body;
       const userId = req.user!.id;
+
+      // Handle optional file attachments (multipart/form-data)
+      const files = (req.files as Express.Multer.File[]) ?? [];
+      if (files.length > 0) {
+        const uploaded = await cloudinaryService.uploadDocuments(files, "lecture_attachments");
+        data.attachments = uploaded.map((u) => ({
+          url: u.url,
+          publicId: u.public_id,
+          originalFilename: u.original_filename,
+          mimeType: files.find((f) => f.originalname === u.original_filename)?.mimetype ?? "",
+          size: u.bytes,
+        }));
+      }
 
       const lecture = await lectureService.create(data, userId);
 

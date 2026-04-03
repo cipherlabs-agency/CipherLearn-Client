@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { isAppUser, isStudent, isTeacher } from "../../auth/middleware";
+import { isAppUser, isStudent, isTeacher, isAdmin } from "../../auth/middleware";
 import { appReadRateLimiter, appWriteRateLimiter } from "../../../middleware/rateLimiter";
 import AppTestController from "./controller";
 import { validate } from "../../../middleware/validate";
@@ -12,11 +12,11 @@ const controller = new AppTestController();
 
 /**
  * POST /app/tests/teacher
- * Teacher: create a new test
+ * Admin only: create a new test
  */
 router.post(
   "/teacher",
-  isTeacher,
+  isAdmin,
   appWriteRateLimiter,
   validate(TestsValidations.createTest),
   controller.createTest.bind(controller)
@@ -24,11 +24,11 @@ router.post(
 
 /**
  * PUT /app/tests/teacher/:id
- * Teacher: update their own test
+ * Admin only: update a test
  */
 router.put(
   "/teacher/:id",
-  isTeacher,
+  isAdmin,
   appWriteRateLimiter,
   validate(TestsValidations.updateTest),
   controller.updateTest.bind(controller)
@@ -36,11 +36,11 @@ router.put(
 
 /**
  * DELETE /app/tests/teacher/:id
- * Teacher: soft-delete their own test
+ * Admin only: soft-delete a test
  */
 router.delete(
   "/teacher/:id",
-  isTeacher,
+  isAdmin,
   controller.deleteTest.bind(controller)
 );
 

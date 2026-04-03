@@ -89,6 +89,31 @@ export interface GetTeacherMaterialsQuery {
   limit?: number;
 }
 
+// ─── Teacher Notes Types ──────────────────────────────────────────────────────
+
+export interface TeacherNoteListItem {
+  id: number;
+  title: string;
+  content: string[];
+  category: string | null;
+  batchId: number;
+  batchName: string;
+  createdAt: string;
+}
+
+export interface CreateNoteInput {
+  title: string;
+  content?: string[];
+  category?: string;
+  batchId: number;
+}
+
+export interface UpdateNoteInput {
+  title?: string;
+  content?: string[];
+  category?: string;
+}
+
 // ─── Starred Resources ────────────────────────────────────────────────────────
 
 export type StarResourceType = "note" | "study_material" | "video";

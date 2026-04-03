@@ -1,22 +1,22 @@
 import { Router } from "express";
 import { announcementsController } from "./controller";
 import { appReadRateLimiter, appWriteRateLimiter, fileUploadRateLimiter } from "../../../middleware/rateLimiter";
-import { isTeacher, requireTeacherPermission } from "../../auth/middleware";
+import { isAdmin } from "../../auth/middleware";
 import { notesUpload } from "../../../config/multer.config";
 import { validate } from "../../../middleware/validate";
 import { AnnouncementsValidations } from "./validation";
 
 const router = Router();
 
-// ==================== TEACHER ROUTES (before /:id) ====================
+// ==================== ADMIN-ONLY ROUTES (before /:id) ====================
 
 /**
  * POST /app/announcements/teacher
- * Teacher: create announcement (multipart: title, description, body, category, department?, pinned?, files[])
+ * Admin: create announcement (multipart: title, description, body, category, department?, pinned?, files[])
  */
 router.post(
   "/teacher",
-  isTeacher, requireTeacherPermission('canSendAnnouncements'),
+  isAdmin,
   fileUploadRateLimiter,
   notesUpload.array("files", 5),
   validate(AnnouncementsValidations.createAnnouncement),
@@ -25,21 +25,21 @@ router.post(
 
 /**
  * PUT /app/announcements/teacher/:id/pin
- * Teacher: toggle pinned status (must come before /:id)
+ * Admin: toggle pinned status (must come before /:id)
  */
 router.put(
   "/teacher/:id/pin",
-  isTeacher, requireTeacherPermission('canSendAnnouncements'),
+  isAdmin,
   announcementsController.togglePin.bind(announcementsController)
 );
 
 /**
  * PUT /app/announcements/teacher/:id
- * Teacher: update their own announcement
+ * Admin: update an announcement
  */
 router.put(
   "/teacher/:id",
-  isTeacher, requireTeacherPermission('canSendAnnouncements'),
+  isAdmin,
   appWriteRateLimiter,
   validate(AnnouncementsValidations.updateAnnouncement),
   announcementsController.updateAnnouncement.bind(announcementsController)
@@ -47,11 +47,11 @@ router.put(
 
 /**
  * DELETE /app/announcements/teacher/:id
- * Teacher: soft-delete their own announcement
+ * Admin: soft-delete an announcement
  */
 router.delete(
   "/teacher/:id",
-  isTeacher, requireTeacherPermission('canSendAnnouncements'),
+  isAdmin,
   announcementsController.deleteAnnouncement.bind(announcementsController)
 );
 

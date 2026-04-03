@@ -69,6 +69,7 @@ export default class LectureService {
         endTime: data.endTime,
         duration,
         createdBy: userId,
+        ...(data.attachments && data.attachments.length > 0 && { attachments: data.attachments as any }),
       },
       include: LECTURE_INCLUDE,
     });

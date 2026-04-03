@@ -64,11 +64,17 @@ export const lecturesApi = api.injectEndpoints({
         }),
 
         createLecture: builder.mutation<ApiResponse<Lecture>, CreateLectureInput>({
-            query: (data) => ({
-                url: '/dashboard/lectures',
-                method: 'POST',
-                body: data,
-            }),
+            query: ({ files, ...data }) => {
+                if (files && files.length > 0) {
+                    const formData = new FormData();
+                    (Object.entries(data) as [string, unknown][]).forEach(([k, v]) => {
+                        if (v !== undefined && v !== null) formData.append(k, String(v));
+                    });
+                    files.forEach((f) => formData.append('files', f));
+                    return { url: '/dashboard/lectures', method: 'POST', body: formData };
+                }
+                return { url: '/dashboard/lectures', method: 'POST', body: data };
+            },
             invalidatesTags: [{ type: 'Lectures', id: 'LIST' }, 'Dashboard'],
         }),
 

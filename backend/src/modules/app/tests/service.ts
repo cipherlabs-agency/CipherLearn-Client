@@ -692,14 +692,13 @@ export default class AppTestService {
     return { ...test, daysUntil: null, myScore: null };
   }
 
-  public async updateTest(testId: number, teacherId: number, data: UpdateTestInput): Promise<AppTestDetailResponse> {
+  public async updateTest(testId: number, teacherId: number, data: UpdateTestInput, isAdmin = false): Promise<AppTestDetailResponse> {
     const test = await prisma.test.findFirst({
       where: { id: testId, isDeleted: false },
     });
     if (!test) throw new Error("Test not found");
 
-    // Admin can update any test; teacher can only update their own
-    if (test.teacherId !== null && test.teacherId !== teacherId) {
+    if (!isAdmin && test.teacherId !== null && test.teacherId !== teacherId) {
       throw new Error("You can only edit your own tests");
     }
 
@@ -732,11 +731,11 @@ export default class AppTestService {
     return { ...updated, daysUntil: null, myScore: null };
   }
 
-  public async deleteTest(testId: number, teacherId: number): Promise<void> {
+  public async deleteTest(testId: number, teacherId: number, isAdmin = false): Promise<void> {
     const test = await prisma.test.findFirst({ where: { id: testId, isDeleted: false } });
     if (!test) throw new Error("Test not found");
 
-    if (test.teacherId !== null && test.teacherId !== teacherId) {
+    if (!isAdmin && test.teacherId !== null && test.teacherId !== teacherId) {
       throw new Error("You can only delete your own tests");
     }
 

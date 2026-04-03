@@ -15,6 +15,9 @@ import type {
   GetTeacherMaterialsQuery,
   StarResourceType,
   StarredResourcesResponse,
+  TeacherNoteListItem,
+  CreateNoteInput,
+  UpdateNoteInput,
 } from "./types";
 
 class ResourcesService {
@@ -605,6 +608,160 @@ class ResourcesService {
     // Move materials to no folder before deleting
     await prisma.studyMaterial.updateMany({ where: { folderId }, data: { folderId: null } });
     await prisma.materialFolder.update({ where: { id: folderId }, data: { isDeleted: true } });
+  }
+
+  // ==================== TEACHER NOTE CRUD ====================
+
+  /**
+   * List notes — admin sees all, teacher sees notes for their batches
+   */
+  async getTeacherNotes(
+    teacherId: number,
+    opts: { batchId?: number; search?: string; page?: number; limit?: number },
+    isAdmin = false
+  ): Promise<{ data: TeacherNoteListItem[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
+    const page = Math.max(1, opts.page ?? 1);
+    const limit = Math.min(100, Math.max(1, opts.limit ?? 20));
+    const skip = (page - 1) * limit;
+
+    let batchFilter: Prisma.NoteWhereInput = {};
+
+    if (isAdmin) {
+      if (opts.batchId) batchFilter = { batchId: opts.batchId };
+    } else {
+      // Teacher sees notes for batches they teach (have lectures in)
+      const batchRows = await prisma.lecture.findMany({
+        where: { teacherId, isDeleted: false },
+        select: { batchId: true },
+        distinct: ["batchId"],
+      });
+      const ids = batchRows.map((b) => b.batchId);
+      const filtered = opts.batchId ? ids.filter((id) => id === opts.batchId) : ids;
+      batchFilter = { batchId: { in: filtered } };
+    }
+
+    const where: Prisma.NoteWhereInput = {
+      ...batchFilter,
+      isDeleted: false,
+      ...(opts.search ? { title: { contains: opts.search, mode: "insensitive" as const } } : {}),
+    };
+
+    const [notes, total] = await Promise.all([
+      prisma.note.findMany({
+        where,
+        include: { batch: { select: { id: true, name: true } } },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.note.count({ where }),
+    ]);
+
+    return {
+      data: notes.map((n) => ({
+        id: n.id,
+        title: n.title,
+        content: Array.isArray(n.content) ? (n.content as string[]) : [],
+        category: n.category,
+        batchId: n.batchId,
+        batchName: (n as any).batch?.name ?? "",
+        createdAt: n.createdAt?.toISOString() ?? new Date().toISOString(),
+      })),
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
+  }
+
+  /**
+   * Create a note for a batch
+   */
+  async createTeacherNote(data: CreateNoteInput, files: AppResourceFile[]): Promise<TeacherNoteListItem> {
+    const batch = await prisma.batch.findFirst({ where: { id: data.batchId, isDeleted: false } });
+    if (!batch) throw new Error("Batch not found");
+
+    const content: string[] = [...(data.content ?? []), ...files.map((f) => f.url)];
+
+    const note = await prisma.note.create({
+      data: {
+        title: data.title,
+        content: content as any,
+        category: data.category ?? null,
+        batchId: data.batchId,
+      },
+      include: { batch: { select: { id: true, name: true } } },
+    });
+
+    return {
+      id: note.id,
+      title: note.title,
+      content: Array.isArray(note.content) ? (note.content as string[]) : [],
+      category: note.category,
+      batchId: note.batchId,
+      batchName: (note as any).batch?.name ?? "",
+      createdAt: note.createdAt?.toISOString() ?? new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Update a note (admin can update any; teacher checks batch ownership)
+   */
+  async updateTeacherNote(
+    noteId: number,
+    teacherId: number,
+    data: UpdateNoteInput,
+    files: AppResourceFile[],
+    isAdmin = false
+  ): Promise<TeacherNoteListItem> {
+    const note = await prisma.note.findFirst({ where: { id: noteId, isDeleted: false } });
+    if (!note) throw new Error("Note not found");
+
+    if (!isAdmin) {
+      const hasAccess = await prisma.lecture.findFirst({
+        where: { teacherId, batchId: note.batchId, isDeleted: false },
+      });
+      if (!hasAccess) throw new Error("You do not have access to this note");
+    }
+
+    const content: string[] | undefined =
+      data.content !== undefined || files.length > 0
+        ? [...(data.content ?? (Array.isArray(note.content) ? (note.content as string[]) : [])), ...files.map((f) => f.url)]
+        : undefined;
+
+    const updated = await prisma.note.update({
+      where: { id: noteId },
+      data: {
+        ...(data.title !== undefined && { title: data.title }),
+        ...(data.category !== undefined && { category: data.category }),
+        ...(content !== undefined && { content: content as any }),
+      },
+      include: { batch: { select: { id: true, name: true } } },
+    });
+
+    return {
+      id: updated.id,
+      title: updated.title,
+      content: Array.isArray(updated.content) ? (updated.content as string[]) : [],
+      category: updated.category,
+      batchId: updated.batchId,
+      batchName: (updated as any).batch?.name ?? "",
+      createdAt: updated.createdAt?.toISOString() ?? new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Soft-delete a note
+   */
+  async deleteTeacherNote(noteId: number, teacherId: number, isAdmin = false): Promise<void> {
+    const note = await prisma.note.findFirst({ where: { id: noteId, isDeleted: false } });
+    if (!note) throw new Error("Note not found");
+
+    if (!isAdmin) {
+      const hasAccess = await prisma.lecture.findFirst({
+        where: { teacherId, batchId: note.batchId, isDeleted: false },
+      });
+      if (!hasAccess) throw new Error("You do not have access to this note");
+    }
+
+    await prisma.note.update({ where: { id: noteId }, data: { isDeleted: true } });
   }
 }
 

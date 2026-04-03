@@ -1,5 +1,13 @@
 import { LectureStatus } from "../../../../prisma/generated/prisma/enums";
 
+export interface LectureAttachment {
+  url: string;
+  publicId: string;
+  originalFilename: string;
+  mimeType: string;
+  size: number;
+}
+
 export interface CreateLectureInput {
   title: string;
   subject: string;
@@ -11,6 +19,7 @@ export interface CreateLectureInput {
   date: string;
   startTime: string;
   endTime: string;
+  attachments?: LectureAttachment[];
 }
 
 export interface CreateBulkLecturesInput {

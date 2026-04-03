@@ -348,7 +348,7 @@ export default class AppTestController {
       const user = req.user!;
       const testId = Number(req.params.id);
       if (isNaN(testId)) return res.status(400).json({ success: false, message: "Invalid test ID" });
-      const test = await testService.updateTest(testId, user.id, req.body);
+      const test = await testService.updateTest(testId, user.id, req.body, user.role === UserRoles.ADMIN);
       return res.status(200).json({ success: true, data: test });
     } catch (error: any) {
       logger.error("AppTestController.updateTest error:", error);
@@ -366,7 +366,7 @@ export default class AppTestController {
       const user = req.user!;
       const testId = Number(req.params.id);
       if (isNaN(testId)) return res.status(400).json({ success: false, message: "Invalid test ID" });
-      await testService.deleteTest(testId, user.id);
+      await testService.deleteTest(testId, user.id, user.role === UserRoles.ADMIN);
       return res.status(200).json({ success: true, message: "Test deleted" });
     } catch (error: any) {
       logger.error("AppTestController.deleteTest error:", error);
