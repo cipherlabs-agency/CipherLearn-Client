@@ -99,12 +99,15 @@ class FeesController {
       const user = req.user!;
       const batchId = req.query.batchId ? Number(req.query.batchId) : undefined;
       const status = req.query.status as PaymentMode | undefined;
-      const students = await feesService.getTeacherStudents(
+      const search = req.query.search as string | undefined;
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const limit = req.query.limit ? Math.min(100, Number(req.query.limit)) : 20;
+      const result = await feesService.getTeacherStudents(
         user.id,
-        { batchId: batchId && !isNaN(batchId) ? batchId : undefined, status: status as any },
+        { batchId: batchId && !isNaN(batchId) ? batchId : undefined, status: status as any, search, page, limit },
         user.role === UserRoles.ADMIN
       );
-      return res.status(200).json({ success: true, data: students });
+      return res.status(200).json({ success: true, data: result.data, pagination: result.pagination });
     } catch (error) {
       log("error", "app.fees.teacher.students failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("FeesController.getTeacherStudents error:", error);

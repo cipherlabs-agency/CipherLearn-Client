@@ -116,9 +116,13 @@ class FeesService {
    */
   async getTeacherStudents(
     teacherId: number,
-    opts?: { batchId?: number; status?: PaymentStatus },
+    opts?: { batchId?: number; status?: PaymentStatus; search?: string; page?: number; limit?: number },
     isAdmin = false
-  ): Promise<TeacherStudentFeeItem[]> {
+  ): Promise<{ data: TeacherStudentFeeItem[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
+    const page = Math.max(1, opts?.page ?? 1);
+    const limit = Math.min(100, Math.max(1, opts?.limit ?? 20));
+    const skip = (page - 1) * limit;
+
     let batchFilter: { batchId?: { in: number[] } | number } = {};
 
     if (isAdmin) {
@@ -137,18 +141,29 @@ class FeesService {
       batchFilter = { batchId: { in: filteredIds } };
     }
 
-    const students = await prisma.student.findMany({
-      where: { ...batchFilter, isDeleted: false },
-      include: {
-        batch: { select: { id: true, name: true } },
-        feeReceipts: {
-          orderBy: { dueDate: "asc" },
-        },
-      },
-      orderBy: { fullname: "asc" },
-    });
+    const where = {
+      ...batchFilter,
+      isDeleted: false,
+      ...(opts?.search ? { fullname: { contains: opts.search, mode: "insensitive" as const } } : {}),
+    };
 
-    return students
+    const [students, total] = await Promise.all([
+      prisma.student.findMany({
+        where,
+        include: {
+          batch: { select: { id: true, name: true } },
+          feeReceipts: {
+            orderBy: { dueDate: "asc" },
+          },
+        },
+        orderBy: { fullname: "asc" },
+        skip,
+        take: limit,
+      }),
+      prisma.student.count({ where }),
+    ]);
+
+    const data = students
       .map((s) => {
         const pendingStatuses: string[] = [PaymentStatus.PENDING, PaymentStatus.OVERDUE, PaymentStatus.PARTIAL];
         const pendingReceipt = s.feeReceipts.find((r) => pendingStatuses.includes(r.status));
@@ -168,6 +183,11 @@ class FeesService {
         };
       })
       .filter((s) => !opts?.status || s.status === opts.status);
+
+    return {
+      data,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   /**
