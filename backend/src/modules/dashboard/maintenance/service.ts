@@ -402,9 +402,33 @@ export default class MaintenanceService {
     }
 
     // ── Delete parents ────────────────────────────────────────────────────────
-    d.notes         = (await prisma.note.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
-    d.lectures      = (await prisma.lecture.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
-    d.tests         = (await prisma.test.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
+    d.notes = (await prisma.note.deleteMany({
+      where: {
+        OR: [
+          { title: { contains: SEED_TAG } },
+          ...(seedBatchIds.length ? [{ batchId: { in: seedBatchIds } }] : []),
+        ],
+      },
+    })).count;
+
+    d.lectures = (await prisma.lecture.deleteMany({
+      where: {
+        OR: [
+          { title: { contains: SEED_TAG } },
+          ...(seedBatchIds.length ? [{ batchId: { in: seedBatchIds } }] : []),
+        ],
+      },
+    })).count;
+
+    d.tests = (await prisma.test.deleteMany({
+      where: {
+        OR: [
+          { title: { contains: SEED_TAG } },
+          ...(seedBatchIds.length ? [{ batchId: { in: seedBatchIds } }] : []),
+        ],
+      },
+    })).count;
+
     d.students      = (await prisma.student.deleteMany({ where: { fullname: { contains: SEED_TAG } } })).count;
     d.users         = (await prisma.user.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
     d.feeStructures = (await prisma.feeStructure.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
