@@ -203,7 +203,7 @@ export default function BatchDetailPage() {
                     <div className="flex items-center gap-3 text-[12.5px] text-muted-foreground">
                         <span className="flex items-center gap-1"><Clock className="h-3 w-3 opacity-60" />{batch.timings?.time || "—"}</span>
                         <span className="opacity-20">·</span>
-                        <span className="flex items-center gap-1"><Calendar className="h-3 w-3 opacity-60" />{batch.timings?.days?.length > 0 ? batch.timings.days.map(d => d.slice(0, 3)).join(", ") : "—"}</span>
+                        <span className="flex items-center gap-1"><Calendar className="h-3 w-3 opacity-60" />{batch.timings?.days?.length > 0 ? batch.timings?.days?.map(d => d.slice(0, 3)).join(", ") : "—"}</span>
                         <span className="opacity-20">·</span>
                         <span>Batch #{batch.id}</span>
                     </div>
