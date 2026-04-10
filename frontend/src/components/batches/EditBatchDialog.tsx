@@ -43,7 +43,7 @@ export function EditBatchDialog({ batch, open, onOpenChange }: EditBatchDialogPr
     const [selectedDays, setSelectedDays] = useState<string[]>(batch.timings.days)
 
     // Parse "17:00 - 19:00" into start/end
-    const timeParts = batch.timings.time?.split(" - ") || ["", ""]
+    const timeParts = batch.timings?.time?.split(" - ") || ["", ""]
     const [startTime, setStartTime] = useState(timeParts[0]?.trim() || "")
     const [endTime, setEndTime] = useState(timeParts[1]?.trim() || "")
 
@@ -53,7 +53,7 @@ export function EditBatchDialog({ batch, open, onOpenChange }: EditBatchDialogPr
         const cap = typeof batch.totalStudents === "object" ? batch.totalStudents?.capacity ?? 30 : Number(batch.totalStudents) || 30
         setNewCapacity(cap)
         setSelectedDays(batch.timings.days)
-        const parts = batch.timings.time?.split(" - ") || ["", ""]
+        const parts = batch.timings?.time?.split(" - ") || ["", ""]
         setStartTime(parts[0]?.trim() || "")
         setEndTime(parts[1]?.trim() || "")
     }, [batch])

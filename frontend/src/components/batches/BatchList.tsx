@@ -157,15 +157,15 @@ export const BatchList: FC = () => {
                                         <Clock className="h-3.5 w-3.5" />
                                         <span className="text-[13.5px] font-medium">Class Time</span>
                                     </div>
-                                    <span className="text-[13.5px] font-semibold tabular-nums text-foreground">{batch.timings.time || 'Not set'}</span>
+                                    <span className="text-[13.5px] font-semibold tabular-nums text-foreground">{batch.timings?.time || 'Not set'}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2 text-muted-foreground">
                                         <Calendar className="h-3.5 w-3.5" />
                                         <span className="text-[13.5px] font-medium">Schedule</span>
                                     </div>
-                                    <span className="text-[13.5px] font-semibold text-foreground truncate max-w-[140px]" title={batch.timings.days.join(', ')}>
-                                        {batch.timings.days.length > 0 
+                                    <span className="text-[13.5px] font-semibold text-foreground truncate max-w-[140px]" title={batch.timings?.days?.join(', ')}>
+                                        {batch.timings?.days?.length > 0 
                                             ? batch.timings.days.map(d => d.slice(0, 3)).join(', ')
                                             : 'Not set'}
                                     </span>
