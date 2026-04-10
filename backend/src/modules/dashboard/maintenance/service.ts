@@ -303,23 +303,32 @@ export default class MaintenanceService {
   async cleanup() {
     const d: Record<string, number> = {};
 
-    // Collect seed student IDs first so we can delete ALL their FK-dependent
-    // rows — not just ones tagged with SEED_TAG (e.g. attendance marked by a
-    // real teacher for a seed student would otherwise block the delete).
+    // ── Pre-fetch IDs needed for FK-safe deletes ──────────────────────────────
+    // Attendance records may have been marked by real teachers for seed students,
+    // so filter by studentId (not just markedBy). Same applies to test scores,
+    // fee receipts, and every non-cascade child of Batch.
+
     const seedStudents = await prisma.student.findMany({
       where: { fullname: { contains: SEED_TAG } },
       select: { id: true },
     });
     const seedStudentIds = seedStudents.map((s) => s.id);
 
-    // Collect seed test IDs for the same reason (test scores reference them).
     const seedTests = await prisma.test.findMany({
       where: { title: { contains: SEED_TAG } },
       select: { id: true },
     });
     const seedTestIds = seedTests.map((t) => t.id);
 
-    // Delete child rows before parents to avoid FK violations.
+    const seedBatches = await prisma.batch.findMany({
+      where: { name: { contains: SEED_TAG } },
+      select: { id: true },
+    });
+    const seedBatchIds = seedBatches.map((b) => b.id);
+
+    // ── Delete deepest children first ─────────────────────────────────────────
+
+    // TestScore (refs student + test — no cascade on student side)
     d.testScores = (await prisma.testScore.deleteMany({
       where: {
         OR: [
@@ -330,31 +339,76 @@ export default class MaintenanceService {
       },
     })).count;
 
+    // Attendance (refs student + batch — neither cascades)
     d.attendances = (await prisma.attendance.deleteMany({
       where: {
         OR: [
           { markedBy: { contains: SEED_TAG } },
           ...(seedStudentIds.length ? [{ studentId: { in: seedStudentIds } }] : []),
+          ...(seedBatchIds.length   ? [{ batchId:   { in: seedBatchIds   } }] : []),
         ],
       },
     })).count;
 
+    // AttendanceSheet (refs batch, no cascade — must go after attendance rows)
+    d.attendanceSheets = (await prisma.attendanceSheet.deleteMany({
+      where: seedBatchIds.length ? { batchId: { in: seedBatchIds } } : { id: -1 },
+    })).count;
+
+    // FeeReceipt (refs student + batch — both cascade, but be explicit)
     d.feeReceipts = (await prisma.feeReceipt.deleteMany({
       where: {
         OR: [
           { generatedBy: { contains: SEED_TAG } },
           ...(seedStudentIds.length ? [{ studentId: { in: seedStudentIds } }] : []),
+          ...(seedBatchIds.length   ? [{ batchId:   { in: seedBatchIds   } }] : []),
         ],
       },
     })).count;
 
-    d.notes        = (await prisma.note.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
-    d.lectures     = (await prisma.lecture.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
-    d.tests        = (await prisma.test.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
-    d.students     = (await prisma.student.deleteMany({ where: { fullname: { contains: SEED_TAG } } })).count;
-    d.users        = (await prisma.user.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
+    // AssignmentSlot → StudentSubmission (submission cascades from slot, slot does not cascade from batch)
+    if (seedBatchIds.length) {
+      const seedSlots = await prisma.assignmentSlot.findMany({
+        where: { batchId: { in: seedBatchIds } },
+        select: { id: true },
+      });
+      const seedSlotIds = seedSlots.map((s) => s.id);
+      if (seedSlotIds.length) {
+        await prisma.studentSubmission.deleteMany({ where: { slotId: { in: seedSlotIds } } });
+      }
+      d.assignmentSlots = (await prisma.assignmentSlot.deleteMany({
+        where: { batchId: { in: seedBatchIds } },
+      })).count;
+
+      // Doubts (no cascade from batch)
+      d.doubts = (await prisma.doubt.deleteMany({
+        where: { batchId: { in: seedBatchIds } },
+      })).count;
+
+      // YoutubeVideo (no cascade from batch)
+      d.youtubeVideos = (await prisma.youtubeVideo.deleteMany({
+        where: { batchId: { in: seedBatchIds } },
+      })).count;
+
+      // StudyMaterial (no cascade from batch — delete before MaterialFolder)
+      d.studyMaterials = (await prisma.studyMaterial.deleteMany({
+        where: { batchId: { in: seedBatchIds } },
+      })).count;
+
+      // MaterialFolder (no cascade from batch)
+      d.materialFolders = (await prisma.materialFolder.deleteMany({
+        where: { batchId: { in: seedBatchIds } },
+      })).count;
+    }
+
+    // ── Delete parents ────────────────────────────────────────────────────────
+    d.notes         = (await prisma.note.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
+    d.lectures      = (await prisma.lecture.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
+    d.tests         = (await prisma.test.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
+    d.students      = (await prisma.student.deleteMany({ where: { fullname: { contains: SEED_TAG } } })).count;
+    d.users         = (await prisma.user.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
     d.feeStructures = (await prisma.feeStructure.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
-    d.batches      = (await prisma.batch.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
+    d.batches       = (await prisma.batch.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
 
     cacheService.flush();
     return d;
