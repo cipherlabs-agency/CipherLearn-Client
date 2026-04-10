@@ -302,16 +302,60 @@ export default class MaintenanceService {
   // ── Cleanup ──────────────────────────────────────
   async cleanup() {
     const d: Record<string, number> = {};
-    d.testScores = (await prisma.testScore.deleteMany({ where: { remarks: { contains: SEED_TAG } } })).count;
-    d.attendances = (await prisma.attendance.deleteMany({ where: { markedBy: { contains: SEED_TAG } } })).count;
-    d.feeReceipts = (await prisma.feeReceipt.deleteMany({ where: { generatedBy: { contains: SEED_TAG } } })).count;
-    d.notes = (await prisma.note.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
-    d.lectures = (await prisma.lecture.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
-    d.tests = (await prisma.test.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
-    d.students = (await prisma.student.deleteMany({ where: { fullname: { contains: SEED_TAG } } })).count;
-    d.users = (await prisma.user.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
+
+    // Collect seed student IDs first so we can delete ALL their FK-dependent
+    // rows — not just ones tagged with SEED_TAG (e.g. attendance marked by a
+    // real teacher for a seed student would otherwise block the delete).
+    const seedStudents = await prisma.student.findMany({
+      where: { fullname: { contains: SEED_TAG } },
+      select: { id: true },
+    });
+    const seedStudentIds = seedStudents.map((s) => s.id);
+
+    // Collect seed test IDs for the same reason (test scores reference them).
+    const seedTests = await prisma.test.findMany({
+      where: { title: { contains: SEED_TAG } },
+      select: { id: true },
+    });
+    const seedTestIds = seedTests.map((t) => t.id);
+
+    // Delete child rows before parents to avoid FK violations.
+    d.testScores = (await prisma.testScore.deleteMany({
+      where: {
+        OR: [
+          { remarks: { contains: SEED_TAG } },
+          ...(seedStudentIds.length ? [{ studentId: { in: seedStudentIds } }] : []),
+          ...(seedTestIds.length    ? [{ testId:    { in: seedTestIds    } }] : []),
+        ],
+      },
+    })).count;
+
+    d.attendances = (await prisma.attendance.deleteMany({
+      where: {
+        OR: [
+          { markedBy: { contains: SEED_TAG } },
+          ...(seedStudentIds.length ? [{ studentId: { in: seedStudentIds } }] : []),
+        ],
+      },
+    })).count;
+
+    d.feeReceipts = (await prisma.feeReceipt.deleteMany({
+      where: {
+        OR: [
+          { generatedBy: { contains: SEED_TAG } },
+          ...(seedStudentIds.length ? [{ studentId: { in: seedStudentIds } }] : []),
+        ],
+      },
+    })).count;
+
+    d.notes        = (await prisma.note.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
+    d.lectures     = (await prisma.lecture.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
+    d.tests        = (await prisma.test.deleteMany({ where: { title: { contains: SEED_TAG } } })).count;
+    d.students     = (await prisma.student.deleteMany({ where: { fullname: { contains: SEED_TAG } } })).count;
+    d.users        = (await prisma.user.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
     d.feeStructures = (await prisma.feeStructure.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
-    d.batches = (await prisma.batch.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
+    d.batches      = (await prisma.batch.deleteMany({ where: { name: { contains: SEED_TAG } } })).count;
+
     cacheService.flush();
     return d;
   }
