@@ -1,3 +1,4 @@
+import http from "http";
 import { config } from "./config/env.config";
 import app from "./server";
 import allRoutes from "./routes";
@@ -27,22 +28,43 @@ if (config.APP.ENV === "production" && !config.APP.CLIENT_URL) {
 
 async function startServer() {
   try {
-    app.listen(config.APP.PORT, () => {
+    const server = http.createServer(app);
+
+    server.listen(config.APP.PORT, () => {
       logger.info(`Server is running on port ${config.APP.PORT}`);
       log("warn", "Instance started", { timestamp: new Date().toISOString() });
-      db.connect();
+      void db.connect();
 
-      // Start token cleanup scheduler (runs every hour)
       startCleanupScheduler();
       logger.info("Token cleanup scheduler started");
 
-      // Start notification scheduler (classStartingSoon — runs every 5 min)
       startNotificationScheduler();
       logger.info("Notification scheduler started");
 
-      // Start the new daily fee reminder job
       startFeeReminderJob();
     });
+
+    // Graceful shutdown — drain in-flight requests before Node exits.
+    // Render sends SIGTERM before killing the container; without this handler,
+    // active requests are cut mid-flight.
+    const shutdown = (signal: string) => {
+      logger.info(`[Shutdown] ${signal} received — draining in-flight requests`);
+      server.close(async () => {
+        await db.disconnect();
+        log("warn", "Instance stopped gracefully", { timestamp: new Date().toISOString() });
+        logger.info("[Shutdown] All connections drained. Exiting.");
+        process.exit(0);
+      });
+      // Force-exit if drain stalls (e.g. a long-running WebSocket or keep-alive)
+      setTimeout(() => {
+        logger.error("[Shutdown] Forced exit — drain did not complete within 10s");
+        process.exit(1);
+      }, 10_000).unref();
+    };
+
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
+    process.on("SIGINT",  () => shutdown("SIGINT"));
+
   } catch (error) {
     logger.error("Failed to start server:", error);
     log("error", "Failed to start server", { err: error instanceof Error ? error.message : String(error) });

@@ -5,14 +5,13 @@ const stream = {
     write: (message: string) => logger.http(message.trim()),
 };
 
-const skip = () => {
-    const env = process.env.NODE_ENV || 'development';
-    return env !== 'development';
-};
-
 const httpLogger = morgan(
     ':method :url :status :res[content-length] - :response-time ms',
-    { stream, skip }
+    {
+        stream,
+        // In production, only log errors (4xx/5xx) — skip noisy 2xx request logs
+        skip: (_req, res) => process.env.NODE_ENV === 'production' && res.statusCode < 400,
+    }
 );
 
 export default httpLogger;

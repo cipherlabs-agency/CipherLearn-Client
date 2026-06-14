@@ -100,49 +100,52 @@ export default class AttendanceService {
         });
       }
 
-      // Process each attendance record
-      const results = await Promise.all(
-        attendances.map(async (record) => {
-          try {
-            // Upsert attendance - update if exists, create if not
-            const attendance = await prisma.attendance.upsert({
-              where: {
-                studentId_date_batchId: {
-                  studentId: record.studentId,
-                  date: attendanceDate,
-                  batchId,
+      // Process attendance in chunks of 15 to avoid saturating the pg pool (max 20)
+      const CHUNK_SIZE = 15;
+      const results: Array<{ success: boolean; studentId: number; attendance?: Attendance; error?: string }> = [];
+
+      for (let i = 0; i < attendances.length; i += CHUNK_SIZE) {
+        const chunk = attendances.slice(i, i + CHUNK_SIZE);
+        const chunkResults = await Promise.all(
+          chunk.map(async (record) => {
+            try {
+              const attendance = await prisma.attendance.upsert({
+                where: {
+                  studentId_date_batchId: {
+                    studentId: record.studentId,
+                    date: attendanceDate,
+                    batchId,
+                  },
                 },
-              },
-              update: {
-                status: record.status,
-                markedBy,
-                markedById,
-                method: AttendanceMethod.MANUAL,
-                time: new Date().toTimeString().slice(0, 8),
-              },
-              create: {
-                student: { connect: { id: record.studentId } },
-                batch: { connect: { id: batchId } },
-                date: attendanceDate,
-                status: record.status,
-                markedBy,
-                markedById,
-                method: AttendanceMethod.MANUAL,
-                time: new Date().toTimeString().slice(0, 8),
-                attendanceSheet: { connect: { id: sheet!.id } },
-              },
-            });
-            return { success: true, studentId: record.studentId, attendance };
-          } catch (error: any) {
-            log("error", "dashboard.attendance.Date failed", { err: error instanceof Error ? error.message : String(error) });
-            return {
-              success: false,
-              studentId: record.studentId,
-              error: error.message,
-            };
-          }
-        })
-      );
+                update: {
+                  status: record.status,
+                  markedBy,
+                  markedById,
+                  method: AttendanceMethod.MANUAL,
+                  time: new Date().toTimeString().slice(0, 8),
+                },
+                create: {
+                  student: { connect: { id: record.studentId } },
+                  batch: { connect: { id: batchId } },
+                  date: attendanceDate,
+                  status: record.status,
+                  markedBy,
+                  markedById,
+                  method: AttendanceMethod.MANUAL,
+                  time: new Date().toTimeString().slice(0, 8),
+                  attendanceSheet: { connect: { id: sheet!.id } },
+                },
+              });
+              return { success: true as const, studentId: record.studentId, attendance };
+            } catch (error: unknown) {
+              const msg = error instanceof Error ? error.message : String(error);
+              log("error", "dashboard.attendance.Date failed", { err: msg });
+              return { success: false as const, studentId: record.studentId, error: msg };
+            }
+          })
+        );
+        results.push(...chunkResults);
+      }
 
       const studentIds = attendances.map((a) => a.studentId);
       invalidateAfterAttendanceMutation(batchId, studentIds);
@@ -515,68 +518,49 @@ export default class AttendanceService {
         };
       }
 
-      // Check for existing attendance on this date
+      // Get or create attendance sheet first
       const attendanceDate = new Date(date!);
-      const existingAttendance = await prisma.attendance.findUnique({
-        where: {
-          studentId_date_batchId: {
-            studentId,
-            date: attendanceDate,
-            batchId: batchId!,
-          },
-        },
-      });
-
-      if (existingAttendance) {
-        return {
-          success: false,
-          message: "Attendance already marked for today",
-        };
-      }
-
-      // Get or create attendance sheet
       const month = String(attendanceDate.getMonth() + 1);
       const year = String(attendanceDate.getFullYear());
 
       let sheet = await prisma.attendanceSheet.findUnique({
-        where: {
-          batchId_year_month: { batchId: batchId!, year, month },
-        },
+        where: { batchId_year_month: { batchId: batchId!, year, month } },
       });
 
       if (!sheet) {
         sheet = await prisma.attendanceSheet.create({
-          data: {
-            batch: { connect: { id: batchId! } },
-            month,
-            year,
-          },
+          data: { batch: { connect: { id: batchId! } }, month, year },
         });
       }
 
-      // Mark attendance
-      const attendance = await prisma.attendance.create({
-        data: {
-          student: { connect: { id: studentId } },
-          batch: { connect: { id: batchId! } },
-          date: attendanceDate,
-          status: AttendanceStatus.PRESENT,
-          method: AttendanceMethod.QR,
-          markedBy: "QR_SCAN",
-          time: new Date().toTimeString().slice(0, 8),
-          attendanceSheet: { connect: { id: sheet.id } },
-        },
-      });
-
-      return {
-        success: true,
-        message: "Attendance marked successfully",
-        attendance,
-      };
-    } catch (error: any) {
+      // Create attendance — let the DB unique constraint (studentId_date_batchId) guard
+      // against concurrent duplicate QR scans rather than a racy pre-check + create.
+      try {
+        const attendance = await prisma.attendance.create({
+          data: {
+            student: { connect: { id: studentId } },
+            batch: { connect: { id: batchId! } },
+            date: attendanceDate,
+            status: AttendanceStatus.PRESENT,
+            method: AttendanceMethod.QR,
+            markedBy: "QR_SCAN",
+            time: new Date().toTimeString().slice(0, 8),
+            attendanceSheet: { connect: { id: sheet.id } },
+          },
+        });
+        return { success: true, message: "Attendance marked successfully", attendance };
+      } catch (createError: unknown) {
+        if (
+          createError instanceof Prisma.PrismaClientKnownRequestError &&
+          createError.code === "P2002"
+        ) {
+          return { success: false, message: "Attendance already marked for today" };
+        }
+        throw createError;
+      }
+    } catch (error: unknown) {
       log("error", "dashboard.attendance.Date failed", { err: error instanceof Error ? error.message : String(error) });
-      console.error("QR Attendance error:", error);
-      return { success: false, message: error.message || "Failed to mark attendance" };
+      return { success: false, message: error instanceof Error ? error.message : "Failed to mark attendance" };
     }
   }
 

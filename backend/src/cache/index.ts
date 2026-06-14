@@ -1,4 +1,5 @@
 import NodeCache from "node-cache";
+import logger from "../utils/logger";
 import { log } from "../utils/logtail";
 
 const MAX_KEYS = 5000;
@@ -13,18 +14,13 @@ class CacheService {
     this.cache = new NodeCache({
       stdTTL: 300,
       checkperiod: 60,
-      useClones: true,
+      useClones: false, // ⚠ callers MUST NOT mutate returned objects — skips deep-clone for perf
       maxKeys: MAX_KEYS,
     });
 
-    console.log(
-      `CacheService initialized (maxKeys=${MAX_KEYS}, useClones=true)`
-    );
+    logger.info(`[Cache] Initialized (maxKeys=${MAX_KEYS}, useClones=false)`);
   }
 
-  /**
-   * Get a value from cache.
-   */
   get<T>(key: string): T | undefined {
     try {
       const value = this.cache.get<T>(key);
@@ -39,35 +35,26 @@ class CacheService {
     }
   }
 
-  /**
-   * Set a value in cache. Silently fails on overflow or errors.
-   */
   set<T>(key: string, value: T, ttl: number): boolean {
     try {
       return this.cache.set(key, value, ttl);
     } catch (err) {
-      log("error", "set.set failed", { err: err instanceof Error ? err.message : String(err) });
-      console.warn(`CacheService.set failed for key "${key}":`, err);
+      log("error", "cache.set failed", { err: err instanceof Error ? err.message : String(err) });
+      logger.warn(`[Cache] set failed for key "${key}":`, err);
       return false;
     }
   }
 
   /**
    * Cache-aside with stampede protection.
-   * If multiple callers request the same key concurrently, only one fetcher runs.
+   * Concurrent requests for the same uncached key share a single fetcher promise.
    */
   async getOrSet<T>(key: string, fetcher: () => Promise<T>, ttl: number): Promise<T> {
-    // Try cache first
     const cached = this.get<T>(key);
-    if (cached !== undefined) {
-      return cached;
-    }
+    if (cached !== undefined) return cached;
 
-    // Stampede protection: coalesce concurrent requests for the same key
     const pending = this.pendingFetches.get(key);
-    if (pending) {
-      return pending as Promise<T>;
-    }
+    if (pending) return pending as Promise<T>;
 
     const fetchPromise = fetcher()
       .then((result) => {
@@ -82,9 +69,6 @@ class CacheService {
     return fetchPromise;
   }
 
-  /**
-   * Delete a single key.
-   */
   del(key: string): void {
     try {
       this.cache.del(key);
@@ -93,36 +77,25 @@ class CacheService {
     }
   }
 
-  /**
-   * Delete all keys matching a prefix.
-   */
   delByPrefix(prefix: string): void {
     try {
       const keys = this.cache.keys();
       const toDelete = keys.filter((k) => k.startsWith(prefix));
-      if (toDelete.length > 0) {
-        this.cache.del(toDelete);
-      }
+      if (toDelete.length > 0) this.cache.del(toDelete);
     } catch {
       // ignore
     }
   }
 
-  /**
-   * Flush all cache entries.
-   */
   flush(): void {
     try {
       this.cache.flushAll();
-      console.log("CacheService flushed all entries");
+      logger.info("[Cache] Flushed all entries");
     } catch {
       // ignore
     }
   }
 
-  /**
-   * Return hit/miss statistics.
-   */
   getStats() {
     return {
       hits: this.hits,

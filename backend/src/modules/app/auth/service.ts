@@ -1,5 +1,7 @@
+import crypto from "crypto";
 import { prisma } from "../../../config/db.config";
 import { config } from "../../../config/env.config";
+import { cacheService } from "../../../cache";
 import {
   generateLoginToken,
   generateHash,
@@ -95,7 +97,7 @@ export const setupPassword = async (
 
   // Check if user exists and has app role (STUDENT, TEACHER, or ADMIN)
   if (!user || (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN)) {
-    await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
+    void logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return { success: false, message: "Email is not registered in our system" };
   }
 
@@ -118,7 +120,7 @@ export const setupPassword = async (
     },
   });
 
-  await logLoginAttempt(normalizedEmail, ipAddress, true, userAgent);
+  void logLoginAttempt(normalizedEmail, ipAddress, true, userAgent);
 
   // Send welcome email (non-blocking)
   sendWelcomeEmail(normalizedEmail, user.name).catch((err) =>
@@ -149,13 +151,13 @@ export const login = async (
   });
 
   if (!user) {
-    await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
+    void logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return { success: false, message: "Invalid email or password" };
   }
 
   // Check if user has app role (STUDENT, TEACHER, or ADMIN)
   if (user.role !== UserRoles.STUDENT && user.role !== UserRoles.TEACHER && user.role !== UserRoles.ADMIN) {
-    await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
+    void logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return { success: false, message: "Access denied" };
   }
 
@@ -164,7 +166,7 @@ export const login = async (
     const remainingMinutes = Math.ceil(
       (user.lockedUntil.getTime() - Date.now()) / (1000 * 60)
     );
-    await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
+    void logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return {
       success: false,
       message: `Account is locked. Try again in ${remainingMinutes} minutes.`,
@@ -194,7 +196,7 @@ export const login = async (
     data: { failedLoginAttempts: 0, lockedUntil: null },
   });
 
-  await logLoginAttempt(normalizedEmail, ipAddress, true, userAgent);
+  void logLoginAttempt(normalizedEmail, ipAddress, true, userAgent);
 
   // Generate tokens
   const accessToken = generateLoginToken({ id: user.id, email: user.email });
@@ -214,23 +216,23 @@ export const login = async (
 
   // Add student profile data if STUDENT role (TEACHER and ADMIN get no student profile)
   if (user.role === UserRoles.STUDENT) {
-    const student = await prisma.student.findFirst({
-      where: { userId: user.id, isDeleted: false },
-      include: { batch: true },
-    });
+    // Primary lookup by userId (indexed); email fallback only for legacy records without userId
+    const student =
+      (await prisma.student.findFirst({
+        where: { userId: user.id, isDeleted: false },
+        select: { id: true, fullname: true, batchId: true, batch: { select: { name: true } } },
+      })) ??
+      (await prisma.student.findFirst({
+        where: { email: normalizedEmail, isDeleted: false },
+        select: { id: true, fullname: true, batchId: true, batch: { select: { name: true } } },
+      }));
 
-    // Fallback to email lookup for backward compatibility
-    const studentByEmail = student || await prisma.student.findFirst({
-      where: { email: normalizedEmail, isDeleted: false },
-      include: { batch: true },
-    });
-
-    if (studentByEmail) {
+    if (student) {
       responseData.student = {
-        id: studentByEmail.id,
-        fullname: studentByEmail.fullname,
-        batchId: studentByEmail.batchId,
-        batchName: studentByEmail.batch?.name || null,
+        id: student.id,
+        fullname: student.fullname,
+        batchId: student.batchId,
+        batchName: student.batch?.name ?? null,
       };
     }
   }
@@ -242,8 +244,13 @@ export const login = async (
   };
 };
 
+// 16-char hex digest — short enough to avoid bloating NodeCache keys with full JWTs
+const tokenCacheKey = (token: string) =>
+  `blacklist:${crypto.createHash("sha256").update(token).digest("hex").slice(0, 16)}`;
+
 /**
- * Logout and blacklist token
+ * Logout and blacklist token.
+ * Proactively writes to NodeCache so any immediate re-use is caught in-memory.
  */
 export const logout = async (
   token: string,
@@ -254,13 +261,11 @@ export const logout = async (
     const expiresAt = new Date((decoded.exp as number) * 1000);
 
     await prisma.tokenBlacklist.create({
-      data: {
-        token,
-        userId,
-        expiresAt,
-        reason: "logout",
-      },
+      data: { token, userId, expiresAt, reason: "logout" },
     });
+
+    const ttlSecs = Math.max(1, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
+    cacheService.set(tokenCacheKey(token), true, Math.min(ttlSecs, 3600));
 
     return { success: true, message: "Logged out successfully" };
   } catch (error) {
@@ -271,13 +276,28 @@ export const logout = async (
 };
 
 /**
- * Check if token is blacklisted
+ * Check if token is blacklisted.
+ * Checks NodeCache first to avoid a DB round-trip on every authenticated request.
  */
 export const isTokenBlacklisted = async (token: string): Promise<boolean> => {
+  const cacheKey = tokenCacheKey(token);
+  const cached = cacheService.get<boolean>(cacheKey);
+  if (cached !== undefined) return cached;
+
   const blacklisted = await prisma.tokenBlacklist.findUnique({
     where: { token },
+    select: { id: true, expiresAt: true },
   });
-  return !!blacklisted;
+
+  const isBlacklisted = !!blacklisted;
+  if (isBlacklisted && blacklisted) {
+    const ttlSecs = Math.max(1, Math.floor((blacklisted.expiresAt.getTime() - Date.now()) / 1000));
+    cacheService.set(cacheKey, true, Math.min(ttlSecs, 3600));
+  } else {
+    // Brief negative-result cache to handle rapid retries without repeated DB hits
+    cacheService.set(cacheKey, false, 30);
+  }
+  return isBlacklisted;
 };
 
 /**
@@ -407,7 +427,7 @@ export const verifyPasswordResetOTP = async (
   });
 
   if (!user) {
-    await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
+    void logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return { success: false, message: "Invalid OTP" };
   }
 
@@ -422,7 +442,7 @@ export const verifyPasswordResetOTP = async (
   });
 
   if (!resetToken) {
-    await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
+    void logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return { success: false, message: "OTP has expired or is invalid" };
   }
 
@@ -430,7 +450,7 @@ export const verifyPasswordResetOTP = async (
   const isValid = verifyOTP(otp, resetToken.token);
 
   if (!isValid) {
-    await logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
+    void logLoginAttempt(normalizedEmail, ipAddress, false, userAgent);
     return { success: false, message: "Invalid OTP" };
   }
 
@@ -447,7 +467,7 @@ export const verifyPasswordResetOTP = async (
     },
   });
 
-  await logLoginAttempt(normalizedEmail, ipAddress, true, userAgent);
+  void logLoginAttempt(normalizedEmail, ipAddress, true, userAgent);
 
   return {
     success: true,
@@ -502,7 +522,7 @@ export const resetPassword = async (
     }),
   ]);
 
-  await logLoginAttempt(tokenRecord.user.email, ipAddress, true, userAgent);
+  void logLoginAttempt(tokenRecord.user.email, ipAddress, true, userAgent);
 
   return { success: true, message: "Password reset successfully" };
 };
@@ -527,22 +547,17 @@ export const getCurrentUser = async (userId: number) => {
     return null;
   }
 
-  // Only get student profile if user is a STUDENT
   let student = null;
   if (user.role === UserRoles.STUDENT) {
-    // First try to find by userId
-    student = await prisma.student.findFirst({
-      where: { userId: userId, isDeleted: false },
-      include: { batch: true },
-    });
-
-    // Fallback to email lookup for backward compatibility
-    if (!student) {
-      student = await prisma.student.findFirst({
+    student =
+      (await prisma.student.findFirst({
+        where: { userId, isDeleted: false },
+        include: { batch: true },
+      })) ??
+      (await prisma.student.findFirst({
         where: { email: user.email, isDeleted: false },
         include: { batch: true },
-      });
-    }
+      }));
   }
 
   return { user, student };
@@ -586,7 +601,7 @@ const handleFailedLogin = async (
     logger.warn(`Account locked for ${email} due to too many failed attempts`);
   }
 
-  await logLoginAttempt(email, ipAddress, false, userAgent);
+  void logLoginAttempt(email, ipAddress, false, userAgent);
 };
 
 /**

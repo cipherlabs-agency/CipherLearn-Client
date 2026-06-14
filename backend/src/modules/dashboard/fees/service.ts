@@ -24,34 +24,25 @@ export default class FeesService {
   // ============================================
 
   /**
-   * Generate unique receipt number in format: RCP-YYYY-NNNNN
+   * Generate unique receipt number in format: RCP-YYYY-NNNNN.
+   * Uses a transaction-level advisory lock so concurrent requests
+   * can never race and produce the same number.
    */
   private async generateReceiptNumber(): Promise<string> {
-    const year = new Date().getFullYear();
-    const prefix = `RCP-${year}-`;
+    return prisma.$transaction(async (tx) => {
+      // Advisory lock scoped to this transaction — released on commit/rollback
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('receipt_number_gen'))`;
 
-    // Find the latest receipt number for this year
-    const latestReceipt = await prisma.feeReceipt.findFirst({
-      where: {
-        receiptNumber: {
-          startsWith: prefix,
-        },
-      },
-      orderBy: {
-        receiptNumber: "desc",
-      },
-      select: {
-        receiptNumber: true,
-      },
+      const year = new Date().getFullYear();
+      const prefix = `RCP-${year}-`;
+      const latest = await tx.feeReceipt.findFirst({
+        where: { receiptNumber: { startsWith: prefix } },
+        orderBy: { receiptNumber: "desc" },
+        select: { receiptNumber: true },
+      });
+      const lastNumber = latest ? parseInt(latest.receiptNumber.split("-")[2], 10) : 0;
+      return `${prefix}${(lastNumber + 1).toString().padStart(5, "0")}`;
     });
-
-    let nextNumber = 1;
-    if (latestReceipt) {
-      const lastNumber = parseInt(latestReceipt.receiptNumber.split("-")[2], 10);
-      nextNumber = lastNumber + 1;
-    }
-
-    return `${prefix}${nextNumber.toString().padStart(5, "0")}`;
   }
 
   /**
@@ -329,59 +320,64 @@ export default class FeesService {
     }
 
     result.total = students.length;
+    if (students.length === 0) return result;
 
-    for (const student of students) {
-      try {
-        // Check if receipt already exists
-        const existing = await prisma.feeReceipt.findFirst({
-          where: {
-            studentId: student.id,
-            batchId: input.batchId,
-            academicMonth: input.academicMonth,
-            academicYear: input.academicYear,
-          },
-        });
+    // Batch-check all existing receipts in a single query instead of N findFirst calls
+    const existingReceipts = await prisma.feeReceipt.findMany({
+      where: {
+        studentId: { in: students.map((s) => s.id) },
+        batchId: input.batchId,
+        academicMonth: input.academicMonth,
+        academicYear: input.academicYear,
+      },
+      select: { studentId: true },
+    });
+    const existingIds = new Set(existingReceipts.map((r) => r.studentId));
 
-        if (existing) {
-          result.skipped++;
-          continue;
-        }
+    const newStudents = students.filter((s) => !existingIds.has(s.id));
+    result.skipped = students.length - newStudents.length;
 
-        const receiptNumber = await this.generateReceiptNumber();
-        const { remainingAmount, status } = this.calculateReceiptStatus(
-          totalAmount,
-          0,
-          0,
-          0,
-          new Date(input.dueDate)
-        );
-
-        await prisma.feeReceipt.create({
-          data: {
-            receiptNumber,
-            studentId: student.id,
-            batchId: input.batchId,
-            feeStructureId: input.feeStructureId || null,
-            totalAmount,
-            paidAmount: 0,
-            discountAmount: 0,
-            lateFeeAmount: 0,
-            remainingAmount,
-            academicMonth: input.academicMonth,
-            academicYear: input.academicYear,
-            status,
-            dueDate: new Date(input.dueDate),
-            generatedBy: input.generatedBy,
-            generatedById: input.generatedById || null,
-          },
-        });
-
-        result.created++;
-      } catch (error: any) {
-        log("error", "dashboard.fees.Date failed", { err: error instanceof Error ? error.message : String(error) });
-        result.errors.push(`Student ${student.id}: ${error.message}`);
-      }
+    if (newStudents.length === 0) {
+      invalidateAfterFeesMutation(input.batchId);
+      return result;
     }
+
+    const { remainingAmount, status } = this.calculateReceiptStatus(totalAmount, 0, 0, 0, new Date(input.dueDate));
+    const dueDate = new Date(input.dueDate);
+
+    // Generate all receipt numbers inside a single advisory-locked transaction
+    const receiptData = await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('receipt_number_gen'))`;
+      const year = new Date().getFullYear();
+      const prefix = `RCP-${year}-`;
+      const latest = await tx.feeReceipt.findFirst({
+        where: { receiptNumber: { startsWith: prefix } },
+        orderBy: { receiptNumber: "desc" },
+        select: { receiptNumber: true },
+      });
+      let lastNumber = latest ? parseInt(latest.receiptNumber.split("-")[2], 10) : 0;
+
+      return newStudents.map((student) => ({
+        receiptNumber: `${prefix}${(++lastNumber).toString().padStart(5, "0")}`,
+        studentId: student.id,
+        batchId: input.batchId,
+        feeStructureId: input.feeStructureId ?? null,
+        totalAmount,
+        paidAmount: 0,
+        discountAmount: 0,
+        lateFeeAmount: 0,
+        remainingAmount,
+        academicMonth: input.academicMonth,
+        academicYear: input.academicYear,
+        status,
+        dueDate,
+        generatedBy: input.generatedBy,
+        generatedById: input.generatedById ?? null,
+      }));
+    });
+
+    await prisma.feeReceipt.createMany({ data: receiptData, skipDuplicates: true });
+    result.created = receiptData.length;
 
     invalidateAfterFeesMutation(input.batchId);
     return result;
@@ -603,64 +599,41 @@ export default class FeesService {
   }
 
   /**
-   * Get student fees summary
+   * Get student fees summary — uses SQL aggregate + count instead of loading all receipt rows
    */
   async getStudentFeesSummary(studentId: number): Promise<StudentFeesSummary> {
     const student = await prisma.student.findUnique({
       where: { id: studentId, isDeleted: false },
-      include: {
-        batch: {
-          select: { name: true },
-        },
-      },
+      select: { id: true, fullname: true, email: true, batch: { select: { name: true } } },
     });
 
     if (!student) {
       throw new Error(`Student with ID ${studentId} not found`);
     }
 
-    const receipts = await prisma.feeReceipt.findMany({
-      where: { studentId },
-      select: {
-        totalAmount: true,
-        paidAmount: true,
-        remainingAmount: true,
-        status: true,
-        paymentDate: true,
-      },
-      orderBy: { paymentDate: "desc" },
-    });
-
-    let totalDue = 0;
-    let totalPaid = 0;
-    let totalPending = 0;
-    let overdueReceipts = 0;
-    let lastPaymentDate: Date | undefined;
-
-    for (const receipt of receipts) {
-      totalDue += receipt.totalAmount;
-      totalPaid += receipt.paidAmount;
-      totalPending += receipt.remainingAmount;
-
-      if (receipt.status === "OVERDUE") {
-        overdueReceipts++;
-      }
-
-      if (receipt.paymentDate && (!lastPaymentDate || receipt.paymentDate > lastPaymentDate)) {
-        lastPaymentDate = receipt.paymentDate;
-      }
-    }
+    const [totals, overdueReceipts, lastPayment] = await Promise.all([
+      prisma.feeReceipt.aggregate({
+        where: { studentId },
+        _sum: { totalAmount: true, paidAmount: true, remainingAmount: true },
+      }),
+      prisma.feeReceipt.count({ where: { studentId, status: "OVERDUE" } }),
+      prisma.feeReceipt.findFirst({
+        where: { studentId, paymentDate: { not: null } },
+        orderBy: { paymentDate: "desc" },
+        select: { paymentDate: true },
+      }),
+    ]);
 
     return {
       studentId,
       studentName: student.fullname,
       email: student.email,
-      batchName: student.batch?.name || "No Batch",
-      totalDue,
-      totalPaid,
-      totalPending,
+      batchName: student.batch?.name ?? "No Batch",
+      totalDue:      totals._sum.totalAmount     ?? 0,
+      totalPaid:     totals._sum.paidAmount      ?? 0,
+      totalPending:  totals._sum.remainingAmount ?? 0,
       overdueReceipts,
-      lastPaymentDate,
+      lastPaymentDate: lastPayment?.paymentDate ?? undefined,
     };
   }
 

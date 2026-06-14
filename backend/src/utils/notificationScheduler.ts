@@ -11,18 +11,16 @@
 import { prisma } from "../config/db.config";
 import logger from "./logger";
 import { sendToBatchStudents, sendToUser } from "./pushNotifications";
+import { cacheService } from "../cache";
 
-// Track lectures that have already been notified to avoid duplicates.
-// Cleared every 24 hours. Holds lectureIds as strings.
-const notifiedLectures = new Set<number>();
-let lastClearDate = new Date().toDateString();
+const NOTIFIED_LECTURE_TTL = 25 * 60 * 60; // 25h — survives across cron ticks and process restarts
 
-function clearStaleNotifiedSet() {
-  const today = new Date().toDateString();
-  if (today !== lastClearDate) {
-    notifiedLectures.clear();
-    lastClearDate = today;
-  }
+function isLectureNotified(lectureId: number): boolean {
+  return cacheService.get<boolean>(`notified:lecture:${lectureId}`) === true;
+}
+
+function markLectureNotified(lectureId: number): void {
+  cacheService.set(`notified:lecture:${lectureId}`, true, NOTIFIED_LECTURE_TTL);
 }
 
 /**
@@ -31,8 +29,6 @@ function clearStaleNotifiedSet() {
  * catches each lecture exactly once.
  */
 async function sendClassStartingSoonNotifications(): Promise<void> {
-  clearStaleNotifiedSet();
-
   const now = new Date();
   const windowStart = new Date(now.getTime() + 8 * 60 * 1000);  // 8 min from now
   const windowEnd = new Date(now.getTime() + 13 * 60 * 1000);   // 13 min from now
@@ -59,7 +55,7 @@ async function sendClassStartingSoonNotifications(): Promise<void> {
   });
 
   for (const lecture of lectures) {
-    if (notifiedLectures.has(lecture.id)) continue;
+    if (isLectureNotified(lecture.id)) continue;
 
     const [h, m] = lecture.startTime.split(":").map(Number);
     const lectureMinutes = h * 60 + m;
@@ -68,7 +64,7 @@ async function sendClassStartingSoonNotifications(): Promise<void> {
 
     if (diffMs < 8 * 60 * 1000 || diffMs > 13 * 60 * 1000) continue;
 
-    notifiedLectures.add(lecture.id);
+    markLectureNotified(lecture.id);
 
     // Notify students in the batch
     sendToBatchStudents(
