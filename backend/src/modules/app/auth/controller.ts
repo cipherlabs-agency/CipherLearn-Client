@@ -42,8 +42,14 @@ export const checkEnrollment = async (
       });
     }
 
-    const result = await authService.checkEnrollment(value.email);
-    return res.status(200).json(result);
+    const status = await authService.checkUserStatus(value.email);
+    return res.status(200).json({
+      success: status.success,
+      isEnrolled: status.isRegistered,
+      hasAccount: status.hasPassword,
+      studentName: status.userName,
+      message: status.message,
+    });
   } catch (err) {
     log("error", "app.auth.status failed", { err: err instanceof Error ? err.message : String(err) });
     logger.error("Check enrollment error:", err);

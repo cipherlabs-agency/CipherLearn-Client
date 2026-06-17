@@ -1,8 +1,10 @@
+import { Prisma } from "../../../../prisma/generated/prisma/client";
 import { prisma } from "../../../config/db.config";
 import CloudinaryService from "../../../config/cloudinairy.config";
 import { validateMagicNumber } from "../../../config/multer.config";
 import { CreateNoteInput, UpdateNoteInput, GetNotesQuery } from "./types";
 import { invalidateAfterResourceMutation } from "../../../cache/invalidation";
+import logger from "../../../utils/logger";
 import { log } from "../../../utils/logtail";
 
 const cloudinaryService = new CloudinaryService();
@@ -64,9 +66,7 @@ export default class NotesService {
           content.push(file.url);
         });
 
-        console.log(
-          `Uploaded ${uploadedFiles.length} files for note: ${data.title}`
-        );
+        logger.info(`Uploaded ${uploadedFiles.length} files for note: ${data.title}`);
       }
 
       // Create note in database
@@ -81,21 +81,14 @@ export default class NotesService {
 
       invalidateAfterResourceMutation();
       return note;
-    } catch (error: any) {
+    } catch (error: unknown) {
       log("error", "dashboard.notes.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
-      console.error("Error creating note:", error);
+      logger.error("Error creating note:", error);
 
-      // Provide specific error messages
-      if (error.message.includes("Batch")) {
-        throw new Error(error.message);
-      }
-      if (error.message.includes("security validation")) {
-        throw new Error(error.message);
-      }
-      if (error.message.includes("Cloudinary")) {
-        throw new Error("File upload failed. Please try again.");
-      }
-
+      const msg = error instanceof Error ? error.message : "";
+      if (msg.includes("Batch")) throw new Error(msg);
+      if (msg.includes("security validation")) throw new Error(msg);
+      if (msg.includes("Cloudinary")) throw new Error("File upload failed. Please try again.");
       throw new Error("Failed to create note");
     }
   }
@@ -114,28 +107,20 @@ export default class NotesService {
   }> {
     const { batchId, page = 1, limit = 10, category } = query;
 
-    const where: any = { isDeleted: false };
+    const where: Prisma.NoteWhereInput = { isDeleted: false };
+    if (batchId) where.batchId = batchId;
+    if (category) where.category = category;
 
-    if (batchId) {
-      where.batchId = batchId;
-    }
-
-    if (category) {
-      where.category = category;
-    }
-
-    // Get total count for pagination
-    const total = await prisma.note.count({ where });
-
-    // Get paginated notes
-    const notes = await prisma.note.findMany({
-      where,
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+    // Count and fetch in parallel
+    const [total, notes] = await Promise.all([
+      prisma.note.count({ where }),
+      prisma.note.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ]);
 
     return {
       notes,
@@ -200,9 +185,7 @@ export default class NotesService {
           content.push(file.url);
         });
 
-        console.log(
-          `Uploaded ${uploadedFiles.length} new files for note ID: ${id}`
-        );
+        logger.info(`Uploaded ${uploadedFiles.length} new files for note ID: ${id}`);
       }
 
       // Update note in database
@@ -218,20 +201,14 @@ export default class NotesService {
 
       invalidateAfterResourceMutation();
       return updatedNote;
-    } catch (error: any) {
+    } catch (error: unknown) {
       log("error", "dashboard.notes.invalidateAfterResourceMutation failed", { err: error instanceof Error ? error.message : String(error) });
-      console.error("Error updating note:", error);
+      logger.error("Error updating note:", error);
 
-      if (error.message.includes("not found")) {
-        throw new Error("Note not found");
-      }
-      if (error.message.includes("Batch")) {
-        throw new Error(error.message);
-      }
-      if (error.message.includes("security validation")) {
-        throw new Error(error.message);
-      }
-
+      const msg = error instanceof Error ? error.message : "";
+      if (msg.includes("not found")) throw new Error("Note not found");
+      if (msg.includes("Batch")) throw new Error(msg);
+      if (msg.includes("security validation")) throw new Error(msg);
       throw new Error("Failed to update note");
     }
   }
@@ -253,6 +230,6 @@ export default class NotesService {
     });
 
     invalidateAfterResourceMutation();
-    console.log(`Note ID ${id} soft deleted by ${deletedBy}`);
+    logger.info(`Note ID ${id} soft deleted by ${deletedBy}`);
   }
 }

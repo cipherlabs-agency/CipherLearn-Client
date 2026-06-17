@@ -64,21 +64,6 @@ export const checkUserStatus = async (
 };
 
 /**
- * @deprecated Use checkUserStatus instead
- * Kept for backward compatibility
- */
-export const checkEnrollment = async (email: string) => {
-  const result = await checkUserStatus(email);
-  return {
-    success: result.success,
-    isEnrolled: result.isRegistered,
-    hasAccount: result.hasPassword,
-    studentName: result.userName,
-    message: result.message,
-  };
-};
-
-/**
  * Setup password for first-time student or teacher
  * Works with existing User records (created during enrollment/teacher creation)
  */
@@ -216,16 +201,14 @@ export const login = async (
 
   // Add student profile data if STUDENT role (TEACHER and ADMIN get no student profile)
   if (user.role === UserRoles.STUDENT) {
-    // Primary lookup by userId (indexed); email fallback only for legacy records without userId
-    const student =
-      (await prisma.student.findFirst({
-        where: { userId: user.id, isDeleted: false },
-        select: { id: true, fullname: true, batchId: true, batch: { select: { name: true } } },
-      })) ??
-      (await prisma.student.findFirst({
-        where: { email: normalizedEmail, isDeleted: false },
-        select: { id: true, fullname: true, batchId: true, batch: { select: { name: true } } },
-      }));
+    // Single query: userId is the preferred join; email fallback covers legacy records without userId
+    const student = await prisma.student.findFirst({
+      where: {
+        OR: [{ userId: user.id }, { email: normalizedEmail }],
+        isDeleted: false,
+      },
+      select: { id: true, fullname: true, batchId: true, batch: { select: { name: true } } },
+    });
 
     if (student) {
       responseData.student = {
@@ -284,15 +267,43 @@ export const isTokenBlacklisted = async (token: string): Promise<boolean> => {
   const cached = cacheService.get<boolean>(cacheKey);
   if (cached !== undefined) return cached;
 
-  const blacklisted = await prisma.tokenBlacklist.findUnique({
-    where: { token },
-    select: { id: true, expiresAt: true },
-  });
+  // Decode claims without verification — we only need userId and iat to check the sentinel
+  const payload = jwt.decode(token) as jwt.JwtPayload | null;
 
-  const isBlacklisted = !!blacklisted;
+  const [blacklisted, resetSentinel] = await Promise.all([
+    prisma.tokenBlacklist.findUnique({
+      where: { token },
+      select: { id: true, expiresAt: true },
+    }),
+    payload?.id && payload?.iat
+      ? prisma.tokenBlacklist.findFirst({
+          where: {
+            userId: payload.id as number,
+            reason: "password_reset",
+            expiresAt: { gt: new Date() },
+          },
+          orderBy: { expiresAt: "desc" },
+          select: { token: true },
+        })
+      : Promise.resolve(null),
+  ]);
+
+  let isBlacklisted = !!blacklisted;
+
+  // Sentinel check: if a password reset occurred after this token was issued, reject it
+  if (!isBlacklisted && resetSentinel && payload?.iat) {
+    const sentinelParts = resetSentinel.token.split(":");
+    const resetMs = parseInt(sentinelParts[2] ?? "0", 10);
+    if (resetMs > payload.iat * 1000) {
+      isBlacklisted = true;
+    }
+  }
+
   if (isBlacklisted && blacklisted) {
     const ttlSecs = Math.max(1, Math.floor((blacklisted.expiresAt.getTime() - Date.now()) / 1000));
     cacheService.set(cacheKey, true, Math.min(ttlSecs, 3600));
+  } else if (isBlacklisted) {
+    cacheService.set(cacheKey, true, 3600);
   } else {
     // Brief negative-result cache to handle rapid retries without repeated DB hits
     cacheService.set(cacheKey, false, 30);
@@ -515,12 +526,19 @@ export const resetPassword = async (
       where: { id: tokenRecord.id },
       data: { usedAt: new Date() },
     }),
-    // Invalidate all existing sessions for security
-    prisma.tokenBlacklist.createMany({
-      data: [],
-      skipDuplicates: true,
-    }),
   ]);
+
+  // Invalidate all existing sessions by writing a sentinel entry to the blacklist.
+  // isTokenBlacklisted() checks for this sentinel and rejects any token issued before this reset.
+  const sentinelToken = `pwd_reset_sentinel:${tokenRecord.userId}:${Date.now()}`;
+  await prisma.tokenBlacklist.create({
+    data: {
+      token: sentinelToken,
+      userId: tokenRecord.userId,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days — covers any realistic token lifetime
+      reason: "password_reset",
+    },
+  });
 
   void logLoginAttempt(tokenRecord.user.email, ipAddress, true, userAgent);
 
@@ -549,15 +567,13 @@ export const getCurrentUser = async (userId: number) => {
 
   let student = null;
   if (user.role === UserRoles.STUDENT) {
-    student =
-      (await prisma.student.findFirst({
-        where: { userId, isDeleted: false },
-        include: { batch: true },
-      })) ??
-      (await prisma.student.findFirst({
-        where: { email: user.email, isDeleted: false },
-        include: { batch: true },
-      }));
+    student = await prisma.student.findFirst({
+      where: {
+        OR: [{ userId }, { email: user.email }],
+        isDeleted: false,
+      },
+      include: { batch: true },
+    });
   }
 
   return { user, student };

@@ -141,20 +141,26 @@ class FeesService {
       batchFilter = { batchId: { in: filteredIds } };
     }
 
+    // Status filter applied at DB level via nested relation — fixes pagination count accuracy
+    const statusFilter = opts?.status
+      ? { feeReceipts: { some: { status: opts.status } } }
+      : {};
+
     const where = {
       ...batchFilter,
       isDeleted: false,
+      ...statusFilter,
       ...(opts?.search ? { fullname: { contains: opts.search, mode: "insensitive" as const } } : {}),
     };
 
     const [students, total] = await Promise.all([
       prisma.student.findMany({
         where,
-        include: {
+        select: {
+          id: true,
+          fullname: true,
+          instituteId: true,
           batch: { select: { id: true, name: true } },
-          feeReceipts: {
-            orderBy: { dueDate: "asc" },
-          },
         },
         orderBy: { fullname: "asc" },
         skip,
@@ -163,26 +169,45 @@ class FeesService {
       prisma.student.count({ where }),
     ]);
 
-    const data = students
-      .map((s) => {
-        const pendingStatuses: string[] = [PaymentStatus.PENDING, PaymentStatus.OVERDUE, PaymentStatus.PARTIAL];
-        const pendingReceipt = s.feeReceipts.find((r) => pendingStatuses.includes(r.status));
-        const totalPaid = s.feeReceipts.reduce((acc, r) => acc + r.paidAmount, 0);
-        const totalPending = s.feeReceipts.reduce((acc, r) => acc + r.remainingAmount, 0);
-        const feeStatus = pendingReceipt?.status ?? PaymentStatus.PAID;
+    if (students.length === 0) {
+      return { data: [], pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+    }
 
-        return {
-          id: s.id,
-          fullname: s.fullname,
-          rollNumber: s.instituteId ?? null,
-          batch: s.batch ? { id: s.batch.id, name: s.batch.name } : null,
-          paidAmount: totalPaid,
-          pendingAmount: totalPending,
-          dueDate: pendingReceipt?.dueDate.toISOString() ?? null,
-          status: feeStatus,
-        };
-      })
-      .filter((s) => !opts?.status || s.status === opts.status);
+    const studentIds = students.map((s) => s.id);
+    const pendingStatuses: PaymentStatus[] = [PaymentStatus.PENDING, PaymentStatus.OVERDUE, PaymentStatus.PARTIAL];
+
+    // Single aggregate query per student — replaces N×M receipt row load
+    const [aggregates, pendingReceipts] = await Promise.all([
+      prisma.feeReceipt.groupBy({
+        by: ["studentId"],
+        where: { studentId: { in: studentIds } },
+        _sum: { paidAmount: true, remainingAmount: true },
+      }),
+      prisma.feeReceipt.findMany({
+        where: { studentId: { in: studentIds }, status: { in: pendingStatuses } },
+        select: { studentId: true, status: true, dueDate: true },
+        orderBy: { dueDate: "asc" },
+        distinct: ["studentId"],
+      }),
+    ]);
+
+    const aggMap = new Map(aggregates.map((a) => [a.studentId, a._sum]));
+    const pendingMap = new Map(pendingReceipts.map((r) => [r.studentId, r]));
+
+    const data = students.map((s) => {
+      const sums = aggMap.get(s.id);
+      const pending = pendingMap.get(s.id);
+      return {
+        id: s.id,
+        fullname: s.fullname,
+        rollNumber: s.instituteId ?? null,
+        batch: s.batch ? { id: s.batch.id, name: s.batch.name } : null,
+        paidAmount: sums?.paidAmount ?? 0,
+        pendingAmount: sums?.remainingAmount ?? 0,
+        dueDate: pending?.dueDate.toISOString() ?? null,
+        status: pending?.status ?? PaymentStatus.PAID,
+      };
+    });
 
     return {
       data,

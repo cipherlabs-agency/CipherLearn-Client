@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import NotesService from "./service";
 import { GetNotesQuery } from "./types";
+import logger from "../../../utils/logger";
 import { log } from "../../../utils/logtail";
 
 const notesService = new NotesService();
@@ -33,7 +34,7 @@ export default class NotesController {
       });
     } catch (error: any) {
       log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
-      console.error("Controller error - createNote:", error);
+      logger.error("Controller error - createNote:", error);
 
       // Handle specific errors
       if (error.message.includes("Batch") && error.message.includes("not found")) {
@@ -92,7 +93,7 @@ export default class NotesController {
       });
     } catch (error: any) {
       log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
-      console.error("Controller error - getNotes:", error);
+      logger.error("Controller error - getNotes:", error);
 
       res.status(500).json({
         success: false,
@@ -125,7 +126,7 @@ export default class NotesController {
       });
     } catch (error: any) {
       log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
-      console.error("Controller error - getNoteById:", error);
+      logger.error("Controller error - getNoteById:", error);
 
       if (error.message.includes("not found")) {
         res.status(404).json({
@@ -169,7 +170,7 @@ export default class NotesController {
       });
     } catch (error: any) {
       log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
-      console.error("Controller error - updateNote:", error);
+      logger.error("Controller error - updateNote:", error);
 
       if (error.message.includes("not found")) {
         res.status(404).json({
@@ -227,7 +228,7 @@ export default class NotesController {
       });
     } catch (error: any) {
       log("error", "dashboard.notes.status failed", { err: error instanceof Error ? error.message : String(error) });
-      console.error("Controller error - deleteNote:", error);
+      logger.error("Controller error - deleteNote:", error);
 
       if (error.message.includes("not found")) {
         res.status(404).json({

@@ -241,22 +241,51 @@ export default class AttendanceService {
   }
 
   /**
-   * Get all attendance sheets for a batch
+   * Get attendance records for a batch, with optional date range and pagination
    */
-  async getBatchAttendanceSheet(batchId: number): Promise<Attendance[]> {
+  async getBatchAttendanceSheet(
+    batchId: number,
+    opts?: { startDate?: string; endDate?: string; page?: number; limit?: number }
+  ): Promise<{ data: Attendance[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
     try {
-      const batch = await prisma.batch.findUnique({
-        where: { id: batchId },
-      });
+      const batch = await prisma.batch.findUnique({ where: { id: batchId } });
+      if (!batch) throw new Error("Batch not found");
 
-      if (!batch) {
-        throw new Error("Batch not found");
-      }
+      const page = Math.max(1, opts?.page ?? 1);
+      const limit = Math.min(500, Math.max(1, opts?.limit ?? 100));
+      const skip = (page - 1) * limit;
 
-      const attendanceSheets = await prisma.attendance.findMany({
-        where: { batchId },
-      });
-      return attendanceSheets;
+      const dateWhere =
+        opts?.startDate || opts?.endDate
+          ? {
+              date: {
+                ...(opts.startDate ? { gte: new Date(opts.startDate) } : {}),
+                ...(opts.endDate   ? { lte: new Date(opts.endDate)   } : {}),
+              },
+            }
+          : {};
+
+      const where = { batchId, ...dateWhere };
+
+      const [data, total] = await Promise.all([
+        prisma.attendance.findMany({
+          where,
+          select: {
+            id: true, date: true, status: true, method: true,
+            markedBy: true, time: true, studentId: true, batchId: true,
+            createdAt: true, updatedAt: true,
+          },
+          orderBy: { date: "desc" },
+          skip,
+          take: limit,
+        }),
+        prisma.attendance.count({ where }),
+      ]);
+
+      return {
+        data: data as unknown as Attendance[],
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      };
     } catch (error) {
       log("error", "dashboard.attendance.findMany failed", { err: error instanceof Error ? error.message : String(error) });
       throw error;
@@ -306,7 +335,7 @@ export default class AttendanceService {
       orderBy: { date: "asc" },
     });
 
-    const map = new Map<string, any>();
+    const map = new Map<string, { id: number; status: AttendanceStatus; method: AttendanceMethod; markedBy: string | null; time: string | null; studentId: number }>();
     const tzOffsetMinutes = 5 * 60 + 30;
     for (const r of attendanceRows) {
       const localMs = r.date.getTime() + tzOffsetMinutes * 60 * 1000;

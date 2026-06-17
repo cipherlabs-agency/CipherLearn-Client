@@ -66,11 +66,7 @@ function formatCurrency(amt: number): string {
     return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0 }).format(amt)
 }
 
-function getInitials(name: string): string {
-    const parts = name.trim().split(/\s+/)
-    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-    return name.charAt(0).toUpperCase()
-}
+import { getInitials } from "@/lib/utils"
 
 function attColor(pct: number) {
     if (pct >= 85) return { text: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500", bgLight: "bg-emerald-500/8" }

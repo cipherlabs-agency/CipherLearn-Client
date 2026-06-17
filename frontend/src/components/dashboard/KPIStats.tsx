@@ -64,7 +64,7 @@ export function KPIStats() {
         )
     }
 
-    const statsData = [
+    const statsData: Array<typeof statConfig[number] & { value: number | string; trend: number | null; trendLabel: string }> = [
         {
             ...statConfig[0],
             value: stats?.totalStudents ?? 0,
@@ -80,8 +80,8 @@ export function KPIStats() {
         {
             ...statConfig[2],
             value: stats?.todayAttendance?.present ?? 0,
-            trend: stats?.todayAttendance?.percentage ?? 0,
-            trendLabel: "attendance rate",
+            trend: null,
+            trendLabel: `${stats?.todayAttendance?.percentage ?? 0}% attendance rate`,
         },
         {
             ...statConfig[3],
@@ -94,7 +94,8 @@ export function KPIStats() {
     return (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {statsData.map((stat, index) => {
-                const trendUp = stat.trend >= 0
+                const hasTrend = stat.trend !== null
+                const trendUp = hasTrend && (stat.trend as number) >= 0
                 const TrendIcon = trendUp ? ArrowUpRight : ArrowDownRight
 
                 return (
@@ -133,15 +134,17 @@ export function KPIStats() {
 
                             {/* Trend */}
                             <div className="flex items-center gap-1.5">
-                                <span className={cn(
-                                    "inline-flex items-center gap-0.5 text-[12px] font-semibold rounded-full px-1.5 py-0.5",
-                                    trendUp
-                                        ? "text-emerald-700 bg-emerald-100"
-                                        : "text-red-600 bg-red-100"
-                                )}>
-                                    <TrendIcon className="h-3 w-3" />
-                                    {stat.trend > 0 ? "+" : ""}{stat.trend}%
-                                </span>
+                                {hasTrend ? (
+                                    <span className={cn(
+                                        "inline-flex items-center gap-0.5 text-[12px] font-semibold rounded-full px-1.5 py-0.5",
+                                        trendUp
+                                            ? "text-emerald-700 bg-emerald-100"
+                                            : "text-red-600 bg-red-100"
+                                    )}>
+                                        <TrendIcon className="h-3 w-3" />
+                                        {(stat.trend as number) > 0 ? "+" : ""}{stat.trend}%
+                                    </span>
+                                ) : null}
                                 <span className="text-[12px] text-muted-foreground">{stat.trendLabel}</span>
                             </div>
                         </div>

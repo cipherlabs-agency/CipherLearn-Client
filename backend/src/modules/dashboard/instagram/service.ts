@@ -1,3 +1,4 @@
+import { Prisma } from "../../../../prisma/generated/prisma/client";
 import { prisma } from "../../../config/db.config";
 import logger from "../../../utils/logger";
 import {
@@ -362,8 +363,8 @@ export class InstagramService {
         });
         if (!account) throw new Error("Instagram account not connected");
 
-        const where: any = { rule: { instagramAccountId: account.id } };
-        if (status) where.dmStatus = status;
+        const where: Prisma.AutomationLogWhereInput = { rule: { instagramAccountId: account.id } };
+        if (status) where.dmStatus = status as Prisma.AutomationLogWhereInput["dmStatus"];
 
         const skip = (page - 1) * limit;
         const [logs, total] = await Promise.all([

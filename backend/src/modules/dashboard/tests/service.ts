@@ -12,6 +12,7 @@ import {
   TestStatsResponse,
   BulkScoreResult,
 } from "./types";
+import { invalidateAfterResourceMutation } from "../../../cache/invalidation";
 import { log } from "../../../utils/logtail";
 
 const TEST_INCLUDE = {
@@ -228,6 +229,8 @@ export default class TestService {
       where: { id },
       data: { isDeleted: true },
     });
+
+    invalidateAfterResourceMutation();
   }
 
   public async publish(id: number): Promise<TestResponse> {
@@ -324,13 +327,17 @@ export default class TestService {
 
     const result: BulkScoreResult = { total: rows.length, uploaded: 0, absent: 0, failed: 0, errors: [] };
 
+    // Pre-fetch all students in a single query — eliminates N+1 per-row lookups
+    const studentRecords = await prisma.student.findMany({
+      where: { id: { in: rows.map((r) => r.studentId) }, isDeleted: false },
+      select: { id: true },
+    });
+    const validStudentIds = new Set(studentRecords.map((s) => s.id));
+
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       try {
-        const student = await prisma.student.findFirst({
-          where: { id: row.studentId, isDeleted: false },
-        });
-        if (!student) {
+        if (!validStudentIds.has(row.studentId)) {
           result.errors.push({ row: i + 1, message: `Student ID ${row.studentId} not found` });
           result.failed++;
           continue;

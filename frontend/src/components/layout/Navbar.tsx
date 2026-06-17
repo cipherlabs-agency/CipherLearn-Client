@@ -29,14 +29,7 @@ function getFormattedDate() {
     })
 }
 
-function getInitials(name: string) {
-    return name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
-}
+import { getInitials } from "@/lib/utils"
 
 // Attendance pill — green/amber/red based on percentage
 function AttendancePill({ pct, loading }: { pct: number | null; loading: boolean }) {

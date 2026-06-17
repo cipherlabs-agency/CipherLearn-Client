@@ -136,21 +136,22 @@ export default class AuthController {
 
   async resetPassword(req: Request, res: Response) {
     try {
-      const { email, newPassword } = req.body as {
+      const { email, token, newPassword } = req.body as {
         email?: string;
+        token?: string;
         newPassword?: string;
       };
-      if (!email || !newPassword)
+      if (!email || !token || !newPassword)
         return res.status(400).json({
           success: false,
-          message: "Email & newPassword are required",
+          message: "email, token & newPassword are required",
         });
 
-      const ok = await authService.resetPassword(email, newPassword);
+      const ok = await authService.resetPassword(email, token, newPassword);
       if (!ok)
         return res
-          .status(404)
-          .json({ success: false, message: "User not found or reset failed" });
+          .status(400)
+          .json({ success: false, message: "Invalid or expired reset token" });
 
       logger.info(`Password reset successful for: ${email}`);
 

@@ -40,12 +40,6 @@ interface AttendanceStateItem {
     status: AttendanceStatus
 }
 
-function getInitials(name: string): string {
-    const parts = name.trim().split(/\s+/)
-    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-    return name.charAt(0).toUpperCase()
-}
-
 export function AttendanceMarker() {
     const dispatch = useDispatch()
     const { date, selectedBatchId } = useSelector((state: RootState) => state.attendance)

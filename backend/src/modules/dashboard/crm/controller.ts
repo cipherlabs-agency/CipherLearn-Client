@@ -40,16 +40,22 @@ export default class CRMController {
 
   async getAllLeads(req: Request, res: Response) {
     try {
-      const leads = await crmService.getAllLeads();
-      return res.status(200).json({ 
-        success: true, 
-        data: leads 
+      const batchId = req.query.batchId ? Number(req.query.batchId) : undefined;
+      const status = req.query.status as string | undefined;
+      const page = req.query.page ? Number(req.query.page) : 1;
+      const limit = req.query.limit ? Number(req.query.limit) : 50;
+
+      const result = await crmService.getAllLeads({ batchId, status, page, limit });
+      return res.status(200).json({
+        success: true,
+        data: result.data,
+        pagination: result.pagination,
       });
     } catch (error) {
       logger.error("CRMController.getAllLeads error:", error);
-      return res.status(500).json({ 
-        success: false, 
-        message: "Failed to fetch enquiries" 
+      return res.status(500).json({
+        success: false,
+        message: "Failed to fetch enquiries",
       });
     }
   }

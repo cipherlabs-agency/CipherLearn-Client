@@ -1,4 +1,5 @@
 // services/auth.service.ts
+import jwt from "jsonwebtoken";
 import { UserRoles } from "../../../prisma/generated/prisma/enums";
 import { prisma } from "../../config/db.config";
 import { LoginData, LoginResult, SignupData } from "./types.auth";
@@ -9,6 +10,7 @@ import {
   generateLoginToken,
   verifyToken,
 } from "./utils.auth";
+import { config } from "../../config/env.config";
 import { sendAdminPasswordResetEmail } from "../../utils/email";
 import logger from "../../utils/logger";
 import { log } from "../../utils/logtail";
@@ -127,30 +129,6 @@ export default class AuthService {
     }
   }
 
-  async resetPassword(email: string, newPassword: string): Promise<boolean> {
-    try {
-      const user = await prisma.user.findUnique({
-        where: { email },
-        select: { id: true },
-      });
-
-      if (!user) return false;
-
-      const hashed = generateHash(newPassword);
-
-      await prisma.user.update({
-        where: { email },
-        data: { password: hashed, isPasswordSet: true },
-      });
-
-      return true;
-    } catch (error) {
-      log("error", "auth.update failed", { err: error instanceof Error ? error.message : String(error) });
-      logger.error("resetPassword error:", error);
-      return false;
-    }
-  }
-
   async updateProfile(userId: number, data: { name?: string; email?: string }) {
     try {
       const user = await prisma.user.update({
@@ -179,10 +157,14 @@ export default class AuthService {
 
       if (!user) return { ok: false };
 
-      const token = generateLoginToken({ id: user.id, email: user.email });
+      // Use a purpose-scoped, short-lived token — NOT a regular access token
+      const resetToken = jwt.sign(
+        { id: user.id, email: user.email, type: "password_reset" },
+        config.JWT.SECRET as string,
+        { expiresIn: "15m" }
+      );
 
-      // Send token via email — do not return it in the HTTP response
-      sendAdminPasswordResetEmail(user.email, user.name, token).catch((err) =>
+      sendAdminPasswordResetEmail(user.email, user.name, resetToken).catch((err) =>
         logger.error(`Failed to send admin password reset email to ${email}:`, err)
       );
 
@@ -191,6 +173,34 @@ export default class AuthService {
       log("error", "auth.error failed", { err: error instanceof Error ? error.message : String(error) });
       logger.error("forgotPassword error:", error);
       return { ok: false };
+    }
+  }
+
+  async resetPassword(email: string, token: string, newPassword: string): Promise<boolean> {
+    try {
+      const decoded = jwt.verify(token, config.JWT.SECRET as string) as jwt.JwtPayload;
+
+      if (decoded.type !== "password_reset" || decoded.email !== email) {
+        return false;
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true },
+      });
+      if (!user) return false;
+
+      const hashed = generateHash(newPassword);
+      await prisma.user.update({
+        where: { email },
+        data: { password: hashed, isPasswordSet: true },
+      });
+
+      return true;
+    } catch (error) {
+      log("error", "auth.update failed", { err: error instanceof Error ? error.message : String(error) });
+      logger.error("resetPassword error:", error);
+      return false;
     }
   }
 

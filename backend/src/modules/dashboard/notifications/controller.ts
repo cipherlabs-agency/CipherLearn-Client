@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { notificationService } from "./service"
+import logger from "../../../utils/logger"
 
 export const notificationController = {
     async getNotifications(req: Request, res: Response) {
@@ -11,7 +12,7 @@ export const notificationController = {
             const notifications = await notificationService.getByUserId(userId, limit, unreadOnly)
             res.json({ data: notifications })
         } catch (error) {
-            console.error("Error fetching notifications:", error)
+            logger.error("Error fetching notifications:", error)
             res.status(500).json({ message: "Failed to fetch notifications" })
         }
     },
@@ -22,7 +23,7 @@ export const notificationController = {
             const count = await notificationService.getUnreadCount(userId)
             res.json({ count })
         } catch (error) {
-            console.error("Error fetching unread count:", error)
+            logger.error("Error fetching unread count:", error)
             res.status(500).json({ message: "Failed to fetch unread count" })
         }
     },
@@ -39,7 +40,7 @@ export const notificationController = {
             await notificationService.markAsRead(notificationId, userId)
             res.json({ message: "Notification marked as read" })
         } catch (error) {
-            console.error("Error marking notification as read:", error)
+            logger.error("Error marking notification as read:", error)
             res.status(500).json({ message: "Failed to mark as read" })
         }
     },
@@ -50,7 +51,7 @@ export const notificationController = {
             await notificationService.markAllAsRead(userId)
             res.json({ message: "All notifications marked as read" })
         } catch (error) {
-            console.error("Error marking all as read:", error)
+            logger.error("Error marking all as read:", error)
             res.status(500).json({ message: "Failed to mark all as read" })
         }
     },
