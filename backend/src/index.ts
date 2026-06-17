@@ -8,6 +8,7 @@ import { startNotificationScheduler } from "./utils/notificationScheduler";
 import { startFeeReminderJob } from "./jobs/feeReminder";
 import logger from "./utils/logger";
 import { log } from "./utils/logtail";
+import { sseManager } from "./sse/manager";
 
 app.use("/api", allRoutes);
 
@@ -42,6 +43,9 @@ async function startServer() {
       logger.info("Notification scheduler started");
 
       startFeeReminderJob();
+
+      sseManager.startHeartbeat();
+      logger.info("SSE heartbeat started (25s interval)");
     });
 
     // Graceful shutdown — drain in-flight requests before Node exits.

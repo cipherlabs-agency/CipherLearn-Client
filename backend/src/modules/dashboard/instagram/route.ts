@@ -1,97 +1,77 @@
 import { Router } from "express";
 import { instagramController } from "./controller";
-import { isAdminOrTeacher, isAuthenticated } from "../../auth/middleware";
+import { isAdminOrTeacher } from "../../auth/middleware";
+import { validate } from "../../../middleware/validate";
+import { InstagramValidations } from "./validation";
 
 const router = Router();
 
-// ─── Webhook endpoints (called by Meta — NO auth) ─────
-router.get(
-    "/webhook",
-    instagramController.webhookVerify.bind(instagramController)
-);
+// ─── Webhook endpoints (called by Meta — NO auth, NO validation) ──────────────
+router.get("/webhook", instagramController.webhookVerify.bind(instagramController));
+router.post("/webhook", instagramController.webhookHandler.bind(instagramController));
+
+// DEV ONLY — simulate a comment webhook
 router.post(
-    "/webhook",
-    instagramController.webhookHandler.bind(instagramController)
-);
-// DEV ONLY — simulate a comment webhook to test DM sending
-router.post(
-    "/webhook/test",
-    isAdminOrTeacher,
-    instagramController.webhookTest.bind(instagramController)
+  "/webhook/test",
+  isAdminOrTeacher,
+  validate(InstagramValidations.webhookTestBody),
+  instagramController.webhookTest.bind(instagramController),
 );
 
-// ─── OAuth endpoints ──────────────────────────────────
-// /connect requires auth (to get user ID for state param)
-// /callback is PUBLIC — Instagram redirects the user here directly (no JWT)
-//   User ID comes from the `state` query parameter instead
-router.get(
-    "/connect",
-    isAdminOrTeacher,
-    instagramController.connect.bind(instagramController)
-);
-router.get(
-    "/callback",
-    instagramController.callback.bind(instagramController)
-);
+// ─── OAuth ────────────────────────────────────────────────────────────────────
+router.get("/connect", isAdminOrTeacher, instagramController.connect.bind(instagramController));
+// /callback is PUBLIC — Instagram redirects here directly (no JWT in request)
+router.get("/callback", instagramController.callback.bind(instagramController));
 
-// ─── Account management ──────────────────────────────
-router.get(
-    "/account",
-    isAdminOrTeacher,
-    instagramController.getAccount.bind(instagramController)
-);
+// ─── Account management ───────────────────────────────────────────────────────
+router.get("/account", isAdminOrTeacher, instagramController.getAccount.bind(instagramController));
+router.post("/disconnect", isAdminOrTeacher, instagramController.disconnect.bind(instagramController));
+
+// ─── Media ────────────────────────────────────────────────────────────────────
+router.get("/media", isAdminOrTeacher, instagramController.getMedia.bind(instagramController));
+
+// ─── Automation Rules CRUD ────────────────────────────────────────────────────
+router.get("/rules", isAdminOrTeacher, instagramController.getRules.bind(instagramController));
+
 router.post(
-    "/disconnect",
-    isAdminOrTeacher,
-    instagramController.disconnect.bind(instagramController)
+  "/rules",
+  isAdminOrTeacher,
+  validate(InstagramValidations.createRule),
+  instagramController.createRule.bind(instagramController),
 );
 
-// ─── Media ────────────────────────────────────────────
-router.get(
-    "/media",
-    isAdminOrTeacher,
-    instagramController.getMedia.bind(instagramController)
-);
-
-// ─── Automation Rules CRUD ────────────────────────────
-router.get(
-    "/rules",
-    isAdminOrTeacher,
-    instagramController.getRules.bind(instagramController)
-);
-router.post(
-    "/rules",
-    isAdminOrTeacher,
-    instagramController.createRule.bind(instagramController)
-);
 router.put(
-    "/rules/:id",
-    isAdminOrTeacher,
-    instagramController.updateRule.bind(instagramController)
+  "/rules/:id",
+  isAdminOrTeacher,
+  validate(InstagramValidations.ruleIdParam, "params"),
+  validate(InstagramValidations.updateRule),
+  instagramController.updateRule.bind(instagramController),
 );
+
 router.delete(
-    "/rules/:id",
-    isAdminOrTeacher,
-    instagramController.deleteRule.bind(instagramController)
+  "/rules/:id",
+  isAdminOrTeacher,
+  validate(InstagramValidations.ruleIdParam, "params"),
+  instagramController.deleteRule.bind(instagramController),
 );
 
-// ─── Rule Logs ────────────────────────────────────────
+// ─── Rule Logs ────────────────────────────────────────────────────────────────
 router.get(
-    "/rules/:id/logs",
-    isAdminOrTeacher,
-    instagramController.getRuleLogs.bind(instagramController)
+  "/rules/:id/logs",
+  isAdminOrTeacher,
+  validate(InstagramValidations.ruleIdParam, "params"),
+  validate(InstagramValidations.ruleLogsQuery, "query"),
+  instagramController.getRuleLogs.bind(instagramController),
 );
 
-// ─── Analytics & Global Logs ──────────────────────────
+// ─── Analytics & Global Logs ──────────────────────────────────────────────────
+router.get("/analytics", isAdminOrTeacher, instagramController.getAnalytics.bind(instagramController));
+
 router.get(
-    "/analytics",
-    isAdminOrTeacher,
-    instagramController.getAnalytics.bind(instagramController)
-);
-router.get(
-    "/logs",
-    isAdminOrTeacher,
-    instagramController.getAllLogs.bind(instagramController)
+  "/logs",
+  isAdminOrTeacher,
+  validate(InstagramValidations.getLogsQuery, "query"),
+  instagramController.getAllLogs.bind(instagramController),
 );
 
 export default router;

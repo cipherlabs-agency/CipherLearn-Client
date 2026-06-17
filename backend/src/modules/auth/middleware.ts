@@ -163,20 +163,21 @@ export const isAuthenticated = async (
   next: NextFunction
 ) => {
   try {
+    // Support ?token= query param for SSE connections (EventSource can't set headers)
+    const queryToken = typeof req.query.token === "string" ? req.query.token : null;
     const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
-      return res.status(401).json({
-        success: false,
-        message: "No authorization header provided",
-      });
+    let token: string | undefined;
+    if (queryToken) {
+      token = queryToken;
+    } else if (authHeader) {
+      token = authHeader.split(" ")[1];
     }
 
-    const token = authHeader.split(" ")[1];
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "No token provided",
+        message: "No authorization token provided",
       });
     }
 
