@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import AnalyticsService from "../../dashboard/analytics/service";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App Analytics controller — exposes the existing dashboard AnalyticsService

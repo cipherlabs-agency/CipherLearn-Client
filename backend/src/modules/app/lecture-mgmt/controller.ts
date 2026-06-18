@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import LectureService from "../../dashboard/lectures/service";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App lecture-management controller — bulk-create (recurring) lectures and

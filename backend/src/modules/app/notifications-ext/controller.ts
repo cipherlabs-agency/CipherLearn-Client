@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { notificationService } from "../../dashboard/notifications/service";
 import { prisma } from "../../../config/db.config";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App notifications-ext controller — unread count (any app user) and an

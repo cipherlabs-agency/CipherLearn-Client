@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { settingsService } from "../../dashboard/settings/service";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App admin settings controller — lets an ADMIN read/update class branding,

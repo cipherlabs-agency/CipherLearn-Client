@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import FeesService from "../../dashboard/fees/service";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App fee-receipts controller — exposes the dashboard FeesService receipt

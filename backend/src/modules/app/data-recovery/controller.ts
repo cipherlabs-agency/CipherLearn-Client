@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import StudentEnrollmentService from "../../dashboard/student-enrollment/service";
 import BatchService from "../../dashboard/batches/service";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App data-recovery controller (ADMIN). Lists soft-deleted students/batches

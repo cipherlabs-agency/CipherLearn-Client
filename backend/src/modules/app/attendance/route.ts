@@ -98,8 +98,9 @@ router.get(
 );
 
 // =====================
-// QR CODE ATTENDANCE - TEMPORARILY DISABLED
+// QR CODE ATTENDANCE (C9 — re-enabled; teacher generates token via /app/attendance/teacher/qr-token)
+// Requires QR_SECRET env, qRAttendanceToken table, and config.FEATURES.QR_ATTENDANCE=true
 // =====================
-// router.post("/mark-qr", isStudent, attendanceController.markQRAttendance.bind(attendanceController));
+router.post("/mark-qr", isStudent, attendanceController.markQRAttendance.bind(attendanceController));
 
 export default router;

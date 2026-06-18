@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import StudentEnrollmentService from "../../dashboard/student-enrollment/service";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App student CSV import controller (ADMIN). Reuses the dashboard

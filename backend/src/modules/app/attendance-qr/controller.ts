@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { qrAttendanceService } from "../../dashboard/attendance/qr.service";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App attendance-QR controller (TEACHER) — generate / fetch the daily QR code

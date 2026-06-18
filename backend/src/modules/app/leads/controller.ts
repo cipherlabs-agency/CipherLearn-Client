@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import CRMService from "../../dashboard/crm/service";
-import { logger } from "../../../utils/logger";
+import logger from "../../../utils/logger";
 
 /**
  * App leads controller (ADMIN) — list CRM leads captured from landing pages.
