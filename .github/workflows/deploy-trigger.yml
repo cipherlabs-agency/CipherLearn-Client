@@ -1,0 +1,17 @@
+name: Trigger CipherLearn Redeploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  trigger-redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify admin portal to redeploy all classes
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 30 \
+            -X POST "${{ vars.CIPHERLEARN_PORTAL_URL }}/api/portal/hosting/webhooks/github-push" \
+            -H "x-deploy-secret: ${{ secrets.CIPHERLEARN_DEPLOY_SECRET }}" \
+          | grep -q "^2" || (echo "Webhook failed" && exit 1)
