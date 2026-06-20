@@ -10,7 +10,6 @@ lerna-debug.log*
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 prisma/generated/
-prisma/migrations/
 
 certs/*.pem
 certs/*.key
