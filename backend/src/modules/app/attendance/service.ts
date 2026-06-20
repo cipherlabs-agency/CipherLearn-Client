@@ -449,65 +449,55 @@ class AttendanceService {
     page: number,
     limit: number
   ): Promise<{ reports: AttendanceReportEntry[]; pagination: object }> {
-    const skip = (page - 1) * limit;
-
-    // Get distinct dates with stats, ordered by date desc
-    const rawDates = await prisma.attendance.groupBy({
-      by: ["date"],
+    // NOTE: deliberately avoid prisma.groupBy here. It is the most engine/version
+    // -sensitive query, and `date` is a full DateTime (records on the same calendar
+    // day can differ by time, so a raw groupBy([date]) would not group them).
+    // Fetch the rows once and group by calendar date (YYYY-MM-DD) in JS.
+    const rows = await prisma.attendance.findMany({
       where: { batchId },
-      _count: { id: true },
+      select: { date: true, status: true, markedBy: true, createdAt: true },
       orderBy: { date: "desc" },
-      skip,
-      take: limit,
     });
 
-    const totalDates = await prisma.attendance.groupBy({
-      by: ["date"],
-      where: { batchId },
-      _count: { id: true },
-    });
+    interface DayAgg {
+      total: number; present: number; absent: number; late: number;
+      submittedBy: string; submittedAt: Date;
+    }
+    const byDay = new Map<string, DayAgg>();
+    for (const r of rows) {
+      const key = r.date.toISOString().slice(0, 10);
+      let g = byDay.get(key);
+      if (!g) {
+        g = { total: 0, present: 0, absent: 0, late: 0, submittedBy: r.markedBy ?? "Unknown", submittedAt: r.createdAt ?? r.date };
+        byDay.set(key, g);
+      }
+      g.total += 1;
+      if (r.status === AttendanceStatus.PRESENT) g.present += 1;
+      else if (r.status === AttendanceStatus.ABSENT) g.absent += 1;
+      else if (r.status === AttendanceStatus.LATE) g.late += 1;
+      // earliest record of the day = "submitted by / at"
+      const ts = r.createdAt ?? r.date;
+      if (ts < g.submittedAt) { g.submittedAt = ts; g.submittedBy = r.markedBy ?? "Unknown"; }
+    }
 
-    const reports: AttendanceReportEntry[] = await Promise.all(
-      rawDates.map(async (d) => {
-        const [allRecords, presentCount, absentCount, lateCount] =
-          await Promise.all([
-            prisma.attendance.findFirst({
-              where: { batchId, date: d.date },
-              select: { markedBy: true, createdAt: true },
-              orderBy: { createdAt: "asc" },
-            }),
-            prisma.attendance.count({
-              where: { batchId, date: d.date, status: AttendanceStatus.PRESENT },
-            }),
-            prisma.attendance.count({
-              where: { batchId, date: d.date, status: AttendanceStatus.ABSENT },
-            }),
-            prisma.attendance.count({
-              where: { batchId, date: d.date, status: AttendanceStatus.LATE },
-            }),
-          ]);
+    const allDays = Array.from(byDay.entries()).sort((a, b) => b[0].localeCompare(a[0]));
+    const total = allDays.length;
+    const paged = allDays.slice((page - 1) * limit, (page - 1) * limit + limit);
 
-        return {
-          date: d.date.toISOString().slice(0, 10),
-          submittedBy: allRecords?.markedBy ?? "Unknown",
-          submittedAt: allRecords?.createdAt?.toISOString() ?? d.date.toISOString(),
-          stats: {
-            total: d._count.id,
-            present: presentCount,
-            absent: absentCount,
-            late: lateCount,
-          },
-        };
-      })
-    );
+    const reports: AttendanceReportEntry[] = paged.map(([date, g]) => ({
+      date,
+      submittedBy: g.submittedBy,
+      submittedAt: g.submittedAt.toISOString(),
+      stats: { total: g.total, present: g.present, absent: g.absent, late: g.late },
+    }));
 
     return {
       reports,
       pagination: {
         page,
         limit,
-        total: totalDates.length,
-        totalPages: Math.ceil(totalDates.length / limit),
+        total,
+        totalPages: Math.ceil(total / limit) || 0,
       },
     };
   }

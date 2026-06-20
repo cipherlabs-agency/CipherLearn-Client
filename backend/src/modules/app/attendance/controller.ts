@@ -258,9 +258,11 @@ class AttendanceController {
         pagination: result.pagination,
       });
     } catch (error) {
-      log("error", "app.attendance.status failed", { err: error instanceof Error ? error.message : String(error) });
+      const detail = error instanceof Error ? error.message : String(error);
+      log("error", "app.attendance.reports failed", { err: detail });
       logger.error("AttendanceController.getTeacherReports error:", error);
-      return res.status(500).json({ success: false, message: "Failed to get reports" });
+      // Surface the real reason so it can be diagnosed from the client too.
+      return res.status(500).json({ success: false, message: `Failed to get reports: ${detail}` });
     }
   }
 

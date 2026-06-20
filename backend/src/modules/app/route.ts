@@ -12,6 +12,16 @@ import appLecturesRoutes from "./lectures/route";
 import appTestsRoutes from "./tests/route";
 import doubtsRoutes from "./doubts/route";
 import adminRoutes from "./admin/route";
+// Section C (v1.0.17) gap-feature submodules
+import analyticsRoutes from "./analytics/route";
+import feeReceiptsRoutes from "./fee-receipts/route";
+import settingsAdminRoutes from "./settings-admin/route";
+import studentsCsvRoutes from "./students-csv/route";
+import dataRecoveryRoutes from "./data-recovery/route";
+import lectureMgmtRoutes from "./lecture-mgmt/route";
+import leadsRoutes from "./leads/route";
+import notificationsExtRoutes from "./notifications-ext/route";
+import attendanceQrRoutes from "./attendance-qr/route";
 import { profileController } from "./profile/controller";
 import { settingsService } from "../dashboard/settings/service";
 import { config } from "../../config/env.config";
@@ -113,6 +123,7 @@ router.use("/profile", profileRoutes);
 
 // Fees - role-specific auth handled within the route module (student own fees + teacher management)
 router.use("/fees", feesRoutes);
+router.use("/fees", feeReceiptsRoutes); // C2 — receipt generation/bulk/summary
 
 // ==================== MULTI-ROLE ROUTES ====================
 // Routes accessible to students and teachers
@@ -131,6 +142,7 @@ router.get(
 
 // Attendance - role-specific auth handled within the route module
 router.use("/attendance", attendanceRoutes);
+router.use("/attendance", attendanceQrRoutes); // C9 — teacher QR token generation
 
 // Assignments - students submit, teachers review
 // Note: assignments route has its own middleware per endpoint
@@ -141,18 +153,30 @@ router.use("/announcements", isAppUser, announcementsRoutes);
 
 // Notifications — preferences (student only, checked per-endpoint) + device token (all app users)
 router.use("/notifications", isAppUser, notificationsRoutes);
+router.use("/notifications", notificationsExtRoutes); // C8 — unread-count + admin broadcast
 
 // Resources - role-specific auth handled within the route module
 router.use("/resources", resourcesRoutes);
 
 // Lectures - schedule for students and teachers
 router.use("/lectures", isAppUser, appLecturesRoutes);
+router.use("/lectures", isAppUser, lectureMgmtRoutes); // C6 — bulk create + assign teacher
 
 // Tests - student scores and teacher batch views
 router.use("/tests", appTestsRoutes);
 
 // Doubts - student ask, teacher reply
 router.use("/doubts", doubtsRoutes);
+
+// Analytics — teacher (canViewAnalytics) / admin
+router.use("/analytics", analyticsRoutes); // C1
+
+// Admin management — Section C standalone modules. Mounted BEFORE the generic
+// /admin router so these specific paths match first.
+router.use("/admin/settings", settingsAdminRoutes);   // C5
+router.use("/admin/students-csv", studentsCsvRoutes); // C3
+router.use("/admin/recovery", dataRecoveryRoutes);    // C4
+router.use("/admin/leads", leadsRoutes);              // C7
 
 // Admin management — batch, student, teacher, fee-structure CRUD
 // Strict isAdmin guard is applied inside the module; teachers cannot access these

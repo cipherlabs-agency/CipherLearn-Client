@@ -533,14 +533,27 @@ class ResourcesService {
     description?: string; category?: string; subject?: string;
     publish?: boolean; visibleBatchIds?: number[]; scheduledAt?: string;
   }): Promise<AppVideo> {
-    const video = await prisma.youtubeVideo.create({
-      data: {
+    // `url` is globally @unique. Re-adding the same link (incl. a previously
+    // soft-deleted one) must not 400 — upsert by url: update + restore instead.
+    const visibility = data.publish ? "PUBLIC" : "PRIVATE";
+    const video = await prisma.youtubeVideo.upsert({
+      where: { url: data.url },
+      create: {
         title: data.title, url: data.url, batchId: data.batchId,
         description: data.description, category: data.category,
         subject: data.subject,
-        visibility: data.publish ? "PUBLIC" : "PRIVATE",
+        visibility,
         visibleBatchIds: data.visibleBatchIds ?? [],
         scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null,
+      },
+      update: {
+        title: data.title, batchId: data.batchId,
+        description: data.description, category: data.category,
+        subject: data.subject,
+        visibility,
+        visibleBatchIds: data.visibleBatchIds ?? [],
+        scheduledAt: data.scheduledAt ? new Date(data.scheduledAt) : null,
+        isDeleted: false,
       },
     });
     await cacheService.delByPrefix(`app:videos:${data.batchId}`);

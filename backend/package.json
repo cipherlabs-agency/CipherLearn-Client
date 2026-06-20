@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node dist/src/index.js",
     "start:dev": "npx prisma generate && tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "npx prisma generate && tsc",
+    "postinstall": "npx prisma generate",
     "prisma:g": "npx prisma generate",
     "prisma:m:d": "npx prisma migrate dev"
   },

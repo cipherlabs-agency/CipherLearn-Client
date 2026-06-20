@@ -233,22 +233,57 @@ class FeesService {
       if (!hasAccess) throw new Error("You do not teach this student's batch");
     }
 
-    const [receipts, summary] = await Promise.all([
+    const [receipts, structures] = await Promise.all([
       this.getFeeReceipts(studentId),
-      this.getFeesSummary(studentId),
+      student.batchId ? this.getFeeStructures(student.batchId) : Promise.resolve([]),
     ]);
+
+    // Expected fees come from the batch's active fee structures (the "default" payable).
+    const components = structures.map((s) => ({ name: s.name, amount: s.amount }));
+    const structureTotal = structures.reduce((sum, s) => sum + s.amount, 0);
+
+    // Actuals come from generated receipts.
+    const hasReceipts = receipts.length > 0;
+    const billedTotal = receipts.reduce(
+      (sum, r) => sum + r.totalAmount + r.lateFeeAmount - r.discountAmount,
+      0
+    );
+    const paidFees = receipts.reduce((sum, r) => sum + r.paidAmount, 0);
+    const receiptPending = receipts.reduce((sum, r) => sum + r.remainingAmount, 0);
+
+    // Receipts are the source of truth once generated; otherwise fall back to the
+    // fee structure so the expected/payable amount still shows for unbilled students.
+    const totalFees = hasReceipts ? billedTotal : structureTotal;
+    const pendingFees = hasReceipts ? receiptPending : Math.max(structureTotal - paidFees, 0);
+
+    const nextDue = receipts
+      .filter((r) => r.status !== PaymentStatus.PAID)
+      .sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0];
+
+    let status: PaymentStatus | "NONE";
+    if (totalFees <= 0) status = "NONE";
+    else if (pendingFees <= 0) status = PaymentStatus.PAID;
+    else if (paidFees > 0) status = PaymentStatus.PARTIAL;
+    else status = PaymentStatus.PENDING;
 
     return {
       student: {
         id: student.id,
         fullname: student.fullname,
         rollNumber: student.instituteId ?? null,
-        phone: student.phone ?? null,
-        parentName: student.parentName ?? null,
-        batch: student.batch,
+        class: student.batch?.name ?? null,
+        batchName: student.batch?.name ?? null,
+        parentContact: student.phone ?? null,
       },
       receipts,
-      summary,
+      summary: {
+        totalFees,
+        paidFees,
+        pendingFees,
+        status,
+        dueDate: nextDue?.dueDate ?? null,
+        components,
+      },
     };
   }
 
