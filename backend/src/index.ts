@@ -1,4 +1,5 @@
 import http from "http";
+import type { Request, Response, NextFunction } from "express";
 import { config } from "./config/env.config";
 import app from "./server";
 import allRoutes from "./routes";
@@ -11,6 +12,40 @@ import { log } from "./utils/logtail";
 import { sseManager } from "./sse/manager";
 
 app.use("/api", allRoutes);
+
+// ── Global error handler (MUST be registered after the routes) ────────────────
+// Errors thrown in middleware — most commonly Multer file-upload rejections
+// (LIMIT_UNEXPECTED_FILE, LIMIT_FILE_SIZE) or its file-type guard — otherwise
+// escape to Express's default handler, which returns an HTML "Internal Server
+// Error" page that mobile clients cannot parse. Always respond with JSON so the
+// real reason reaches the app.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  if (res.headersSent) return;
+
+  const isMulterError = err?.name === "MulterError";
+  const isFileTypeError = typeof err?.message === "string" && err.message.includes("is not allowed");
+
+  if (isMulterError || isFileTypeError) {
+    const codeMessages: Record<string, string> = {
+      LIMIT_FILE_SIZE: "One of the files is too large.",
+      LIMIT_FILE_COUNT: "Too many files uploaded.",
+      LIMIT_UNEXPECTED_FILE: `Unexpected file field "${err?.field ?? ""}". Check the upload field name.`,
+      LIMIT_PART_COUNT: "Too many form parts.",
+    };
+    const message = codeMessages[err?.code as string] || err?.message || "File upload error.";
+    logger.error("Upload/middleware error:", err);
+    log("error", "app.upload.error", { err: err?.message, code: err?.code, field: err?.field });
+    return res.status(400).json({ success: false, message });
+  }
+
+  logger.error("Unhandled application error:", err);
+  log("error", "app.unhandled.error", { err: err instanceof Error ? err.message : String(err) });
+  return res.status(err?.status || err?.statusCode || 500).json({
+    success: false,
+    message: err?.message || "Internal Server Error",
+  });
+});
 
 // ── Startup security / config checks ─────────────────────────────────────────
 if (config.JWT.SECRET === "your_jwt_secret") {

@@ -16,12 +16,21 @@ export interface TeacherStudentFeeDetail {
     id: number;
     fullname: string;
     rollNumber: string | null;
-    phone: string | null;
-    parentName: string | null;
-    batch: { id: number; name: string } | null;
+    class: string | null;
+    batchName: string | null;
+    parentContact: string | null;
   };
   receipts: AppFeeReceipt[];
-  summary: AppFeesSummary;
+  summary: {
+    /** Expected total payable: from receipts when billed, else from the batch fee structure. */
+    totalFees: number;
+    paidFees: number;
+    pendingFees: number;
+    status: PaymentStatus | "NONE";
+    dueDate: string | null;
+    /** The batch's active fee structures (the "default" payable components). */
+    components: { name: string; amount: number }[];
+  };
 }
 
 export interface AppFeeReceipt {
