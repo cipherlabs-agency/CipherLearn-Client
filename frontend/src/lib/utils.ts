@@ -5,8 +5,6 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-
-//this is workflow test
 export function getInitials(name: string): string {
     return name
         .trim()
