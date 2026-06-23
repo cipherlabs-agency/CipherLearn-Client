@@ -10,8 +10,11 @@ jobs:
     steps:
       - name: Notify admin portal to redeploy all classes
         run: |
-          curl -s -o /dev/null -w "%{http_code}" \
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
             --max-time 30 \
             -X POST "${{ vars.CIPHERLEARN_PORTAL_URL }}/api/portal/hosting/webhooks/github-push" \
+            -H "Content-Type: application/json" \
             -H "x-deploy-secret: ${{ secrets.CIPHERLEARN_DEPLOY_SECRET }}" \
-          | grep -q "^2" || (echo "Webhook failed" && exit 1)
+            -d "{\"sha\":\"${{ github.sha }}\",\"message\":$(echo '${{ github.event.head_commit.message }}' | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip()))')}")
+          echo "HTTP status: $HTTP_CODE"
+          echo "$HTTP_CODE" | grep -q "^2" || (echo "Webhook failed with HTTP $HTTP_CODE" && exit 1)
