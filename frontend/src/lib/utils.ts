@@ -5,7 +5,6 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-// Ops -redploy all 
 export function getInitials(name: string): string {
     return name
         .trim()
